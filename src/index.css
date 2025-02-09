@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "zzz";
+    src: url("/assets/zzz.woff2");
+}
+
+:root {
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
