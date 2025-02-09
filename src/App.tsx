@@ -1,6 +1,6 @@
 import "@mantine/core/styles.css"
 import { MantineProvider } from "@mantine/core"
-import { theme } from "./theme"
+import theme from "./theme"
 import Shell from "./components/Shell"
 import { BrowserRouter, Route, Routes } from "react-router"
 import ProfilePage from "./pages/ProfilePage"

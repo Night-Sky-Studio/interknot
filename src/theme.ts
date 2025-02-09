@@ -1,6 +1,6 @@
 import { ActionIcon, Button, colorsTuple, createTheme, Title } from "@mantine/core"
 
-export const theme = createTheme({
+const theme = createTheme({
     colors: { 
         "zzz": colorsTuple("#dcfe00")
     }, 
@@ -28,3 +28,5 @@ export const theme = createTheme({
         })
     }
 })
+
+export default theme
