@@ -1,15 +1,34 @@
-import { Title, Text, Container, Center } from "@mantine/core"
+import { Title, Text, ScrollArea, Space, Button, UnstyledButton, Stack } from "@mantine/core"
 import React from "react"
-import PlayerSearch from "../components/PlayerSearch";
+import PlayerSearch from "../components/PlayerSearch"
+import Users from "../mock/MockUsers"
+import UserHeader from "../components/UserHeader"
+import { mapUserProfile } from "../api/UserProfile"
+import "./styles/HomePage.css"
+import { useNavigate } from "react-router"
 
 export default function HomePage(): React.ReactElement {
+    const navigate = useNavigate()
     return (
         <section>
-            <Container size="xl">
-                <Title order={1}>Welcome to Inter-Knot</Title>
-                <Text>A place for proxies to share their agents' builds.</Text>
-                <PlayerSearch />
-            </Container>
+            <Title order={1}>Welcome to Inter-Knot</Title>
+            <Text>A place for proxies to share their agents' builds.</Text>
+            <PlayerSearch />
+            <div style={{ height: "100%" }}>
+                <Stack>
+                    {
+                        Users.map(u => {
+                            let user = mapUserProfile(u)
+                            return (
+                                <UnstyledButton key={user.Uid} className="profile-button"
+                                    onClick={() => navigate(`user/${user.Uid}`)}>
+                                    <UserHeader user={user} />
+                                </UnstyledButton>
+                            )
+                        })
+                    }
+                </Stack>
+            </div>
         </section>
     );
 }

@@ -1,8 +1,9 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, SimpleGrid, Center, Tabs } from '@mantine/core'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, SimpleGrid, Center, Tabs, FloatingIndicator, ScrollArea } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import Users from '../mock/MockUsers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import "./Shell.pcss"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
@@ -10,6 +11,17 @@ export default function Shell(): React.ReactElement {
 
     const [users, setUsers] = useState(Users)
     const [selectedUser, setSelectedUser] = useState(params.id ?? "")
+
+    const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
+    const [controlRefs, setControlRefs] = useState<Record<string, HTMLButtonElement | null>>({})
+    const setControlRef = (val: string) => (node: HTMLButtonElement) => {
+        controlRefs[val] = node
+        setControlRefs(controlRefs)
+    }
+
+    useEffect(() => {
+        setSelectedUser(params.id ?? "")
+    }, [params])
 
     return (
         <AppShell header={{ height: 60 }} padding="md">
@@ -34,23 +46,33 @@ export default function Shell(): React.ReactElement {
             </AppShell.Header>
 
             <AppShell.Main>
-                <Tabs value={selectedUser} onChange={(value) => {
-                    setSelectedUser(value ?? "")
-                    navigate(`/user/${value}`)
-                }}>
-                    {
-                        users.map(user => {
-                            let profile = user.PlayerInfo.SocialDetail.ProfileDetail 
-                            return <Tabs.Tab key={profile.Uid} value={profile.Uid.toString()}>
-                                {profile.Nickname}
-                            </Tabs.Tab>
-                        })
-                    }
-                </Tabs>
-                <Outlet />
+                <Container size="xl">
+                    <Tabs value={selectedUser} onChange={(value) => {
+                        setSelectedUser(value ?? "")
+                        navigate(`/user/${value}`)
+                    }} variant="none">
+                        <Tabs.List ref={setRootRef} className="list">
+                            {
+                                users.map(user => {
+                                    let profile = user.PlayerInfo.SocialDetail.ProfileDetail 
+                                    return <Tabs.Tab key={profile.Uid} 
+                                        value={profile.Uid.toString()}
+                                        ref={setControlRef(profile.Uid.toString())}
+                                        className="tab">
+                                        {profile.Nickname}
+                                    </Tabs.Tab>
+                                })
+                            }
+
+                            <FloatingIndicator target={selectedUser ? controlRefs[selectedUser] : null}
+                                parent={rootRef} className="indicator" />
+                        </Tabs.List>
+                    </Tabs>
+                    <Outlet />
+                </Container>
             </AppShell.Main>
 
-            <AppShell.Footer>
+            <AppShell.Footer pos="relative">
                 <Container size="lg" h="100%">
                     <Flex justify="space-between" align="center" wrap="wrap">
                         <Anchor href="https://enka.network" target="_blank">
