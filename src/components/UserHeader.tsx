@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { UserProfile } from "../api/UserProfile"
 import { 
     BackgroundImage, 
@@ -34,11 +34,12 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
             const ctx = canvas.getContext("2d")
             if (!ctx) return
 
-            canvas.width = img.width
-            canvas.height = img.height
-            ctx.drawImage(img, 0, 0, img.width, img.height)
+            const SAMPLE_SIZE = 128
+            canvas.width = SAMPLE_SIZE // img.width
+            canvas.height = SAMPLE_SIZE // img.height
+            ctx.drawImage(img, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE)
 
-            const imageData = ctx.getImageData(0, 0, img.width, img.height)
+            const imageData = ctx.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE)
             let totalLuminance = 0
             const pixels = imageData.data
 
@@ -54,11 +55,7 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
             setTextColor(avgLuminance > 128 ? "black" : "white")
 
             // Convert the canvas to a Blob URL and set it as the image source
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    setImageSrc(URL.createObjectURL(blob));
-                }
-            })
+            setImageSrc(img.src)
         }
     }, [user.Information.NamecardUrl])
 
@@ -74,7 +71,7 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
                     {
                         user.Information.Medals.map(m => {
                             return (
-                                <MantineImage src={m.MedalIcon.IconUrl} h="42px" />
+                                <MantineImage key={m.MedalType} src={m.MedalIcon.IconUrl} h="42px" />
                             )
                         })
                     }
