@@ -1,11 +1,9 @@
 import path from "node:path"
-import { mapAvatars } from "./mappers/Avatars"
 import { setLocale } from "./mappers/Localization"
-import { mapUserProfile } from "../UserProfile"
-import Uber from "../../mock/Uber.json"
 
-function updateEnkaDefinitions() {
+async function updateEnkaDefinitions() {
     let urls = [
+        // Enka data
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/avatars.json",
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/equipments.json",
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/locs.json",
@@ -14,25 +12,38 @@ function updateEnkaDefinitions() {
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/pfps.json",
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/property.json",
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/titles.json",
-        "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/weapons.json"
+        "https://raw.githubusercontent.com/EnkaNetwork/API-docs/refs/heads/master/store/zzz/weapons.json",
+        
+        // Raw game data
+        "https://git.mero.moe/dimbreath/ZenlessData/raw/branch/master/FileCfg/WeaponLevelTemplateTb.json",
+        "https://git.mero.moe/dimbreath/ZenlessData/raw/branch/master/FileCfg/WeaponStarTemplateTb.json"
     ]
 
-    urls.forEach(async (url) => {
+    for (let url of urls) {
         const result = await fetch(url)
+        let json = await result.json()
         const file = path.join(import.meta.dir, "mappers", "source", path.basename(url))
-        await Bun.write(file, result, { createPath: true })
-    })
+
+        if (file.indexOf("WeaponLevelTemplateTb") !== -1) {
+            // unwrap first object
+            let recTransformed = json[Object.keys(json)[0]] as Record<string, number>[]
+
+            json = recTransformed.map(o => {
+                let keys = Object.keys(o)
+                return {
+                    Rarity: o[keys[0]],
+                    Level: o[keys[1]],
+                    MainStatMultiplier: o[keys[2]]
+                }
+            })
+
+        }
+
+        await Bun.write(file, JSON.stringify(json), { createPath: true })
+    }
 }
 
-function remapEnkaDefinitions() {
-    setLocale("en")
-    console.log(JSON.stringify(mapAvatars()))
-}
+// if (process.argv.indexOf("--update") !== -1)
+await updateEnkaDefinitions()
 
-if (process.argv.indexOf("--remap") !== -1)
-    remapEnkaDefinitions()
-
-if (process.argv.indexOf("--update") !== -1)
-    updateEnkaDefinitions()
-
-console.log(JSON.stringify(mapUserProfile(Uber)))
+// console.log(JSON.stringify(mapUserProfile(Uber)))
