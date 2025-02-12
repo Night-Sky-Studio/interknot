@@ -4,7 +4,7 @@ import medals from "./source/medals.json"
 
 type RawMedal = { Name: string, Icon: string, TipNum: string }
 
-const Medals = medals as Record<string, RawMedal>
+const RawMedals = medals as Record<string, RawMedal>
 
 export interface MedalIcon {
     Id: number
@@ -23,8 +23,8 @@ export enum MedalType {
 export function getMedalIcon(id: number): MedalIcon {
     return {
         Id: id,
-        Name: getLocalString(Medals[id]["Name"]),
-        IconUrl: BASE_URL + Medals[id]["Icon"],
-        LevelFormat: getLocalString(Medals[id]["TipNum"])
+        Name: getLocalString(RawMedals[id]["Name"]),
+        IconUrl: BASE_URL + RawMedals[id]["Icon"],
+        LevelFormat: getLocalString(RawMedals[id]["TipNum"])
     }
 }

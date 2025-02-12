@@ -1,3 +1,4 @@
+import { Character } from "./Character"
 import { MainCharacter } from "./definitions/mappers/Avatars"
 import { getMedalIcon, MedalIcon, MedalType } from "./definitions/mappers/Medals"
 import { getNamecardUrl } from "./definitions/mappers/Namecards"
@@ -21,6 +22,7 @@ export interface UserProfile {
     Uid: number
     Ttl: number
     Information: ProfileInfo
+    Characters: Character[]
 }
 
 export interface Medal {

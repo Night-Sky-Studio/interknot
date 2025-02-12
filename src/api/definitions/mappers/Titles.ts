@@ -3,7 +3,7 @@ import titles from "./source/titles.json"
 
 type RawTitle = { TitleText: string, ColorA: string, ColorB: string }
 
-const Titles = titles as Record<string, RawTitle>
+const RawTitles = titles as Record<string, RawTitle>
 
 export interface Title {
     Id: number
@@ -22,5 +22,5 @@ export function mapTitle(id: number, title: RawTitle): Title {
 }
 
 export function getTitle(id: number): Title {
-    return mapTitle(id, Titles[id])
+    return mapTitle(id, RawTitles[id])
 }

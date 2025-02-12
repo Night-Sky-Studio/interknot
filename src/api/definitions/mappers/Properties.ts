@@ -1,7 +1,7 @@
 import { getLocalString } from "./Localization"
 import property from "./source/property.json"
 
-const props = property as Record<string, Record<string, string>>
+const RawProps = property as Record<string, Record<string, string>>
 
 interface Property {
     Id: string
@@ -51,5 +51,5 @@ function mapProperty(id: string, prop: Record<string, string>): Property {
 }
 
 export default function getProperty(id: string): Property {
-    return mapProperty(id, props[id])
+    return mapProperty(id, RawProps[id])
 }

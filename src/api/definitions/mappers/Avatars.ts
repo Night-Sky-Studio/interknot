@@ -2,20 +2,28 @@ import { getLocalString } from "./Localization"
 import getProperty, { formatProperty } from "./Properties"
 import avatars from "./source/avatars.json"
 
-interface AvatarProperty {
+export interface StatProperty {
     Id: number
     Name: string
+    Format: string
+    Value: number
+}
+
+export interface FormattedStatProperty {
+    Id: number
+    Name: string
+    RawValue: number
     Value: string
 }
 
-interface AvatarSkin {
+export interface AvatarSkin {
     Id: number
     // Name: string
     Image: string
     CircleIcon: string
 }
 
-interface Avatar {
+interface AvatarData {
     Id: number
     Name: string
     Rarity: number
@@ -28,10 +36,10 @@ interface Avatar {
         Mindscape: string
     } | {},
     Skins: AvatarSkin[]
-    BaseProps: AvatarProperty[]
-    GrowthProps: AvatarProperty[]
-    PromotionProps: AvatarProperty[][]
-    CoreEnhancementProps: AvatarProperty[][]
+    BaseProps: FormattedStatProperty[]
+    GrowthProps: FormattedStatProperty[]
+    PromotionProps: FormattedStatProperty[][]
+    CoreEnhancementProps: FormattedStatProperty[][]
 }
 
 type RawAvatar = {
@@ -69,13 +77,14 @@ function mapSkins(data: Record<string, { Image: string; CircleIcon: string }>): 
     return result
 }
 
-function mapAvatarProps(data: Record<string, number>): AvatarProperty[] {
-    let result: AvatarProperty[] = []
+function mapAvatarProps(data: Record<string, number>): FormattedStatProperty[] {
+    let result: FormattedStatProperty[] = []
     for (let id in data) {
         let p = getProperty(id)
-        let prop: AvatarProperty = {
+        let prop: FormattedStatProperty = {
             Id: parseInt(id),
             Name: p.Name,
+            RawValue: data[id],
             Value: formatProperty(p.Format, data[id])
         }
         result.push(prop)
@@ -83,27 +92,49 @@ function mapAvatarProps(data: Record<string, number>): AvatarProperty[] {
     return result
 }
 
-export function mapAvatars(): Avatar[] {
+export function mapAvatar(id: number, r: RawAvatar): AvatarData {
+    return {
+        Id: id,
+        Name: getLocalString(r.Name),
+        Rarity: r.Rarity,
+        ProfessionType: r.ProfessionType,
+        ElementTypes: r.ElementTypes,
+        Image: r.Image,
+        CircleIcon: r.CircleIcon,
+        Colors: r.Colors,
+        Skins: mapSkins(r.Skins),
+        BaseProps: mapAvatarProps(r.BaseProps),
+        GrowthProps: mapAvatarProps(r.GrowthProps),
+        PromotionProps: r.PromotionProps.map(pp => mapAvatarProps(pp)),
+        CoreEnhancementProps: r.CoreEnhancementProps.map(cep => mapAvatarProps(cep))
+    }
+}
+
+export function mapAvatars(): AvatarData[] {
     const raw: RawAvatarData = avatars 
-    let result: Avatar[] = []
+    let result: AvatarData[] = []
     for (let id in raw) {
         let rawAvatar = raw[id]
-        let avatar: Avatar = {
-            Id: parseInt(id),
-            Name: getLocalString(rawAvatar.Name),
-            Rarity: rawAvatar.Rarity,
-            ProfessionType: rawAvatar.ProfessionType,
-            ElementTypes: rawAvatar.ElementTypes,
-            Image: rawAvatar.Image,
-            CircleIcon: rawAvatar.CircleIcon,
-            Colors: rawAvatar.Colors,
-            Skins: mapSkins(rawAvatar.Skins),
-            BaseProps: mapAvatarProps(rawAvatar.BaseProps),
-            GrowthProps: mapAvatarProps(rawAvatar.GrowthProps),
-            PromotionProps: rawAvatar.PromotionProps.map(pp => mapAvatarProps(pp)),
-            CoreEnhancementProps: rawAvatar.CoreEnhancementProps.map(cep => mapAvatarProps(cep))
-        }
+        let avatar = mapAvatar(parseInt(id), rawAvatar)
         result.push(avatar)
     }
     return result
+}
+
+const RawAvatars = avatars as Record<string, RawAvatar>
+
+export function getAvatar(id: number): AvatarData {
+    return mapAvatar(id, RawAvatars[id])
+}
+
+export function getSkin(id: number): AvatarSkin | undefined {
+    var avatar = Object.values(RawAvatars)
+        .find(val => Object.keys(val.Skins).indexOf(id.toString()) !== -1)
+    
+    if (!avatar) return undefined
+
+    return {
+        Id: id,
+        ...avatar.Skins[id]
+    }
 }

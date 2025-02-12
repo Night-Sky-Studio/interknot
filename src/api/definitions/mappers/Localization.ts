@@ -1,7 +1,7 @@
 import locs from "./source/locs.json"
 
-const localizations = locs as Record<string, Record<string, string>>
-export const availableLocales = Object.keys(localizations)
+const Localizations = locs as Record<string, Record<string, string>>
+export const availableLocales = Object.keys(Localizations)
 
 export let currentLocale = "en"
 
@@ -12,5 +12,5 @@ export function setLocale(loc: string) {
 }
 
 export function getLocalString(key: string): string {
-    return localizations[currentLocale][key]
+    return Localizations[currentLocale][key]
 }
