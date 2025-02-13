@@ -63,7 +63,7 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
         return (<>                                
             <Avatar src={user.Information.ProfilePictureUrl} size="xl" mr="sm" />
             <Stack align="flex-start" justify="flex-start" gap="0" h="100%">
-                <Text style={{ color: textColor }} size="sm" c="dimmed">{user.Uid}</Text>
+                <Text style={{ color: textColor, opacity: 0.75 }} size="sm">{user.Uid}</Text>
                 <Title order={2} style={{ color: textColor }}>{user.Information.Nickname}</Title>
                 <Group gap="sm" h="42px">  
                     {
