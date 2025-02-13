@@ -14,7 +14,7 @@ export interface BaseAvatar {
     Colors: {
         Accent: string
         Mindscape: string
-    } | {}
+    }
 }
 
 export interface Avatar extends BaseAvatar {

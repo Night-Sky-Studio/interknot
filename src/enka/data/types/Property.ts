@@ -28,10 +28,11 @@ export class ValueProperty implements IValueProperty {
         return new ValueProperty(prop.Id, prop.Name, prop.Format, value)
     }
 
-    toString(): string {
+    toString(includePercentageSign: boolean = false): string {
         return this.Format.replace(/\{(\d+)(?::([^}]+))?\}/g, (_, index, pattern) => {
             if (index !== "0") return this.Value.toString() // Only support {0:pattern} for now.
-    
+            
+            let result: string
             let num = this.Value
             if (isNaN(num)) return String(this.Value) // If not a number, return as a string.
     
@@ -43,7 +44,7 @@ export class ValueProperty implements IValueProperty {
             if (pattern.includes("%")) {
                 const decimalPlaces = (pattern.split(".")[1] || "").length // Count decimals after '.'
                 num = num / 100 // Divide by 100 to match C# behavior
-                return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") + "%"
+                return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") + (includePercentageSign ? "%" : "")
             }
     
             // Handle decimal places
