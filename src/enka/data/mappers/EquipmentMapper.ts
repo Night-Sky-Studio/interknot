@@ -2,8 +2,9 @@ import type { Equipment } from "../types/Equipment"
 import equipments from "../raw/equipments.json"
 import { getLocalString } from "../types/Localization"
 import { BASE_URL } from "../../api/Enka"
-import { mapValueProperty, valuePropertyMapper } from "./PropertyMapper"
+import { valuePropertyMapper } from "./PropertyMapper"
 import "../../extensions"
+import { map, recordToMap } from "../../extensions"
 
 type RawItem = {
     Rarity: number,
@@ -27,7 +28,7 @@ function mapEquipment(item: RawItem): Equipment {
         Name: getLocalString(Suits[item.SuitId].Name),
         Rarity: item.Rarity,
         IconUrl: BASE_URL + Suits[item.SuitId].Icon,
-        SetBonusProps: suit.SetBonusProps.toMap().map(valuePropertyMapper)
+        SetBonusProps: map(recordToMap(suit.SetBonusProps), valuePropertyMapper)
     }
 }
 

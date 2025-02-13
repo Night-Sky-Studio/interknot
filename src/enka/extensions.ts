@@ -1,24 +1,15 @@
-declare global {
-    interface Object {
-        toMap<K extends string, V>(this: Record<K, V>): Map<K, V>
-    }
-    interface Map<K, V> {
-        map<T>(callback: (key: K, value: V) => T): T[]
-        map<T>(callback: (key: K, value: V, index: number) => T): T[]
-    }
+export const recordToMap = function <K extends string, V>(r: Record<K, V>): Map<K, V> {
+    return new Map(Object.entries(r) as [K, V][])
 }
 
-Object.prototype.toMap = function <K extends string, V>(this: Record<K, V>): Map<K, V> {
-    return new Map(Object.entries(this) as [K, V][])
-}
-
-Map.prototype.map = function <K, V, T>(
+export const map = function <K, V, T>(
+    m: Map<K, V>,
     callback: ((key: K, value: V) => T) | ((key: K, value: V, index: number) => T)
 ): T[] {
     let index = 0
     const result: T[] = []
 
-    this.forEach((value, key) => {
+    m.forEach((value, key) => {
         if (callback.length === 2) {
             // Call the function without index
             result.push((callback as (key: K, value: V) => T)(key, value))

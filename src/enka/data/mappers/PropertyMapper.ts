@@ -25,6 +25,15 @@ export function getProperty(id: number): Property {
     return mapProperty(id, Property[id])
 }
 
+export function getPropertyByName(name: string): Property | null {
+    for (let key of Object.keys(Property)) {
+        if (Property[key].Name.toLowerCase() === name.toLowerCase()) {
+            return getProperty(parseInt(key))
+        }
+    }
+    return null
+}
+
 export function mapValueProperty(id: number, value: number): ValueProperty {
     return ValueProperty.fromProp(getProperty(id), value)
 }

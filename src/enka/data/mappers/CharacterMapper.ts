@@ -1,5 +1,4 @@
 import type { AvatarList } from "../../api/EnkaResponse"
-import type { BaseAvatar } from "../types/Avatar"
 import type { Character } from "../types/Character"
 import { getAvatar, pickBaseAvatar } from "./AvatarMapper"
 import { mapDriveDisk } from "./DriveDiskMapper"

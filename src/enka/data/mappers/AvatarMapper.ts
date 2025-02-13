@@ -1,10 +1,11 @@
 import { BASE_URL } from "../../api/Enka"
 import avatars from "../raw/avatars.json"
 import type { Avatar, BaseAvatar } from "../types/Avatar"
-import { mapValueProperty, valuePropertyMapper } from "./PropertyMapper"
+import { valuePropertyMapper } from "./PropertyMapper"
 import { mapSkin, type RawSkin } from "./SkinMapper"
 import "../../extensions"
 import { getLocalString } from "../types/Localization"
+import { map, recordToMap } from "../../extensions"
 
 type RawAvatar = {
     Name: string
@@ -32,12 +33,15 @@ function mapAvatar(id: number, a: RawAvatar): Avatar {
         ElementTypes: a.ElementTypes,
         ImageUrl: BASE_URL + a.Image,
         CircleIconUrl: BASE_URL + a.CircleIcon,
-        Colors: a.Colors,
+        Colors: {
+            Accent: a.Colors["Accent"],
+            Mindscape: a.Colors["Mindscape"]
+        },
         Skins: Object.values(a.Skins).map(mapSkin),
-        BaseProps: a.BaseProps.toMap().map(valuePropertyMapper),
-        GrowthProps: a.GrowthProps.toMap().map(valuePropertyMapper),
-        PromotionProps: a.PromotionProps.map(p => p.toMap().map(valuePropertyMapper)),
-        CoreEnhancementProps: a.CoreEnhancementProps.map(p => p.toMap().map(valuePropertyMapper))
+        BaseProps: map(recordToMap(a.BaseProps), valuePropertyMapper),
+        GrowthProps: map(recordToMap(a.GrowthProps), valuePropertyMapper),
+        PromotionProps: a.PromotionProps.map(p => map(recordToMap(p), valuePropertyMapper)),
+        CoreEnhancementProps: a.CoreEnhancementProps.map(c => map(recordToMap(c), valuePropertyMapper))
     }
 }
 

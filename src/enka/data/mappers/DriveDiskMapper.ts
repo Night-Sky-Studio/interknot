@@ -1,7 +1,7 @@
 import type { EquippedList } from "../../api/EnkaResponse"
 import type { DriveDisk } from "../types/DriveDisk"
 import { getEquipment } from "./EquipmentMapper"
-import { mapDriveDiskProperty, mapValueProperty } from "./PropertyMapper"
+import { mapDriveDiskProperty } from "./PropertyMapper"
 import { getEquipmentLevelStatMultiplier } from "./RawDataTablesMapper"
 
 export function mapDriveDisk(raw: EquippedList): DriveDisk {
