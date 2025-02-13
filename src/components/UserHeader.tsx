@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { UserProfile } from "../api/UserProfile"
+import { Profile } from "../enka/data/types/Profile"
 import { 
     BackgroundImage, 
     Card, 
@@ -16,7 +16,7 @@ import {
 import "./UserHeader.css"
 
 interface IUserHeaderProps {
-    user: UserProfile
+    user: Profile
 }
 
 export default function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
