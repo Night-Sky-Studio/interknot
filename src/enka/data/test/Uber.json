@@ -1919,19 +1919,19 @@
                 }
             ],
             "ProfileDetail": {
-                "Nickname": "Uber1, but not",
+                "Nickname": "Uber",
                 "AvatarId": 2021,
-                "Uid": 1000024024,
+                "Uid": 1000024021,
                 "Level": 57,
                 "Title": 3800139,
                 "ProfileId": 3231091,
                 "PlatformType": 3,
-                "CallingCardId": 3321151
+                "CallingCardId": 3311321
             },
             "Desc": "good meowning"
         },
         "Desc": ""
     },
-    "uid": "1000024024",
+    "uid": "1000024021",
     "ttl": 60
 }

@@ -1,7 +1,4 @@
 import path from "node:path"
-import { setLocale } from "./mappers/Localization"
-import { mapCharacter } from "../Character"
-import Users from "../../mock/MockUsers"
 
 async function updateEnkaDefinitions() {
     let urls = [
@@ -25,7 +22,7 @@ async function updateEnkaDefinitions() {
     for (let url of urls) {
         const result = await fetch(url)
         let json = await result.json()
-        const file = path.join(import.meta.dir, "mappers", "source", path.basename(url))
+        const file = path.join(import.meta.dir, "raw", path.basename(url))
 
         if (file.indexOf("WeaponLevelTemplateTb") !== -1) {
             let recTransformed = json[Object.keys(json)[0]] as Record<string, number>[]
@@ -82,7 +79,7 @@ async function updateEnkaDefinitions() {
 if (process.argv.indexOf("--update") !== -1)
     await updateEnkaDefinitions()
 
-if (process.argv.indexOf("--map") !== -1) 
-    console.log(JSON.stringify(Users[0].PlayerInfo.ShowcaseDetail.AvatarList.map(mapCharacter)))
+// if (process.argv.indexOf("--map") !== -1) 
+//     console.log(JSON.stringify(Users[0].PlayerInfo.ShowcaseDetail.AvatarList.map(mapCharacter)))
 
 // console.log(JSON.stringify(mapUserProfile(Uber)))

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "update_definitions": "bun src/api/definitions/update.js --update",
+    "update": "bun src/enka/data/update.ts --update",
     "dev": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview"
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.2.2",
+    "@types/node": "^22.13.2",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",

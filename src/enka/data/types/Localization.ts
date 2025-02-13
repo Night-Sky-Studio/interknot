@@ -1,13 +1,13 @@
-import locs from "./source/locs.json"
+import locs from "../raw/locs.json"
 
 const Localizations = locs as Record<string, Record<string, string>>
-export const availableLocales = Object.keys(Localizations)
+export const AvailableLocs = Object.keys(Localizations)
 
 export let currentLocale = "en"
 
 export function setLocale(loc: string) {
-    if (availableLocales.indexOf(loc) === -1) 
-        throw new Error(`Unknown locale: ${loc}. Available locales: ${availableLocales.join(", ")}`)
+    if (AvailableLocs.indexOf(loc) === -1) 
+        throw new Error(`Unknown locale: ${loc}. Available locales: ${AvailableLocs.join(", ")}`)
     currentLocale = loc
 }
 

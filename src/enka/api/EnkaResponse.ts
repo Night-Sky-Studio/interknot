@@ -39,8 +39,8 @@ export interface EquippedList {
 }
 
 export interface Equipment {
-    RandomPropertyList: RandomPropertyList[]
-    MainPropertyList: MainPropertyList[]
+    RandomPropertyList: PropertyList[]
+    MainPropertyList: PropertyList[]
     IsAvailable: boolean
     IsLocked: boolean
     IsTrash: boolean
@@ -51,13 +51,7 @@ export interface Equipment {
     Exp: number
 }
 
-export interface RandomPropertyList {
-    PropertyId: number
-    PropertyLevel: number
-    PropertyValue: number
-}
-
-export interface MainPropertyList {
+export interface PropertyList {
     PropertyId: number
     PropertyLevel: number
     PropertyValue: number
