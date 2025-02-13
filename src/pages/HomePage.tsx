@@ -1,4 +1,4 @@
-import { Title, Text, ScrollArea, Space, Button, UnstyledButton, Stack } from "@mantine/core"
+import { Title, Text, UnstyledButton, Stack } from "@mantine/core"
 import React from "react"
 import PlayerSearch from "../components/PlayerSearch"
 import Users from "../mock/MockUsers"
@@ -30,5 +30,5 @@ export default function HomePage(): React.ReactElement {
                 </Stack>
             </div>
         </section>
-    );
+    )
 }

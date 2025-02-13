@@ -1,9 +1,9 @@
 .profile-button {
-    transition: transform 0.25s ease-in-out;
+    transition: transform 0.1s ease-in-out;
 }
 
 .profile-button:hover {
-    transform: scale(1.025)
+    transform: scale(1.005)
 }
 .profile-button:active {
     transform: scale(0.995)

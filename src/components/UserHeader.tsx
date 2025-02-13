@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Profile } from "../enka/data/types/Profile"
 import { 
     BackgroundImage, 
@@ -13,7 +13,7 @@ import {
     Image as MantineImage,
     Group
 } from "@mantine/core"
-import "./UserHeader.css"
+import "./styles/UserHeader.css"
 
 interface IUserHeaderProps {
     user: Profile
@@ -62,12 +62,10 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
     const UserData = () => {
         return (<>                                
             <Avatar src={user.Information.ProfilePictureUrl} size="xl" mr="sm" />
-            <Stack align="flex-start" justify="flex-start" gap="0">
-                <Group>
-                    <Title order={2} style={{ color: textColor }}>{user.Information.Nickname}</Title>
-                    <Text style={{ color: textColor }}>{user.Uid}</Text>
-                </Group>
-                <Group gap="sm">  
+            <Stack align="flex-start" justify="flex-start" gap="0" h="100%">
+                <Text style={{ color: textColor }} size="sm" c="dimmed">{user.Uid}</Text>
+                <Title order={2} style={{ color: textColor }}>{user.Information.Nickname}</Title>
+                <Group gap="sm" h="42px">  
                     {
                         user.Information.Medals.map(m => {
                             return (
@@ -83,7 +81,7 @@ export default function UserHeader({ user }: IUserHeaderProps): React.ReactEleme
     return (
         <Card shadow="lg" radius="md">
             <Card.Section>
-                    <BackgroundImage src={imageSrc ?? ""} className="img-vignette">
+                    <BackgroundImage src={imageSrc ?? ""} className="background">
                         <Flex p="sm" align="center">
                             {
                                 imageSrc === null 

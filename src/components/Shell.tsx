@@ -3,7 +3,7 @@ import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld } 
 import { Outlet, useNavigate, useParams } from 'react-router'
 import Users from '../mock/MockUsers'
 import { useEffect, useState } from 'react'
-import "./Shell.pcss"
+import "./styles/Shell.pcss"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
