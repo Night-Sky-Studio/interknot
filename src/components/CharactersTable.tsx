@@ -88,7 +88,7 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
                                         </Group>
                                     </Table.Td>
                                     <Table.Td w="160px" bg="rgba(0 0 0 / 25%)">
-                                        <Text className="crit-cell">
+                                        <Text className="crit-cell" component="div">
                                             <div>
                                                 {c.CritValue.CritRate.toString()} : {c.CritValue.CritDamage.toString()}
                                             </div>
