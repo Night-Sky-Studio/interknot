@@ -24,22 +24,32 @@ export interface Character extends BaseAvatar {
 // }
 
 export function getCharacterCritValue(c: Character): CritValue {
-    const crProp = getProperty(20103),
-        cdProp = getProperty(21103)
+    const crDiskProp = getProperty(20103),
+        cdDiskProp = getProperty(21103)
 
     // 20103 - DriveDisk CR id
     const CritRate = c.DriveDisks
-        .map(dd => dd.SubStats.find(ss => ss.Id == crProp.Id))
+        .map(dd => dd.SubStats.find(ss => ss.Id == crDiskProp.Id))
         .reduce((res, cr) => res + (cr?.Value ?? 0), 0)
 
     // 21103 - DriveDisk CR id
     const CritDmg = c.DriveDisks
-        .map(dd => dd.SubStats.find(ss => ss.Id == cdProp.Id))
+        .map(dd => dd.SubStats.find(ss => ss.Id == cdDiskProp.Id))
         .reduce((res, cr) => res + (cr?.Value ?? 0), 0)
 
+    let weaponCr = 0, weaponCd = 0
+
+    if (c.Weapon?.SecondaryStat.Id === crDiskProp.Id) {
+        weaponCr += c.Weapon.SecondaryStat.Value
+    }
+
+    if (c.Weapon?.SecondaryStat.Id === cdDiskProp.Id) {
+        weaponCd += c.Weapon.SecondaryStat.Value
+    }
+
     return {
-        CritRate: ValueProperty.fromProp(crProp, CritRate + 500), 
-        CritDamage: ValueProperty.fromProp(cdProp, CritDmg + 5000),
+        CritRate: ValueProperty.fromProp(crDiskProp, CritRate + 500 + weaponCr), 
+        CritDamage: ValueProperty.fromProp(cdDiskProp, CritDmg + 5000 + weaponCd),
         Value: (CritRate * 2 + CritDmg) / 100
     }
 }
