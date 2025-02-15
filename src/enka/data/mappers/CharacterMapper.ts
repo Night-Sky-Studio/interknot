@@ -122,31 +122,31 @@ export function calculateCritValue(char: Character): number {
     }
 
     // add weapon crit stats if available
-    if (char.Weapon) {
-        if (char.Weapon.SecondaryStat.Id === crDiskProp.Id) {
-            critRate += char.Weapon.SecondaryStat.Value
-        }
+    // if (char.Weapon) {
+    //     if (char.Weapon.SecondaryStat.Id === crDiskProp.Id) {
+    //         critRate += char.Weapon.SecondaryStat.Value
+    //     }
         
-        if (char.Weapon.SecondaryStat.Id === cdDiskProp.Id) {
-            critDamage += char.Weapon.SecondaryStat.Value
-        }
-    }
+    //     if (char.Weapon.SecondaryStat.Id === cdDiskProp.Id) {
+    //         critDamage += char.Weapon.SecondaryStat.Value
+    //     }
+    // }
 
-    const sets = getDriveDisksSet(char.DriveDisks)
+    // const sets = getDriveDisksSet(char.DriveDisks)
 
-    for (let set of sets) {
-        const bonusProp = set.Set.SetBonusProps[0]
+    // for (let set of sets) {
+    //     const bonusProp = set.Set.SetBonusProps[0]
 
-        if (bonusProp) {
-            if (bonusProp.Id === crDiskProp.Id) {
-                critRate += bonusProp.Value
-            }
+    //     if (bonusProp) {
+    //         if (bonusProp.Id === crDiskProp.Id) {
+    //             critRate += bonusProp.Value
+    //         }
 
-            if (bonusProp.Id === cdDiskProp.Id) {
-                critDamage += bonusProp.Value
-            }
-        }
-    }
+    //         if (bonusProp.Id === cdDiskProp.Id) {
+    //             critDamage += bonusProp.Value
+    //         }
+    //     }
+    // }
 
     return (critRate * 2 + critDamage) / 100
 }
