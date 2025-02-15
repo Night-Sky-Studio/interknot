@@ -1,6 +1,4 @@
-import { getProperty } from "../mappers/PropertyMapper"
 import type { BaseAvatar } from "./Avatar"
-import { CritValue } from "./CritValue"
 import type { DriveDisk } from "./DriveDisk"
 import { ValueProperty } from "./Property"
 import type { Skin } from "./Skin"

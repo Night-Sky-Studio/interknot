@@ -1,4 +1,4 @@
-import { ActionIcon, Button, colorsTuple, createTheme, ScrollArea, Title } from "@mantine/core"
+import { ActionIcon, Button, colorsTuple, createTheme, Title } from "@mantine/core"
 
 const theme = createTheme({
     colors: { 

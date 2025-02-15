@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, SimpleGrid, Center, Tabs, FloatingIndicator, ScrollArea } from '@mantine/core'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, FloatingIndicator } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import Users from '../mock/MockUsers'
@@ -9,7 +9,7 @@ export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
     const params = useParams()
 
-    const [users, setUsers] = useState(Users)
+    const [users, _] = useState(Users)
     const [selectedUser, setSelectedUser] = useState(params.id ?? "")
 
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)

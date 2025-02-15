@@ -1,4 +1,4 @@
-import { Stack, Title, Text, Image, Flex, Center } from "@mantine/core"
+import { Stack, Title, Text, Image, Center } from "@mantine/core"
 import "./styles/ErrorPage.css"
 
 export default function ErrorPage(): React.ReactElement {

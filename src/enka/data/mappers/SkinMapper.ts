@@ -1,7 +1,6 @@
 import { BASE_URL } from "../../api/Enka"
 import type { Avatar } from "../types/Avatar"
 import type { Skin } from "../types/Skin"
-import { Avatars } from "./AvatarMapper"
 
 export type RawSkin = {
     Image: string

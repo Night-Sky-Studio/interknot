@@ -32,7 +32,6 @@ export class ValueProperty implements IValueProperty {
         return this.Format.replace(/\{(\d+)(?::([^}]+))?\}/g, (_, index, pattern) => {
             if (index !== "0") return this.Value.toString() // Only support {0:pattern} for now.
             
-            let result: string
             let num = this.Value
             if (isNaN(num)) return String(this.Value) // If not a number, return as a string.
     
