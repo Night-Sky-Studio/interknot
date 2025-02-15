@@ -4,6 +4,8 @@ import { Outlet, useNavigate, useParams } from 'react-router'
 import Users from '../mock/MockUsers'
 import { useEffect, useState } from 'react'
 import "./styles/Shell.pcss"
+import enkaImg from "../../assets/Enka.svg"
+import nssImg from "../../assets/nss.svg"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
@@ -76,10 +78,10 @@ export default function Shell(): React.ReactElement {
                 <Container size="lg" h="100%">
                     <Flex justify="space-between" align="center" wrap="wrap">
                         <Anchor href="https://enka.network" target="_blank">
-                            <Image src="/public/Enka.svg" alt="Powered by Enka.Network" w={256} />
+                            <Image src={enkaImg} alt="Powered by Enka.Network" w={256} />
                         </Anchor>
                         <Anchor href="https://github.com/Night-Sky-Studio" target="_blank">
-                            <Image src="/public/nss.svg" alt="Developed by Night Sky Studio" w={256} />
+                            <Image src={nssImg} alt="Developed by Night Sky Studio" w={256} />
                         </Anchor>
                         <Text fs="italic" m="lg">Welcome to New Eridu - where humanity rises anew!</Text>
                     </Flex>
