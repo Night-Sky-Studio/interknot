@@ -1,9 +1,9 @@
-.mindscape-chip {
+.chip {
     display: inline-flex;
     align-items: center;
     user-select: none;
-    background-color: var(--mindscape-chip-background);
-    padding: 0.125rem 1rem;
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-7));
+    padding: 0.125rem 0.5rem;
     border-radius: 1rem;
 }
 

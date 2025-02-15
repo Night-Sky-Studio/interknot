@@ -1,8 +1,29 @@
 import type { EquippedList } from "../../api/EnkaResponse"
-import type { DriveDisk } from "../types/DriveDisk"
+import type { DriveDisk, DriveDiskSet } from "../types/DriveDisk"
 import { getEquipment } from "./EquipmentMapper"
 import { mapDriveDiskProperty } from "./PropertyMapper"
 import { getEquipmentLevelStatMultiplier } from "./RawDataTablesMapper"
+
+export function getDriveDisksSet(disks: DriveDisk[]): DriveDiskSet[] {
+    // find unique sets in disks and count them
+    const set = new Map<string, number>()
+    disks.forEach(d => {
+        const key = d.Name
+        if (set.has(key)) {
+            set.set(key, (set.get(key) ?? 0) + 1)
+        } else {
+            set.set(key, 1)
+        }
+    })
+
+    // convert map to array
+    return Array.from(set.entries()).map(([key, value]) => {
+        return {
+            Count: value,
+            Set: getEquipment(disks.find(d => d.Name === key)?.Id ?? 0)
+        }
+    })
+}
 
 export function mapDriveDisk(raw: EquippedList): DriveDisk {
     const entry = raw.Equipment,
@@ -29,7 +50,7 @@ export function mapDriveDisk(raw: EquippedList): DriveDisk {
         SubStats: entry.RandomPropertyList.map(p => {
             return {
                 ...mapDriveDiskProperty(p),
-                Value: p.PropertyValue * (1 + statMultiplier)
+                Value: p.PropertyValue
             }
         })
     }

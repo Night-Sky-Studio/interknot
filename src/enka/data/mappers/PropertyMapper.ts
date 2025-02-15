@@ -1,8 +1,7 @@
 import type { PropertyList } from "../../api/EnkaResponse"
 import property from "../raw/property.json"
 import { getLocalString } from "../types/Localization"
-import { type Property, type IValueProperty, ValueProperty, DriveDiskProperty } from "../types/Property"
-import { getEquipmentLevelStatMultiplier } from "./RawDataTablesMapper"
+import { type Property, ValueProperty, DriveDiskProperty } from "../types/Property"
 
 type RawProperty = {
     Name: string

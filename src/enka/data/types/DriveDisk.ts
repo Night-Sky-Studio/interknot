@@ -1,6 +1,11 @@
 import type { Equipment } from "./Equipment"
 import type { DriveDiskProperty, ValueProperty } from "./Property"
 
+export type DriveDiskSet = {
+    Count: number,
+    Set: Equipment
+}
+
 export interface DriveDisk extends Equipment {
     Id: number
     Uid: number
