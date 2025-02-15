@@ -2,7 +2,7 @@ name: Bun CI
 
 on:
   push:
-    branches: [ "main", "dev/actions" ]
+    branches: [ "main" ]
 
 jobs:
   build:
