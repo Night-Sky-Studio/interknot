@@ -76,10 +76,10 @@ export default function Shell(): React.ReactElement {
                 <Container size="lg" h="100%">
                     <Flex justify="space-between" align="center" wrap="wrap">
                         <Anchor href="https://enka.network" target="_blank">
-                            <Image src="/assets/Enka.svg" alt="Powered by Enka.Network" w={256} />
+                            <Image src="/public/Enka.svg" alt="Powered by Enka.Network" w={256} />
                         </Anchor>
                         <Anchor href="https://github.com/Night-Sky-Studio" target="_blank">
-                            <Image src="/assets/nss.svg" alt="Developed by Night Sky Studio" w={256} />
+                            <Image src="/public/nss.svg" alt="Developed by Night Sky Studio" w={256} />
                         </Anchor>
                         <Text fs="italic" m="lg">Welcome to New Eridu - where humanity rises anew!</Text>
                     </Flex>
