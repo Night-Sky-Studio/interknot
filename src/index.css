@@ -1,6 +1,6 @@
 @font-face {
     font-family: "zzz";
-    src: url("/assets/zzz.woff2");
+    src: url("/public/zzz.woff2");
 }
 
 :root {
