@@ -14,12 +14,12 @@ jobs:
       - name: "Checkout repo"
         uses: actions/checkout@v4
 
-      - name: "Clone release"
+      - name: "Clone prod"
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: release
-          path: release
+          ref: prod
+          path: prod
 
       - name: "Setup Bun"
         uses: oven-sh/setup-bun@v2
@@ -32,12 +32,12 @@ jobs:
       
       - name: Copy production build
         run: |
-          rsync -a dist/* ./release
+          rsync -a dist/* ./prod
 
       - name: Publish
         uses: EndBug/add-and-commit@v9
         with:
-          cwd: "release"
+          cwd: "prod"
           add: "."
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
