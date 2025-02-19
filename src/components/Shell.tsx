@@ -56,9 +56,6 @@ export default function Shell(): React.ReactElement {
                             <Text component="a" c="blue" href="https://discordapp.com/users/225471940826103810"> @lilystilson</Text>.
                             Any help is highly appreciated!
                         </Text>
-                        <Text>Also, the only official sources of information is our Twitter page 
-                            <Text component="a" c="blue" href="https://x.com/InterknotSpace"> @InterknotSpace</Text>. It's currently empty, 
-                            but I'll try to post some updates there.</Text>
                     </Stack>
                 </Grid.Col>
             </Grid>
