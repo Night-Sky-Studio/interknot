@@ -6,6 +6,7 @@
   "scripts": {
     "update": "bun src/enka/data/update.ts --update",
     "dev": "vite --host",
+    "server": "bun backend/server.ts --env-file backend/.dev.env",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -13,12 +14,15 @@
     "@mantine/core": "7.16.3",
     "@mantine/hooks": "7.16.3",
     "@tabler/icons-react": "^3.30.0",
+    "express": "^4.21.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router": "^7.1.5"
+    "react-router": "^7.1.5",
+    "react-use": "^17.6.0"
   },
   "devDependencies": {
     "@types/bun": "^1.2.2",
+    "@types/express": "^5.0.0",
     "@types/node": "^22.13.2",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
