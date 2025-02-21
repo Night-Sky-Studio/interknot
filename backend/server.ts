@@ -16,8 +16,10 @@ app.get("/profile/:uid", (req, res) => {
     const { uid } = req.params
     const user = Users.find(u => u.Uid.toString() === uid)
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "dev") {
         res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     }
 
     if (user) {
@@ -30,8 +32,10 @@ app.get("/profile/:uid", (req, res) => {
 app.get("/profiles", (req, res) => {
     const { query, listAll } = req.query
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "dev") {
         res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     }
 
     if (listAll) {
