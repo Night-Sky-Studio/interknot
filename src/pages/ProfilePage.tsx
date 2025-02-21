@@ -1,20 +1,35 @@
 import { useParams } from "react-router"
-import Users from "../mock/MockUsers"
 import UserHeader from "../components/UserHeader"
-import { mapProfile } from "../enka/data/mappers/ProfileMapper"
 import { Stack } from "@mantine/core"
+import { useLocalStorage } from "@mantine/hooks"
 import CharactersTable from "../components/CharactersTable"
+import { useEffect } from "react"
+import { Profile } from "../../backend/data/types/Profile"
+import { useAsync } from "react-use"
+import { getUser } from "../api/data"
 
 export default function ProfilePage(): React.ReactElement {
-    let { id } = useParams()
+    let { uid } = useParams()
 
-    const rawUser = Users.find(u => u.uid == id)
-    const user = mapProfile(rawUser!)
-    
+    let [savedUsers, setSavedUsers] = useLocalStorage<Profile[]>({ key: "savedUsers" })
+
+    const userState = useAsync(async () => {
+        return await getUser(Number(uid))
+    }, [uid])
+
+    useEffect(() => {
+        if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
+            setSavedUsers([...savedUsers ?? [], userState.value])
+            console.log(userState.value)
+        }
+    }, [userState.value])
+
     return (
         <Stack>
-            <UserHeader user={user} />
-            <CharactersTable characters={user.Characters} />
+            {userState.value && <>
+                <UserHeader user={userState.value} />
+                <CharactersTable characters={userState.value.Characters} />
+            </>}
         </Stack>
     )
 }

@@ -1,28 +1,35 @@
 import { Title, Text, UnstyledButton, Stack } from "@mantine/core"
-import React from "react"
+import React, { useState } from "react"
 import PlayerSearch from "../components/PlayerSearch"
-import Users from "../mock/MockUsers"
 import UserHeader from "../components/UserHeader"
 import "./styles/HomePage.css"
 import { useNavigate } from "react-router"
-import { mapProfile } from "../enka/data/mappers/ProfileMapper"
+import { Profile } from "../../backend/data/types/Profile"
+import { useLocalStorage } from "@mantine/hooks"
 
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
+
+    const [savedUsers, _] = useLocalStorage<Profile[]>({ key: "savedUsers" })
+    const [users, setUsers] = useState<Profile[]>(savedUsers ?? [])
+
     return (
         <section>
             <Title order={1}>Welcome to Inter-Knot</Title>
             <Text>A place for proxies to share their agents' builds.</Text>
-            <PlayerSearch />
+            <PlayerSearch search={(response) => {
+                setUsers(response)
+            }} />
             <div style={{ height: "100%" }}>
                 <Stack>
                     {
-                        Users.map(u => {
-                            let user = mapProfile(u)
+                        users?.map(u => {
                             return (
-                                <UnstyledButton key={user.Uid} className="profile-button"
-                                    onClick={() => navigate(`user/${user.Uid}`)}>
-                                    <UserHeader user={user} />
+                                <UnstyledButton key={u.Uid} className="profile-button"
+                                    onClick={() => {
+                                        navigate(`user/${u.Uid}`)
+                                    }}>
+                                    <UserHeader user={u} />
                                 </UnstyledButton>
                             )
                         })
