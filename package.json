@@ -6,7 +6,7 @@
   "scripts": {
     "update": "bun src/enka/data/update.ts --update",
     "dev": "vite --host",
-    "server": "bun backend/server.ts --env-file backend/.dev.env",
+    "server": "bun backend/server.ts",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
