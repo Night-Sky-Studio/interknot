@@ -90,7 +90,7 @@ export default function Shell(): React.ReactElement {
                             <Tabs.List className="list">
                                 {
                                     users.map(user => {
-                                        return <Tabs.Tab key={user.Uid} 
+                                        return <Tabs.Tab key={user.Uid} component="div"
                                             value={user.Uid.toString()}
                                             className="tab"
                                             rightSection={
