@@ -1,19 +1,42 @@
 import { Character } from "../../backend/data/types/Character"
-import { Card, Group, Table, Image, Text, useMantineTheme } from "@mantine/core"
+import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import { ValueProperty } from "../../backend/data/types/Property"
+import CharacterCard from "./CharacterCard"
+import { useEffect, useState } from "react"
+import { useResizeObserver } from "@mantine/hooks"
 
 interface ICharactersTableProps {
+    uid: number
+    username: string
     characters: Character[]
 }
 
-export default function CharactersTable({ characters }: ICharactersTableProps): React.ReactElement {
+export default function CharactersTable({ uid, username, characters }: ICharactersTableProps): React.ReactElement {
     const theme = useMantineTheme()
     // const [sortMode, setSortMode] = useState(0)
 
     // useEffect(() => {
     //     // Update tableData
     // }, [sortMode])
+
+    const CARD_ASPECT_RATIO = 21 / 43
+    const [cardScale, setCardScale] = useState(1)
+    const [cardContainerHeight, setCardContainerHeight] = useState(860 * CARD_ASPECT_RATIO)
+    const [cardContainerRef, cardContainerRect] = useResizeObserver()
+
+    useEffect(() => {
+        if (cardContainerRect.width < 1000) return
+
+        if (cardContainerRect.width) {
+            const newScale = Math.max(cardContainerRect.width / 900, 1)
+            setCardScale(newScale)
+            setCardContainerHeight(cardContainerRect.width * CARD_ASPECT_RATIO + 16)
+        }
+    }, [cardContainerRect.width])
+
+
+    const [openedId, setOpenedId] = useState<number | null>(null)
 
     const tableData = characters.map(c => {
         return {
@@ -77,8 +100,8 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
                 <Table.Tbody>
                     {
                         tableData.map((c, i) => {
-                            return (
-                                <Table.Tr key={c.Id}>
+                            return (<>
+                                <Table.Tr key={c.Id} onClick={() => setOpenedId(openedId === c.Id ? null : c.Id)}>
                                     <Table.Td>{i + 1}</Table.Td>
                                     <Table.Td>
                                         <Group gap="sm">
@@ -128,7 +151,18 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
                                     </Table.Td>
                                     {/* Add character stats */}
                                 </Table.Tr>
-                            )
+                                <Table.Tr key={c.Id * 10000} className="character-card-row"
+                                    style={{ borderBottomWidth: openedId === c.Id ? "1px" : "0" }}>
+                                    <Table.Td colSpan={6} p="0" ref={cardContainerRef}>
+                                        <Collapse in={openedId === c.Id} style={{height: `${cardContainerHeight}px`}}>
+                                            <Center style={{ "--scale": cardScale}}>
+                                                <CharacterCard
+                                                    uid={uid} username={username} character={characters.find(ch => ch.Id === c.Id)!}/>
+                                            </Center>
+                                        </Collapse>
+                                    </Table.Td>
+                                </Table.Tr>
+                            </>)
                         })
                     }
                 </Table.Tbody>

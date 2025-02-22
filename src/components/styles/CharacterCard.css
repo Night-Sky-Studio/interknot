@@ -1,0 +1,109 @@
+.character-card {
+    aspect-ratio: 43 / 21;
+    width: 860px;
+    transform-origin: 50% 0;
+    transform: scale(var(--scale));
+}
+.cc-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1fr;
+    grid-template-rows: 2fr 1fr 1.5fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.cc-image {
+    grid-area: 1 / 1 / 4 / 2;
+    background-image: url("/assets/pattern.svg"),
+        linear-gradient(var(--accent), color-mix(in oklab, black 100%, var(--accent) 100%));
+}
+
+.cc-discs {
+    grid-area: 3 / 1 / 4 / 4;
+}
+
+.cc-stats-bg {
+    grid-area: 1 / 2 / 4 / 4;
+    background-size: 8px;
+    background-image: url("/assets/pattern2.svg"),
+        linear-gradient(135deg, #353535, #252525);
+    box-shadow: 0 0 64px rgb(0 0 0 / 50%);
+}
+
+.cc-stats {
+    grid-area: 1 / 2 / 2 / 4;
+    padding: 8px;
+}
+.cc-stats > * {
+    color: white;
+}
+
+.cc-level, .cc-mindscape {
+    height: 100%;
+    background-color: var(--mantine-color-dark-9);
+}
+.cc-level {
+    border-radius: 16px 0 0 16px;
+    padding: 0 8px 0 8px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0% 100%);
+}
+.cc-mindscape {
+    border-radius: 0 16px 16px 0;
+    padding: 0 2px 0 8px;
+    margin-left: -6px;
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.cc-weapon {
+    height: 52px;
+    background-color: var(--mantine-color-dark-7);
+    border-radius: 26px 8px 8px 26px;
+    padding-right: 4px;
+}
+.cc-weapon-icon {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: var(--mantine-color-dark-9);
+    border-radius: 26px;
+    box-shadow: inset -2px 2px 8px var(--accent);
+}
+.cc-weapon-icon img:first-child {
+    height: 52px;
+}
+.cc-weapon-icon img:last-child {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 16px;
+}
+.cc-weapon-stat {
+    background-color: var(--mantine-color-dark-9);
+    padding: 2px 4px;
+    border-radius: 10px 5px 10px 5px;
+    box-shadow: 0.5px 0.5px 0 0.5px var(--accent);
+}
+.cc-weapon-stat.level {
+    height: 14px;
+    border-radius: 7px 4px 7px 4px;
+}
+
+.cc-talents {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+.cc-graph {
+    grid-area: 1 / 3 / 2 / 4;
+}
+
+.cc-teams {
+    grid-area: 2 / 3 / 3 / 4;
+}
+
+.character-img {
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center top;
+}

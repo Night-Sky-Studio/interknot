@@ -28,7 +28,8 @@ export default function ProfilePage(): React.ReactElement {
         <Stack>
             {userState.value && <>
                 <UserHeader user={userState.value} />
-                <CharactersTable characters={userState.value.Characters} />
+                <CharactersTable uid={userState.value.Uid} username={userState.value.Information.Nickname} 
+                    characters={userState.value.Characters} />
             </>}
         </Stack>
     )
