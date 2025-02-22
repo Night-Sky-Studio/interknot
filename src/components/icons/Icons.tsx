@@ -9,6 +9,10 @@ import defense from "../../../assets/icons/spec/defense.webp"
 import stun from "../../../assets/icons/spec/stun.webp"
 import support from "../../../assets/icons/spec/support.webp"
 
+import b_rarity from "../../../assets/icons/rarity/ItemRarityB.png"
+import a_rarity from "../../../assets/icons/rarity/ItemRarityA.png"
+import s_rarity from "../../../assets/icons/rarity/ItemRarityS.png"
+
 const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
     "Physics": Elements.Physics,
     "Fire": Elements.Fire,
@@ -77,4 +81,13 @@ interface IProfessionIconProps {
 
 export function ProfessionIcon({ name, size, style, className }: IProfessionIconProps): React.ReactElement {
     return (<Image className={className} style={style} h={(size ?? 16) + "px"} src={ProfessionsMap[name]} alt={name} />)
+}
+
+export function getRarityIcon(rarity: number): string | undefined {
+    switch (rarity) {
+        case 2: return b_rarity;
+        case 3: return a_rarity;
+        case 4: return s_rarity;
+        default: return undefined
+    }
 }
