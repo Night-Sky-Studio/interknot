@@ -6,7 +6,6 @@ export interface Property {
 
 export interface IValueProperty extends Property {
     Value: number
-    toString(): string
 }
 
 interface IDriveDiskProperty extends IValueProperty {
@@ -28,15 +27,16 @@ export class ValueProperty implements IValueProperty {
         return new ValueProperty(prop.Id, prop.Name, prop.Format, value)
     }
 
-    toString(includePercentageSign: boolean = false): string {
-        return this.Format.replace(/\{(\d+)(?::([^}]+))?\}/g, (_, index, pattern) => {
-            if (index !== "0") return this.Value.toString() // Only support {0:pattern} for now.
+    static format(format?: string, prop?: any, includePercentageSign: boolean = false): string {
+        if (!format || !prop) return String(prop)
+        return format.replace(/\{(\d+)(?::([^}]+))?\}/g, (_, index, pattern) => {
+            if (index !== "0") return prop.toString() // Only support {0:pattern} for now.
             
-            let num = this.Value
-            if (isNaN(num)) return String(this.Value) // If not a number, return as a string.
+            let num = Number(prop)
+            if (isNaN(num)) return String(prop) // If not a number, return as a string.
     
             if (!pattern) {
-                return String(this.Value) // If no pattern, return value as-is.
+                return String(prop) // If no pattern, return value as-is.
             }
     
             // Handle percentage formats correctly
@@ -53,8 +53,12 @@ export class ValueProperty implements IValueProperty {
                 return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") // Remove trailing zeros.
             }
     
-            return String(this.Value)
+            return String(prop)
         })
+    }
+
+    toString(includePercentageSign: boolean = false): string {
+        return ValueProperty.format(this.Format, this.Value, includePercentageSign)
     }
 }
 

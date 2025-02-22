@@ -1,27 +1,24 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, FloatingIndicator, Modal, Center, Stack, Grid } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld } from '@tabler/icons-react'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Center, Stack, Grid } from '@mantine/core'
+import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
-import Users from '../mock/MockUsers'
 import { useEffect, useState } from 'react'
+import { Profile } from "../../backend/data/types/Profile"
 import "./styles/Shell.pcss"
 import enkaImg from "../../assets/Enka.svg"
 import nssImg from "../../assets/nss.svg"
-import { useDisclosure } from '@mantine/hooks'
+import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import grace from "../../assets/grace.webp"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
-    const params = useParams()
+    const { uid } = useParams()
 
-    const [users, _] = useState(Users)
-    const [selectedUser, setSelectedUser] = useState(params.id ?? "")
+    const [users, setSavedUsers] = useLocalStorage<Profile[]>({ key: "savedUsers", defaultValue: [] })
+    const [selectedUser, setSelectedUser] = useState(uid ?? "")
 
-    const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
-    const [controlRefs, setControlRefs] = useState<Record<string, HTMLButtonElement | null>>({})
-    const setControlRef = (val: string) => (node: HTMLButtonElement) => {
-        controlRefs[val] = node
-        setControlRefs(controlRefs)
-    }
+    useEffect(() => {
+        setSelectedUser(uid ?? "")
+    }, [uid])
 
     const [opened, { open, close }] = useDisclosure(false)
 
@@ -31,10 +28,6 @@ export default function Shell(): React.ReactElement {
             open()
         }
     })
-
-    useEffect(() => {
-        setSelectedUser(params.id ?? "")
-    }, [params])
 
     return (<>
         <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl">
@@ -88,27 +81,33 @@ export default function Shell(): React.ReactElement {
 
             <AppShell.Main>
                 <Container size="xl">
-                    <Tabs value={selectedUser} onChange={(value) => {
-                        setSelectedUser(value ?? "")
-                        navigate(`/user/${value}`)
-                    }} variant="none">
-                        <Tabs.List ref={setRootRef} className="list">
-                            {
-                                users.map(user => {
-                                    let profile = user.PlayerInfo.SocialDetail.ProfileDetail 
-                                    return <Tabs.Tab key={profile.Uid} 
-                                        value={profile.Uid.toString()}
-                                        ref={setControlRef(profile.Uid.toString())}
-                                        className="tab">
-                                        {profile.Nickname}
-                                    </Tabs.Tab>
-                                })
-                            }
-
-                            <FloatingIndicator target={selectedUser ? controlRefs[selectedUser] : null}
-                                parent={rootRef} className="indicator" />
-                        </Tabs.List>
-                    </Tabs>
+                    {users.length !== 0 &&
+                        <Tabs value={selectedUser} onChange={(value) => {
+                            setSelectedUser(value ?? uid ?? "")
+                            navigate(`/user/${value}`)
+                        }} variant="pills" mb="md">
+                            
+                            <Tabs.List className="list">
+                                {
+                                    users.map(user => {
+                                        return <Tabs.Tab key={user.Uid} component="div"
+                                            value={user.Uid.toString()}
+                                            className="tab"
+                                            rightSection={
+                                                <ActionIcon variant="transparent" onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    setSavedUsers(users.filter(u => u.Uid !== user.Uid))
+                                                }}>
+                                                    <IconX />
+                                                </ActionIcon>
+                                            }>
+                                            {user.Information.Nickname}
+                                        </Tabs.Tab>
+                                    })
+                                }
+                            </Tabs.List>
+                        </Tabs>
+                    }
                     <Outlet />
                 </Container>
             </AppShell.Main>

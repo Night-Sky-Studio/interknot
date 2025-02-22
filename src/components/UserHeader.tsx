@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Profile } from "../enka/data/types/Profile"
+import { Profile } from "../../backend/data/types/Profile"
 import { 
     BackgroundImage, 
     Card, 

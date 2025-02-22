@@ -1,9 +1,7 @@
-import { Character } from "../enka/data/types/Character"
+import { Character } from "../../backend/data/types/Character"
 import { Card, Group, Table, Image, Text, useMantineTheme } from "@mantine/core"
 import "./styles/CharactersTable.css"
-import { getDriveDisksSet } from "../enka/data/mappers/DriveDiskMapper"
-import { calculateCritValue } from "../enka/data/mappers/CharacterMapper"
-
+import { ValueProperty } from "../../backend/data/types/Property"
 
 interface ICharactersTableProps {
     characters: Character[]
@@ -26,11 +24,11 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
             CircleIconUrl: c.CircleIconUrl,
             Mindscape: c.MindscapeLevel,
             Weapon: c.Weapon,
-            DriveDiskSet: getDriveDisksSet(c.DriveDisks),
+            DriveDiskSet: c.DriveDisksSet,
             CritValue: {
-                Value: calculateCritValue(c),
-                CritRate: c.Stats.find(p => p.Id === 20101),
-                CritDamage: c.Stats.find(p => p.Id === 21101)
+                Value: c.CritValue,
+                CritRate: c.BaseStats.find(p => p.Id === 20101),
+                CritDamage: c.BaseStats.find(p => p.Id === 21101)
             },
             // TODO: Add character stats
         }
@@ -44,19 +42,21 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
 
     const cvColor = (critValue: number) => {
         switch (true) {
-            case critValue >= 230: return theme.colors.pink[7]
-            case critValue >= 220: return theme.colors.grape[7]
-            case critValue >= 200: return theme.colors.violet[6]
-            case critValue >= 180: return theme.colors.blue[5]
+            case critValue >= 200: return theme.colors.red[7]
+            case critValue >= 180: return theme.colors.pink[7]
+            case critValue >= 170: return theme.colors.grape[7]
+            case critValue >= 160: return theme.colors.violet[6]
+            case critValue >= 150: return theme.colors.blue[5]
             default: return undefined
         }
     }
     const cvWeight = (critValue: number) => {
         switch (true) {
-            case critValue >= 230: return 800
-            case critValue >= 220: return 700
-            case critValue >= 200: return 600
-            case critValue >= 180: return 500
+            case critValue >= 200: return 800
+            case critValue >= 180: return 700
+            case critValue >= 170: return 600
+            case critValue >= 160: return 500
+            case critValue >= 150: return 400
             default: return undefined
         }
     }
@@ -115,7 +115,11 @@ export default function CharactersTable({ characters }: ICharactersTableProps): 
                                     <Table.Td w="160px" bg="rgba(0 0 0 / 25%)">
                                         <Text className="crit-cell" component="div">
                                             <div>
-                                                {c.CritValue.CritRate?.toString()} : {c.CritValue.CritDamage?.toString()}
+                                                {
+                                                    ValueProperty.format(c.CritValue.CritRate?.Format, c.CritValue.CritRate?.Value)
+                                                } : {
+                                                    ValueProperty.format(c.CritValue.CritDamage?.Format, c.CritValue.CritDamage?.Value)
+                                                }
                                             </div>
                                             <div style={{ color: cvColor(c.CritValue.Value), fontWeight: cvWeight(c.CritValue.Value)}}>
                                                 {c.CritValue.Value} cv

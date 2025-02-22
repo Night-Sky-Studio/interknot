@@ -96,29 +96,29 @@ function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Wea
     return baseProps
 }
 
-export function calculateCritValue(char: Character): number {
+export function calculateCritValue(driveDisks: DriveDisk[]): number {
     // crit_rate * 2 + crit_damage
     // taken only from drive disk' sub stats
 
     const crDiskProp = getProperty(20103),
         cdDiskProp = getProperty(21103)
 
-    let critRate = char.DriveDisks
+    let critRate = driveDisks
         .map(dd => dd.SubStats.find(ss => ss.Id === crDiskProp.Id))
         .filter(ss => ss !== undefined)
         .reduce((res, cr) => res + (cr.Value * cr.Level), 0)
 
-    let critDamage = char.DriveDisks
+    let critDamage = driveDisks
         .map(dd => dd.SubStats.find(ss => ss.Id === cdDiskProp.Id))
         .filter(ss => ss !== undefined)
         .reduce((res, cd) => res + (cd.Value * cd?.Level), 0)
 
-    if (char.DriveDisks[3]?.MainStat.Id === crDiskProp.Id) {
-        critRate += char.DriveDisks[3].MainStat.Value
+    if (driveDisks[3]?.MainStat.Id === crDiskProp.Id) {
+        critRate += driveDisks[3].MainStat.Value
     }
 
-    if (char.DriveDisks[3]?.MainStat.Id === cdDiskProp.Id) {
-        critDamage += char.DriveDisks[3].MainStat.Value
+    if (driveDisks[3]?.MainStat.Id === cdDiskProp.Id) {
+        critDamage += driveDisks[3].MainStat.Value
     }
 
     // add weapon crit stats if available
@@ -168,6 +168,8 @@ export function mapCharacter(raw: AvatarList): Character {
         WeaponEffect: { 0: null, 1: false, 2: true }[raw.WeaponEffectState] ?? null,
         IsHidden: raw.IsHidden,
         DriveDisks: disks,
-        Stats: mapStats(avatar, raw, disks, weapon)
+        DriveDisksSet: getDriveDisksSet(disks),
+        BaseStats: mapStats(avatar, raw, disks, weapon),
+        CritValue: calculateCritValue(disks)
     }
 }

@@ -16,7 +16,7 @@ export default function App() {
                     <Routes>
                         <Route element={<Shell />}>
                             <Route index element={<HomePage />} />
-                            <Route path="/user/:id" element={<ProfilePage />} />
+                            <Route path="/user/:uid" element={<ProfilePage />} />
                             <Route path="404" element={<ErrorPage />}/>
                         </Route>
                     </Routes>
