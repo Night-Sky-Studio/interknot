@@ -1,4 +1,4 @@
-import { ActionIcon, Button, colorsTuple, createTheme, Title } from "@mantine/core"
+import { ActionIcon, Button, colorsTuple, createTheme, Title, Image } from "@mantine/core"
 
 const theme = createTheme({
     colors: { 
@@ -24,6 +24,13 @@ const theme = createTheme({
             defaultProps: {
                 autoContrast: true,
                 radius: "xl"
+            }
+        }),
+        Image: Image.extend({
+            styles: {
+                root: {
+                    width: "auto"
+                }
             }
         })
     }
