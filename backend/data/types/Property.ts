@@ -43,7 +43,7 @@ export class ValueProperty implements IValueProperty {
             if (pattern.includes("%")) {
                 const decimalPlaces = (pattern.split(".")[1] || "").length // Count decimals after '.'
                 num = num / 100 // Divide by 100 to match C# behavior
-                return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") + (includePercentageSign ? "%" : "")
+                return num.toFixed(decimalPlaces).replace(/\.?0$/, "") + (includePercentageSign ? "%" : "")
             }
     
             // Handle decimal places
