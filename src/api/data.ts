@@ -12,7 +12,7 @@ function url(t: { base: string, path?: string, query?: Record<string, string>[] 
     return e
 }
 
-const dataUrl = (process.env.NODE_ENV ?? "") === "dev" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
+const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
 export async function searchUsers(query: string) : Promise<Profile[]> {
     let response = await fetch(url({
