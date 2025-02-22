@@ -10,15 +10,19 @@ import fairy from "../../assets/fairy.png"
 export default function PlayerSearch({ search }: { search: (result: Profile[]) => void }): React.ReactElement {
     const [value, setValue] = useState(""),
         [error, setError] = useState(""),
-        [alertVisible, { open }] = useDisclosure(false)
+        [alertVisible, { open, close }] = useDisclosure(false)
 
     const allUsers = useAsync(async () => {
         return await devListAllUsers()
     }, [])
 
     useEffect(() => {
-        setError(allUsers.error?.message ?? "...stack trace must be here")
-        open()
+        if (allUsers.error) {
+            setError(allUsers.error?.message ?? "...stack trace must be here")
+            open()
+        } else {
+            close()
+        }
     }, [allUsers.error])
 
     const onSearchChange = async (val: string) => {
