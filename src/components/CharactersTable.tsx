@@ -34,7 +34,6 @@ export const cvWeight = (critValue: number) => {
 }
 
 export default function CharactersTable({ uid, username, characters }: ICharactersTableProps): React.ReactElement {
-    const theme = useMantineTheme()
     // const [sortMode, setSortMode] = useState(0)
 
     // useEffect(() => {
