@@ -4,6 +4,15 @@ import { Property } from "./Property"
 import type { Skin } from "./Skin"
 import type { Weapon } from "./Weapon"
 
+export interface Talents {
+    BasicAttack: number
+    SpecialAttack: number
+    Dash: number
+    Ultimate: number
+    CoreSkill: number
+    Assist: number
+}
+
 export interface Character extends BaseAvatar {
     Id: number
     Name: string
@@ -12,7 +21,7 @@ export interface Character extends BaseAvatar {
     Skin: Skin | null
     MindscapeLevel: number
     CoreSkillEnhancement: number
-    SkillLevels: number[]
+    SkillLevels: Talents
     Weapon: Weapon | null
     WeaponEffect: boolean | null
     IsHidden: boolean

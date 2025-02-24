@@ -1,5 +1,5 @@
-import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title } from "@mantine/core"
-import { Character } from "../../backend/data/types/Character"
+import { BackgroundImage, Card, Group, Image, Stack, Title } from "@mantine/core"
+import { Character, Talents as CharacterTalents } from "../../backend/data/types/Character"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "./icons/Icons"
 import * as Mindscapes from "./icons/mindscapes"
@@ -130,28 +130,28 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
     )
 }
 
-function Talents({ talentLevels }: { talentLevels: number[] }): React.ReactElement {
+function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.ReactElement {
     return (
         <Group className="cc-talents" gap="4px" justify="center" align="center">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels[0]}</Title>
+                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Dodge width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels[1]}</Title>
+                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Switch width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels[2]}</Title>
+                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Skill width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels[3]}</Title>
+                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Ultimate width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels[4]}</Title>
+                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
             </div>
         </Group>
     )

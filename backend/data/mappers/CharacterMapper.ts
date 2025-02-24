@@ -1,6 +1,6 @@
-import type { AvatarList } from "../../api/EnkaResponse"
+import type { AvatarList, SkillLevelList } from "../../api/EnkaResponse"
 import { Avatar } from "../types/Avatar"
-import type { Character } from "../types/Character"
+import type { Character, Talents } from "../types/Character"
 import { DriveDisk } from "../types/DriveDisk"
 import { Property, PropertyType } from "../types/Property"
 import { Weapon } from "../types/Weapon"
@@ -171,6 +171,17 @@ export function calculateCritValue(driveDisks: DriveDisk[]): number {
     return (critRate * 2 + critDamage) / 100
 }
 
+function mapTalents(skills: SkillLevelList[]): Talents {
+    return {
+        BasicAttack: skills.find(sk => sk.Index == 0)?.Level ?? 1,
+        SpecialAttack: skills.find(sk => sk.Index == 1)?.Level ?? 1,
+        Dash: skills.find(sk => sk.Index == 2)?.Level ?? 1,
+        Ultimate: skills.find(sk => sk.Index == 3)?.Level ?? 1,
+        CoreSkill: skills.find(sk => sk.Index == 5)?.Level ?? 1,
+        Assist: skills.find(sk => sk.Index == 6)?.Level ?? 1,
+    }
+}
+
 export function mapCharacter(raw: AvatarList): Character {
     const avatar = getAvatar(raw.Id),
         weapon = mapWeaponData(raw.Weapon) ?? null,
@@ -184,7 +195,7 @@ export function mapCharacter(raw: AvatarList): Character {
         Skin: getSkin(avatar, raw.SkinId) ?? null,
         MindscapeLevel: raw.TalentLevel,
         CoreSkillEnhancement: raw.CoreSkillEnhancement,
-        SkillLevels: raw.SkillLevelList.sort(s => s.Index).map(s => s.Level),
+        SkillLevels: mapTalents(raw.SkillLevelList),
         Weapon: weapon,
         WeaponEffect: { 0: null, 1: false, 2: true }[raw.WeaponEffectState] ?? null,
         IsHidden: raw.IsHidden,
