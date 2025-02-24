@@ -60,8 +60,8 @@ export class Property {
         return getLocalString(this.simpleName)
     }
 
-    add(other: Property): Property {
-        return new Property(this.Id, this.Value + other.Value, this.Level)
+    addValue(other: number): Property {
+        return new Property(this.Id, this.Value + other, this.Level)
     }
 
     subtract(other: Property): Property {

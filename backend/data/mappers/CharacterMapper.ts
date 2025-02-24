@@ -6,6 +6,7 @@ import { Property, PropertyType } from "../types/Property"
 import { Weapon } from "../types/Weapon"
 import { getAvatar, pickBaseAvatar } from "./AvatarMapper"
 import { getDriveDisksSet, mapDriveDisk } from "./DriveDiskMapper"
+import { getBaseElementId } from "./PropertyMapper"
 import { getSkin } from "./SkinMapper"
 import { mapWeaponData } from "./WeaponMapper"
 
@@ -20,7 +21,7 @@ function applyDriveDiskProp(prop: Property, baseValue: number, disks: DriveDisk[
                 result += baseValue * (disk.MainStat.Value / 100 / 100)
             } else if (prop.simpleName.includes("Sp") && disk.MainStat.simpleName.includes("Sp")) {
                 result += baseValue * (disk.MainStat.Value / 100 / 100)
-            }else {
+            } else {
                 result += disk.MainStat.Value
             }
         }
@@ -42,6 +43,8 @@ function applyDriveDiskProp(prop: Property, baseValue: number, disks: DriveDisk[
         if (bonusProp && prop.simpleName.includes(bonusProp.simpleName) && !(prop.simpleName === "CritDmg" && bonusProp.simpleName === "Crit")) {
             if (prop.FormatType === PropertyType.Delta && bonusProp.FormatType === PropertyType.Ratio) {
                 result += baseValue * (bonusProp.Value / 100 / 100) 
+            } else if (prop.simpleName.includes("Sp") && bonusProp.simpleName.includes("Sp")) {
+                result += baseValue * (bonusProp.Value / 100 / 100)
             } else {
                 result += bonusProp.Value
             }
@@ -52,7 +55,7 @@ function applyDriveDiskProp(prop: Property, baseValue: number, disks: DriveDisk[
 }
 
 function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number, coreEnhancement: number): Property[] {
-    return avatar.BaseProps.map(prop => {
+    const calculatePropValue = (prop: Property) => {
         const 
             growthProp = avatar.GrowthProps.find(p => p.Id === prop.Id)?.Value ?? 0,
             growthValue = Math.floor((growthProp * (level - 1)) / 10000),
@@ -61,10 +64,26 @@ function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number,
             
             coreEnhancementValue = avatar.CoreEnhancementProps[coreEnhancement].find(p => p.Id === prop.Id)?.Value ?? 0
 
-        let basePropValue = prop.Value + growthValue + promotionValue + coreEnhancementValue
+        return prop.Value + growthValue + promotionValue + coreEnhancementValue
+    }
 
-        return new Property(prop.Id, Math.floor(basePropValue))
+    const baseProps = avatar.BaseProps.map(prop => {
+        return new Property(prop.Id, Math.floor(calculatePropValue(prop)))
     })
+
+    if (baseProps.length < 12) {
+        // add PEN delta
+        const pen = new Property(23201, 0)
+        baseProps.push(pen.addValue(calculatePropValue(pen)))
+        // add PEN ratio
+        const penRatio = new Property(23101, 0)
+        baseProps.push(penRatio.addValue(calculatePropValue(penRatio)))
+        // add elemental dmg bonus
+        const elementDmgBonus = new Property(getBaseElementId(avatar.ElementTypes), 0)
+        baseProps.push(elementDmgBonus.addValue(calculatePropValue(elementDmgBonus)))
+    }
+
+    return baseProps
 }
 
 function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Weapon | null): Property[] {

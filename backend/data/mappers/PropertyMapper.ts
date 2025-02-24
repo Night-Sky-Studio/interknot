@@ -22,3 +22,22 @@ export function mapValueProperty(id: number, value: number): Property {
 export function mapDriveDiskProperty(prop: PropertyList): Property {
     return new Property(prop.PropertyId, prop.PropertyValue, prop.PropertyLevel)
 }
+
+export function getBaseElementId(elements: string[]): number {
+    const ElementsMap: Record<string, number[]> = {
+        "Physics": [31501, 31503, 31505], // Elements.Physics
+        "Fire": [31601, 31603, 31605], // Elements.Fire
+        "Ice": [31701, 31703, 31705], // Elements.Ice    
+        "Elec": [31801, 31803, 31805], // Elements.Elec
+        "Ether": [31901, 31903, 31905], // Elements.Ether
+    }
+
+    for (let element of elements) {
+        try {
+            return ElementsMap[element][0]
+        } catch {
+            continue
+        }
+    }
+    return -1
+}
