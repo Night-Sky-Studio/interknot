@@ -1,4 +1,4 @@
-import { BackgroundImage, Card, Group, Image, Stack, Title } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, useMantineTheme } from "@mantine/core"
 import { Character, Talents as CharacterTalents } from "../../backend/data/types/Character"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "./icons/Icons"
@@ -157,9 +157,44 @@ function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.Re
     )
 }
 
-function DriveDisc({ disc }: { disc: DriveDisk }) {
+function SubStat({ stat }: { stat: Property }): React.ReactElement {
+    const SubStatLevel = ({ level }: { level: number }) => {
+        const isActive = (lvl: number) => lvl <= level
+        return <SimpleGrid cols={4} spacing="2px" verticalSpacing="0"> 
+            <div className="cc-disc-stat-level" data-active={isActive(2)}></div>
+            <div className="cc-disc-stat-level" data-active={isActive(3)}></div>
+            <div className="cc-disc-stat-level" data-active={isActive(4)}></div>
+            <div className="cc-disc-stat-level" data-active={isActive(5)}></div>
+        </SimpleGrid>
+    }
+
     return (
-        <div className="cc-disc" style={{ "--disc-gradient": getDriveDiscGradient(disc.SetId) } as React.CSSProperties}>
+        <Stack className="cc-disc-stat" gap="1px">
+            <Group align="flex-start" gap="4px">
+                <ZenlessIcon id={stat.Id} size={12} />
+                <Title order={6} fz="11px" mt="-2px" h="12px">{stat.formatted}</Title>
+            </Group>
+            <SubStatLevel level={stat.Level}/>
+        </Stack>
+    )
+}
+
+function DriveDisc({ disc }: { disc: DriveDisk }): React.ReactElement {
+    const theme = useMantineTheme()
+
+    const cvColor = (cv: number) => {
+        switch(true) {
+            case cv >= 28.8: return theme.colors.red[7]
+            case cv >= 24: return theme.colors.pink[7]
+            case cv >= 19.2: return theme.colors.grape[7]
+            case cv >= 14.4: return theme.colors.violet[6]
+            case cv >= 9.6: return theme.colors.blue[6]
+            default: return undefined
+        }
+    }
+
+    return (
+        <div className="cc-disc" style={{ "--disc-gradient": getDriveDiscGradient(disc.SetId), "--cv": cvColor(disc.CritValue.Value / 100) } as React.CSSProperties}>
             <Group gap="4px" className="cc-disc-main" wrap="nowrap">
                 <div className="cc-disc-icon">
                     <Image src={disc.IconUrl} alt={disc.Name} />
@@ -174,6 +209,11 @@ function DriveDisc({ disc }: { disc: DriveDisk }) {
                     <Title order={6} fz="8px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
                 </Stack>
             </Group>
+            <SimpleGrid cols={2} spacing="4px" verticalSpacing="4px" className="cc-disc-stats">
+                {
+                    disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} />)
+                }
+            </SimpleGrid>
         </div>
     )
 }
@@ -210,9 +250,11 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                 </div>
 
                 <div className="cc-discs">
-                    {
-                        character.DriveDisks.map(d => <DriveDisc key={d.Uid} disc={d} />)
-                    }
+                    <div className="cc-discs-grid">
+                        {
+                            character.DriveDisks.map(d => <DriveDisc key={d.Uid} disc={d} />)
+                        }
+                    </div>
                 </div>
             </div>
         </Card>

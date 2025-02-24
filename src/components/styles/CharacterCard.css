@@ -34,14 +34,18 @@
 
 .cc-image {
     grid-area: 1 / 1 / 5 / 2;
-    background-image: url("/assets/pattern.svg"),
+    background-size: 8px;
+    background-image: url("/assets/pattern.png"),
         linear-gradient(var(--accent), color-mix(in oklab, black 100%, var(--accent) 100%));
+}
+.cc-image > img {
+    image-rendering: optimizeQuality !important;
 }
 
 .cc-info-bg {
     grid-area: 1 / 2 / 5 / 4;
     background-size: 8px;
-    background-image: url("/assets/pattern2.svg"),
+    background-image: url("/assets/pattern2.png"),
         linear-gradient(135deg, #353535, #252525);
     box-shadow: 0 0 64px rgb(0 0 0 / 50%);
 }
@@ -196,25 +200,34 @@
 .cc-discs {
     grid-area: 4 / 1 / 5 / 4;
     z-index: 100;
-    width: 100%;
 
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.cc-discs-grid {
+    width: calc(100% - 24px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     justify-items: center;
-    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .cc-disc {
     height: 52px;
     width: 268px;
     background-color: var(--mantine-color-dark-8);
-    border-radius: 26px;
+    border-radius: 26px 8px 8px 26px;
     display: grid;
     grid-template-columns: min-content auto;
     color: white;
+    /* box-shadow: 1px 1px 0px 0.5px var(--cv); */
 }
 .cc-disc-main {
     height: 52px;
+    width: 128px;
     background: var(--disc-gradient);
     border-radius: 26px;
     padding-right: 8px;
@@ -234,6 +247,28 @@
     bottom: 0;
     right: 0;
     height: 16px;
+}
+.cc-disc-stats {
+    height: 52px;
+    padding: 4px;
+}
+.cc-disc-stat {
+    overflow: hidden;
+    height: 20px;
+    width: 64px;
+    background-color: var(--mantine-color-dark-5);
+    padding: 4px;
+    border-radius: 8px 4px 8px 4px;
+}
+.cc-disc-stat-level {
+    height: 1px;
+    background-color: #FF922B;
+}
+.cc-disc-stat-level[data-active="false"] {
+    display: none;
+}
+.cc-disc-stat-level[data-active="true"] {
+    display: block;
 }
 
 .cc-graph {
