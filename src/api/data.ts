@@ -15,6 +15,8 @@ function url(t: { base: string, path?: string, query?: Record<string, string>[] 
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
+// This should restore Property classes that's lost 
+// when converting from json
 function restoreProperties(obj: any): any {
     if (Array.isArray(obj)) {
         return obj.map(restoreProperties); // Recursively process arrays
@@ -29,7 +31,6 @@ function restoreProperties(obj: any): any {
     }
     return obj;
 }
-
 
 export async function searchUsers(query: string) : Promise<Profile[]> {
     let response = await fetch(url({
