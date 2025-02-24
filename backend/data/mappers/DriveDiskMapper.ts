@@ -38,6 +38,7 @@ export function mapDriveDisk(raw: EquippedList): DriveDisk {
         ...equipment,
         Id: entry.Id,
         Uid: entry.Uid,
+        SetId: equipment.Id,
         Slot: raw.Slot,
         IsAvailable: entry.IsAvailable,
         IsTrash: entry.IsTrash,

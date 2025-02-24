@@ -9,6 +9,7 @@ export type DriveDiskSet = {
 export interface DriveDisk extends Equipment {
     Id: number
     Uid: number
+    SetId: number
     Slot: number
     IsAvailable: boolean
     IsTrash: boolean
