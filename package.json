@@ -7,7 +7,7 @@
     "update": "bun src/enka/data/update.ts --update",
     "dev": "vite --host",
     "server": "bun backend/server.ts",
-    "build": "bun run svgr && tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "svgr": "bunx @svgr/cli --out-dir 'src/components/icons' --ignore-existing --typescript -- 'assets/icons' "
   },
