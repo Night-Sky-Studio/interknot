@@ -1,7 +1,7 @@
-import { ValueProperty } from "./Property"
+import { Property } from "./Property"
 
 export type CritValue = {
-    CritRate: ValueProperty
-    CritDamage: ValueProperty
+    CritRate: Property
+    CritDamage: Property
     Value: number
 }

@@ -1,7 +1,6 @@
 import { Character } from "../../backend/data/types/Character"
 import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } from "@mantine/core"
 import "./styles/CharactersTable.css"
-import { ValueProperty } from "../../backend/data/types/Property"
 import CharacterCard from "./CharacterCard"
 import { useEffect, useState } from "react"
 import { useResizeObserver } from "@mantine/hooks"
@@ -137,9 +136,9 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                                         <Text className="crit-cell" component="div">
                                             <div>
                                                 {
-                                                    ValueProperty.format(c.CritValue.CritRate?.Format, c.CritValue.CritRate?.Value)
+                                                    c.CritValue.CritRate?.formatted.replace("%", "")
                                                 } : {
-                                                    ValueProperty.format(c.CritValue.CritDamage?.Format, c.CritValue.CritDamage?.Value)
+                                                    c.CritValue.CritDamage?.formatted.replace("%", "")
                                                 }
                                             </div>
                                             <div style={{ color: cvColor(c.CritValue.Value), fontWeight: cvWeight(c.CritValue.Value)}}>
