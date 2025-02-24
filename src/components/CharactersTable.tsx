@@ -26,8 +26,6 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
     const [cardContainerRef, cardContainerRect] = useResizeObserver()
 
     useEffect(() => {
-        if (cardContainerRect.width < 1000) return
-
         if (cardContainerRect.width) {
             const newScale = Math.max(cardContainerRect.width / 900, 1)
             setCardScale(newScale)
