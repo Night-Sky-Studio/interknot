@@ -171,7 +171,7 @@ function DriveDisc({ disc }: { disc: DriveDisk }) {
                         <ZenlessIcon id={disc.MainStat.Id} size="18px"/>
                         <Title order={6} fz="14px">{disc.MainStat.formatted}</Title>
                     </Group>
-                    <Title order={6} fz="8px">CV 0.0</Title>
+                    <Title order={6} fz="8px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
                 </Stack>
             </Group>
         </div>

@@ -1,3 +1,4 @@
+import { CritValue } from "./CritValue"
 import type { Equipment } from "./Equipment"
 import { Property } from "./Property"
 
@@ -17,5 +18,6 @@ export interface DriveDisk extends Equipment {
     Level: number
     BreakLevel: number
     MainStat: Property
-    SubStats: Property[]
+    SubStats: Property[],
+    CritValue: CritValue
 }
