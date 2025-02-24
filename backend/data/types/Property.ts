@@ -56,7 +56,6 @@ export class Property {
     }
 
     get simpleNameLocalized(): string {
-        console.log("simpleNameLocalized", this.simpleName, getLocalString(this.simpleName))
         return getLocalString(this.simpleName)
     }
 

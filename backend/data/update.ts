@@ -78,8 +78,3 @@ async function updateEnkaDefinitions() {
 
 if (process.argv.indexOf("--update") !== -1)
     await updateEnkaDefinitions()
-
-// if (process.argv.indexOf("--map") !== -1) 
-//     console.log(JSON.stringify(Users[0].PlayerInfo.ShowcaseDetail.AvatarList.map(mapCharacter)))
-
-// console.log(JSON.stringify(mapUserProfile(Uber)))

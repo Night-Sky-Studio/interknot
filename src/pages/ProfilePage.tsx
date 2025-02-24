@@ -20,7 +20,6 @@ export default function ProfilePage(): React.ReactElement {
     useEffect(() => {
         if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
             setSavedUsers([...savedUsers ?? [], userState.value])
-            console.log(userState.value)
         }
     }, [userState.value])
 
