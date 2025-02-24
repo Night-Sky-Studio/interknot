@@ -91,3 +91,27 @@ export function getRarityIcon(rarity: number): string | undefined {
         default: return undefined
     }
 }
+
+const DriveDiscGradientMap: Record<number, string[]> = {
+    31000: ["#158754", "#085750"],    // Woodpecker Electro
+    31100: ["#787070", "#2e2b2b"],    // Puffer Electro
+    31200: ["#765dff", "#2c1e73"],    // Shockstar Disco
+    31300: ["#47a386", "#146d52"],    // Freedom Blues
+    31400: ["#c6ea35", "#538000"],    // Hormone Punk
+    31500: ["#eda217", "#835500"],    // Soul Rock
+    31600: ["#34b34a", "#1a5925"],    // Swing Jazz
+    31800: ["#ecc217", "#81730d"],    // Chaos Jazz
+    31900: ["#f9aa21", "#f77e21", "#f64e21"],    // Proto Punk
+    32200: ["#de1b79", "#800f66"],    // Inferno Metal
+    32300: ["#57BC4D", "#285623"],    // Chaos Metal
+    32400: ["#6a2df4", "#381880"],    // Thunder Metal
+    32500: ["#3fd08f", "#132c20"],    // Polar Metal
+    32600: ["#e12625", "#460605"],    // Fanged Metal
+    32700: ["#59b8ed", "#25b7b6", "#1f77aa"],    // Branch & Blade Song
+    32800: ["#9f1011", "#9f1011", "#835500"],    // Astral Voice
+}
+
+export function getDriveDiscGradient(id: number) {
+    if (!DriveDiscGradientMap[id]) return "red"
+    return `linear-gradient(135deg, ${DriveDiscGradientMap[id].join(",")})`
+}
