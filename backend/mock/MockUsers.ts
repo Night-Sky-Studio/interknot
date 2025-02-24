@@ -3,6 +3,7 @@ import Jelosus1 from "./Jelosus1.json"
 import LilyStilson from "./LilyStilson.json"
 import Neijin from "./Neijin.json"
 import Alt from "./Альт.json"
+import Pad from "./Pad.json"
 
 import EnkaResponse from "../../backend/api/EnkaResponse"
 import { mapProfile } from "../data/mappers/ProfileMapper"
@@ -12,7 +13,8 @@ const Users = [
     mapProfile(Jelosus1 as unknown as EnkaResponse),
     mapProfile(LilyStilson as unknown as EnkaResponse),
     mapProfile(Neijin as unknown as EnkaResponse),
-    mapProfile(Alt as unknown as EnkaResponse)
+    mapProfile(Alt as unknown as EnkaResponse),
+    mapProfile(Pad as unknown as EnkaResponse)
 ]
 
 

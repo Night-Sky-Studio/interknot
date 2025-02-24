@@ -60,7 +60,7 @@ export default function Shell(): React.ReactElement {
 
         <AppShell header={{ height: 60 }} padding="md">
             <AppShell.Header>
-                <Container size="xl" h="100%">
+                <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
                         <Group gap={0}>
                             <Button variant="transparent" component={Title} onClick={() => {
@@ -80,7 +80,7 @@ export default function Shell(): React.ReactElement {
             </AppShell.Header>
 
             <AppShell.Main>
-                <Container size="xl">
+                <Container size="1600px">
                     {users.length !== 0 &&
                         <Tabs value={selectedUser} onChange={(value) => {
                             setSelectedUser(value ?? uid ?? "")

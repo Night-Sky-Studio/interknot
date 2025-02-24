@@ -1,79 +1,69 @@
-export interface Property {
-    Id: number
-    Name: string
-    Format: string
+import { getPropertyName } from "../mappers/PropertyMapper"
+import { getLocalString } from "./Localization"
+
+export enum PropertyType {
+    Delta = 0,
+    Ratio = 1,
+    Decimal = 2
 }
 
-export interface IValueProperty extends Property {
-    Value: number
-}
+export class Property {
+    public FormatType: PropertyType = PropertyType.Delta
 
-interface IDriveDiskProperty extends IValueProperty {
-    Level: number
-}
-
-export class ValueProperty implements IValueProperty {
     constructor(
-        public Id: number,
-        public Name: string,
-        public Format: string,
-        public Value: number
-    ) { }
-
-    static fromProp(
-        prop: Property,
-        value: number
+        public readonly Id: number, 
+        public BaseValue: number, 
+        public readonly Level: number = 1
     ) {
-        return new ValueProperty(prop.Id, prop.Name, prop.Format, value)
+        if (this.name.includes("Crit") || this.name.includes("Ratio")) {
+            this.FormatType = 1
+        } else if (this.name.includes("SpRec")) {
+            this.FormatType = 2
+        }
     }
 
-    static format(format?: string, prop?: any, includePercentageSign: boolean = false): string {
-        if (!format || !prop) return String(prop)
-        return format.replace(/\{(\d+)(?::([^}]+))?\}/g, (_, index, pattern) => {
-            if (index !== "0") return prop.toString() // Only support {0:pattern} for now.
-            
-            let num = Number(prop)
-            if (isNaN(num)) return String(prop) // If not a number, return as a string.
-    
-            if (!pattern) {
-                return String(prop) // If no pattern, return value as-is.
-            }
-    
-            // Handle percentage formats correctly
-            if (pattern.includes("%")) {
-                const decimalPlaces = (pattern.split(".")[1] || "").length // Count decimals after '.'
-                num = num / 100 // Divide by 100 to match C# behavior
-                return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") + (includePercentageSign ? "%" : "")
-            }
-    
-            // Handle decimal places
-            const match = pattern.match(/^0\.#*$/)
-            if (match) {
-                const decimalPlaces = (match[0].split(".")[1] || "").length
-                return num.toFixed(decimalPlaces).replace(/\.?0+$/, "") // Remove trailing zeros.
-            }
-    
-            return String(prop)
-        })
+    get Value(): number {
+        return this.BaseValue * this.Level
     }
 
-    toString(includePercentageSign: boolean = false): string {
-        return ValueProperty.format(this.Format, this.Value, includePercentageSign)
-    }
-}
-
-export class DriveDiskProperty extends ValueProperty implements IDriveDiskProperty {
-    constructor(
-        public Id: number,
-        public Name: string,
-        public Format: string,
-        public Value: number,
-        public Level: number
-    ) { 
-        super(Id, Name, Format, Value) 
+    set Value(other: number) {
+        this.BaseValue = other
     }
 
-    static fromProp(prop: ValueProperty, level: number): DriveDiskProperty {
-        return new DriveDiskProperty(prop.Id, prop.Name, prop.Format, prop.Value, level)
+    get formatted(): string {
+        if (this.FormatType === 0) {
+            return Math.floor(this.Value).toLocaleString()
+        }
+        if (this.FormatType === 1) {
+            return (this.Value / 100).toFixed(1) + "%"
+        }
+        if (this.FormatType === 2) {
+            return (Math.floor(this.Value) / 100).toFixed(2).replace(/0$/, "")
+        }
+        return this.Value.toLocaleString()
+    }
+
+    get name(): string {
+        return getPropertyName(this.Id) ?? "Unknown"
+    }
+
+    get simpleName(): string {
+        return this.name.replace(/_(b|B)ase|_(r|R)atio|_(d|D)elta/g, "")
+    }
+
+    get nameLocalized(): string {
+        return getLocalString(this.name)
+    }
+
+    get simpleNameLocalized(): string {
+        return getLocalString(this.simpleName)
+    }
+
+    addValue(other: number): Property {
+        return new Property(this.Id, this.Value + other, this.Level)
+    }
+
+    subtract(other: Property): Property {
+        return new Property(this.Id, this.Value - other.Value, this.Level)
     }
 }

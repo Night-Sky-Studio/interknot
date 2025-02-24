@@ -1,4 +1,5 @@
 import { Profile } from "../../backend/data/types/Profile"
+import { Property } from "../../backend/data/types/Property";
 
 function url(t: { base: string, path?: string, query?: Record<string, string>[] }) {
     let e = ""
@@ -13,6 +14,23 @@ function url(t: { base: string, path?: string, query?: Record<string, string>[] 
 }
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
+
+// This should restore Property classes that's lost 
+// when converting from json
+function restoreProperties(obj: any): any {
+    if (Array.isArray(obj)) {
+        return obj.map(restoreProperties); // Recursively process arrays
+    } else if (obj && typeof obj === "object") {
+        if ("Id" in obj && "BaseValue" in obj && "Level" in obj) {
+            return new Property(obj.Id, obj.BaseValue, obj.Level);
+        }
+        // Recursively check properties of objects
+        for (const key of Object.keys(obj)) {
+            obj[key] = restoreProperties(obj[key]);
+        }
+    }
+    return obj;
+}
 
 export async function searchUsers(query: string) : Promise<Profile[]> {
     let response = await fetch(url({
@@ -32,7 +50,9 @@ export async function getUser(uid: number) : Promise<Profile | undefined> {
     }))
     if (response.status !== 200) return undefined
 
-    return await response.json()
+    const json = await response.json()
+
+    return restoreProperties(json)
 }
 
 export async function devListAllUsers() : Promise<number[]> {

@@ -1,42 +1,43 @@
 import type { PropertyList } from "../../api/EnkaResponse"
 import property from "../raw/property.json"
-import { getLocalString } from "../types/Localization"
-import { type Property, ValueProperty, DriveDiskProperty } from "../types/Property"
+import { Property } from "../types/Property"
 
 type RawProperty = {
     Name: string
     Format: string
 }
 
-const Property = property as Record<string, RawProperty>
+const Properties = property as Record<string, RawProperty>
 
 export const valuePropertyMapper = (id: string, val: number) => mapValueProperty(parseInt(id), val)
 
-function mapProperty(id: number, prop: RawProperty): Property {
-    return {
-        Id: id,
-        Name: getLocalString(prop.Name),
-        Format: prop.Format
+export function getPropertyName(id: number): string {
+    return Properties[id].Name
+}
+
+export function mapValueProperty(id: number, value: number): Property {
+    return new Property(id, value)
+}
+
+export function mapDriveDiskProperty(prop: PropertyList): Property {
+    return new Property(prop.PropertyId, prop.PropertyValue, prop.PropertyLevel)
+}
+
+export function getBaseElementId(elements: string[]): number {
+    const ElementsMap: Record<string, number[]> = {
+        "Physics": [31501, 31503, 31505], // Elements.Physics
+        "Fire": [31601, 31603, 31605], // Elements.Fire
+        "Ice": [31701, 31703, 31705], // Elements.Ice    
+        "Elec": [31801, 31803, 31805], // Elements.Elec
+        "Ether": [31901, 31903, 31905], // Elements.Ether
     }
-}
 
-export function getProperty(id: number): Property {
-    return mapProperty(id, Property[id])
-}
-
-export function getPropertyByName(name: string): Property | null {
-    for (let key of Object.keys(Property)) {
-        if (Property[key].Name.toLowerCase() === name.toLowerCase()) {
-            return getProperty(parseInt(key))
+    for (let element of elements) {
+        try {
+            return ElementsMap[element][0]
+        } catch {
+            continue
         }
     }
-    return null
-}
-
-export function mapValueProperty(id: number, value: number): ValueProperty {
-    return ValueProperty.fromProp(getProperty(id), value)
-}
-
-export function mapDriveDiskProperty(prop: PropertyList): DriveDiskProperty {
-    return DriveDiskProperty.fromProp(ValueProperty.fromProp(getProperty(prop.PropertyId), prop.PropertyValue), prop.PropertyLevel)
+    return -1
 }

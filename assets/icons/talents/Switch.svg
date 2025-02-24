@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #f9d217;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 5px;
+      }
+
+      .cls-2 {
+        fill: #f9d217;
+      }
+    </style>
+  </defs>
+  <g id="Switch">
+    <circle class="cls-2" cx="24" cy="24" r="24"/>
+    <circle cx="24" cy="24" r="20"/>
+    <path class="cls-1" d="M18,15.5h-6.01s.01,15.88.01,15.88c0,.69.69,1.19,1.34.94,1.25-.47,3.28-2.17,10.6-8.32s9.52-7.99,10.81-8.38c.62-.19,1.24.32,1.24.97v15.9s-5.99,0-5.99,0"/>
+    <path class="cls-2" d="M25.7,15.1l-6.9-5.16c-.33-.25-.81-.01-.81.4v10.33c0,.42.47.65.81.4l6.9-5.16c.27-.2.27-.61,0-.81Z"/>
+    <path class="cls-2" d="M22.37,32.9l6.9,5.16c.33.25.81.01.81-.4v-10.33c0-.42-.47-.65-.81-.4l-6.9,5.16c-.27.2-.27.61,0,.81Z"/>
+  </g>
+</svg>
