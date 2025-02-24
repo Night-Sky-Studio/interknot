@@ -12,6 +12,7 @@ export interface Character extends BaseAvatar {
     Skin: Skin | null
     MindscapeLevel: number
     CoreSkillEnhancement: number
+    SkillLevels: number[]
     Weapon: Weapon | null
     WeaponEffect: boolean | null
     IsHidden: boolean

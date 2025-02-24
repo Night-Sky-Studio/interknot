@@ -164,6 +164,7 @@ export function mapCharacter(raw: AvatarList): Character {
         Skin: getSkin(avatar, raw.SkinId) ?? null,
         MindscapeLevel: raw.TalentLevel,
         CoreSkillEnhancement: raw.CoreSkillEnhancement,
+        SkillLevels: raw.SkillLevelList.sort(s => s.Index).map(s => s.Level),
         Weapon: weapon,
         WeaponEffect: { 0: null, 1: false, 2: true }[raw.WeaponEffectState] ?? null,
         IsHidden: raw.IsHidden,
