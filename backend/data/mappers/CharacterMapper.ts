@@ -2,46 +2,47 @@ import type { AvatarList } from "../../api/EnkaResponse"
 import { Avatar } from "../types/Avatar"
 import type { Character } from "../types/Character"
 import { DriveDisk } from "../types/DriveDisk"
-import { ValueProperty } from "../types/Property"
+import { Property, PropertyType } from "../types/Property"
 import { Weapon } from "../types/Weapon"
 import { getAvatar, pickBaseAvatar } from "./AvatarMapper"
 import { getDriveDisksSet, mapDriveDisk } from "./DriveDiskMapper"
-import { getProperty } from "./PropertyMapper"
 import { getSkin } from "./SkinMapper"
 import { mapWeaponData } from "./WeaponMapper"
 
-function applyDriveDiskProp(propId: number, baseValue: number, disks: DriveDisk[]) {
+function applyDriveDiskProp(prop: Property, baseValue: number, disks: DriveDisk[]) {
     let result = 0
 
     const sets = getDriveDisksSet(disks)
 
     for (let disk of disks) {
-        if (Math.abs(disk.MainStat.Id - propId) < 3) {
-            result += disk.MainStat.Value
+        if (prop.simpleName.includes(disk.MainStat.simpleName) && !(prop.simpleName === "CritDmg" && disk.MainStat.simpleName === "Crit")) {
+            if (prop.FormatType === PropertyType.Delta && disk.MainStat.FormatType === PropertyType.Ratio) {
+                result += baseValue * (disk.MainStat.Value / 100 / 100)
+            } else if (prop.simpleName.includes("Sp") && disk.MainStat.simpleName.includes("Sp")) {
+                result += baseValue * (disk.MainStat.Value / 100 / 100)
+            }else {
+                result += disk.MainStat.Value
+            }
         }
 
         for (let subStat of disk.SubStats) {
-            // STAT%
-            if (Math.abs(subStat.Id - propId) === 1) {
-                result += baseValue * ((subStat.Value * subStat.Level) / 100 / 100)
+            if (prop.simpleName.includes(subStat.simpleName) && !(prop.simpleName === "CritDmg" && subStat.simpleName === "Crit")) {
+                if (prop.FormatType === PropertyType.Delta && subStat.FormatType === PropertyType.Ratio) {
+                    result += baseValue * (subStat.Value / 100 / 100)
+                } else {
+                    result += subStat.Value
+                }
             }
-
-            // Flat STAT
-            if (Math.abs(subStat.Id - propId) === 2) {
-                result += subStat.Value * subStat.Level
-            }
-        }
+        } 
     }
 
-    for(let set of sets) {
+    for (let set of sets) {
         const bonusProp = set.Set.SetBonusProps[0]
 
-        if (bonusProp) {
-            if (Math.abs(bonusProp.Id - propId) === 1) {
+        if (bonusProp && prop.simpleName.includes(bonusProp.simpleName) && !(prop.simpleName === "CritDmg" && bonusProp.simpleName === "Crit")) {
+            if (prop.FormatType === PropertyType.Delta && bonusProp.FormatType === PropertyType.Ratio) {
                 result += baseValue * (bonusProp.Value / 100 / 100) 
-            }
-
-            if (Math.abs(bonusProp.Id - propId) === 2) {
+            } else {
                 result += bonusProp.Value
             }
         }
@@ -50,7 +51,7 @@ function applyDriveDiskProp(propId: number, baseValue: number, disks: DriveDisk[
     return Math.floor(result)
 }
 
-function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number, coreEnhancement: number): ValueProperty[] {
+function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number, coreEnhancement: number): Property[] {
     return avatar.BaseProps.map(prop => {
         const 
             growthProp = avatar.GrowthProps.find(p => p.Id === prop.Id)?.Value ?? 0,
@@ -62,11 +63,11 @@ function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number,
 
         let basePropValue = prop.Value + growthValue + promotionValue + coreEnhancementValue
 
-        return ValueProperty.fromProp(prop, Math.floor(basePropValue))
+        return new Property(prop.Id, Math.floor(basePropValue))
     })
 }
 
-function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Weapon | null): ValueProperty[] {
+function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Weapon | null): Property[] {
     // Get the base props
     const baseProps = getCharacterBaseProps(raw, char.Level, char.PromotionLevel, char.CoreSkillEnhancement)
 
@@ -80,7 +81,7 @@ function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Wea
 
     // Apply Drive Disk stats
     for (let prop of baseProps) {
-        const diskValue = applyDriveDiskProp(prop.Id, prop.Value, disks)
+        const diskValue = applyDriveDiskProp(prop, prop.Value, disks)
         prop.Value += diskValue
     }
 
@@ -100,24 +101,24 @@ export function calculateCritValue(driveDisks: DriveDisk[]): number {
     // crit_rate * 2 + crit_damage
     // taken only from drive disk' sub stats
 
-    const crDiskProp = getProperty(20103),
-        cdDiskProp = getProperty(21103)
+    const crDiskPropId = 20103,
+        cdDiskPropId = 21103
 
     let critRate = driveDisks
-        .map(dd => dd.SubStats.find(ss => ss.Id === crDiskProp.Id))
+        .map(dd => dd.SubStats.find(ss => ss.Id === crDiskPropId))
         .filter(ss => ss !== undefined)
-        .reduce((res, cr) => res + (cr.Value * cr.Level), 0)
+        .reduce((res, cr) => res + cr.Value, 0)
 
     let critDamage = driveDisks
-        .map(dd => dd.SubStats.find(ss => ss.Id === cdDiskProp.Id))
+        .map(dd => dd.SubStats.find(ss => ss.Id === cdDiskPropId))
         .filter(ss => ss !== undefined)
-        .reduce((res, cd) => res + (cd.Value * cd?.Level), 0)
+        .reduce((res, cd) => res + cd.Value, 0)
 
-    if (driveDisks[3]?.MainStat.Id === crDiskProp.Id) {
+    if (driveDisks[3]?.MainStat.Id === crDiskPropId) {
         critRate += driveDisks[3].MainStat.Value
     }
 
-    if (driveDisks[3]?.MainStat.Id === cdDiskProp.Id) {
+    if (driveDisks[3]?.MainStat.Id === cdDiskPropId) {
         critDamage += driveDisks[3].MainStat.Value
     }
 

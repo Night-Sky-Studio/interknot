@@ -1,6 +1,6 @@
 // !== Character
 
-import type { ValueProperty } from "./Property"
+import type { Property } from "./Property"
 import type { Skin } from "./Skin"
 
 export interface BaseAvatar {
@@ -19,8 +19,8 @@ export interface BaseAvatar {
 
 export interface Avatar extends BaseAvatar {
     Skins: Skin[]
-    BaseProps: ValueProperty[]
-    GrowthProps: ValueProperty[]
-    PromotionProps: ValueProperty[][]
-    CoreEnhancementProps: ValueProperty[][]
+    BaseProps: Property[]
+    GrowthProps: Property[]
+    PromotionProps: Property[][]
+    CoreEnhancementProps: Property[][]
 }

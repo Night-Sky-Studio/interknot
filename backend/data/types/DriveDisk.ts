@@ -1,5 +1,5 @@
 import type { Equipment } from "./Equipment"
-import type { DriveDiskProperty, ValueProperty } from "./Property"
+import { Property } from "./Property"
 
 export type DriveDiskSet = {
     Count: number,
@@ -16,6 +16,6 @@ export interface DriveDisk extends Equipment {
     Rarity: number
     Level: number
     BreakLevel: number
-    MainStat: ValueProperty
-    SubStats: DriveDiskProperty[]
+    MainStat: Property
+    SubStats: Property[]
 }

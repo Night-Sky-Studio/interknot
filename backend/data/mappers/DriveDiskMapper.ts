@@ -1,5 +1,6 @@
 import type { EquippedList } from "../../api/EnkaResponse"
 import type { DriveDisk, DriveDiskSet } from "../types/DriveDisk"
+import { Property } from "../types/Property"
 import { getEquipment } from "./EquipmentMapper"
 import { mapDriveDiskProperty } from "./PropertyMapper"
 import { getEquipmentLevelStatMultiplier } from "./RawDataTablesMapper"
@@ -44,15 +45,7 @@ export function mapDriveDisk(raw: EquippedList): DriveDisk {
         IsTrash: entry.IsTrash,
         Level: entry.Level,
         BreakLevel: entry.BreakLevel,
-        MainStat: {
-            ...mainStatProp,
-            Value: mainStatValue
-        },
-        SubStats: entry.RandomPropertyList.map(p => {
-            return {
-                ...mapDriveDiskProperty(p),
-                Value: p.PropertyValue
-            }
-        })
+        MainStat: new Property(mainStatProp.Id, mainStatValue) ,
+        SubStats: entry.RandomPropertyList.map(mapDriveDiskProperty)
     }
 }

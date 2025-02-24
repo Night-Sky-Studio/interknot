@@ -3,7 +3,7 @@ import type { Weapon as WeaponData } from "../../api/EnkaResponse"
 import { isNullOrUndefined, type Nullable } from "../../Nullable"
 import weapons from "../raw/weapons.json"
 import { getLocalString } from "../types/Localization"
-import { ValueProperty } from "../types/Property"
+import { Property } from "../types/Property"
 import type { BaseWeapon, Weapon } from "../types/Weapon"
 import { mapValueProperty } from "./PropertyMapper"
 import { getWeaponMainStatMultiplier, getWeaponSecondaryStatMultiplier, getWeaponStarMultiplier } from "./RawDataTablesMapper"
@@ -49,8 +49,8 @@ export function mapWeaponData(data: Nullable<WeaponData>): Nullable<Weapon> {
 
     return {
         ...raw,
-        MainStat: ValueProperty.fromProp(raw.MainStat, mainStatValue),
-        SecondaryStat: ValueProperty.fromProp(raw.SecondaryStat, secStatValue),
+        MainStat: new Property(raw.MainStat.Id, mainStatValue),
+        SecondaryStat: new Property(raw.SecondaryStat.Id, secStatValue),
         Uid: data.Uid,
         Level: data.Level,
         BreakLevel: data.BreakLevel,

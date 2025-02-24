@@ -6,7 +6,7 @@ import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon } from "../../backend/data/types/Weapon"
-import { ValueProperty } from "../../backend/data/types/Property"
+import { Property } from "../../backend/data/types/Property"
 import React from "react"
 import { DriveDisk } from "../../backend/data/types/DriveDisk"
 
@@ -66,11 +66,11 @@ interface ICharacterCardProps {
 }
 
 function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
-    const WeaponStat = ({ stat }: { stat: ValueProperty }) => {
+    const WeaponStat = ({ stat }: { stat: Property }) => {
         return (
             <Group gap="6px" className="cc-weapon-stat">
                 <ZenlessIcon id={stat.Id} size={12} />
-                <Title order={6} fz="9px">{ValueProperty.format(stat.Format, stat.Value, true)}</Title>
+                <Title order={6} fz="9px">{stat.formatted}</Title>
             </Group>
         )
     }
@@ -106,12 +106,12 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
     )
 }
 
-function Stat({ stat }: { stat: ValueProperty }): React.ReactElement {
+function Stat({ stat }: { stat: Property }): React.ReactElement {
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} fz="9px" ml="4px">{stat.Name}</Title>
-            <Title order={6} fz="9px">{ValueProperty.format(stat.Format, stat.Value, true)}</Title>
+            <Title order={6} fz="9px" ml="4px">{stat.simpleNameLocalized}</Title>
+            <Title order={6} fz="9px">{stat.formatted}</Title>
         </div>
     )
 }
@@ -169,7 +169,7 @@ function DriveDisc({ disc }: { disc: DriveDisk }) {
                     <Title order={6} fz="8px">Lv. {disc.Level}</Title>
                     <Group gap="2px" wrap="nowrap">
                         <ZenlessIcon id={disc.MainStat.Id} size="18px"/>
-                        <Title order={6} fz="14px">{ValueProperty.format(disc.MainStat.Format, disc.MainStat.Value, true)}</Title>
+                        <Title order={6} fz="14px">{disc.MainStat.formatted}</Title>
                     </Group>
                     <Title order={6} fz="8px">CV 0.0</Title>
                 </Stack>
