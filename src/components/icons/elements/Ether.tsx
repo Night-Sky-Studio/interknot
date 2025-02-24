@@ -13,7 +13,7 @@ const SvgEther = (props: SVGProps<SVGSVGElement>) => {
                     y2={367.587}
                     gradientTransform="translate(-2.93 -294.054)scale(.83374)"
                     gradientUnits="userSpaceOnUse"
-                    href="#ether_svg__a_${id}"
+                    href={`#ether_svg__a_${id}`}
                 />
                 <linearGradient id={`ether_svg__a_${id}`}>
                     <stop

@@ -13,7 +13,7 @@ const SvgFire = (props: SVGProps<SVGSVGElement>) => {
                     y2={315.03}
                     gradientTransform="translate(-4.909 -294.668)scale(.9776)"
                     gradientUnits="userSpaceOnUse"
-                    href="#fire_svg__a"
+                    href={`#fire_svg__a_${id}`}
                 />
                 <linearGradient id={`fire_svg__a_${id}`}>
                     <stop
