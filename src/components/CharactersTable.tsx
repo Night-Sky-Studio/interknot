@@ -11,6 +11,28 @@ interface ICharactersTableProps {
     characters: Character[]
 }
 
+export const cvColor = (critValue: number) => {
+    const theme = useMantineTheme()
+    switch (true) {
+        case critValue >= 200: return theme.colors.red[7]
+        case critValue >= 180: return theme.colors.pink[7]
+        case critValue >= 170: return theme.colors.grape[7]
+        case critValue >= 160: return theme.colors.violet[6]
+        case critValue >= 150: return theme.colors.blue[5]
+        default: return undefined
+    }
+}
+export const cvWeight = (critValue: number) => {
+    switch (true) {
+        case critValue >= 200: return 800
+        case critValue >= 180: return 700
+        case critValue >= 170: return 600
+        case critValue >= 160: return 500
+        case critValue >= 150: return 400
+        default: return undefined
+    }
+}
+
 export default function CharactersTable({ uid, username, characters }: ICharactersTableProps): React.ReactElement {
     const theme = useMantineTheme()
     // const [sortMode, setSortMode] = useState(0)
@@ -58,27 +80,6 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
         return <div className="chip mindscape-chip" style={{padding: `0.125rem ${(level / 5 + 1) * 1}rem`}} data-level={level}>
             <Text fw={700}>{level}</Text>
         </div>
-    }
-
-    const cvColor = (critValue: number) => {
-        switch (true) {
-            case critValue >= 200: return theme.colors.red[7]
-            case critValue >= 180: return theme.colors.pink[7]
-            case critValue >= 170: return theme.colors.grape[7]
-            case critValue >= 160: return theme.colors.violet[6]
-            case critValue >= 150: return theme.colors.blue[5]
-            default: return undefined
-        }
-    }
-    const cvWeight = (critValue: number) => {
-        switch (true) {
-            case critValue >= 200: return 800
-            case critValue >= 180: return 700
-            case critValue >= 170: return 600
-            case critValue >= 160: return 500
-            case critValue >= 150: return 400
-            default: return undefined
-        }
     }
 
     return (

@@ -1,4 +1,4 @@
-import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, useMantineTheme } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, Text, useMantineTheme } from "@mantine/core"
 import { Character, Talents as CharacterTalents } from "../../backend/data/types/Character"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "./icons/Icons"
@@ -8,7 +8,8 @@ import * as CoreSkillIcons from "./icons/core"
 import { Weapon } from "../../backend/data/types/Weapon"
 import { Property } from "../../backend/data/types/Property"
 import React from "react"
-import { DriveDisk } from "../../backend/data/types/DriveDisk"
+import { DriveDisk, DriveDiskSet } from "../../backend/data/types/DriveDisk"
+import { cvColor, cvWeight } from "./CharactersTable"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -218,6 +219,16 @@ function DriveDisc({ disc }: { disc: DriveDisk }): React.ReactElement {
     )
 }
 
+function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
+    return (
+        <div className="cc-disc-set">
+            <Image h="18px" src={set.Set.IconUrl} alt={set.Set.Name} />
+            <Title order={6} fz="8px">{set.Set.Name}</Title>
+            <Title order={6} fz="8px">x{set.Count}</Title>
+        </div>
+    )
+}
+
 export default function CharacterCard({ uid, username, character }: ICharacterCardProps): React.ReactElement {
     return (
         <Card className="character-card" withBorder shadow="xs" m="lg" p="0px"
@@ -234,6 +245,15 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                             level={character.Level} msLevel={character.MindscapeLevel} />
                         <WeaponEngine weapon={character.Weapon ?? undefined}/>
                     </Group>
+                    <Stack gap="0px" className="cc-info-user">
+                        <Text fz="8px">{uid}</Text>
+                        <Text fz="14px" fw={600} mt="-2px">{username}</Text>
+                        <Text fz="12px" mt="-4px" component="span">
+                            CV <Text component="span" inherit fw={cvWeight(character.CritValue)} c={cvColor(character.CritValue)}>
+                                {character.CritValue}
+                            </Text>
+                        </Text>
+                    </Stack>
                 </div>
                 <div className="cc-vignette" />
                 <div className="cc-cell cc-stats">
@@ -246,6 +266,11 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                     <Stack gap="6px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
                         <Talents talentLevels={character.SkillLevels} />
+                    </Stack>
+                    <Stack gap="4px" justify="flex-end">
+                        {
+                            character.DriveDisksSet.map(dds => <DriveDiscSet key={dds.Set.Id} set={dds} />)
+                        }
                     </Stack>
                 </div>
 
