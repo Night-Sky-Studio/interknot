@@ -1,7 +1,7 @@
 {
   "name": "inter-knot",
   "private": true,
-  "version": "0.1.0-beta",
+  "version": "0.1.1-beta",
   "type": "module",
   "scripts": {
     "update": "bun src/enka/data/update.ts --update",
