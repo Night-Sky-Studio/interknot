@@ -3,7 +3,7 @@ import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } fr
 import "./styles/CharactersTable.css"
 import CharacterCard from "./CharacterCard"
 import { memo, useEffect, useState } from "react"
-import { useDebouncedValue, useDisclosure, useResizeObserver, useThrottledValue } from "@mantine/hooks"
+import { useDisclosure, useResizeObserver } from "@mantine/hooks"
 
 interface ICharactersTableProps {
     uid: number
