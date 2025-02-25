@@ -89,13 +89,17 @@ function getCharacterBaseProps(avatar: Avatar, level: number, promLevel: number,
 function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Weapon | null): Property[] {
     // Get the base props
     const baseProps = getCharacterBaseProps(raw, char.Level, char.PromotionLevel, char.CoreSkillEnhancement)
-
+    const mainPropIdx = baseProps.findIndex(p => p.Id === weapon?.MainStat.Id)
+    const secPropIdx = baseProps.findIndex(p => [p.Id + 1, p.Id + 2].indexOf(weapon?.SecondaryStat.Id ?? -1) !== -1)
+    
     // Add weapon main stat to the base props
-    if (weapon) {
-        const idx = baseProps.findIndex(p => p.Id === weapon.MainStat.Id)
-        if (idx !== -1) {
-            baseProps[idx].Value += weapon.MainStat.Value
-        }
+    if (weapon && mainPropIdx !== -1) {
+        baseProps[mainPropIdx].Value += weapon.MainStat.Value
+    }
+
+    let secProp: Property | undefined
+    if (weapon && secPropIdx !== -1) {
+        secProp = new Property(baseProps[secPropIdx].Id, baseProps[secPropIdx].Value)
     }
 
     // Apply Drive Disk stats
@@ -106,10 +110,13 @@ function mapStats(raw: Avatar, char: AvatarList, disks: DriveDisk[], weapon: Wea
 
     // add secondary weapon stat
     // id type is different from main stat
-    if (weapon) {
-        const idx = baseProps.findIndex(p => [p.Id + 1, p.Id + 2].indexOf(weapon.SecondaryStat.Id) !== -1)
-        if (idx !== -1) {
-            baseProps[idx].Value += weapon.SecondaryStat.Value
+    if (weapon && secProp && secPropIdx !== -1) {
+        if (baseProps[secPropIdx].FormatType === PropertyType.Delta && weapon.SecondaryStat.FormatType === PropertyType.Ratio) {
+            baseProps[secPropIdx].Value += secProp.Value * (weapon.SecondaryStat.Value / 100 / 100) 
+        } else if (baseProps[secPropIdx].simpleName.includes("Sp") && weapon.SecondaryStat.simpleName.includes("Sp")) {
+            baseProps[secPropIdx].Value += secProp.Value * (weapon.SecondaryStat.Value / 100 / 100)
+        } else {
+            baseProps[secPropIdx].Value += weapon.SecondaryStat.Value
         }
     }
 

@@ -10,7 +10,7 @@ app.use(cors({
 }))
 
 app.get("/", (_, res) => {
-    res.type("text/plain").send("Inter-knot data server. Version 0.1.0-beta")
+    res.type("text/plain").send("Inter-knot data server. Version 0.1.1-beta")
 })
 
 app.get("/profile/:uid", (req, res) => {

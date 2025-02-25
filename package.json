@@ -1,7 +1,7 @@
 {
-  "name": "vite-min-template",
+  "name": "inter-knot",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.1-beta",
   "type": "module",
   "scripts": {
     "update": "bun src/enka/data/update.ts --update",
@@ -37,5 +37,5 @@
     "typescript": "^5.7.3",
     "vite": "^6.1.0"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "bun@1.2.3"
 }
