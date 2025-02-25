@@ -2,8 +2,8 @@ import { Character } from "../../backend/data/types/Character"
 import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import CharacterCard from "./CharacterCard"
-import { useEffect, useState } from "react"
-import { useResizeObserver } from "@mantine/hooks"
+import { memo, useEffect, useState } from "react"
+import { useDebouncedValue, useDisclosure, useResizeObserver, useThrottledValue } from "@mantine/hooks"
 
 interface ICharactersTableProps {
     uid: number
@@ -46,12 +46,16 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
         </div>
     }
 
+    const MemoCard = memo(CharacterCard)
+
     const CharacterRow = ({ c, i }: { c: Character, i: number }) => {
-        const [openedId, setOpenedId] = useState<number | null>(null)
+        // const [openedId, setOpenedId] = useState<number | null>(null)
         const CARD_ASPECT_RATIO = 21 / 43
         const [cardScale, setCardScale] = useState(1)
         const [cardContainerHeight, setCardContainerHeight] = useState(860 * CARD_ASPECT_RATIO)
         const [cardContainerRef, cardContainerRect] = useResizeObserver()
+
+        const [isCardVisible, { toggle }] = useDisclosure(false)
 
         useEffect(() => {
             if (cardContainerRect.width) {
@@ -63,7 +67,10 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
         
         return (
             <>
-                <Table.Tr onClick={() => setOpenedId(openedId === c.Id ? null : c.Id)}>
+                <Table.Tr onClick={() => {
+                    // setOpenedId(openedId === c.Id ? null : c.Id)
+                    toggle()
+                }}>
                     <Table.Td>{i + 1}</Table.Td>
                     <Table.Td>
                         <Group gap="sm">
@@ -114,12 +121,12 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                     {/* Add character stats */}
                 </Table.Tr>
                 <Table.Tr className="character-card-row"
-                    style={{ borderBottomWidth: openedId === c.Id ? "1px" : "0" }}>
+                    style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
                     <Table.Td colSpan={6} p="0" ref={cardContainerRef}>
-                        <Collapse in={openedId === c.Id} style={{ height: `${cardContainerHeight}px` }}>
+                        <Collapse in={isCardVisible} style={{ height: `${cardContainerHeight}px` }}>
                             <Center style={{ "--scale": cardScale }}>
-                                {openedId === c.Id &&
-                                    <CharacterCard
+                                {isCardVisible &&
+                                    <MemoCard
                                         uid={uid} username={username}
                                         character={c} />
                                 }
