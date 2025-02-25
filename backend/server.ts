@@ -24,6 +24,19 @@ app.get("/profile/:uid", (req, res) => {
     }
 })
 
+app.get("/profile/:uid/character/:cid", (req, res) => {
+    const { uid, cid } = req.params
+    const character = Users
+        .find(u => u.Uid.toString() === uid)?.Characters
+        .find(c => c.Id.toString() === cid)
+
+    if (character) {
+        res.json(character)
+    } else {
+        res.status(404).json({ status: 404, message: `Character ${cid} not found in user ${uid}` })
+    }
+})
+
 app.get("/profiles", (req, res) => {
     const { query, listAll } = req.query
 

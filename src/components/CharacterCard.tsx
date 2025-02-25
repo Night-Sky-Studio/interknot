@@ -9,7 +9,7 @@ import { Weapon } from "../../backend/data/types/Weapon"
 import { Property } from "../../backend/data/types/Property"
 import React from "react"
 import { DriveDisk, DriveDiskSet } from "../../backend/data/types/DriveDisk"
-import { cvColor, cvWeight } from "./CharactersTable"
+import { cvWeight } from "./CharactersTable"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -249,7 +249,7 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                         <Text fz="8px">{uid}</Text>
                         <Text fz="14px" fw={600} mt="-2px">{username}</Text>
                         <Text fz="12px" mt="-4px" component="span">
-                            CV <Text component="span" inherit fw={cvWeight(character.CritValue)} c={cvColor(character.CritValue)}>
+                            CV <Text component="span" inherit fw={cvWeight(character.CritValue)}>
                                 {character.CritValue}
                             </Text>
                         </Text>

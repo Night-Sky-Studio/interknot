@@ -24,7 +24,7 @@ export default function ProfilePage(): React.ReactElement {
     }, [userState.value])
 
     return (
-        <Stack>
+        <Stack style={{ minHeight: "150vh" }}>
             {userState.value && <>
                 <UserHeader user={userState.value} />
                 <CharactersTable uid={userState.value.Uid} username={userState.value.Information.Nickname} 
