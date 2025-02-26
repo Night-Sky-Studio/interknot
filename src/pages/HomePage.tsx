@@ -1,7 +1,7 @@
 import { Title, Text, UnstyledButton, Stack } from "@mantine/core"
 import React, { useState } from "react"
 import PlayerSearch from "../components/PlayerSearch"
-import UserHeader from "../components/UserHeader"
+import { UserHeaderMemorized } from "../components/UserHeader"
 import "./styles/HomePage.css"
 import { useNavigate } from "react-router"
 import { Profile } from "../../backend/data/types/Profile"
@@ -25,11 +25,11 @@ export default function HomePage(): React.ReactElement {
                     {
                         users?.map(u => {
                             return (
-                                <UnstyledButton key={u.Uid} className="profile-button"
+                                <UnstyledButton key={u.Information.Uid} className="profile-button"
                                     onClick={() => {
-                                        navigate(`user/${u.Uid}`)
+                                        navigate(`user/${u.Information.Uid}`)
                                     }}>
-                                    <UserHeader user={u} />
+                                    <UserHeaderMemorized user={u.Information} />
                                 </UnstyledButton>
                             )
                         })

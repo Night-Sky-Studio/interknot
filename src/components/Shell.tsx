@@ -90,13 +90,13 @@ export default function Shell(): React.ReactElement {
                             <Tabs.List className="list">
                                 {
                                     users.map(user => {
-                                        return <Tabs.Tab key={user.Uid} component="div"
-                                            value={user.Uid.toString()}
+                                        return <Tabs.Tab key={user.Information.Uid} component="div"
+                                            value={user.Information.Uid.toString()}
                                             className="tab"
                                             rightSection={
                                                 <ActionIcon variant="transparent" onClick={(event) => {
                                                     event.stopPropagation()
-                                                    setSavedUsers(users.filter(u => u.Uid !== user.Uid))
+                                                    setSavedUsers(users.filter(u => u.Information.Uid !== user.Information.Uid))
                                                 }}>
                                                     <IconX />
                                                 </ActionIcon>

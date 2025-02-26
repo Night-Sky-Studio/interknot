@@ -9,7 +9,6 @@ import { Weapon } from "../../backend/data/types/Weapon"
 import { Property } from "../../backend/data/types/Property"
 import React from "react"
 import { DriveDisk, DriveDiskSet } from "../../backend/data/types/DriveDisk"
-import { cvWeight } from "./CharactersTable"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -245,15 +244,6 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                             level={character.Level} msLevel={character.MindscapeLevel} />
                         <WeaponEngine weapon={character.Weapon ?? undefined}/>
                     </Group>
-                    <Stack gap="0px" className="cc-info-user">
-                        <Text fz="8px">{uid}</Text>
-                        <Text fz="14px" fw={600} mt="-2px">{username}</Text>
-                        <Text fz="12px" mt="-4px" component="span">
-                            CV <Text component="span" inherit fw={cvWeight(character.CritValue)}>
-                                {character.CritValue}
-                            </Text>
-                        </Text>
-                    </Stack>
                 </div>
                 <div className="cc-vignette" />
                 <div className="cc-cell cc-stats">
@@ -261,7 +251,6 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                         character.BaseStats.map(s => <Stat key={s.Id ^ character.Id} stat={s} />)
                     }
                 </div>
-
                 <div className="cc-cell cc-skills">
                     <Stack gap="6px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
@@ -273,13 +262,21 @@ export default function CharacterCard({ uid, username, character }: ICharacterCa
                         }
                     </Stack>
                 </div>
-
                 <div className="cc-discs">
                     <div className="cc-discs-grid">
                         {
                             character.DriveDisks.map(d => <DriveDisc key={d.Uid} disc={d} />)
                         }
                     </div>
+                </div>
+                <div className="cc-user">
+                    <Stack gap="0px" className="cc-info-user">
+                        <Text fz="8px">{uid}</Text>
+                        <Text fz="12px" fw={600} mt="-2px">{username}</Text>
+                    </Stack>
+                    <Title className="cc-cv" fz="12px" mt="-4px" component="span">
+                        CV {character.CritValue}
+                    </Title>
                 </div>
             </div>
         </Card>
