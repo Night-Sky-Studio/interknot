@@ -10,13 +10,17 @@ import { useLocalStorage } from "@mantine/hooks"
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
 
-    const [savedUsers, setSavedUsers] = useLocalStorage<Profile[]>({ key: "savedUsers" })
+    const [savedUsers, _] = useLocalStorage<Profile[]>({ key: "savedUsers", defaultValue: [] })
     const [users, setUsers] = useState<Profile[]>(savedUsers ?? [])
 
     useEffect(() => {
         // old version fix
+        if ((savedUsers as any) === undefined) {
+            setUsers([])
+        }
+
         if (savedUsers.some(u => (u as any).Uid !== undefined)) {
-            setSavedUsers([])
+            setUsers([])
         }
     }, [savedUsers])
 
