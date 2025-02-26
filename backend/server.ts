@@ -15,7 +15,7 @@ app.get("/", (_, res) => {
 
 app.get("/profile/:uid", (req, res) => {
     const { uid } = req.params
-    const user = Users.find(u => u.Uid.toString() === uid)
+    const user = Users.find(u => u.Information.Uid.toString() === uid)
 
     if (user) {
         res.json(user)
@@ -27,7 +27,7 @@ app.get("/profile/:uid", (req, res) => {
 app.get("/profile/:uid/character/:cid", (req, res) => {
     const { uid, cid } = req.params
     const character = Users
-        .find(u => u.Uid.toString() === uid)?.Characters
+        .find(u => u.Information.Uid.toString() === uid)?.Characters
         .find(c => c.Id.toString() === cid)
 
     if (character) {
@@ -41,11 +41,11 @@ app.get("/profiles", (req, res) => {
     const { query, listAll } = req.query
 
     if (listAll) {
-        res.json(Users.map(u => u.Uid))
+        res.json(Users.map(u => u.Information.Uid))
         return
     }
 
-    let users = Users.filter(u => u.Information.Nickname.includes(query as string) || u.Uid.toString().includes(query as string))
+    let users = Users.filter(u => u.Information.Nickname.includes(query as string) || u.Information.Uid.toString().includes(query as string))
     res.json(users)
 })
 
