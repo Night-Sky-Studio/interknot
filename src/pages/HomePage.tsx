@@ -1,5 +1,5 @@
 import { Title, Text, UnstyledButton, Stack } from "@mantine/core"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import PlayerSearch from "../components/PlayerSearch"
 import { UserHeaderMemorized } from "../components/UserHeader"
 import "./styles/HomePage.css"
@@ -12,17 +12,6 @@ export default function HomePage(): React.ReactElement {
 
     const [savedUsers, _] = useLocalStorage<Profile[]>({ key: "savedUsers", defaultValue: [] })
     const [users, setUsers] = useState<Profile[]>(savedUsers ?? [])
-
-    useEffect(() => {
-        // old version fix
-        if ((savedUsers as any) === undefined) {
-            setUsers([])
-        }
-
-        if (savedUsers.some(u => (u as any).Uid !== undefined)) {
-            setUsers([])
-        }
-    }, [savedUsers])
 
     return (
         <section>

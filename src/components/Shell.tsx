@@ -17,17 +17,6 @@ export default function Shell(): React.ReactElement {
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
 
     useEffect(() => {
-        // old version fix
-        if ((users as any) === undefined) {
-            setSavedUsers([])
-        }
-
-        if (users.some(u => (u as any).Uid !== undefined)) {
-            setSavedUsers([])
-        }
-    }, [users])
-
-    useEffect(() => {
         setSelectedUser(uid ?? "")
     }, [uid])
 
@@ -101,6 +90,10 @@ export default function Shell(): React.ReactElement {
                             <Tabs.List className="list">
                                 {
                                     users.map(user => {
+                                        if ((user as any).Uid !== undefined) {
+                                            setSavedUsers([])
+                                            return
+                                        }
                                         return <Tabs.Tab key={user.Information.Uid} component="div"
                                             value={user.Information.Uid.toString()}
                                             className="tab"
