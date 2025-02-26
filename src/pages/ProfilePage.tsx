@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import UserHeader from "../components/UserHeader"
+import { UserHeaderMemorized } from "../components/UserHeader"
 import { Stack } from "@mantine/core"
 import { useLocalStorage } from "@mantine/hooks"
 import CharactersTable from "../components/CharactersTable"
@@ -18,7 +18,7 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid])
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
+        if (!savedUsers?.find(u => u.Information.Uid.toString() === uid) && userState.value) { 
             setSavedUsers([...savedUsers ?? [], userState.value])
         }
     }, [userState.value])
@@ -26,8 +26,8 @@ export default function ProfilePage(): React.ReactElement {
     return (
         <Stack style={{ minHeight: "150vh" }}>
             {userState.value && <>
-                <UserHeader user={userState.value} />
-                <CharactersTable uid={userState.value.Uid} username={userState.value.Information.Nickname} 
+                <UserHeaderMemorized user={userState.value.Information} />
+                <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
                     characters={userState.value.Characters} />
             </>}
         </Stack>

@@ -4,10 +4,28 @@
     }
 }
 
-.background {
-    /* box-shadow: inset 0 0 16px black; */
+.user-data {
+    padding: 16px;
+    position: relative;
 }
-
-.card-text {
-    /* mix-blend-mode: difference; */
+.user-achievements {
+    position: absolute;
+    right: 16px;
+    color: white;
+}
+.namecard-title {
+    height: 24px;
+    border-radius: 12px;
+    padding: 2px 8px;
+    background-color: var(--mantine-color-dark-8);
+}
+.namecard-title > h6 {
+    color: transparent;
+    background: linear-gradient(0deg, var(--color-a), var(--color-b));
+    background-clip: text;
+}
+.user-info {
+    background-color: var(--mantine-color-dark-8);
+    padding: 2px 8px;
+    border-radius: 8px;
 }
