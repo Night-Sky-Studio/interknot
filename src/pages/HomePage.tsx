@@ -4,7 +4,7 @@ import PlayerSearch from "../components/PlayerSearch"
 import { UserHeaderMemorized } from "../components/UserHeader"
 import "./styles/HomePage.css"
 import { useNavigate } from "react-router"
-import { Profile } from "../../backend/data/types/Profile"
+import { Profile } from "@interknot/types"
 import { useLocalStorage } from "@mantine/hooks"
 
 export default function HomePage(): React.ReactElement {

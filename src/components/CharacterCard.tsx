@@ -1,14 +1,13 @@
 import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, Text, useMantineTheme } from "@mantine/core"
-import { Character, Talents as CharacterTalents } from "../../backend/data/types/Character"
+import { Character, Talents as CharacterTalents } from "@interknot/types"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "./icons/Icons"
 import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
-import { Weapon } from "../../backend/data/types/Weapon"
-import { Property } from "../../backend/data/types/Property"
+import { Weapon, Property } from "@interknot/types"
 import React from "react"
-import { DriveDisk, DriveDiskSet } from "../../backend/data/types/DriveDisk"
+import { type DriveDisc, DriveDiskSet } from "@interknot/types"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -179,7 +178,7 @@ function SubStat({ stat }: { stat: Property }): React.ReactElement {
     )
 }
 
-function DriveDisc({ disc }: { disc: DriveDisk }): React.ReactElement {
+function DriveDisc({ disc }: { disc: DriveDisc }): React.ReactElement {
     const theme = useMantineTheme()
 
     const cvColor = (cv: number) => {
