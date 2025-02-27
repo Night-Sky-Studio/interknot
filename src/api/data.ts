@@ -1,5 +1,4 @@
-import { Profile } from "../../backend/data/types/Profile"
-import { Property } from "../../backend/data/types/Property";
+import { Profile, Property } from "@interknot/types"
 
 function url(t: { base: string, path?: string, query?: Record<string, string>[] }) {
     let e = ""
@@ -19,17 +18,17 @@ const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/
 // when converting from json
 function restoreProperties(obj: any): any {
     if (Array.isArray(obj)) {
-        return obj.map(restoreProperties); // Recursively process arrays
+        return obj.map(restoreProperties) // Recursively process arrays
     } else if (obj && typeof obj === "object") {
         if ("Id" in obj && "BaseValue" in obj && "Level" in obj) {
-            return new Property(obj.Id, obj.BaseValue, obj.Level);
+            return new Property(obj.Id, obj.BaseValue, obj.Level)
         }
         // Recursively check properties of objects
         for (const key of Object.keys(obj)) {
-            obj[key] = restoreProperties(obj[key]);
+            obj[key] = restoreProperties(obj[key])
         }
     }
-    return obj;
+    return obj
 }
 
 export async function searchUsers(query: string) : Promise<Profile[]> {

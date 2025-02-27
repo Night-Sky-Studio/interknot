@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from "react"
-import { ProfileInfo } from "../../backend/data/types/Profile"
+import { ProfileInfo } from "@interknot/types"
 import { 
     BackgroundImage, 
     Card, 

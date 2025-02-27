@@ -4,7 +4,7 @@ import { Stack } from "@mantine/core"
 import { useLocalStorage } from "@mantine/hooks"
 import CharactersTable from "../components/CharactersTable"
 import { useEffect } from "react"
-import { Profile } from "../../backend/data/types/Profile"
+import { Profile } from "@interknot/types"
 import { useAsync } from "react-use"
 import { getUser } from "../api/data"
 

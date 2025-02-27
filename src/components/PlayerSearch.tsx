@@ -1,7 +1,7 @@
 import { Card, Center, CloseButton, TextInput, Title, Text, Anchor, Group, Alert, Image } from "@mantine/core"
 import { IconInfoCircle, IconSearch } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
-import { Profile } from "../../backend/data/types/Profile"
+import { Profile } from "@interknot/types"
 import { devListAllUsers, searchUsers } from "../api/data"
 import { useAsync } from "react-use"
 import { useDisclosure } from "@mantine/hooks"

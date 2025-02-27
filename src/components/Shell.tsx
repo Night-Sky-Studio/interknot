@@ -2,7 +2,7 @@ import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Imag
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
-import { Profile } from "../../backend/data/types/Profile"
+import { Profile } from "@interknot/types"
 import "./styles/Shell.pcss"
 import enkaImg from "../../assets/Enka.svg"
 import nssImg from "../../assets/nss.svg"

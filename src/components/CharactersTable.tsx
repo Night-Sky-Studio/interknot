@@ -1,4 +1,4 @@
-import { Character } from "../../backend/data/types/Character"
+import { Character } from "@interknot/types"
 import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import CharacterCard from "./CharacterCard"
