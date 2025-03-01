@@ -21,7 +21,7 @@ function restoreProperties(obj: any): any {
         return obj.map(restoreProperties) // Recursively process arrays
     } else if (obj && typeof obj === "object") {
         if ("Id" in obj && "BaseValue" in obj && "Level" in obj) {
-            return new Property(obj.Id, obj.BaseValue, obj.Level)
+            return new Property(obj.Id, obj.Name, obj.BaseValue, obj.Level)
         }
         // Recursively check properties of objects
         for (const key of Object.keys(obj)) {

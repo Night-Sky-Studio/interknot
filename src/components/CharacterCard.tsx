@@ -8,6 +8,7 @@ import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React from "react"
 import { type DriveDisc, DriveDiskSet } from "@interknot/types"
+import { getLocalString } from "../localization/Localization"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -49,7 +50,7 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
     return (
         <Stack gap="0">
             <Group gap="4px">
-                <Title order={3}>{name}</Title>
+                <Title order={3}>{getLocalString(name)}</Title>
                 <ZenlessIcon elementName={element} size={16} />
                 <ProfessionIcon name={profession} />
             </Group>
@@ -83,7 +84,7 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
                 </div>
                 {weapon && 
                     <Stack gap="4px" justify="center"> 
-                        <Title order={6} fz="11px">{weapon.Name}</Title>
+                        <Title order={6} fz="11px">{getLocalString(weapon.Name)}</Title>
                         <Group gap="16px" align="flex-end">
                             <Group gap="4px">
                                 <WeaponStat stat={weapon.MainStat} />
@@ -109,7 +110,7 @@ function Stat({ stat }: { stat: Property }): React.ReactElement {
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} fz="9px" ml="4px">{stat.simpleNameLocalized}</Title>
+            <Title order={6} fz="9px" ml="4px">{getLocalString(stat.simpleName)}</Title>
             <Title order={6} fz="9px">{stat.formatted}</Title>
         </div>
     )
@@ -221,7 +222,7 @@ function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
     return (
         <div className="cc-disc-set">
             <Image h="18px" src={set.Set.IconUrl} alt={set.Set.Name} />
-            <Title order={6} fz="8px">{set.Set.Name}</Title>
+            <Title order={6} fz="8px">{getLocalString(set.Set.Name)}</Title>
             <Title order={6} fz="8px">x{set.Count}</Title>
         </div>
     )

@@ -13,6 +13,7 @@ import {
     Loader
 } from "@mantine/core"
 import "./styles/UserHeader.css"
+import { getLocalString } from "../localization/Localization"
 
 interface IUserHeaderProps {
     user: ProfileInfo
@@ -81,7 +82,7 @@ export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
                     <Title order={2} style={{ color: textColor }}>{user.Nickname}</Title>
                     <Center className="namecard-title">
                         <Title className="namecard-title" order={6}>
-                            {user.Title.Text}
+                            {getLocalString(user.Title.Text)}
                         </Title>
                     </Center>
                     <Text style={{ color: textColor }}>{user.Description}</Text>
