@@ -4,6 +4,7 @@ import "./styles/CharactersTable.css"
 import CharacterCard from "./CharacterCard"
 import { memo, useEffect, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
+import { getLocalString } from "../localization/Localization"
 
 interface ICharactersTableProps {
     uid: number
@@ -75,7 +76,7 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                     <Table.Td>
                         <Group gap="sm">
                             <Image src={c.CircleIconUrl} h="32px" />
-                            <Text>{c.Name}</Text>
+                            <Text>{getLocalString(c.Name)}</Text>
                             <div className="chip">Lv. {c.Level}</div>
                         </Group>
                     </Table.Td>
