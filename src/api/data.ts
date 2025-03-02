@@ -1,16 +1,4 @@
-import { Profile, Property } from "@interknot/types"
-
-function url(t: { base: string, path?: string, query?: Record<string, string>[] }) {
-    let e = ""
-    if ((t.base && ((e += t.base), t.base.endsWith("/") || (e += "/")), t.path && (t.path.startsWith("/") ? (e += t.path.substring(1)) : (e += t.path), t.path.endsWith("/") && (e = e.substring(0, e.length - 1))), t.query)) {
-        for (let s of ((e += "?"), t.query)) {
-            let n = Object.entries(s)[0];
-            "" !== n[1] && (e += n[0] + "=" + n[1] + "&");
-        }
-        e = e.substring(0, e.length - 1);
-    }
-    return e
-}
+import { Profile, Property, url } from "@interknot/types"
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
@@ -42,10 +30,13 @@ export async function searchUsers(query: string) : Promise<Profile[]> {
     return await response.json()
 }
 
-export async function getUser(uid: number) : Promise<Profile | undefined> {
+export async function getUser(uid: number, update: boolean = false) : Promise<Profile | undefined> {
     let response = await fetch(url({
         base: dataUrl,
-        path: `profile/${uid}`
+        path: `profile/${uid}`,
+        query: [{
+            update: `${update}`
+        }]
     }))
     if (response.status !== 200) return undefined
 
@@ -54,13 +45,9 @@ export async function getUser(uid: number) : Promise<Profile | undefined> {
     return restoreProperties(json)
 }
 
-export async function devListAllUsers() : Promise<number[]> {
-    let response = await fetch(url({
-        base: dataUrl,
-        path: "profiles",
-        query: [{ listAll: "true" }]
+export async function pingDataServer() {
+    const response = await fetch(url({
+        base: dataUrl
     }))
-    if (response.status !== 200) return []
-
-    return await response.json()
+    return response
 }
