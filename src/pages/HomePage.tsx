@@ -4,7 +4,7 @@ import PlayerSearch from "../components/PlayerSearch"
 import { UserHeaderMemorized } from "../components/UserHeader"
 import "./styles/HomePage.css"
 import { useNavigate } from "react-router"
-import { Profile } from "@interknot/types"
+import { ProfileInfo } from "@interknot/types"
 import { useLocalStorage } from "@mantine/hooks"
 import { IconInfoCircle } from "@tabler/icons-react"
 
@@ -12,8 +12,8 @@ export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
 
     const [enkaAlertDismissed, setEnkaAlertDismissed] = useLocalStorage({ key: "enkaAlertDismissed", defaultValue: false })
-    const [savedUsers, _] = useLocalStorage<Profile[]>({ key: "savedUsers", defaultValue: [] })
-    const [users, setUsers] = useState<Profile[]>(savedUsers ?? [])
+    const [savedUsers, _] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
+    const [users, setUsers] = useState<ProfileInfo[]>(savedUsers ?? [])
 
     return (
         <section>
@@ -40,11 +40,11 @@ export default function HomePage(): React.ReactElement {
                     {
                         users?.map(u => {
                             return (
-                                <UnstyledButton key={u.Information.Uid} className="profile-button"
+                                <UnstyledButton key={u.Uid} className="profile-button"
                                     onClick={() => {
-                                        navigate(`user/${u.Information.Uid}`)
+                                        navigate(`user/${u.Uid}`)
                                     }}>
-                                    <UserHeaderMemorized user={u.Information} />
+                                    <UserHeaderMemorized user={u} />
                                 </UnstyledButton>
                             )
                         })

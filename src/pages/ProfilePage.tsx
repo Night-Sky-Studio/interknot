@@ -4,7 +4,7 @@ import { ActionIcon, Button, Group, Stack } from "@mantine/core"
 import { useLocalStorage } from "@mantine/hooks"
 import CharactersTable from "../components/CharactersTable"
 import { useEffect, useState } from "react"
-import { Profile } from "@interknot/types"
+import { ProfileInfo } from "@interknot/types"
 import { useAsyncRetry } from "react-use"
 import { getUser } from "../api/data"
 import { IconReload } from "@tabler/icons-react"
@@ -14,15 +14,15 @@ export default function ProfilePage(): React.ReactElement {
     let { uid } = useParams()
 
     let [needsUpdate, setNeedsUpdate] = useState(false)
-    let [savedUsers, setSavedUsers] = useLocalStorage<Profile[]>({ key: "savedUsers" })
+    let [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers" })
 
     const userState = useAsyncRetry(async () => {
         return await getUser(Number(uid), needsUpdate)
     }, [uid])
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Information.Uid.toString() === uid) && userState.value) { 
-            setSavedUsers([...savedUsers ?? [], userState.value])
+        if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
+            setSavedUsers([...savedUsers ?? [], userState.value.Information])
         }
     }, [userState.value])
 

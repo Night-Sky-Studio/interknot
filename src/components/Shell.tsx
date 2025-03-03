@@ -2,7 +2,7 @@ import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Imag
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
-import { Profile } from "@interknot/types"
+import { ProfileInfo } from "@interknot/types"
 import "./styles/Shell.pcss"
 import enkaImg from "../../assets/Enka.svg"
 import nssImg from "../../assets/nss.svg"
@@ -13,7 +13,7 @@ export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
     const { uid } = useParams()
 
-    const [users, setSavedUsers] = useLocalStorage<Profile[]>({ key: "savedUsers", defaultValue: [] })
+    const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
 
     useEffect(() => {
@@ -90,22 +90,22 @@ export default function Shell(): React.ReactElement {
                             <Tabs.List className="list">
                                 {
                                     users.map(user => {
-                                        if ((user as any).Uid !== undefined) {
+                                        if ((user as any).Characters !== undefined) {
                                             setSavedUsers([])
                                             return
                                         }
-                                        return <Tabs.Tab key={user.Information.Uid} component="div"
-                                            value={user.Information.Uid.toString()}
+                                        return <Tabs.Tab key={user.Uid} component="div"
+                                            value={user.Uid.toString()}
                                             className="tab"
                                             rightSection={
                                                 <ActionIcon variant="transparent" onClick={(event) => {
                                                     event.stopPropagation()
-                                                    setSavedUsers(users.filter(u => u.Information.Uid !== user.Information.Uid))
+                                                    setSavedUsers(users.filter(u => u.Uid !== user.Uid))
                                                 }}>
                                                     <IconX />
                                                 </ActionIcon>
                                             }>
-                                            {user.Information.Nickname}
+                                            {user.Nickname}
                                         </Tabs.Tab>
                                     })
                                 }
