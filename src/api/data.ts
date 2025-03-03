@@ -1,4 +1,4 @@
-import { Profile, Property, url } from "@interknot/types"
+import { Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
@@ -19,7 +19,7 @@ function restoreProperties(obj: any): any {
     return obj
 }
 
-export async function searchUsers(query: string) : Promise<Profile[]> {
+export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
     let response = await fetch(url({
         base: dataUrl,
         path: "profiles",
