@@ -2,11 +2,15 @@ import "@mantine/core/styles.css"
 import { MantineProvider } from "@mantine/core"
 import theme from "./theme"
 import Shell from "./components/Shell"
-import { BrowserRouter, Route, Routes } from "react-router"
+import { BrowserRouter, Route, Routes, useParams } from "react-router"
 import ProfilePage from "./pages/ProfilePage"
 import HomePage from "./pages/HomePage"
 import ErrorPage from "./pages/ErrorPage"
 
+const ProfilePageWrapper = () => {
+    const { uid } = useParams()
+    return <ProfilePage key={uid} />
+}
 
 export default function App() {
     return (
@@ -16,7 +20,7 @@ export default function App() {
                     <Routes>
                         <Route element={<Shell />}>
                             <Route index element={<HomePage />} />
-                            <Route path="/user/:uid" element={<ProfilePage />} />
+                            <Route path="/user/:uid" element={<ProfilePageWrapper />} />
                             <Route path="404" element={<ErrorPage />}/>
                         </Route>
                     </Routes>
