@@ -48,7 +48,7 @@ export default function ProfilePage(): React.ReactElement {
                         {""}
                     </ActionIcon>
                 </Group>
-                <UserHeaderMemorized user={userState.value.Information} />
+                <UserHeaderMemorized user={userState.value.Information} showDescription />
                 <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
                     characters={userState.value.Characters} />
             </>}

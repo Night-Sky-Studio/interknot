@@ -13,6 +13,31 @@
     right: 16px;
     color: white;
 }
+.namecard-avatar {
+    outline: 2px solid #1A1D1E;
+}
+.namecard-nickname::before {
+    content: attr(title);
+    position: absolute;
+    left: 0;
+    z-index: -1;
+    text-shadow: 
+        0 0 1px black,
+        0 0 1px black,
+        0 0 1px black,
+        0 0 1px black,
+        0 0 1px black;
+}
+.namecard-nickname, .namecard-description {
+    position: relative;
+    overflow: visible;
+    color: transparent;
+    background: linear-gradient(0deg, #CECECE, #F7F7F7);
+    background-clip: text;
+}
+.namecard-nickname {
+    letter-spacing: -1px;
+}
 .namecard-title {
     height: 24px;
     border-radius: 12px;
@@ -21,11 +46,32 @@
 }
 .namecard-title > h6 {
     color: transparent;
-    background: linear-gradient(0deg, var(--color-a), var(--color-b));
+    background: linear-gradient(180deg, var(--color-a), var(--color-b));
     background-clip: text;
 }
+.namecard-medal {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.namecard-medal-level {
+    font-family: "zzz-jp", monospace !important;
+    letter-spacing: -1px;
+    color: white;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    /* voodoo abs positioned element centering hack  */
+    transform: translateX(-50%); 
+    padding: 0 16px;
+
+    background-color: var(--mantine-color-dark-9);
+    border-radius: var(--mantine-radius-sm);
+    box-shadow: 0 0 8px rgb(0 0 0 / 50%);
+}
 .user-info {
-    background-color: var(--mantine-color-dark-8);
+    background-color: var(--mantine-color-dark-9);
     padding: 2px 8px;
-    border-radius: 8px;
+    border-radius: var(--mantine-radius-sm);
+    box-shadow: 0 0 8px rgb(0 0 0 / 50%);
 }
