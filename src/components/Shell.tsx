@@ -8,6 +8,7 @@ import enkaImg from "../../assets/Enka.svg"
 import nssImg from "../../assets/nss.svg"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import grace from "../../assets/grace.webp"
+import InterknotLogo from "./icons/Interknot"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
@@ -66,7 +67,11 @@ export default function Shell(): React.ReactElement {
                             <Button variant="transparent" component={Title} onClick={() => {
                                 setSelectedUser("")
                                 navigate("/")
-                            }}>Inter-Knot</Button>
+                            }}><Group gap="8px">
+                                <InterknotLogo height="38px" /> 
+                                Inter-Knot
+                                </Group>
+                            </Button>
                             <Text c="dimmed" size="lg" fw={500}>β</Text>
                         </Group>
                         <Group gap="xs">
