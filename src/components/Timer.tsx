@@ -8,7 +8,7 @@ export interface ITimerProps {
     endTime: number
     elapsedTime?: number
     isEnabled: boolean
-    onTimerEnd: () => void
+    onTimerEnd?: () => void
 }
 
 const Timer: React.FC<ITimerProps> = ({ title, endTime, elapsedTime, isEnabled, onTimerEnd }) => {
@@ -48,7 +48,7 @@ const Timer: React.FC<ITimerProps> = ({ title, endTime, elapsedTime, isEnabled, 
 
     useEffect(() => {
         if (currentTime >= endTime) {
-            onTimerEnd()
+            onTimerEnd?.()
         }
     }, [currentTime, endTime])
 

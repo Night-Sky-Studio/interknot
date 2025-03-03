@@ -46,7 +46,7 @@
     background-color: var(--table-striped-color);
 }
 
-.mantine-Table-tr:not(.mantine-Table-thead > .mantine-Table-tr) {
+.mantine-Table-tr:not(.character-card-row):not(.mantine-Table-thead > .mantine-Table-tr) {
     cursor: pointer;
 }
 

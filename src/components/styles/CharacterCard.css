@@ -186,10 +186,13 @@
     align-items: center;
 }
 .cc-talent-level {
+    font-family: "zzz-jp", monospace !important;
+    /* letter-spacing: -1px; */
     color: white;
     position: absolute;
     bottom: -1px;
     left: 50%;
+    text-align: center;
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
     padding: 0 6px;

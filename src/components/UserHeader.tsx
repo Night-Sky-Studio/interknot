@@ -1,11 +1,10 @@
-import React, { memo, useEffect, useState } from "react"
-import { ProfileInfo } from "@interknot/types"
+import React, { memo } from "react"
+import { Medal, ProfileInfo } from "@interknot/types"
 import { 
     BackgroundImage, 
     Card, 
     Stack, 
     Title, 
-    Text, 
     Avatar, 
     Center,  
     Image as MantineImage,
@@ -16,49 +15,20 @@ import "./styles/UserHeader.css"
 import { getLocalString } from "../localization/Localization"
 
 interface IUserHeaderProps {
-    user: ProfileInfo
+    user: ProfileInfo,
+    showDescription?: boolean
 }
 
-export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
-    const [textColor, setTextColor] = useState("white")
-    const [imageSrc, setImageSrc] = useState<string | null>(null)
-
-    useEffect(() => {
-        setImageSrc(null)
-        const img = new Image()
-        img.crossOrigin = "Anonymous" // Ensure cross-origin access
-        img.src = user.NamecardUrl
-
-        img.onload = () => {
-            const canvas = document.createElement("canvas")
-            const ctx = canvas.getContext("2d")
-            if (!ctx) return
-
-            const SAMPLE_SIZE = 64
-            canvas.width = SAMPLE_SIZE // img.width
-            canvas.height = SAMPLE_SIZE // img.height
-            ctx.drawImage(img, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE)
-
-            const imageData = ctx.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE)
-            let totalLuminance = 0
-            const pixels = imageData.data
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                const r = pixels[i]
-                const g = pixels[i + 1]
-                const b = pixels[i + 2]
-                const luminance = 0.299 * r + 0.587 * g + 0.114 * b
-                totalLuminance += luminance
-            }
-
-            const avgLuminance = totalLuminance / (pixels.length / 4)
-            setTextColor(avgLuminance > 128 ? "black" : "white")
-
-            // Convert the canvas to a Blob URL and set it as the image source
-            setImageSrc(img.src)
-        }
-    }, [user.NamecardUrl])
-
+export function UserHeader({ user, showDescription }: IUserHeaderProps): React.ReactElement {
+    const Medal = ({ m }: { m: Medal }) => {
+        return (
+            <div className="namecard-medal">
+                <MantineImage src={m.MedalIcon.IconUrl} alt={getLocalString(m.MedalIcon.Name)} h="42px" />
+                <Title order={6} fz="10px" className="namecard-medal-level">{m.Value}</Title>
+            </div>
+        )
+    }
+    
     const UserData = () => {
         const userServer = (uid: string) => {
             switch (true) {
@@ -76,16 +46,15 @@ export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
 
         return (
             <Group className="user-data">         
-                <Avatar src={user.ProfilePictureUrl} size="xl" mr="sm" />
+                <Avatar className="namecard-avatar" src={user.ProfilePictureUrl} size="xl" mr="sm" />
                 <Stack align="flex-start" justify="flex-start" gap="4px"
                     style={{ "--color-a": `#${user.Title.ColorA}`, "--color-b": `#${user.Title.ColorB}` }}>
-                    <Title order={2} style={{ color: textColor }}>{user.Nickname}</Title>
+                    <Title order={2} className="namecard-nickname" title={user.Nickname}>{user.Nickname}</Title>
                     <Center className="namecard-title">
                         <Title className="namecard-title" order={6}>
                             {getLocalString(user.Title.Text)}
                         </Title>
                     </Center>
-                    <Text style={{ color: textColor }}>{user.Description}</Text>
                 </Stack>
                 <Stack className="user-achievements" align="flex-end" justify="flex-start" gap="4px">
                     <Group gap="4px">
@@ -96,7 +65,7 @@ export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
                         {
                             user.Medals.map(m => {
                                 return (
-                                    <MantineImage key={m.MedalType} src={m.MedalIcon.IconUrl} h="42px" />
+                                    <Medal key={m.MedalType} m={m} />
                                 )
                             })
                         }
@@ -111,13 +80,21 @@ export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
             <Card.Section style={{ 
                 display: "grid", 
                 gridTemplateColumns: "1fr", 
-                gridTemplateRows: "1fr" 
+                gridTemplateRows: "1fr",
+                borderRadius: "var(--mantine-radius-md)",
+                boxShadow: "0 0 32px rgba(0 0 0 / 50%)"
             }}>
-                    { imageSrc === null && <Center style={{ gridColumn: 1, gridRow: 1, zIndex: 0 }} ><Loader /></Center> }
-                    <BackgroundImage style={{ gridColumn: 1, gridRow: 1, zIndex: 1 }} src={imageSrc ?? ""} className="background">
+                    <Center style={{ gridColumn: 1, gridRow: 1, zIndex: 0 }} ><Loader /></Center>
+                    <BackgroundImage radius="md" style={{ gridColumn: 1, gridRow: 1, zIndex: 1 }} src={user.NamecardUrl} className="background">
                         <UserData />
                     </BackgroundImage>
             </Card.Section>
+            {(showDescription ?? false) && 
+                <Card.Section p="xs">
+                    <Title order={6} className="namecard-description" title={user.Description}>{user.Description}</Title>
+                </Card.Section>
+            }
+            
         </Card>
     )
 }

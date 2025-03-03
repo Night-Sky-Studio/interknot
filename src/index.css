@@ -10,6 +10,11 @@
     src: url("/assets/zzz.woff2");
 }
 
+@font-face {
+    font-family: "zzz-jp";
+    src: url("/assets/zzz-jp.woff2");
+}
+
 :root {
     font-synthesis: none;
     text-rendering: optimizeLegibility;
