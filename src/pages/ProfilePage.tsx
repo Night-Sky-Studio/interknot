@@ -27,31 +27,34 @@ export default function ProfilePage(): React.ReactElement {
         setNeedsUpdate(userState.value?.Ttl !== 0)
     }, [userState.value])
 
-    return (
-        <Stack>
-            {userState.loading && !userState.value &&
-                <Center><Loader /></Center>
-            }
-            {userState.value && <>
-                <Group justify="flex-end">
-                    <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
-                        setNeedsUpdate(true)
-                        userState.retry()
-                    }}>
-                        <Timer key={uid} title="Update" endTime={userState.value.Ttl} isEnabled={needsUpdate}
-                            onTimerEnd={() => {
-                                setNeedsUpdate(false)
-                            }} />
-                    </Button>
-                    <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
-                        component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
-                        {""}
-                    </ActionIcon>
-                </Group>
-                <UserHeaderMemorized user={userState.value.Information} showDescription />
-                <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
-                    characters={userState.value.Characters} />
-            </>}
-        </Stack>
+    return (<> 
+            <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
+            <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
+            <Stack>
+                {userState.loading && !userState.value &&
+                    <Center><Loader /></Center>
+                }
+                {userState.value && <>
+                    <Group justify="flex-end">
+                        <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
+                            setNeedsUpdate(true)
+                            userState.retry()
+                        }}>
+                            <Timer key={uid} title="Update" endTime={userState.value.Ttl} isEnabled={needsUpdate}
+                                onTimerEnd={() => {
+                                    setNeedsUpdate(false)
+                                }} />
+                        </Button>
+                        <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
+                            component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
+                            {""}
+                        </ActionIcon>
+                    </Group>
+                    <UserHeaderMemorized user={userState.value.Information} showDescription />
+                    <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
+                        characters={userState.value.Characters} />
+                </>}
+            </Stack>
+        </>
     )
 }
