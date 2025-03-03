@@ -1,10 +1,12 @@
 import { Character } from "@interknot/types"
-import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Center } from "@mantine/core"
+import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import CharacterCard from "./CharacterCard"
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
 import { getLocalString } from "../localization/Localization"
+import { IconDownload } from "@tabler/icons-react"
+import { toPng } from "html-to-image"
 
 interface ICharactersTableProps {
     uid: number
@@ -66,6 +68,8 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
             }
         }, [cardContainerRect.width])
         
+        const cardRef = useRef<HTMLDivElement | null>(null)
+
         return (
             <>
                 <Table.Tr onClick={() => {
@@ -124,14 +128,42 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                 <Table.Tr className="character-card-row"
                     style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
                     <Table.Td colSpan={6} p="0" ref={cardContainerRef}>
-                        <Collapse in={isCardVisible} style={{ height: `${cardContainerHeight}px` }}>
-                            <Center style={{ "--scale": cardScale }}>
-                                {isCardVisible &&
-                                    <MemoCard
-                                        uid={uid} username={username}
-                                        character={c} />
-                                }
-                            </Center>
+                        <Collapse in={isCardVisible}>
+                            <Stack gap="8px">
+                                <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
+                                    {isCardVisible &&
+                                        <MemoCard ref={cardRef}
+                                            uid={uid} username={username}
+                                            character={c} />
+                                    }
+                                </div>
+                                <Group m="xl">
+                                    <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
+                                        if (cardRef.current === null) return
+
+                                        const cardRect = cardRef.current.getBoundingClientRect()
+                                        const cs = cardScale
+                                        setCardScale(1.0)
+
+                                        const dataUrl = await toPng(cardRef.current, {
+                                            quality: 1.0,
+                                            canvasHeight: (cardRect.height) * 2,
+                                            canvasWidth: (cardRect.width) * 2,
+                                            backgroundColor: "transparent",
+                                            style: {
+                                                margin: "var(--mantine-spacing-lg)"
+                                            }
+                                        })
+
+                                        const link = document.createElement("a")
+                                        link.download = `${getLocalString(c.Name)}-${uid}.png`
+                                        link.href = dataUrl
+                                        link.click();
+
+                                        setCardScale(cs)
+                                    }}>Download Image</Button>
+                                </Group>
+                            </Stack>
                         </Collapse>
                     </Table.Td>
                 </Table.Tr>
@@ -154,10 +186,12 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                 </Table.Thead>
                 <Table.Tbody>
                     {
-                        characters.map((c, i) => <CharacterRow key={c.Id} c={c} i={i} />)
+                        characters.sort((c1, c2) => c2.CritValue - c1.CritValue).map((c, i) => <CharacterRow key={c.Id} c={c} i={i} />)
                     }
                 </Table.Tbody>
             </Table>
         </Card>
     )
 }
+
+export const CharactersTableMemorized = memo(CharactersTable)

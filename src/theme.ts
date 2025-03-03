@@ -24,6 +24,17 @@ const theme = createTheme({
             defaultProps: {
                 autoContrast: true,
                 radius: "xl"
+            },
+            styles: {
+                root: {
+                    overflow: "visible"
+                },
+                inner: {
+                    overflow: "visible"
+                },
+                label: {
+                    overflow: "visible"
+                }
             }
         }),
         Image: Image.extend({

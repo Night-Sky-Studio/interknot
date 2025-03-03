@@ -60,6 +60,7 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
 }
 
 interface ICharacterCardProps {
+    ref?: React.Ref<HTMLDivElement>
     uid: number
     username: string
     character: Character
@@ -228,9 +229,9 @@ function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
     )
 }
 
-export default function CharacterCard({ uid, username, character }: ICharacterCardProps): React.ReactElement {
+export default function CharacterCard({ ref, uid, username, character }: ICharacterCardProps): React.ReactElement {
     return (
-        <Card className="character-card" withBorder shadow="xs" m="lg" p="0px"
+        <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
             style={{ "--accent": character.Colors.Mindscape }}>
             <div className="cc-grid">
                 <div className="cc-image">

@@ -114,7 +114,7 @@ export function UserHeader({ user }: IUserHeaderProps): React.ReactElement {
                 gridTemplateRows: "1fr" 
             }}>
                     { imageSrc === null && <Center style={{ gridColumn: 1, gridRow: 1, zIndex: 0 }} ><Loader /></Center> }
-                    <BackgroundImage style={{ gridColumn: 1, gridRow: 1, zIndex: 100 }} src={imageSrc ?? ""} className="background">
+                    <BackgroundImage style={{ gridColumn: 1, gridRow: 1, zIndex: 1 }} src={imageSrc ?? ""} className="background">
                         <UserData />
                     </BackgroundImage>
             </Card.Section>

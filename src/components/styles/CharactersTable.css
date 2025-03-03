@@ -46,6 +46,10 @@
     background-color: var(--table-striped-color);
 }
 
-.mantine-Table-tr:not(.character-card-row):hover {
+.mantine-Table-tr:not(.mantine-Table-thead > .mantine-Table-tr) {
+    cursor: pointer;
+}
+
+.mantine-Table-tr:not(.character-card-row):not(.mantine-Table-thead > .mantine-Table-tr):hover {
     background-color: var(--table-hover-color);
 }
