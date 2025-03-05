@@ -1,0 +1,20 @@
+img {
+    height: 64px;
+}
+
+.lb-button {
+    height: 64px;
+    background-color: var(--mantine-color-dark-8);
+    border-radius: 32px;
+}
+
+.lb-avatar {
+    border-radius: 32px;
+    background-color: var(--mantine-color-dark-9);
+}
+.lb-info {
+    color: white;
+}
+.lb-info > *:not(:first-child) {
+    letter-spacing: -1px;   
+}

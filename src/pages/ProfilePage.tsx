@@ -1,24 +1,32 @@
 import { useParams } from "react-router"
 import { UserHeaderMemorized } from "../components/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center } from "@mantine/core"
-import { useLocalStorage } from "@mantine/hooks"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse } from "@mantine/core"
+import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import CharactersTable from "../components/CharactersTable"
 import { useEffect, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
 import { useAsyncRetry } from "react-use"
-import { getUser } from "../api/data"
-import { IconReload } from "@tabler/icons-react"
+import { getUser, getUserLeaderboards } from "../api/data"
+import { IconChevronDown, IconChevronUp, IconReload } from "@tabler/icons-react"
 import Timer from "../components/Timer"
+import "./styles/ProfilePage.css"
+import { LeaderboardGridMemorized, shouldShowLeaderboards } from "../components/LeaderboardGrid"
 
 export default function ProfilePage(): React.ReactElement {
-    let { uid } = useParams()
+    const { uid } = useParams()
     
-    let [needsUpdate, setNeedsUpdate] = useState(false)
-    let [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers" })
-    
+    const [needsUpdate, setNeedsUpdate] = useState(false)
+    const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers" })
+
     const userState = useAsyncRetry(async () => {
         return await getUser(Number(uid), needsUpdate)
     }, [uid])
+
+    const leaderboardsState = useAsyncRetry(async () => {
+        return await getUserLeaderboards(Number(uid), needsUpdate)
+    }, [uid])
+
+    const [opened, { toggle }] = useDisclosure(shouldShowLeaderboards(leaderboardsState.value))
 
     useEffect(() => {
         if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
@@ -50,7 +58,20 @@ export default function ProfilePage(): React.ReactElement {
                             {""}
                         </ActionIcon>
                     </Group>
-                    <UserHeaderMemorized user={userState.value.Information} showDescription />
+                    <Stack gap="0px" align="center">
+                        <UserHeaderMemorized user={userState.value.Information} showDescription />
+                        <Collapse in={opened} className="leaderboards" data-open={opened}>
+                            {
+                                leaderboardsState.loading && <Center><Loader /></Center>
+                            }
+                            {
+                                leaderboardsState.value && <LeaderboardGridMemorized profile={leaderboardsState.value} />
+                            }
+                        </Collapse>
+                        <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>
+                            Leaderboards
+                        </Button>
+                    </Stack>
                     <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
                         characters={userState.value.Characters} />
                 </>}

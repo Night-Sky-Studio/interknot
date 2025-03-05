@@ -14,8 +14,12 @@ export interface ITimerProps {
 const Timer: React.FC<ITimerProps> = ({ title, endTime, elapsedTime, isEnabled, onTimerEnd }) => {
     const [currentTime, setCurrentTime] = useState(elapsedTime ?? 0)
 
+    useEffect(() => {
+        setCurrentTime(0)
+    }, [endTime])
+
     if (currentTime > endTime) {
-        throw new Error("elapsedTime can't be greater than endTime")
+        throw new Error(`elapsedTime can't be greater than endTime. Current: ${currentTime}, End: ${endTime}`)
     }
 
     if (endTime > 3599) {
