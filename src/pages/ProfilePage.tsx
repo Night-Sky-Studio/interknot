@@ -35,6 +35,11 @@ export default function ProfilePage(): React.ReactElement {
         setNeedsUpdate(userState.value?.Ttl !== 0)
     }, [userState.value])
 
+    useEffect(() => {
+        if (userState.value)
+            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}`)
+    }, [userState.value, needsUpdate])
+
     return (<> 
             <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
@@ -48,7 +53,8 @@ export default function ProfilePage(): React.ReactElement {
                             setNeedsUpdate(true)
                             userState.retry()
                         }}>
-                            <Timer key={uid} title="Update" endTime={userState.value.Ttl} isEnabled={needsUpdate}
+                            <Timer key={uid} title="Update" isEnabled={needsUpdate}
+                                endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
                                 onTimerEnd={() => {
                                     setNeedsUpdate(false)
                                 }} />
@@ -62,7 +68,7 @@ export default function ProfilePage(): React.ReactElement {
                         <UserHeaderMemorized user={userState.value.Information} showDescription />
                         <Collapse in={opened} className="leaderboards" data-open={opened}>
                             {
-                                leaderboardsState.loading && <Center><Loader /></Center>
+                                leaderboardsState.loading && <Center m="md"><Loader /></Center>
                             }
                             {
                                 leaderboardsState.value && <LeaderboardGridMemorized profile={leaderboardsState.value} />
