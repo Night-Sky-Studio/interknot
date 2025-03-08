@@ -29,6 +29,10 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Clean up previous build
+        run: |
+          rm -rf ./prod/assets/*
       
       - name: Copy production build
         run: |
