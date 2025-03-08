@@ -76,7 +76,7 @@ export function UserHeader({ user, showDescription }: IUserHeaderProps): React.R
     }
 
     return (
-        <Card shadow="lg" radius="md">
+        <Card shadow="lg" radius="md" w="100%">
             <Card.Section style={{ 
                 display: "grid", 
                 gridTemplateColumns: "1fr", 

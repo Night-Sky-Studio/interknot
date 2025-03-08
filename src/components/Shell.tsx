@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Center, Stack, Grid } from '@mantine/core'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
@@ -46,17 +46,23 @@ export default function Shell(): React.ReactElement {
                             extremely excited for you all to use our platform in the future, so please be patient.
                         </Text>
                         <Text>
-                            With that said, if you'd like to help, then don't hesitate contacting me on Discord 
-                            <Text component="a" c="blue" href="https://discordapp.com/users/225471940826103810"> @lilystilson</Text>.
+                            With that said, if you'd like to help, then don't hesitate joining our Discord server and submitting
+                            a bug report or suggesting a feature you'd like to see.
                             Any help is highly appreciated!
                         </Text>
                     </Stack>
                 </Grid.Col>
             </Grid>
-            <Center m="lg"><Button onClick={() => {
-                localStorage.setItem("first-time", "true")
-                close()
-            }}>I understand, let me click some buttons!</Button></Center>
+            <Group m="lg" justify="center">
+                <Button leftSection={<IconBrandDiscordFilled />} variant="subtle"
+                    component="a" href="https://discord.gg/hFNheySRQD" target="_blank">
+                        Join our Discord server
+                </Button>
+                <Button onClick={() => {
+                    localStorage.setItem("first-time", "true")
+                    close()
+                }}>I understand, let me click some buttons!</Button>
+            </Group>
         </Modal>
 
         <AppShell header={{ height: 60 }} padding="md">
@@ -77,7 +83,7 @@ export default function Shell(): React.ReactElement {
                         <Group gap="xs">
                             <Button leftSection={<IconWorld />}>Language</Button>
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
-                            <ActionIcon><IconBrandDiscordFilled /></ActionIcon>
+                            <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
                             <Button leftSection={<IconLogin />}>Log in</Button>
                         </Group>
                     </Flex>

@@ -1,0 +1,19 @@
+.lb-expand-button {
+    background: linear-gradient(var(--mantine-color-dark-7), var(--mantine-color-dark-5));
+    color: white;
+    font-family: "zzz";
+    border-radius: 0 0 12px 12px;
+    margin: 0;
+    border: none;
+}
+
+.leaderboards {
+    background-color: var(--mantine-color-dark-5);
+    width: 100%;
+    border-radius: 0 0 var(--mantine-radius-md) var(--mantine-radius-md);
+}
+
+.leaderboards[data-open="true"] {
+    margin-top: -8px;
+    padding-top: 8px;
+}

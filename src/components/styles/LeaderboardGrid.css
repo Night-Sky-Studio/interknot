@@ -1,0 +1,13 @@
+.lb-data-collection {
+    color: white;
+    background-color: var(--mantine-color-dark-8);
+    border-radius: var(--mantine-radius-md);
+    box-shadow: 0 4px 16px rgba(0 0 0 / 50%);
+}
+.lb-grid {
+    margin: var(--mantine-spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 256px);
+    gap: 4px;
+    justify-content: space-around;
+}
