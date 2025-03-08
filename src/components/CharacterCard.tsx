@@ -18,8 +18,8 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
             <Mindscapes.Ms1 width={size} height={size} color={isActive(1)} />
             <Mindscapes.Ms2 width={size} height={size} color={isActive(2)} />
             <Mindscapes.Ms3 width={size} height={size} color={isActive(3)} />
-            <Mindscapes.Ms3 width={size} height={size} color={isActive(4)} />
-            <Mindscapes.Ms4 width={size} height={size} color={isActive(5)} />
+            <Mindscapes.Ms4 width={size} height={size} color={isActive(4)} />
+            <Mindscapes.Ms5 width={size} height={size} color={isActive(5)} />
             <Mindscapes.Ms6 width={size} height={size} color={isActive(6)} />
         </Group>
     )
