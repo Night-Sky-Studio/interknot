@@ -4,8 +4,19 @@ img {
 
 .lb-button {
     height: 64px;
+    width: 100%;
     background-color: var(--mantine-color-dark-8);
     border-radius: 32px;
+}
+
+.lb-button[data-type="0"] {
+    background: linear-gradient(90deg, var(--mantine-color-green-5), var(--mantine-color-green-9));
+}
+.lb-button[data-type="1"] {
+    background: linear-gradient(90deg, var(--mantine-color-yellow-5), var(--mantine-color-yellow-9));
+}
+.lb-button[data-type="2"] {
+    background: linear-gradient(90deg, var(--mantine-color-red-5), var(--mantine-color-red-9));
 }
 
 .lb-avatar {

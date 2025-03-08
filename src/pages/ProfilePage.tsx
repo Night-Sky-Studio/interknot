@@ -71,7 +71,10 @@ export default function ProfilePage(): React.ReactElement {
                                 leaderboardsState.loading && <Center m="md"><Loader /></Center>
                             }
                             {
-                                leaderboardsState.value && <LeaderboardGridMemorized profile={leaderboardsState.value} />
+                                !leaderboardsState.loading && !leaderboardsState.error && <LeaderboardGridMemorized profile={leaderboardsState.value} characters={userState.value.Characters} />
+                            }
+                            {
+                                leaderboardsState.error && <Center m="md">Failed to load leaderboards</Center>
                             }
                         </Collapse>
                         <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>
