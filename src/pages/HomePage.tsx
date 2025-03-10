@@ -26,9 +26,10 @@ export default function HomePage(): React.ReactElement {
                     onClose={() => setEnkaAlertDismissed(true)}>
                     <Text>You can use your own UID to test our website.</Text>
                     <Text>
-                        Please inform <Text component="a" c="blue" href="https://discordapp.com/users/225471940826103810"> @lilystilson </Text> 
-                        on Discord about any encountered bugs. 
-                        We're working on creating our own Discord server, please be patient.
+                        Please inform <Text c="blue" component="span"> @lilystilson </Text> on Discord about any encountered bugs. 
+                        Out Discord server is not live! You can 
+                        <Text c="blue" component="a" href="https://discord.gg/hFNheySRQD" target="_blank"> join it </Text>
+                        to chat and report any encountered issues.
                     </Text>
                 </Alert>
             </>}
