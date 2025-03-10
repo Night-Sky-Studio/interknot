@@ -113,9 +113,9 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                         <Text className="crit-cell" component="div">
                             <div>
                                 {
-                                    c.BaseStats.find(p => p.Id === 20101)?.formatted.replace("%", "")
+                                    c.Stats.ComputedStats.find(p => p.Id === 20101)?.formatted.replace("%", "")
                                 } : {
-                                    c.BaseStats.find(p => p.Id === 21101)?.formatted.replace("%", "")
+                                    c.Stats.ComputedStats.find(p => p.Id === 21101)?.formatted.replace("%", "")
                                 }
                             </div>
                             <div style={{ color: cvColor(c.CritValue), fontWeight: cvWeight(c.CritValue) }}>

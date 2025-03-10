@@ -249,7 +249,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                 <div className="cc-vignette" />
                 <div className="cc-cell cc-stats">
                     {
-                        character.BaseStats.map(s => <Stat key={s.Id ^ character.Id} stat={s} />)
+                        character.Stats.ComputedStats.map(s => <Stat key={s.Id ^ character.Id} stat={s} />)
                     }
                 </div>
                 <div className="cc-cell cc-skills">
