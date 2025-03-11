@@ -34,7 +34,7 @@ export default function Shell(): React.ReactElement {
         <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl">
             <Grid grow columns={6}>
                 <Grid.Col span={2}>
-                    <Image src={grace} w="236px" alt="Grace" />
+                    <Image src={grace} w="236px" h="100%" fit="contain" alt="Grace" />
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Stack>
