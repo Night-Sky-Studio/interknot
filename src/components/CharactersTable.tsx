@@ -1,7 +1,7 @@
 import { Character } from "@interknot/types"
 import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button } from "@mantine/core"
 import "./styles/CharactersTable.css"
-import CharacterCard from "./CharacterCard"
+import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useRef, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
 import { getLocalString } from "../localization/Localization"
@@ -48,8 +48,6 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
             <Text fw={700}>{level}</Text>
         </div>
     }
-
-    const MemoCard = memo(CharacterCard)
 
     const CharacterRow = ({ c, i }: { c: Character, i: number }) => {
         // const [openedId, setOpenedId] = useState<number | null>(null)
@@ -132,7 +130,7 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                             <Stack gap="8px">
                                 <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
                                     {isCardVisible &&
-                                        <MemoCard ref={cardRef}
+                                        <CharacterCardMemorized ref={cardRef}
                                             uid={uid} username={username}
                                             character={c} />
                                     }

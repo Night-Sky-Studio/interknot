@@ -2,7 +2,7 @@ import { useParams } from "react-router"
 import { UserHeaderMemorized } from "../components/UserHeader"
 import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
-import CharactersTable from "../components/CharactersTable"
+import { CharactersTableMemorized } from "../components/CharactersTable"
 import { useEffect, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
 import { useAsyncRetry } from "react-use"
@@ -81,7 +81,7 @@ export default function ProfilePage(): React.ReactElement {
                             Leaderboards
                         </Button>
                     </Stack>
-                    <CharactersTable uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
+                    <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
                         characters={userState.value.Characters} />
                 </>}
             </Stack>

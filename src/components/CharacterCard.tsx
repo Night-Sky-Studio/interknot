@@ -6,7 +6,7 @@ import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
-import React from "react"
+import React, { memo } from "react"
 import { type DriveDisc, DriveDiskSet } from "@interknot/types"
 import { getLocalString } from "../localization/Localization"
 
@@ -283,3 +283,5 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
         </Card>
     )
 }
+
+export const CharacterCardMemorized = memo(CharacterCard)
