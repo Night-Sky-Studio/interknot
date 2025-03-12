@@ -109,6 +109,8 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     32600: ["#e12625", "#460605"],    // Fanged Metal
     32700: ["#59b8ed", "#25b7b6", "#1f77aa"],    // Branch & Blade Song
     32800: ["#9f1011", "#9f1011", "#835500"],    // Astral Voice
+    32900: ["#ffca3f", "#ff8200"],    // Shadow Harmony
+    33000: ["#9d7cff", "#ad57ff", "#6c48df"] // Phaethon's Melody
 }
 
 export function getDriveDiscGradient(id: number) {
