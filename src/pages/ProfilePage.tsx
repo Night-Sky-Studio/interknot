@@ -65,7 +65,7 @@ export default function ProfilePage(): React.ReactElement {
                     </ActionIcon>
                 </Group>
                 <Stack gap="0px" align="center">
-                    <UserHeaderMemorized user={userState.value.Information} showDescription />
+                    <UserHeaderMemorized user={userState.value.Information} showDescription={userState.value.Information.Description !== ""} />
                     <Collapse in={opened} className="leaderboards" data-open={opened}>
                         {
                             leaderboardsState.loading && <Center m="md"><Loader /></Center>
