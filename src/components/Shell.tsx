@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconWorld, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -88,7 +88,7 @@ export default function Shell(): React.ReactElement {
                         </Group>
                         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                         <Group className="header-buttons-right"  gap="xs">
-                            <Button leftSection={<IconWorld />}>Language</Button>
+                            <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
                             <Button leftSection={<IconLogin />}>Log in</Button>
