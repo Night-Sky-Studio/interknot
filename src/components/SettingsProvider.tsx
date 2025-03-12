@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useLocalStorage } from "@mantine/hooks"
+import { Localizations } from "../localization/Localization"
 
 export enum Unit {
     CritValue = "CV",
@@ -10,15 +11,21 @@ export const Units: Unit[] = [Unit.CritValue, Unit.RollValue]
 type InterknotSettings = {
     units: Unit,
     decimalPlaces: number,
-    setUnits: (value: Unit) => void
-    setDecimalPlaces: (value: number) => void
+    language: string,
+    setUnits: (value: Unit) => void,
+    setDecimalPlaces: (value: number) => void,
+    setLanguage: (value: string) => void,
+    getLocalString: (value: string) => string
 }
 
 const defaultSettings: InterknotSettings = {
     units: Unit.CritValue,
     decimalPlaces: 2,
+    language: "en",
     setUnits: () => {},
-    setDecimalPlaces: () => {}
+    setDecimalPlaces: () => {},
+    setLanguage: () => {},
+    getLocalString: () => ""
 }
 
 export const SettingsContext = createContext(defaultSettings)
@@ -28,17 +35,30 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     const [units, setUnits] = useState<Unit>(settings.units)
     const [decimalPlaces, setDecimalPlaces] = useState<number>(settings.decimalPlaces)
+    const [language, setLanguage] = useState<string>(settings.language)
 
     useEffect(() => {
         setSettings((prev) => { return {
             ...prev,
             units: units, 
-            decimalPlaces: decimalPlaces
+            decimalPlaces: decimalPlaces,
+            language: language
         }})
-    }, [units, decimalPlaces])
+        console.log(units, decimalPlaces, language)
+    }, [units, decimalPlaces, language])
+
+    const getLocalString = useCallback((value: string) => {
+        return Localizations[language][value]
+    }, [language])
 
     return (
-        <SettingsContext.Provider value={{ ...settings, setUnits, setDecimalPlaces }}>
+        <SettingsContext.Provider value={{ 
+            ...settings, 
+            setUnits, 
+            setDecimalPlaces, 
+            setLanguage, 
+            getLocalString 
+        }}>
             {children}
         </SettingsContext.Provider>
     )

@@ -8,7 +8,7 @@ import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo } from "react"
 import { type DriveDisc, DriveDiskSet } from "@interknot/types"
-import { getLocalString } from "../localization/Localization"
+import { useSettings } from "./SettingsProvider"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -47,6 +47,7 @@ interface ICharacterNameProps {
 }
 
 function CharacterName({ name, element, profession, level, msLevel }: ICharacterNameProps): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <Stack gap="0">
             <Group gap="4px">
@@ -75,6 +76,8 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
             </Group>
         )
     }
+
+    const { getLocalString } = useSettings()
 
     return (
         <div className="cc-weapon">
@@ -108,6 +111,7 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
 }
 
 function Stat({ stat }: { stat: Property }): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
@@ -220,6 +224,7 @@ function DriveDisc({ disc }: { disc: DriveDisc }): React.ReactElement {
 }
 
 function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <div className="cc-disc-set">
             <Image h="18px" src={set.Set.IconUrl} alt={set.Set.Name} />

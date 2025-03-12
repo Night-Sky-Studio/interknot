@@ -1,7 +1,7 @@
 import { BaseAvatar, WeaponData } from "@interknot/types"
 import { Group, UnstyledButton, Image, Title, Stack } from "@mantine/core"
-import { getLocalString } from "../localization/Localization"
 import "./styles/LeaderboardButton.css"
+import { useSettings } from "./SettingsProvider"
 
 interface ILeaderboardButtonProps {
     agent: BaseAvatar
@@ -10,6 +10,7 @@ interface ILeaderboardButtonProps {
 }
 
 export function LeaderboardButton({ agent, weapon, type }: ILeaderboardButtonProps) {
+    const { getLocalString } = useSettings()
     return (
         <UnstyledButton className="lb-button" data-type={type}>
             <Group gap="4px" wrap="nowrap">

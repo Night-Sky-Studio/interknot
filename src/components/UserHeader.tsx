@@ -12,7 +12,7 @@ import {
     Loader
 } from "@mantine/core"
 import "./styles/UserHeader.css"
-import { getLocalString } from "../localization/Localization"
+import { useSettings } from "./SettingsProvider"
 
 interface IUserHeaderProps {
     user: ProfileInfo,
@@ -20,6 +20,8 @@ interface IUserHeaderProps {
 }
 
 export function UserHeader({ user, showDescription }: IUserHeaderProps): React.ReactElement {
+    const { getLocalString } = useSettings()
+    
     const Medal = ({ m }: { m: Medal }) => {
         return (
             <div className="namecard-medal">
