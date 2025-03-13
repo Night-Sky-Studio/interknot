@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconWorld, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -99,7 +99,10 @@ export default function Shell(): React.ReactElement {
             
             <AppShell.Navbar>
                 <NavLink label="Log in" leftSection={<IconLogin />} />
-                <NavLink label="Language" leftSection={<IconWorld />} />
+                <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
+                    navigate("/settings")
+                    toggle()
+                }} />
                 
                 { users.length !== 0 && <>
                     <Title m="sm" order={4}>Users</Title>
