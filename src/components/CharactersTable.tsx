@@ -4,9 +4,9 @@ import "./styles/CharactersTable.css"
 import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useRef, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
-import { getLocalString } from "../localization/Localization"
 import { IconDownload } from "@tabler/icons-react"
 import { toPng } from "html-to-image"
+import { useSettings } from "./SettingsProvider"
 
 interface ICharactersTableProps {
     uid: number
@@ -26,6 +26,8 @@ export const cvWeight = (critValue: number) => {
 }
 
 export default function CharactersTable({ uid, username, characters }: ICharactersTableProps): React.ReactElement {
+    const { getLocalString } = useSettings()
+    
     const cvColor = (critValue: number) => {
         const theme = useMantineTheme()
         switch (true) {

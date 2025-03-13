@@ -15,7 +15,8 @@ export default function HomePage(): React.ReactElement {
     const [savedUsers, _] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [users, setUsers] = useState<ProfileInfo[]>(savedUsers ?? [])
 
-    return (
+    return (<>
+        <title>Inter-Knot</title>
         <section>
             <Title order={1}>Welcome to Inter-Knot</Title>
             <Text>A place for proxies to share their agents' builds.</Text>
@@ -53,5 +54,5 @@ export default function HomePage(): React.ReactElement {
                 </Stack>
             </div>
         </section>
-    )
+    </>)
 }

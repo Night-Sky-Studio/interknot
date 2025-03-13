@@ -8,7 +8,7 @@ import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo } from "react"
 import { type DriveDisc, DriveDiskSet } from "@interknot/types"
-import { getLocalString } from "../localization/Localization"
+import { useSettings } from "./SettingsProvider"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -47,10 +47,11 @@ interface ICharacterNameProps {
 }
 
 function CharacterName({ name, element, profession, level, msLevel }: ICharacterNameProps): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <Stack gap="0">
             <Group gap="4px">
-                <Title order={3}>{getLocalString(name)}</Title>
+                <Title order={3} className="cc-character-name">{getLocalString(name)}</Title>
                 <ZenlessIcon elementName={element} size={16} />
                 <ProfessionIcon name={profession} />
             </Group>
@@ -75,6 +76,8 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
             </Group>
         )
     }
+
+    const { getLocalString } = useSettings()
 
     return (
         <div className="cc-weapon">
@@ -108,11 +111,12 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
 }
 
 function Stat({ stat }: { stat: Property }): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} fz="9px" ml="4px">{getLocalString(stat.simpleName)}</Title>
-            <Title order={6} fz="9px">{stat.formatted}</Title>
+            <Title order={6} ml="4px">{getLocalString(stat.simpleName)}</Title>
+            <Title order={6}>{stat.formatted}</Title>
         </div>
     )
 }
@@ -136,23 +140,23 @@ function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.Re
         <Group className="cc-talents" gap="4px" justify="center" align="center">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Dodge width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Switch width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Skill width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Ultimate width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
             </div>
         </Group>
     )
@@ -220,6 +224,7 @@ function DriveDisc({ disc }: { disc: DriveDisc }): React.ReactElement {
 }
 
 function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
+    const { getLocalString } = useSettings()
     return (
         <div className="cc-disc-set">
             <Image h="18px" src={set.Set.IconUrl} alt={set.Set.Name} />

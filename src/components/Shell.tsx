@@ -1,5 +1,5 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconWorld, IconX } from '@tabler/icons-react'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
+import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconX } from '@tabler/icons-react'
 import { Outlet, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -29,6 +29,8 @@ export default function Shell(): React.ReactElement {
             open()
         }
     })
+
+    const [navBarOpened, { toggle }] = useDisclosure(false)
 
     return (<>
         <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl">
@@ -65,11 +67,15 @@ export default function Shell(): React.ReactElement {
             </Group>
         </Modal>
 
-        <AppShell header={{ height: 60 }} padding="md">
+        <AppShell header={{ height: 60 }} navbar={{
+            width: 300, 
+            breakpoint: "sm",
+            collapsed: { desktop: !navBarOpened, mobile: !navBarOpened }
+        }} padding="md">
             <AppShell.Header>
                 <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
-                        <Group gap={0}>
+                        <Group gap={0} wrap="nowrap">
                             <Button variant="transparent" component={Title} onClick={() => {
                                 setSelectedUser("")
                                 navigate("/")
@@ -80,8 +86,9 @@ export default function Shell(): React.ReactElement {
                             </Button>
                             <Text c="dimmed" size="lg" fw={500}>β</Text>
                         </Group>
-                        <Group gap="xs">
-                            <Button leftSection={<IconWorld />}>Language</Button>
+                        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+                        <Group className="header-buttons-right"  gap="xs">
+                            <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
                             <Button leftSection={<IconLogin />}>Log in</Button>
@@ -89,6 +96,34 @@ export default function Shell(): React.ReactElement {
                     </Flex>
                 </Container>
             </AppShell.Header>
+            
+            <AppShell.Navbar>
+                <NavLink label="Log in" leftSection={<IconLogin />} />
+                <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
+                    navigate("/settings")
+                    toggle()
+                }} />
+                
+                { users.length !== 0 && <>
+                    <Title m="sm" order={4}>Users</Title>
+                    {
+                        users.map(u => <NavLink key={u.Uid} label={u.Nickname}
+                            variant="filled"
+                            autoContrast
+                            active={`${u.Uid}` === selectedUser}
+                            onClick={() => { 
+                                setSelectedUser(`${u.Uid}`)
+                                navigate(`/user/${u.Uid}`)
+                                toggle()
+                            }} />)
+                    }       
+                    </>
+                }
+                
+                <Title m="sm" order={4}>Links</Title>
+                <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
+                <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
+            </AppShell.Navbar>
 
             <AppShell.Main>
                 <Container size="1600px">
@@ -127,9 +162,9 @@ export default function Shell(): React.ReactElement {
                 </Container>
             </AppShell.Main>
 
-            <AppShell.Footer pos="relative">
+            <AppShell.Footer pos="relative" p="sm">
                 <Container size="lg" h="100%">
-                    <Flex justify="space-between" align="center" wrap="wrap">
+                    <Flex justify="center" gap="xl" align="center" wrap="wrap">
                         <Anchor href="https://enka.network" target="_blank">
                             <Image src={enkaImg} alt="Powered by Enka.Network" w={256} />
                         </Anchor>

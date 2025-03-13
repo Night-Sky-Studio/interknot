@@ -3,7 +3,8 @@ import "./styles/ErrorPage.css"
 import ellen from "../../assets/ellen_404.webp"
 
 export default function ErrorPage(): React.ReactElement {
-    return (
+    return (<>
+        <title>Inter-Knot | 404</title>
         <Center h="100%" w="100%">
             <Stack justify="center" align="center">
                 <Image className="img-wiggle" src={ellen} alt="404" w={384} />
@@ -11,5 +12,5 @@ export default function ErrorPage(): React.ReactElement {
                 <Text size="xl">Sorry, the page you're looking for doesn't exist.</Text>
             </Stack>
         </Center>
-    )
+    </>)
 }

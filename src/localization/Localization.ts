@@ -1,6 +1,6 @@
 import locs from "./locs.json"
 
-const Localizations = locs as Record<string, Record<string, string>>
+export const Localizations = locs as Record<string, Record<string, string>>
 export const AvailableLocs = Object.keys(Localizations)
 
 export let currentLocale = "en"

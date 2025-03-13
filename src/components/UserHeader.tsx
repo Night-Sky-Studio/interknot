@@ -12,7 +12,7 @@ import {
     Loader
 } from "@mantine/core"
 import "./styles/UserHeader.css"
-import { getLocalString } from "../localization/Localization"
+import { useSettings } from "./SettingsProvider"
 
 interface IUserHeaderProps {
     user: ProfileInfo,
@@ -20,6 +20,8 @@ interface IUserHeaderProps {
 }
 
 export function UserHeader({ user, showDescription }: IUserHeaderProps): React.ReactElement {
+    const { getLocalString } = useSettings()
+    
     const Medal = ({ m }: { m: Medal }) => {
         return (
             <div className="namecard-medal">
@@ -84,10 +86,10 @@ export function UserHeader({ user, showDescription }: IUserHeaderProps): React.R
                 borderRadius: "var(--mantine-radius-md)",
                 boxShadow: "0 0 32px rgba(0 0 0 / 50%)"
             }}>
-                    <Center style={{ gridColumn: 1, gridRow: 1, zIndex: 0 }} ><Loader /></Center>
-                    <BackgroundImage radius="md" style={{ gridColumn: 1, gridRow: 1, zIndex: 1 }} src={user.NamecardUrl} className="background">
-                        <UserData />
-                    </BackgroundImage>
+                <Center style={{ gridColumn: 1, gridRow: 1, zIndex: 0 }} ><Loader /></Center>
+                <BackgroundImage radius="md" style={{ gridColumn: 1, gridRow: 1, zIndex: 1 }} src={user.NamecardUrl} className="background">
+                    <UserData />
+                </BackgroundImage>
             </Card.Section>
             {(showDescription ?? false) && 
                 <Card.Section p="xs">
