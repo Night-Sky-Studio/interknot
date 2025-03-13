@@ -51,7 +51,7 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
     return (
         <Stack gap="0">
             <Group gap="4px">
-                <Title order={3}>{getLocalString(name)}</Title>
+                <Title order={3} className="cc-character-name">{getLocalString(name)}</Title>
                 <ZenlessIcon elementName={element} size={16} />
                 <ProfessionIcon name={profession} />
             </Group>
@@ -115,8 +115,8 @@ function Stat({ stat }: { stat: Property }): React.ReactElement {
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} fz="9px" ml="4px">{getLocalString(stat.simpleName)}</Title>
-            <Title order={6} fz="9px">{stat.formatted}</Title>
+            <Title order={6} ml="4px">{getLocalString(stat.simpleName)}</Title>
+            <Title order={6}>{stat.formatted}</Title>
         </div>
     )
 }
@@ -140,23 +140,23 @@ function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.Re
         <Group className="cc-talents" gap="4px" justify="center" align="center">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Dodge width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Switch width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Skill width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Ultimate width="32px" />
-                <Title fz="6px" order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
             </div>
         </Group>
     )
