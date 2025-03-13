@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect } from "react"
 import { useLocalStorage } from "@mantine/hooks"
 import { Localizations } from "../localization/Localization"
 
@@ -8,48 +8,54 @@ export enum Unit {
 }
 export const Units: Unit[] = [Unit.CritValue, Unit.RollValue]
 
-type InterknotSettings = {
+type InterknotSettingsBase = {
     units: Unit,
     decimalPlaces: number,
     language: string,
+    lbButtonVariant: number,
+}
+
+type InterknotSettings = InterknotSettingsBase & {
     setUnits: (value: Unit) => void,
     setDecimalPlaces: (value: number) => void,
     setLanguage: (value: string) => void,
-    getLocalString: (value: string) => string
+    getLocalString: (value: string) => string,
+    setLbButtonVariant: (value: number) => void
 }
 
-const defaultSettings: InterknotSettings = {
+const defaultSettings: InterknotSettingsBase = {
     units: Unit.CritValue,
     decimalPlaces: 2,
-    language: "en",
+    language: navigator.language.split("-")[0],
+    lbButtonVariant: 0
+}
+
+const defaultCallbacks: InterknotSettings = {
+    ...defaultSettings,
     setUnits: () => {},
     setDecimalPlaces: () => {},
     setLanguage: () => {},
-    getLocalString: () => ""
+    getLocalString: () => "",
+    setLbButtonVariant: () => {}
 }
 
-export const SettingsContext = createContext(defaultSettings)
+export const SettingsContext = createContext(defaultCallbacks)
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-    const [settings, setSettings] = useLocalStorage<InterknotSettings>({ key: "settings", defaultValue: defaultSettings })
+    const [settings, setSettings] = useLocalStorage<InterknotSettingsBase>({ key: "settings", defaultValue: defaultSettings })
 
-    const [units, setUnits] = useState<Unit>(settings.units)
-    const [decimalPlaces, setDecimalPlaces] = useState<number>(settings.decimalPlaces)
-    const [language, setLanguage] = useState<string>(settings.language)
+    const setUnits = (units: Unit) => setSettings((prev) => ({ ...prev, units }))
+    const setDecimalPlaces = (decimalPlaces: number) => setSettings((prev) => ({ ...prev, decimalPlaces }))
+    const setLanguage = (language: string) => setSettings((prev) => ({ ...prev, language }))
+    const setLbButtonVariant = (lbButtonVariant: number) => setSettings((prev => ({ ...prev, lbButtonVariant })))
 
     useEffect(() => {
-        setSettings((prev) => { return {
-            ...prev,
-            units: units, 
-            decimalPlaces: decimalPlaces,
-            language: language
-        }})
-        console.log(units, decimalPlaces, language)
-    }, [units, decimalPlaces, language])
+        document.documentElement.setAttribute("lang", settings.language)
+    }, [settings.language])
 
     const getLocalString = useCallback((value: string) => {
-        return Localizations[language][value]
-    }, [language])
+        return Localizations[settings.language][value]
+    }, [settings.language])
 
     return (
         <SettingsContext.Provider value={{ 
@@ -57,7 +63,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             setUnits, 
             setDecimalPlaces, 
             setLanguage, 
-            getLocalString 
+            getLocalString,
+            setLbButtonVariant
         }}>
             {children}
         </SettingsContext.Provider>
