@@ -8,14 +8,35 @@ export default function SettingsPage() {
         onDropdownClose: () => combobox.resetSelectedOption()
     })
 
+    const localeMap: Record<string, string> = {
+        "zh-tw": "🇹🇼 繁體中文",
+        "zh-cn": "🇨🇳 简体中文",
+        "de": "🇩🇪 Deutsch", 
+        "en": "🇺🇸 English",
+        "es": "🇪🇸 Español",
+        "fr": "🇫🇷 Français",
+        "id": "🇮🇩 Bahasa Indonesia",
+        "ja": "🇯🇵 日本語",
+        "ko": "🇰🇷 한국어",
+        "pt": "🇵🇹 Português",
+        "ru": "🇷🇺 Русский",
+        "th": "🇹🇭 ภาษาไทย",
+        "vi": "🇻🇳 Tiếng Việt"
+    }
+
     return (<>
         <title>Settings | Inter-Knot</title>
-        <Card m="lg" p="lg">
+        <Card p="lg">
             <Stack gap="lg">
                 <Title>Settings</Title>
                 <Group gap="sm">
                     <Text>Language:</Text>
-                    <Select data={AvailableLocs} value={settings.language} 
+                    <Select data={AvailableLocs.map(l => {
+                        return {
+                            label: localeMap[l],
+                            value: l
+                        }
+                    })} value={settings.language} 
                         onChange={(val) => {
                             if (!val)
                                 throw new Error("Language is null?????")
