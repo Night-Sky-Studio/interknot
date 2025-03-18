@@ -1,4 +1,4 @@
-import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, Text, useMantineTheme } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, SimpleGrid, Stack, Title, Text, useMantineTheme, Center } from "@mantine/core"
 import { Character, Talents as CharacterTalents } from "@interknot/types"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "./icons/Icons"
@@ -184,7 +184,15 @@ function SubStat({ stat }: { stat: Property }): React.ReactElement {
     )
 }
 
-function DriveDisc({ disc }: { disc: DriveDisc }): React.ReactElement {
+function SlotIcon({ slot }: { slot: number }): React.ReactElement {
+    return <div className="cc-disc-slot">
+        <div>
+            <Title ff="zzz-jp, monospace" order={3}>{slot}</Title>
+        </div>
+    </div>
+}
+
+function DriveDisc({ slot, disc }: { slot: number, disc: DriveDisc | null }): React.ReactElement {
     const theme = useMantineTheme()
 
     const cvColor = (cv: number) => {
@@ -198,29 +206,42 @@ function DriveDisc({ disc }: { disc: DriveDisc }): React.ReactElement {
         }
     }
 
-    return (
-        <div className="cc-disc" style={{ "--disc-gradient": getDriveDiscGradient(disc.SetId), "--cv": cvColor(disc.CritValue.Value / 100) } as React.CSSProperties}>
-            <Group gap="4px" className="cc-disc-main" wrap="nowrap">
+    return (<>
+        {disc !== null ? 
+            <div className="cc-disc" style={{ "--disc-gradient": getDriveDiscGradient(disc.SetId), "--cv": cvColor(disc.CritValue.Value / 100) } as React.CSSProperties}>
+                <Group gap="4px" className="cc-disc-main" wrap="nowrap">
+                    <div className="cc-disc-icon">
+                        <Image src={disc.IconUrl} alt={disc.Name} />
+                        <Image src={getRarityIcon(disc.Rarity)} alt={disc.Rarity.toString()} />
+                        <Title order={6} fz="6px" ff="zzz-jp">{slot}</Title>
+                    </div>
+                    <Stack gap="0px" justify="space-evenly" style={{ zIndex: "100" }}>
+                        <Title order={6} fz="8px">Lv. {disc.Level}</Title>
+                        <Group gap="2px" wrap="nowrap">
+                            <ZenlessIcon id={disc.MainStat.Id} size="18px"/>
+                            <Title order={6} fz="14px">{disc.MainStat.formatted}</Title>
+                        </Group>
+                        <Title order={6} fz="8px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
+                    </Stack>
+                </Group>
+                <SimpleGrid cols={2} spacing="4px" verticalSpacing="4px" className="cc-disc-stats">
+                    {
+                        disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} />)
+                    }
+                </SimpleGrid>
+            </div>
+        : <div className="cc-disc" style={{ "--disc-gradient": "linear-gradient(135deg, #404040, #202020)" } as React.CSSProperties}>
+            <Group gap="4px" className="cc-disc-main" style={{ borderRadius: "26px" }} wrap="nowrap">
                 <div className="cc-disc-icon">
-                    <Image src={disc.IconUrl} alt={disc.Name} />
-                    <Image src={getRarityIcon(disc.Rarity)} alt={disc.Rarity.toString()} />
+                    <SlotIcon slot={slot}  />
                 </div>
-                <Stack gap="0px" justify="space-evenly" style={{ zIndex: "100" }}>
-                    <Title order={6} fz="8px">Lv. {disc.Level}</Title>
-                    <Group gap="2px" wrap="nowrap">
-                        <ZenlessIcon id={disc.MainStat.Id} size="18px"/>
-                        <Title order={6} fz="14px">{disc.MainStat.formatted}</Title>
-                    </Group>
-                    <Title order={6} fz="8px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
-                </Stack>
+                <Center style={{ zIndex: 100 }}>
+                    <Title order={6} fz="10px" pl="sm">Empty</Title>
+                </Center>
             </Group>
-            <SimpleGrid cols={2} spacing="4px" verticalSpacing="4px" className="cc-disc-stats">
-                {
-                    disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} />)
-                }
-            </SimpleGrid>
         </div>
-    )
+        }
+    </>)
 }
 
 function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
@@ -271,7 +292,10 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                 <div className="cc-discs">
                     <div className="cc-discs-grid">
                         {
-                            character.DriveDisks.map(d => <DriveDisc key={d.Uid} disc={d} />)
+                            Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
+                                const disc = character.DriveDisks.find(dd => dd.Slot === idx)
+                                return <DriveDisc key={disc ? disc.Uid : character.Id ^ idx} slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                            })
                         }
                     </div>
                 </div>

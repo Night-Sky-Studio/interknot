@@ -276,7 +276,7 @@ html[lang="fr"] .cc-stat * {
     height: 52px;
     width: 128px;
     background: var(--disc-gradient);
-    border-radius: 26px;
+    border-radius: 26px 26px 26px 4px;
     padding-right: 8px;
     overflow: hidden;
 }
@@ -284,16 +284,40 @@ html[lang="fr"] .cc-stat * {
     position: relative;
     height: 52px;
 }
-.cc-disc-icon > img:first-child {
+.cc-disc-icon > *:nth-child(1) {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 0 16px black);
 }
-.cc-disc-icon > img:last-child {
+.cc-disc-icon > *:nth-child(2) {
     position: absolute;
     bottom: 0;
     right: 0;
     height: 16px;
+}
+.cc-disc-icon > *:nth-child(3) {
+    position: absolute;
+    bottom: 0;
+    left: 2px;
+}
+.cc-disc-slot {
+    height: 52px !important;
+    width: 52px !important;
+    background-color: #151515;
+    position: relative;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cc-disc-slot > div {
+    height: 60%;
+    width: 60%;
+    background-color: #252525;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .cc-disc-stats {
     height: 52px;
