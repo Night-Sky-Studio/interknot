@@ -1,14 +1,14 @@
-import { Character, LeaderboardProfile, WeaponData } from "@interknot/types"
+import { BaseWeapon, Character, LeaderboardProfile } from "@interknot/types"
 import { Center, Title } from "@mantine/core"
 import { LeaderboardButton } from "./LeaderboardButton"
 import "./styles/LeaderboardGrid.css"
 import { memo } from "react"
 
-export const shouldShowLeaderboards = (p?: LeaderboardProfile) =>
-    p?.Agents?.some(a => a.Weapons.some(w => w.Players > 100000)) ?? false
+export const shouldShowLeaderboards = (p?: LeaderboardProfile) => 
+    p?.Agents?.some(a => a.Total > 20) ?? false
 
 export function LeaderboardGrid({ profile, characters }: { profile?: LeaderboardProfile, characters: Character[] }) {
-    const buttonType = (c: Character, w: WeaponData): number => {
+    const buttonType = (c: Character, w: BaseWeapon): number => {
         if (c.Weapon?.Id == w.Id) {
             return 0 // matches weapon
         }
@@ -24,11 +24,13 @@ export function LeaderboardGrid({ profile, characters }: { profile?: Leaderboard
             <div className="lb-grid">
                 {
                     profile?.Agents.map(a => {
-                        const w = a.Weapons.sort((a, b) => b.Rank - a.Rank)[0]
                         return <LeaderboardButton key={a.Agent.Id} 
                         agent={a.Agent} 
-                        weapon={w} 
-                        type={buttonType(characters.find(c => c.Id === a.Agent.Id)!, w)} />
+                        weapon={a.Weapon} 
+                        name={a.LeaderboardName}
+                        rank={a.Rank}
+                        total={a.Total}
+                        type={buttonType(characters.find(c => c.Id === a.Agent.Id)!, a.Weapon)} />
                     })
                 }
             </div>
