@@ -90,7 +90,7 @@ export default function ProfilePage(): React.ReactElement {
                         </Button>
                     </Stack>
                     <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
-                        characters={userState.value.Characters} />
+                        characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} />
             </Stack>
         </>
     }
