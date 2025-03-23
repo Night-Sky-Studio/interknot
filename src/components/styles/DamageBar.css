@@ -1,0 +1,74 @@
+.dmg-bar {
+    display: flex;
+    width: 100%;
+    gap: 2px;
+}
+.dmg-bar > div:first-child {
+    border-radius: 8px 0 0 8px;
+}
+.dmg-bar > div:last-child {
+    border-radius: 0 8px 8px 0;
+}
+.dmg-bar > div {
+    background-color: var(--mantine-color-dark-7);
+    padding: 0.25rem 0.5rem;
+    color: white;
+    width: max(var(--width), 48px);
+    user-select: none;
+    position: relative;
+}
+
+.dmg-bar > div[data-tag="BasicAtk"],
+.dmg-bar > div[data-tag="Dash"],
+.dmg-bar > div[data-tag="Counter"] {
+    background-color: var(--basic);
+    color: black;
+}
+.dmg-bar > div[data-tag="BasicAtk"]:hover,
+.dmg-bar > div[data-tag="Dash"]:hover,
+.dmg-bar > div[data-tag="Counter"]:hover {
+    background-color: var(--basic-hover);
+}
+.dmg-bar > div[data-tag="Chain"], 
+.dmg-bar > div[data-tag="Ultimate"] {
+    background-color: var(--chain);
+    color: black;
+}
+.dmg-bar > div[data-tag="Chain"]:hover,
+.dmg-bar > div[data-tag="Ultimate"]:hover {
+    background-color: var(--chain-hover);
+}
+.dmg-bar > div[data-tag="Special"],
+.dmg-bar > div[data-tag="ExSpecial"] {
+    background-color: var(--special);
+}
+.dmg-bar > div[data-tag="Special"]:hover,
+.dmg-bar > div[data-tag="ExSpecial"]:hover {
+    background-color: var(--special-hover);
+}
+.dmg-bar > div[data-tag="AttributeAnomaly"] {
+    background-color: var(--anomaly);
+}
+.dmg-bar > div[data-tag="AttributeAnomaly"]:hover {
+    background-color: var(--anomaly-hover);
+}
+.dmg-bar > div[data-tag="Aftershock"] {
+    background-color: var(--aftershock);
+}
+.dmg-bar > div[data-tag="Aftershock"]:hover {
+    background-color: var(--aftershock-hover);
+}
+
+.dmg-bar > div[data-hover="true"]::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    
+    border-top: 8px solid rgba(0 0 0 / 50%);
+}

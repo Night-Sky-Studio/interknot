@@ -1,0 +1,15 @@
+:root {
+    --basic: var(--mantine-color-yellow-5);
+    --assist: var(--mantine-color-pink-7);
+    --special: var(--mantine-color-grape-7);
+    --chain: var(--mantine-color-orange-6);
+    --anomaly: var(--mantine-color-blue-5);
+    --aftershock: var(--mantine-color-cyan-6);
+
+    --basic-hover: var(--mantine-color-yellow-6);
+    --assist-hover: var(--mantine-color-pink-8);
+    --special-hover: var(--mantine-color-grape-8);
+    --chain-hover: var(--mantine-color-orange-7);
+    --anomaly-hover: var(--mantine-color-blue-6);
+    --aftershock-hover: var(--mantine-color-cyan-7);
+}
