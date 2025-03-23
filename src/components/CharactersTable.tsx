@@ -1,17 +1,19 @@
-import { Character } from "@interknot/types"
+import { Character, LeaderboardAgent } from "@interknot/types"
 import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useRef, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
-import { IconDownload } from "@tabler/icons-react"
+import { IconChevronDown, IconChevronUp, IconDownload } from "@tabler/icons-react"
 import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
+import { DamageDistributionMemoized } from "./DamageDistribution"
 
 interface ICharactersTableProps {
     uid: number
     username: string
     characters: Character[]
+    lbAgents?: LeaderboardAgent[]
 }
 
 export const cvWeight = (critValue: number) => {
@@ -25,7 +27,7 @@ export const cvWeight = (critValue: number) => {
     }
 }
 
-export default function CharactersTable({ uid, username, characters }: ICharactersTableProps): React.ReactElement {
+export default function CharactersTable({ uid, username, characters, lbAgents }: ICharactersTableProps): React.ReactElement {
     const { getLocalString } = useSettings()
     
     const cvColor = (critValue: number) => {
@@ -59,6 +61,7 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
         const [cardContainerRef, cardContainerRect] = useResizeObserver()
 
         const [isCardVisible, { toggle }] = useDisclosure(false)
+        const [isDmgDistributionVisible, { toggle: toggleDmgDistribution }] = useDisclosure(false)
 
         useEffect(() => {
             if (cardContainerRect.width) {
@@ -69,6 +72,8 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
         }, [cardContainerRect.width])
         
         const cardRef = useRef<HTMLDivElement | null>(null)
+
+        const agentLeaderboards = lbAgents?.filter(l => l.Agent.Id === c.Id) ?? []
 
         return (
             <>
@@ -137,32 +142,43 @@ export default function CharactersTable({ uid, username, characters }: ICharacte
                                             character={c} />
                                     }
                                 </div>
-                                <Group m="xl">
-                                    <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
-                                        if (cardRef.current === null) return
+                                <Stack>
+                                    <Group m="xl">
+                                        <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
+                                            if (cardRef.current === null) return
 
-                                        const cardRect = cardRef.current.getBoundingClientRect()
-                                        const cs = cardScale
-                                        setCardScale(1.0)
+                                            const cardRect = cardRef.current.getBoundingClientRect()
+                                            const cs = cardScale
+                                            setCardScale(1.0)
 
-                                        const dataUrl = await toPng(cardRef.current, {
-                                            quality: 1.0,
-                                            canvasHeight: (cardRect.height) * 2,
-                                            canvasWidth: (cardRect.width) * 2,
-                                            backgroundColor: "transparent",
-                                            style: {
-                                                margin: "var(--mantine-spacing-lg)"
-                                            }
-                                        })
+                                            const dataUrl = await toPng(cardRef.current, {
+                                                quality: 1.0,
+                                                canvasHeight: (cardRect.height) * 2,
+                                                canvasWidth: (cardRect.width) * 2,
+                                                backgroundColor: "transparent",
+                                                style: {
+                                                    margin: "var(--mantine-spacing-lg)"
+                                                }
+                                            })
 
-                                        const link = document.createElement("a")
-                                        link.download = `${getLocalString(c.Name)}-${uid}.png`
-                                        link.href = dataUrl
-                                        link.click();
+                                            const link = document.createElement("a")
+                                            link.download = `${getLocalString(c.Name)}-${uid}.png`
+                                            link.href = dataUrl
+                                            link.click();
 
-                                        setCardScale(cs)
-                                    }}>Download Image</Button>
-                                </Group>
+                                            setCardScale(cs)
+                                        }}>Download Image</Button>
+                                        { agentLeaderboards.length > 0 &&
+                                            <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
+                                                variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
+                                        }
+                                    </Group>
+                                    <Collapse in={isDmgDistributionVisible}>
+                                        { agentLeaderboards.length > 0 &&
+                                            <DamageDistributionMemoized entries={agentLeaderboards} />
+                                        }
+                                    </Collapse>
+                                </Stack>
                             </Stack>
                         </Collapse>
                     </Table.Td>
