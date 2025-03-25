@@ -1,8 +1,9 @@
 .character-card {
-    aspect-ratio: 43 / 21;
+    /* aspect-ratio: 43 / 21; */
     width: 860px;
     transform-origin: 50% 0;
     transform: scale(var(--scale));
+    position: relative;
 }
 .cc-grid {
     width: 100%;
@@ -16,6 +17,28 @@
     grid-template-rows: 64px 2fr 1fr 128px;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
+}
+
+.cc-sub-stats {
+    height: 28px;
+    padding: 4px;
+    background-color: var(--mantine-color-dark-8);
+    z-index: 100;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.cc-sub-stats > div[data-count^="*"] {
+    color: var(--mantine-color-gray-6);
+}
+
+.cc-sub-stats > div[data-count^="***"] {
+    color: var(--mantine-color-gray-4);
+}
+.cc-sub-stats > div[data-count^="*****"] {
+    color: var(--mantine-color-gray-1);
 }
 
 .cc-vignette {
@@ -152,6 +175,10 @@ html[lang="fr"] .cc-stat * {
 }
 .cc-stat > *:nth-child(3) {
     grid-area: 1 / 3 / 2 / 4;
+}
+
+.cc-highlight {
+    color: var(--accent) !important;
 }
 
 .cc-skills {
