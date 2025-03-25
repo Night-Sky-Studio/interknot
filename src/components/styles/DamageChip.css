@@ -17,6 +17,14 @@
     color: black;
 }
 
+.damage-chip[data-tag="QuickAssist"][data-hover="true"],
+.damage-chip[data-tag="DefensiveAssist"][data-hover="true"],
+.damage-chip[data-tag="EvasiveAssist"][data-hover="true"],
+.damage-chip[data-tag="FollowUpAssist"][data-hover="true"] {
+    background-color: var(--assist);
+    color: white;
+}
+
 .damage-chip[data-tag="Special"][data-hover="true"],
 .damage-chip[data-tag="ExSpecial"][data-hover="true"] {
     background-color: var(--special);
