@@ -65,6 +65,7 @@ interface ICharacterCardProps {
     uid: number
     username: string
     character: Character
+    substatsVisible?: boolean
 }
 
 function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
@@ -110,13 +111,13 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
     )
 }
 
-function Stat({ stat }: { stat: Property }): React.ReactElement {
+function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
         <div className="cc-stat">
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} ml="4px">{getLocalString(stat.simpleName)}</Title>
-            <Title order={6}>{stat.formatted}</Title>
+            <Title order={6} ml="4px" className={(highlight ? "cc-highlight" : "")}>{getLocalString(stat.simpleName)}</Title>
+            <Title order={6} className={(highlight ? "cc-highlight" : "")}>{stat.formatted}</Title>
         </div>
     )
 }
@@ -165,11 +166,12 @@ function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.Re
 function SubStat({ stat }: { stat: Property }): React.ReactElement {
     const SubStatLevel = ({ level }: { level: number }) => {
         const isActive = (lvl: number) => lvl <= level
-        return <SimpleGrid cols={4} spacing="2px" verticalSpacing="0"> 
+        return <SimpleGrid cols={5} spacing="2px" verticalSpacing="0"> 
             <div className="cc-disc-stat-level" data-active={isActive(2)}></div>
             <div className="cc-disc-stat-level" data-active={isActive(3)}></div>
             <div className="cc-disc-stat-level" data-active={isActive(4)}></div>
             <div className="cc-disc-stat-level" data-active={isActive(5)}></div>
+            <div className="cc-disc-stat-level" data-active={isActive(6)}></div>
         </SimpleGrid>
     }
 
@@ -255,11 +257,37 @@ function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character }: ICharacterCardProps): React.ReactElement {
-    return (
+export default function CharacterCard({ ref, uid, username, character, substatsVisible }: ICharacterCardProps): React.ReactElement {
+    const collectSubstats = (): [number, Property][] => {
+        const result: [number, Property][] = []
+        const substatValueMap: Record<number, number> = {}
+        const substatNameMap: Record<number, string> = {}
+        const substatCountMap: Record<number, number> = {}
+
+        for (let disc of character.DriveDisks) {
+            for (let subStat of disc.SubStats) {
+                if (!substatValueMap[subStat.Id]) {
+                    substatValueMap[subStat.Id] = subStat.Value
+                    substatNameMap[subStat.Id] = subStat.Name
+                    substatCountMap[subStat.Id] = 1
+                } else {
+                    substatValueMap[subStat.Id] += subStat.Value
+                    substatCountMap[subStat.Id] += 1
+                }
+            }
+        }
+
+        for (const [sid, value] of Object.entries(substatValueMap)) {
+            const id = Number(sid)
+            result.push([substatCountMap[id], new Property(id, substatNameMap[id], value)])
+        }
+        return result
+    }
+
+    return (<Stack>
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
-            style={{ "--accent": character.Colors.Mindscape }}>
-            <div className="cc-grid">
+            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent }}>
+            <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
                     <BackgroundImage mt="xs" className="character-img" src={character.ImageUrl} />
                 </div>
@@ -275,7 +303,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                 <div className="cc-vignette" />
                 <div className="cc-cell cc-stats">
                     {
-                        character.Stats.map(s => <Stat key={s.Id ^ character.Id} stat={s} />)
+                        character.Stats.map(s => <Stat key={s.Id ^ character.Id} stat={s} highlight={character.HighlightProps?.includes(s.Id) ?? false} />)
                     }
                 </div>
                 <div className="cc-cell cc-skills">
@@ -294,7 +322,8 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                         {
                             Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
                                 const disc = character.DriveDisks.find(dd => dd.Slot === idx)
-                                return <DriveDisc key={disc ? disc.Uid : character.Id ^ idx} slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                                return <DriveDisc key={disc ? disc.Uid : character.Id ^ idx} 
+                                    slot={disc ? disc.Slot : idx} disc={disc ?? null} />
                             })
                         }
                     </div>
@@ -308,9 +337,21 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                         CV {character.CritValue}
                     </Title>
                 </div>
-            </div>
+            </Card.Section>
+            {substatsVisible && substatsVisible === true &&
+                <Card.Section m="0px" className="cc-sub-stats">
+                    {
+                        collectSubstats().map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
+                            data-count={"*".repeat(cnt + 1)} key={ss.Id}>
+                            <Text fz="10px">{cnt}</Text>
+                            <SubStat stat={ss} />
+                        </Group>)
+                    }
+                </Card.Section>
+            }
         </Card>
-    )
+        
+    </Stack>)
 }
 
 export const CharacterCardMemorized = memo(CharacterCard)

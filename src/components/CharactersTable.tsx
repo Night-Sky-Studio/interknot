@@ -1,5 +1,5 @@
 import { Character, LeaderboardAgent } from "@interknot/types"
-import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button } from "@mantine/core"
+import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button, Switch } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useRef, useState } from "react"
@@ -61,15 +61,16 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
         const [cardContainerRef, cardContainerRect] = useResizeObserver()
 
         const [isCardVisible, { toggle }] = useDisclosure(false)
+        const [isSubstatsVisible, { toggle: toggleSubstats }] = useDisclosure(true)
         const [isDmgDistributionVisible, { toggle: toggleDmgDistribution }] = useDisclosure(false)
 
         useEffect(() => {
             if (cardContainerRect.width) {
                 const newScale = Math.max(cardContainerRect.width / 900, 1)
                 setCardScale(newScale)
-                setCardContainerHeight(Math.round(cardContainerRect.width * CARD_ASPECT_RATIO) + 20)
+                setCardContainerHeight(Math.round(cardContainerRect.width * CARD_ASPECT_RATIO) + 20 + (isSubstatsVisible ? 24 : 0))
             }
-        }, [cardContainerRect.width])
+        }, [cardContainerRect.width, isSubstatsVisible])
         
         const cardRef = useRef<HTMLDivElement | null>(null)
 
@@ -139,7 +140,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                                     {isCardVisible &&
                                         <CharacterCardMemorized ref={cardRef}
                                             uid={uid} username={username}
-                                            character={c} />
+                                            character={c} substatsVisible={isSubstatsVisible} />
                                     }
                                 </div>
                                 <Stack>
@@ -172,6 +173,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                                             <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
                                                 variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
                                         }
+                                        <Switch label="Substats breakdown" checked={isSubstatsVisible} onChange={toggleSubstats} />
                                     </Group>
                                     <Collapse in={isDmgDistributionVisible}>
                                         { agentLeaderboards.length > 0 &&

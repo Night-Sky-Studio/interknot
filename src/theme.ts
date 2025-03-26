@@ -1,4 +1,4 @@
-import { ActionIcon, Button, colorsTuple, createTheme, Title, Image } from "@mantine/core"
+import { ActionIcon, Button, colorsTuple, createTheme, Title, Image, Switch } from "@mantine/core"
 
 const theme = createTheme({
     colors: { 
@@ -41,6 +41,17 @@ const theme = createTheme({
             styles: {
                 root: {
                     width: "auto"
+                }
+            }
+        }),
+        Switch: Switch.extend({
+            styles: {
+                root: {
+                    color: "white"
+                },
+                thumb: {
+                    backgroundColor: "white",
+                    outline: "1px solid var(--mantine-color-dark-3)"
                 }
             }
         })
