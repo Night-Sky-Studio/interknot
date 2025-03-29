@@ -8,6 +8,7 @@ import { IconChevronDown, IconChevronUp, IconDownload } from "@tabler/icons-reac
 import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
 import { DamageDistributionMemoized } from "./DamageDistribution"
+import { ExpandableRow } from "./ExpandableRow"
 
 interface ICharactersTableProps {
     uid: number
@@ -131,60 +132,55 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                     </Table.Td>
                     {/* Add character stats */}
                 </Table.Tr>
-                <Table.Tr className="character-card-row"
+                <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}
                     style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
-                    <Table.Td colSpan={6} p="0" ref={cardContainerRef}>
-                        <Collapse in={isCardVisible}>
-                            <Stack gap="8px">
-                                <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
-                                    {isCardVisible &&
-                                        <CharacterCardMemorized ref={cardRef}
-                                            uid={uid} username={username}
-                                            character={c} substatsVisible={isSubstatsVisible} />
-                                    }
-                                </div>
-                                <Stack>
-                                    <Group m="xl">
-                                        <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
-                                            if (cardRef.current === null) return
+                    <Stack gap="8px">
+                        <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
+                            <CharacterCardMemorized ref={cardRef}
+                                uid={uid} username={username}
+                                character={c} substatsVisible={isSubstatsVisible} />
+                        </div>
+                        <Stack>
+                            <Group m="xl">
+                                <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
+                                    if (cardRef.current === null) return
 
-                                            const cardRect = cardRef.current.getBoundingClientRect()
-                                            const cs = cardScale
-                                            setCardScale(1.0)
+                                    const cardRect = cardRef.current.getBoundingClientRect()
+                                    const cs = cardScale
+                                    setCardScale(1.0)
 
-                                            const dataUrl = await toPng(cardRef.current, {
-                                                quality: 1.0,
-                                                canvasHeight: (cardRect.height) * 2,
-                                                canvasWidth: (cardRect.width) * 2,
-                                                backgroundColor: "transparent",
-                                                style: {
-                                                    margin: "var(--mantine-spacing-lg)"
-                                                }
-                                            })
-
-                                            const link = document.createElement("a")
-                                            link.download = `${getLocalString(c.Name)}-${uid}.png`
-                                            link.href = dataUrl
-                                            link.click();
-
-                                            setCardScale(cs)
-                                        }}>Download Image</Button>
-                                        { agentLeaderboards.length > 0 &&
-                                            <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
-                                                variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
+                                    const dataUrl = await toPng(cardRef.current, {
+                                        quality: 1.0,
+                                        canvasHeight: (cardRect.height) * 2,
+                                        canvasWidth: (cardRect.width) * 2,
+                                        backgroundColor: "transparent",
+                                        style: {
+                                            margin: "var(--mantine-spacing-lg)"
                                         }
-                                        <Switch label="Substats breakdown" checked={isSubstatsVisible} onChange={toggleSubstats} />
-                                    </Group>
-                                    <Collapse in={isDmgDistributionVisible}>
-                                        { agentLeaderboards.length > 0 &&
-                                            <DamageDistributionMemoized entries={agentLeaderboards} />
-                                        }
-                                    </Collapse>
-                                </Stack>
-                            </Stack>
-                        </Collapse>
-                    </Table.Td>
-                </Table.Tr>
+                                    })
+
+                                    const link = document.createElement("a")
+                                    link.download = `${getLocalString(c.Name)}-${uid}.png`
+                                    link.href = dataUrl
+                                    link.click();
+
+                                    setCardScale(cs)
+                                }}>Download Image</Button>
+                                { agentLeaderboards.length > 0 &&
+                                    <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
+                                        variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
+                                }
+                                <Switch label="Substats breakdown" checked={isSubstatsVisible} onChange={toggleSubstats} />
+                            </Group>
+                            <Collapse in={isDmgDistributionVisible}>
+                                { agentLeaderboards.length > 0 &&
+                                    <DamageDistributionMemoized entries={agentLeaderboards} />
+                                }
+                            </Collapse>
+                        </Stack>
+                    </Stack>
+
+                </ExpandableRow>
             </>
         )
     }
