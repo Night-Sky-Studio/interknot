@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage"
 import ErrorPage from "./pages/ErrorPage"
 import { SettingsProvider } from "./components/SettingsProvider"
 import SettingsPage from "./pages/SettingsPage"
+import LeaderboardsPage from "./pages/LeaderboardsPage"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -24,8 +25,9 @@ export default function App() {
                             <Route element={<Shell />}>
                                 <Route index element={<HomePage />} />
                                 <Route path="/user/:uid" element={<ProfilePageWrapper />} />
-                                <Route path="404" element={<ErrorPage />}/>
+                                <Route path="*" element={<ErrorPage />}/>
                                 <Route path="settings" element={<SettingsPage />}/>
+                                <Route path="leaderboards" element={<LeaderboardsPage />} />
                             </Route>
                         </Routes>
                     </BrowserRouter>

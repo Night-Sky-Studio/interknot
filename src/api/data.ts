@@ -1,4 +1,4 @@
-import { LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { Leaderboard, LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
@@ -30,7 +30,7 @@ export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
     return await response.json()
 }
 
-export async function getUser(uid: number, update: boolean = false) : Promise<Profile | undefined> {
+export async function getUser(uid: number, update: boolean = false) : Promise<Profile> {
     let response = await fetch(url({
         base: dataUrl,
         path: `profile/${uid}`,
@@ -38,14 +38,15 @@ export async function getUser(uid: number, update: boolean = false) : Promise<Pr
             update: `${update}`
         }]
     }))
-    if (response.status !== 200) return undefined
+    if (response.status !== 200) 
+        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
 
     const json = await response.json()
 
     return restoreProperties(json)
 }
 
-export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<LeaderboardProfile | undefined> {
+export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<LeaderboardProfile> {
     const response = await fetch(url({
         base: dataUrl,
         path: `/leaderboards/${uid}`,
@@ -53,9 +54,20 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
             { "update": `${update}` }
         ]
     }))
-    if (response.status !== 200) return undefined
+    if (response.status !== 200) 
+        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
 
     return restoreProperties(await response.json())
+}
+
+export async function getLeaderboards(): Promise<Leaderboard[]> {
+    const response = await fetch(url({
+        base: dataUrl,
+        path: "/leaderboards"
+    }))
+    if (response.status !== 200) 
+        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+    return await response.json()
 }
 
 export async function pingDataServer() {
