@@ -1,12 +1,15 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, SimpleGrid } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, SimpleGrid, em } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import CritCell from "../components/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "../components/WeaponButton"
 import { useMemo } from "react"
+import { useMediaQuery } from "@mantine/hooks"
+import { Character, Property } from "@interknot/types"
+import PropertyCell from "../components/PropertyCell"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -44,6 +47,27 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const leaderboardDistributionState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(Number(id))
     }, [id])
+
+    const isNarrow = useMediaQuery(`(max-width: ${em("1150px")})`)
+
+    const stats = (c: Character) => {
+        const result: Property[] = []
+        let skippedStats = 0
+        for (const prodId of c.DisplayProps) {
+            const stat = c.Stats.find(p => p.Id === prodId)
+            if (stat?.Value === 0) {
+                skippedStats++
+                if (c.DisplayProps.length - skippedStats >= 4)
+                    continue
+            }
+            if (result.length >= 4)
+                break
+            if (stat) {
+                result.push(stat)
+            }
+        }
+        return result
+    }
 
     return (<>
         <title>{`${currentLeaderboard?.FullName} | Inter-Knot`}</title>
@@ -103,6 +127,12 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 {/* <Table.Th>Character</Table.Th> */}
                                 <Table.Th>Drive Discs</Table.Th>
                                 <Table.Th>Crit Ratio</Table.Th>
+                                {!isNarrow && <>
+                                    <Table.Th>-</Table.Th>
+                                    <Table.Th>-</Table.Th>
+                                    <Table.Th>-</Table.Th>
+                                    <Table.Th>-</Table.Th>
+                                </>}
                                 <Table.Th bg="rgba(0 0 0 / 25%)">Total Value</Table.Th>
                             </Table.Tr>
                         </Table.Thead>
@@ -143,6 +173,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                                 cd={user.Character.Stats.find(p => p.Id === 21101)?.formatted?.replace("%", "") ?? ""} 
                                                 cv={user.Character.CritValue} />
                                         </Table.Td>
+                                        {!isNarrow &&
+                                            stats(user.Character).map(prop => <PropertyCell key={prop.Id} prop={prop} />)
+                                        }
                                         <Table.Td w="128px" bg="rgba(0 0 0 / 25%)">
                                             <Text fz="12pt" fw={600}>{Math.round(user.TotalValue).toLocaleString()}</Text>
                                         </Table.Td>
