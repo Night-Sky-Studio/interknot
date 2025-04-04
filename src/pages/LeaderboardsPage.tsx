@@ -77,7 +77,7 @@ export default function LeaderboardsPage(): React.ReactElement {
                                                 <WeaponButton id={leaderboard.Id} weapon={leaderboard.Weapon} />
                                                 {
                                                     leaderboard.Children.map((child) => (
-                                                        <WeaponButton id={child.Id} weapon={child.Weapon} />
+                                                        <WeaponButton key={child.Id} id={child.Id} weapon={child.Weapon} />
                                                     ))
                                                 }
                                             </Group>
