@@ -1,15 +1,16 @@
-import { Character, LeaderboardAgent } from "@interknot/types"
-import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch } from "@mantine/core"
+import { Character, LeaderboardAgent, Property } from "@interknot/types"
+import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch, em } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import { CharacterCardMemorized } from "./CharacterCard"
-import { memo, useEffect, useRef, useState } from "react"
-import { useDisclosure, useResizeObserver } from "@mantine/hooks"
+import { memo, useEffect, useMemo, useRef, useState } from "react"
+import { useDisclosure, useMediaQuery, useResizeObserver } from "@mantine/hooks"
 import { IconChevronDown, IconChevronUp, IconDownload } from "@tabler/icons-react"
 import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
 import { DamageDistributionMemoized } from "./DamageDistribution"
 import { ExpandableRow } from "./ExpandableRow"
 import CritCell from "./CritCell"
+import PropertyCell from "./PropertyCell"
 
 interface ICharactersTableProps {
     uid: number
@@ -20,18 +21,7 @@ interface ICharactersTableProps {
 
 export default function CharactersTable({ uid, username, characters, lbAgents }: ICharactersTableProps): React.ReactElement {
     const { getLocalString } = useSettings()
-    
-    // const cvColor = (critValue: number) => {
-    //     const theme = useMantineTheme()
-    //     switch (true) {
-    //         case critValue >= 200: return theme.colors.red[7]
-    //         case critValue >= 180: return theme.colors.pink[7]
-    //         case critValue >= 170: return theme.colors.grape[7]
-    //         case critValue >= 160: return theme.colors.violet[6]
-    //         case critValue >= 150: return theme.colors.blue[5]
-    //         default: return undefined
-    //     }
-    // }
+
     // const [sortMode, setSortMode] = useState(0)
 
     // useEffect(() => {
@@ -43,6 +33,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
             <Text fw={700}>{level}</Text>
         </div>
     }
+
+    const isNarrow = useMediaQuery(`(max-width: ${em("1150px")})`)
 
     const CharacterRow = ({ c, i }: { c: Character, i: number }) => {
         // const [openedId, setOpenedId] = useState<number | null>(null)
@@ -67,15 +59,34 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
 
         const agentLeaderboards = lbAgents?.filter(l => l.Agent.Id === c.Id) ?? []
 
+        const stats = useMemo(() => {
+            const result: Property[] = []
+            let skippedStats = 0
+            for (const prodId of c.DisplayProps) {
+                const stat = c.Stats.find(p => p.Id === prodId)
+                if (stat?.Value === 0) {
+                    skippedStats++
+                    if (c.DisplayProps.length - skippedStats >= 4)
+                        continue
+                }
+                if (result.length >= 4)
+                    break
+                if (stat) {
+                    result.push(stat)
+                }
+            }
+            return result
+        }, [c.DisplayProps])
+
         return (
             <>
-                <Table.Tr onClick={() => {
+                <Table.Tr style={{ borderBottom: isNarrow ? "unset" : undefined }} onClick={() => {
                     // setOpenedId(openedId === c.Id ? null : c.Id)
                     toggle()
                 }}>
-                    <Table.Td>{i + 1}</Table.Td>
+                    <Table.Td w="16px">{i + 1}</Table.Td>
                     <Table.Td>
-                        <Group gap="sm">
+                        <Group gap="sm" wrap="nowrap">
                             <Image src={c.CircleIconUrl} h="32px" />
                             <Text>{getLocalString(c.Name)}</Text>
                             <div className="chip">Lv. {c.Level}</div>
@@ -84,16 +95,16 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                     <Table.Td>
                         {mindscapeChip(c.MindscapeLevel)}
                     </Table.Td>
-                    <Table.Td>
+                    <Table.Td w="56px">
                         {c.Weapon &&
-                            <Group gap="-14px" align="flex-end">
+                            <Group gap="-14px" align="flex-end" wrap="nowrap">
                                 <Image src={c.Weapon?.ImageUrl} h="32px" />
                                 <Text size="10pt">P{c.Weapon?.UpgradeLevel}</Text>
                             </Group>
                         }
                     </Table.Td>
-                    <Table.Td>
-                        <Group gap="8px">
+                    <Table.Td w="110px">
+                        <Group gap="8px" wrap="nowrap">
                             {
                                 c.DriveDisksSet.map(set => {
                                     return (
@@ -106,11 +117,17 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                             }
                         </Group>
                     </Table.Td>
-                    <Table.Td w="160px" bg="rgba(0 0 0 / 25%)">
+                    <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
                         <CritCell cr={c.Stats.find(p => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
                             cd={c.Stats.find(p => p.Id === 21101)?.formatted.replace("%", "") ?? ""} cv={c.CritValue} />
                     </Table.Td>
-                    {/* Add character stats */}
+                    {!isNarrow && 
+                        stats.map(prop => {
+                            return (
+                                <PropertyCell key={prop.Id} prop={prop} />
+                            )
+                        })
+                    }
                 </Table.Tr>
                 <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}
                     style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
@@ -167,7 +184,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
 
     return (
         <Card p="0" radius="md" shadow="lg">
-            <Table stickyHeader highlightOnHover striped>
+            <Table stickyHeader>
                 <Table.Thead>
                     <Table.Tr>
                         <Table.Th>#</Table.Th>
@@ -176,6 +193,12 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                         <Table.Th>Weapon</Table.Th>
                         <Table.Th>Drive Disks</Table.Th>
                         <Table.Th>Crit Value</Table.Th>
+                        {!isNarrow && <>
+                            <Table.Th>-</Table.Th>
+                            <Table.Th>-</Table.Th>
+                            <Table.Th>-</Table.Th>
+                            <Table.Th>-</Table.Th>
+                        </>}
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
