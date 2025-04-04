@@ -27,7 +27,8 @@ export default function LeaderboardsPage(): React.ReactElement {
         )
     }
 
-    return (
+    return (<>
+        <title>Leaderboards | Inter-Knot</title>
         <Stack>
             <Alert variant="light" color="blue" 
                 title="Leaderboards are meant for comparing Drive Discs strength only!" icon={<IconInfoCircle />}>
@@ -54,18 +55,20 @@ export default function LeaderboardsPage(): React.ReactElement {
             }
             {leaderboardsState.error &&
                 <Alert variant="light" color="red" title="Failed to load leaderboards" icon={<IconInfoCircle />}>
-                <Text ff="monospace">Error: {leaderboardsState.error.message}</Text>
-            </Alert>
+                    <Text ff="monospace">Error: {leaderboardsState.error.message}</Text>
+                </Alert>
             }
             {leaderboardsState.value &&
                 <Card p="0" withBorder radius="md">
                     <Table stickyHeader>
                         <Table.Thead>
-                            <Table.Th>#</Table.Th>
-                            <Table.Th>Name</Table.Th>
-                            <Table.Th>Weapons</Table.Th>
-                            <Table.Th>Team</Table.Th>
-                            <Table.Th>Total</Table.Th>
+                            <Table.Tr>
+                                <Table.Th>#</Table.Th>
+                                <Table.Th>Name</Table.Th>
+                                <Table.Th>Weapons</Table.Th>
+                                <Table.Th>Team</Table.Th>
+                                <Table.Th>Total</Table.Th>
+                            </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
                             {leaderboardsState.value.map((leaderboard, index) => {
@@ -104,18 +107,5 @@ export default function LeaderboardsPage(): React.ReactElement {
                 </Card>
             }
         </Stack>
-    )
+    </>)
 }
-/* // use on details page
-<Group justify="center" gap="xs">
-<Pagination withControls autoContrast 
-    total={leaderboardsState.value.totalPages} 
-    value={page} onChange={setPage} />
-<Select w="128px"
-    data={[10, 30, 60, 100].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
-    value={limit.toString()}
-    onChange={(value) => {
-        value && setLimit(Number(value))
-    }} />
-</Group>
-*/
