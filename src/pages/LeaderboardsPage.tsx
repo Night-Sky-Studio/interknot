@@ -1,12 +1,11 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "../api/data"
-import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert, ActionIcon } from "@mantine/core"
-import { BaseWeapon } from "@interknot/types"
+import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
-import { getLocalString } from "../localization/Localization"
 import { Team } from "../components/Team"
+import WeaponButton from "../components/WeaponButton"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -14,18 +13,6 @@ export default function LeaderboardsPage(): React.ReactElement {
     const leaderboardsState = useAsyncRetry(async () => {
         return await getLeaderboards()
     })
-
-    const WeaponButton = ({ id, weapon } : { id: number, weapon: BaseWeapon }) => {
-        return (
-            <ActionIcon variant="subtle" p="0" style={{ overflow: "visible" }}
-                onClick={(e) => {
-                    e.stopPropagation()
-                    navigate(`/leaderboards/${id}`)
-                }}>
-                <Image h="38px" src={weapon.ImageUrl} alt={getLocalString(weapon.Name)} />
-            </ActionIcon>
-        )
-    }
 
     return (<>
         <title>Leaderboards | Inter-Knot</title>
