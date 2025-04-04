@@ -1,5 +1,5 @@
 import { Character, LeaderboardAgent } from "@interknot/types"
-import { Card, Group, Table, Image, Text, useMantineTheme, Collapse, Stack, Button, Switch } from "@mantine/core"
+import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch } from "@mantine/core"
 import "./styles/CharactersTable.css"
 import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useRef, useState } from "react"
@@ -9,6 +9,7 @@ import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
 import { DamageDistributionMemoized } from "./DamageDistribution"
 import { ExpandableRow } from "./ExpandableRow"
+import CritCell from "./CritCell"
 
 interface ICharactersTableProps {
     uid: number
@@ -17,31 +18,20 @@ interface ICharactersTableProps {
     lbAgents?: LeaderboardAgent[]
 }
 
-export const cvWeight = (critValue: number) => {
-    switch (true) {
-        case critValue >= 200: return 800
-        case critValue >= 180: return 700
-        case critValue >= 170: return 600
-        case critValue >= 160: return 500
-        case critValue >= 150: return 400
-        default: return undefined
-    }
-}
-
 export default function CharactersTable({ uid, username, characters, lbAgents }: ICharactersTableProps): React.ReactElement {
     const { getLocalString } = useSettings()
     
-    const cvColor = (critValue: number) => {
-        const theme = useMantineTheme()
-        switch (true) {
-            case critValue >= 200: return theme.colors.red[7]
-            case critValue >= 180: return theme.colors.pink[7]
-            case critValue >= 170: return theme.colors.grape[7]
-            case critValue >= 160: return theme.colors.violet[6]
-            case critValue >= 150: return theme.colors.blue[5]
-            default: return undefined
-        }
-    }
+    // const cvColor = (critValue: number) => {
+    //     const theme = useMantineTheme()
+    //     switch (true) {
+    //         case critValue >= 200: return theme.colors.red[7]
+    //         case critValue >= 180: return theme.colors.pink[7]
+    //         case critValue >= 170: return theme.colors.grape[7]
+    //         case critValue >= 160: return theme.colors.violet[6]
+    //         case critValue >= 150: return theme.colors.blue[5]
+    //         default: return undefined
+    //     }
+    // }
     // const [sortMode, setSortMode] = useState(0)
 
     // useEffect(() => {
@@ -117,18 +107,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                         </Group>
                     </Table.Td>
                     <Table.Td w="160px" bg="rgba(0 0 0 / 25%)">
-                        <Text className="crit-cell" component="div">
-                            <div>
-                                {
-                                    c.Stats.find(p => p.Id === 20101)?.formatted.replace("%", "")
-                                } : {
-                                    c.Stats.find(p => p.Id === 21101)?.formatted.replace("%", "")
-                                }
-                            </div>
-                            <div style={{ color: cvColor(c.CritValue), fontWeight: cvWeight(c.CritValue) }}>
-                                {c.CritValue} cv
-                            </div>
-                        </Text>
+                        <CritCell cr={c.Stats.find(p => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
+                            cd={c.Stats.find(p => p.Id === 21101)?.formatted.replace("%", "") ?? ""} cv={c.CritValue} />
                     </Table.Td>
                     {/* Add character stats */}
                 </Table.Tr>
