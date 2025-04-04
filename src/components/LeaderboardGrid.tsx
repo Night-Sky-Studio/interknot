@@ -24,7 +24,7 @@ export function LeaderboardGrid({ profile, characters }: { profile?: Leaderboard
             <div className="lb-grid">
                 {
                     profile?.Agents.map(a => {
-                        return <LeaderboardButton key={a.Agent.Id} 
+                        return <LeaderboardButton key={a.LeaderboardId} 
                         agent={a.Agent} 
                         weapon={a.Weapon} 
                         name={a.LeaderboardName}
