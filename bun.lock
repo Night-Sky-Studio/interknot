@@ -6,8 +6,8 @@
       "dependencies": {
         "@interknot/types": "git+https://github.com/Night-Sky-Studio/interknot-types.git#main",
         "@mantine/charts": "^7.17.3",
-        "@mantine/core": "7.16.3",
-        "@mantine/hooks": "7.16.3",
+        "@mantine/core": "^7.17.3",
+        "@mantine/hooks": "^7.17.3",
         "@tabler/icons-react": "^3.30.0",
         "babel-plugin-react-compiler": "^19.0.0-beta-bafa41b-20250307",
         "html-to-image": "^1.11.13",
@@ -145,9 +145,9 @@
 
     "@mantine/charts": ["@mantine/charts@7.17.3", "", { "peerDependencies": { "@mantine/core": "7.17.3", "@mantine/hooks": "7.17.3", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x", "recharts": "^2.13.3" } }, "sha512-YGx8hLi4E3yyiRx9fNAoPPF+YrFkLWM+fnzqKIVvRbWqMbUw920AU+K5XSDjPmNB7cuYWSVwxxA/hIstQ8x3VA=="],
 
-    "@mantine/core": ["@mantine/core@7.16.3", "", { "dependencies": { "@floating-ui/react": "^0.26.28", "clsx": "^2.1.1", "react-number-format": "^5.4.3", "react-remove-scroll": "^2.6.2", "react-textarea-autosize": "8.5.6", "type-fest": "^4.27.0" }, "peerDependencies": { "@mantine/hooks": "7.16.3", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x" } }, "sha512-cxhIpfd2i0Zmk9TKdejYAoIvWouMGhzK3OOX+VRViZ5HEjnTQCGl2h3db56ThqB6NfVPCno6BPbt5lwekTtmuQ=="],
+    "@mantine/core": ["@mantine/core@7.17.3", "", { "dependencies": { "@floating-ui/react": "^0.26.28", "clsx": "^2.1.1", "react-number-format": "^5.4.3", "react-remove-scroll": "^2.6.2", "react-textarea-autosize": "8.5.6", "type-fest": "^4.27.0" }, "peerDependencies": { "@mantine/hooks": "7.17.3", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x" } }, "sha512-N/AfV5eMnfEMx9WzI7AU5pNFBEzAfT/KtE2XDKS+0ht6RifUmolIxyIvoGMYz2yUEsCBMJZqmBq33Rabf5W7Ug=="],
 
-    "@mantine/hooks": ["@mantine/hooks@7.16.3", "", { "peerDependencies": { "react": "^18.x || ^19.x" } }, "sha512-B94FBWk5Sc81tAjV+B3dGh/gKzfqzpzVC/KHyBRWOOyJRqeeRbI/FAaJo4zwppyQo1POSl5ArdyjtDRrRIj2SQ=="],
+    "@mantine/hooks": ["@mantine/hooks@7.17.3", "", { "peerDependencies": { "react": "^18.x || ^19.x" } }, "sha512-6o65Rbfl8jd1C1nF9icvungqL0qZViEOmrZgkyKXxBYkC3x91fz4zftwQgNjt1tZHWDNO6Bo4GpRjJyAdwl48g=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 

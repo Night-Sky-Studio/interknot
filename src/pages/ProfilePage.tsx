@@ -40,6 +40,8 @@ export default function ProfilePage(): React.ReactElement {
             console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}`)
     }, [userState.value, needsUpdate])
 
+    const [openedId, setOpenedId] = useState<number | null>(null)
+
     return (<> 
         {userState.loading && !userState.value && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
@@ -79,7 +81,13 @@ export default function ProfilePage(): React.ReactElement {
                             leaderboardsState.loading && <Center m="md"><Loader /></Center>
                         }
                         {
-                            !leaderboardsState.loading && !leaderboardsState.error && <LeaderboardGridMemorized profile={leaderboardsState.value} characters={userState.value.Characters} />
+                            !leaderboardsState.loading && !leaderboardsState.error && 
+                                <LeaderboardGridMemorized 
+                                    profile={leaderboardsState.value} 
+                                    characters={userState.value.Characters}
+                                    onProfileClick={(agentId) => {
+                                        setOpenedId(agentId === openedId ? null : agentId)
+                                    }} />
                         }
                         {
                             leaderboardsState.error && <Center m="md">Failed to load leaderboards</Center>
@@ -90,7 +98,7 @@ export default function ProfilePage(): React.ReactElement {
                     </Button>
                 </Stack>
                 <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
-                    characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} />
+                    characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
             </Stack>
         </>
     }

@@ -16,10 +16,11 @@ interface ICharactersTableProps {
     uid: number
     username: string
     characters: Character[]
-    lbAgents?: LeaderboardAgent[]
+    lbAgents?: LeaderboardAgent[],
+    openedId?: number | null
 }
 
-export default function CharactersTable({ uid, username, characters, lbAgents }: ICharactersTableProps): React.ReactElement {
+export default function CharactersTable({ uid, username, characters, lbAgents, openedId }: ICharactersTableProps): React.ReactElement {
     const { getLocalString } = useSettings()
 
     // const [sortMode, setSortMode] = useState(0)
@@ -36,14 +37,14 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
 
     const isNarrow = useMediaQuery(`(max-width: ${em("1150px")})`)
 
-    const CharacterRow = ({ c, i }: { c: Character, i: number }) => {
+    const CharacterRow = ({ c, i, isOpened }: { c: Character, i: number, isOpened: boolean }) => {
         // const [openedId, setOpenedId] = useState<number | null>(null)
         const CARD_ASPECT_RATIO = 21 / 43
         const [cardScale, setCardScale] = useState(1)
         const [cardContainerHeight, setCardContainerHeight] = useState(860 * CARD_ASPECT_RATIO)
         const [cardContainerRef, cardContainerRect] = useResizeObserver()
 
-        const [isCardVisible, { toggle }] = useDisclosure(false)
+        const [isCardVisible, { toggle }] = useDisclosure(isOpened)
         const [isSubstatsVisible, { toggle: toggleSubstats }] = useDisclosure(true)
         const [isDmgDistributionVisible, { toggle: toggleDmgDistribution }] = useDisclosure(false)
 
@@ -58,6 +59,20 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
         const cardRef = useRef<HTMLDivElement | null>(null)
 
         const agentLeaderboards = lbAgents?.filter(l => l.Agent.Id === c.Id) ?? []
+
+        // Scroll card into view when opened
+        /*
+        useEffect(() => {
+            if (isOpened && cardContainerRef.current) {
+                setTimeout(() => {
+                    cardContainerRef.current?.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'center'
+                    })
+                }, 100)
+            }
+        }, [isOpened])
+        */
 
         const stats = useMemo(() => {
             const result: Property[] = []
@@ -203,7 +218,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                 </Table.Thead>
                 <Table.Tbody>
                     {
-                        characters.sort((c1, c2) => c2.CritValue - c1.CritValue).map((c, i) => <CharacterRow key={c.Id} c={c} i={i} />)
+                        characters.sort((c1, c2) => c2.CritValue - c1.CritValue).map((c, i) => 
+                            <CharacterRow key={c.Id} c={c} i={i} isOpened={openedId === c.Id} />)
                     }
                 </Table.Tbody>
             </Table>

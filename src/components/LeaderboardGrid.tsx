@@ -7,7 +7,13 @@ import { memo, useMemo } from "react"
 export const shouldShowLeaderboards = (p?: LeaderboardProfile) => 
     p?.Agents?.some(a => a.Total > 20) ?? false
 
-export function LeaderboardGrid({ profile, characters }: { profile?: LeaderboardProfile, characters: Character[] }) {
+interface ILeaderboardGridProps {
+    profile?: LeaderboardProfile
+    characters: Character[]
+    onProfileClick?: (agentId: number) => void
+}
+
+export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeaderboardGridProps) {
     const buttonType = (c: Character, w: BaseWeapon): number => {
         if (c.Weapon?.Id == w.Id) {
             return 0 // matches weapon
@@ -48,12 +54,16 @@ export function LeaderboardGrid({ profile, characters }: { profile?: Leaderboard
                 {
                     prioritizedAgents.map(a => {
                         return <LeaderboardButton key={a.LeaderboardId} 
-                        agent={a.Agent} 
-                        weapon={a.Weapon} 
-                        name={a.LeaderboardName}
-                        rank={a.Rank}
-                        total={a.Total}
-                        type={buttonType(characters.find(c => c.Id === a.Agent.Id)!, a.Weapon)} />
+                            id={a.LeaderboardId}
+                            agent={a.Agent} 
+                            weapon={a.Weapon} 
+                            name={a.LeaderboardName}
+                            rank={a.Rank}
+                            total={a.Total}
+                            type={buttonType(characters.find(c => c.Id === a.Agent.Id)!, a.Weapon)}
+                            onClick={() => {
+                                onProfileClick?.(a.Agent.Id)
+                            }} />
                     })
                 }
             </div>
