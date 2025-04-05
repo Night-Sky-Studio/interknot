@@ -5,7 +5,7 @@ import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { CharactersTableMemorized } from "../components/CharactersTable"
 import { useEffect, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
-import { useAsyncRetry } from "react-use"
+import { useAsyncRetry, useSearchParam } from "react-use"
 import { getUser, getUserLeaderboards } from "../api/data"
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload } from "@tabler/icons-react"
 import Timer from "../components/Timer"
@@ -14,6 +14,7 @@ import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
 
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
+    const initialOpenedId = useSearchParam("openedId")
     
     const [needsUpdate, setNeedsUpdate] = useState(false)
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
@@ -40,7 +41,7 @@ export default function ProfilePage(): React.ReactElement {
             console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}`)
     }, [userState.value, needsUpdate])
 
-    const [openedId, setOpenedId] = useState<number | null>(null)
+    const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
     return (<> 
         {userState.loading && !userState.value && <>

@@ -150,9 +150,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         <Table.Tbody>
                             {leaderboardUsersState.value.items.map(user => {
                                 return (
-                                    <Table.Tr key={user.Profile.Uid}>
+                                    <Table.Tr key={user.Profile.Uid} onClick={() => navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)}>
                                         <Table.Td w="64px">{user.Rank}</Table.Td>
-                                        <Table.Td>
+                                        <Table.Td w="30%">
                                             <Group gap="sm">
                                                 <Image src={user.Profile.ProfilePictureUrl} h="32px" />
                                                 <Text>{user.Profile.Nickname}</Text>
