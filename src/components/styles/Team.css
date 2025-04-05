@@ -1,0 +1,17 @@
+.empty-member {
+    height: 100%;
+    background-color: var(--mantine-color-dark-8);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    position: relative;
+}
+.empty-member::before {
+    color: white;
+    font-family: "zzz", monospace;
+    font-weight: 600;
+    content: '?';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,6 +1,6 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconX } from '@tabler/icons-react'
-import { Outlet, useNavigate, useParams } from 'react-router'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconTrophyFilled, IconX } from '@tabler/icons-react'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
 import "./styles/Shell.pcss"
@@ -12,6 +12,7 @@ import InterknotLogo from "./icons/Interknot"
 
 export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
+    const location = useLocation()
     const { uid } = useParams()
 
     const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
@@ -67,37 +68,52 @@ export default function Shell(): React.ReactElement {
             </Group>
         </Modal>
 
-        <AppShell header={{ height: 60 }} navbar={{
-            width: 300, 
-            breakpoint: "sm",
-            collapsed: { desktop: !navBarOpened, mobile: !navBarOpened }
+        <AppShell header={{ height: 60 }} aside={{
+            width: 500,
+            breakpoint: "md",
+            collapsed: { desktop: true, mobile: !navBarOpened }
         }} padding="md">
             <AppShell.Header>
                 <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
                         <Group gap={0} wrap="nowrap">
                             <Button variant="transparent" component={Title} onClick={() => {
-                                setSelectedUser("")
                                 navigate("/")
-                            }}><Group gap="8px">
+                            }}><Group gap="8px" wrap="nowrap">
                                 <InterknotLogo height="38px" /> 
                                 Inter-Knot
                                 </Group>
                             </Button>
                             <Text c="dimmed" size="lg" fw={500}>β</Text>
+                            <Group ml="md" className="header-buttons">
+                                <Button size="xs"
+                                    variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"} 
+                                    onClick={() => {
+                                        navigate("/leaderboards")
+                                    }}>Leaderboards</Button>
+                            </Group>
                         </Group>
-                        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-                        <Group className="header-buttons-right"  gap="xs">
+                        <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
+                        <Group className="header-buttons"  gap="xs">
                             <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
+                            <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
                             <Button leftSection={<IconLogin />}>Log in</Button>
                         </Group>
                     </Flex>
                 </Container>
             </AppShell.Header>
             
-            <AppShell.Navbar>
+            <AppShell.Aside>
+                <NavLink label="Leaderboards" leftSection={<IconTrophyFilled />}
+                    variant="filled" 
+                    autoContrast
+                    active={location.pathname.includes("leaderboards")}
+                    onClick={() => {
+                        navigate("/leaderboards")
+                        toggle()
+                    }} />
                 <NavLink label="Log in" leftSection={<IconLogin />} />
                 <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
                     navigate("/settings")
@@ -112,7 +128,6 @@ export default function Shell(): React.ReactElement {
                             autoContrast
                             active={`${u.Uid}` === selectedUser}
                             onClick={() => { 
-                                setSelectedUser(`${u.Uid}`)
                                 navigate(`/user/${u.Uid}`)
                                 toggle()
                             }} />)
@@ -123,13 +138,13 @@ export default function Shell(): React.ReactElement {
                 <Title m="sm" order={4}>Links</Title>
                 <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
                 <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
-            </AppShell.Navbar>
+                <NavLink label="GitHub" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
+            </AppShell.Aside>
 
             <AppShell.Main>
                 <Container size="1600px">
                     {users.length !== 0 &&
                         <Tabs value={selectedUser} onChange={(value) => {
-                            setSelectedUser(value ?? uid ?? "")
                             navigate(`/user/${value}`)
                         }} variant="pills" mb="md">
                             

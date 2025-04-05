@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css"
+import '@mantine/charts/styles.css'
 import { MantineProvider } from "@mantine/core"
 import theme from "./theme"
 import Shell from "./components/Shell"
@@ -8,6 +9,8 @@ import HomePage from "./pages/HomePage"
 import ErrorPage from "./pages/ErrorPage"
 import { SettingsProvider } from "./components/SettingsProvider"
 import SettingsPage from "./pages/SettingsPage"
+import LeaderboardsPage from "./pages/LeaderboardsPage"
+import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -24,8 +27,10 @@ export default function App() {
                             <Route element={<Shell />}>
                                 <Route index element={<HomePage />} />
                                 <Route path="/user/:uid" element={<ProfilePageWrapper />} />
-                                <Route path="404" element={<ErrorPage />}/>
+                                <Route path="*" element={<ErrorPage />}/>
                                 <Route path="settings" element={<SettingsPage />}/>
+                                <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
                             </Route>
                         </Routes>
                     </BrowserRouter>

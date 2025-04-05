@@ -1,0 +1,10 @@
+.crit-cell {
+    display: flex;
+    position: relative;
+    gap: 24px;
+    white-space: nowrap;
+}
+.crit-cell > div:first-child {
+    text-align: end;
+    width: 72px;
+}
