@@ -91,7 +91,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                 }
             }
             return result
-        }, [c.DisplayProps])
+        }, [c.DisplayProps, c.Stats])
 
         return (
             <>
