@@ -100,7 +100,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                     toggle()
                 }}>
                     <Table.Td w="16px">{i + 1}</Table.Td>
-                    <Table.Td>
+                    <Table.Td w="30%">
                         <Group gap="sm" wrap="nowrap">
                             <Image src={c.CircleIconUrl} h="32px" />
                             <Text>{getLocalString(c.Name)}</Text>
@@ -118,7 +118,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             </Group>
                         }
                     </Table.Td>
-                    <Table.Td w="110px">
+                    <Table.Td>
                         <Group gap="8px" wrap="nowrap">
                             {
                                 c.DriveDisksSet.map(set => {
