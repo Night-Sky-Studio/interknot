@@ -39,7 +39,7 @@ export async function getUser(uid: number, update: boolean = false) : Promise<Pr
         }]
     }))
     if (response.status !== 200) 
-        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
 
     const json = await response.json()
 
@@ -55,7 +55,7 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
         ]
     }))
     if (response.status !== 200) 
-        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
 
     return restoreProperties(await response.json())
 }
@@ -66,7 +66,7 @@ export async function getLeaderboards(): Promise<Leaderboard[]> {
         path: "/leaderboards"
     }))
     if (response.status !== 200) 
-        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
     return await response.json()
 }
 
@@ -76,7 +76,7 @@ export async function getLeaderboard(id: number): Promise<Leaderboard[]> {
         path: `/leaderboard/${id}`
     }))
     if (response.status !== 200)
-        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
     return await response.json()
 }
 
@@ -90,7 +90,7 @@ export async function getLeaderboardUsers(id: number, page: number = 1, limit: n
         ]
     }))
     if (response.status !== 200)
-        throw new Error(`Code: ${response.status} - ${response.statusText}\nBody: ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
     return restoreProperties(await response.json())
 }
 
@@ -100,7 +100,7 @@ export async function getLeaderboardDmgDistribution(id: number): Promise<{top: s
         path: `/leaderboard/${id}/distribution`
     }))
     if (response.status !== 200)
-        throw new Error(`${response.status}: ${response.statusText}. ${await response.text()}`)
+        throw new Error(`${response.status}: ${await response.text()}`)
     return await response.json()
 }
 
