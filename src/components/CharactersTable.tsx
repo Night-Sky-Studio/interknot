@@ -194,10 +194,10 @@ export default function CharactersTable({ uid, username, characters, lbAgents }:
                         <Table.Th>Drive Disks</Table.Th>
                         <Table.Th>Crit Value</Table.Th>
                         {!isNarrow && <>
-                            <Table.Th>-</Table.Th>
-                            <Table.Th>-</Table.Th>
-                            <Table.Th>-</Table.Th>
-                            <Table.Th>-</Table.Th>
+                            <Table.Th>Stats</Table.Th>
+                            <Table.Th></Table.Th>
+                            <Table.Th></Table.Th>
+                            <Table.Th></Table.Th>
                         </>}
                     </Table.Tr>
                 </Table.Thead>

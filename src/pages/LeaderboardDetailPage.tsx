@@ -128,10 +128,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 <Table.Th>Drive Discs</Table.Th>
                                 <Table.Th>Crit Ratio</Table.Th>
                                 {!isNarrow && <>
-                                    <Table.Th>-</Table.Th>
-                                    <Table.Th>-</Table.Th>
-                                    <Table.Th>-</Table.Th>
-                                    <Table.Th>-</Table.Th>
+                                    <Table.Th>Stats</Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th></Table.Th>
+                                    <Table.Th></Table.Th>
                                 </>}
                                 <Table.Th bg="rgba(0 0 0 / 25%)">Total Value</Table.Th>
                             </Table.Tr>
