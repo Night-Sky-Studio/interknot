@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconTrophyFilled, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconTrophyFilled, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -98,6 +98,7 @@ export default function Shell(): React.ReactElement {
                             <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
+                            <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
                             <Button leftSection={<IconLogin />}>Log in</Button>
                         </Group>
                     </Flex>
@@ -137,6 +138,7 @@ export default function Shell(): React.ReactElement {
                 <Title m="sm" order={4}>Links</Title>
                 <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
                 <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
+                <NavLink label="GitHub" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
             </AppShell.Aside>
 
             <AppShell.Main>
