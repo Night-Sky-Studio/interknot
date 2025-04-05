@@ -100,7 +100,16 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         </Center>
                         <Stack>
                             <Title order={2}>{currentLeaderboard?.FullName}</Title>
-                            <Group>
+                            {currentLeaderboard?.Description &&
+                                <Text fz="12pt">{currentLeaderboard?.Description}</Text>
+                            }
+                            <Group gap="xs">
+                                <Text>
+                                    Rotation: 
+                                    {` ${currentLeaderboard?.Rotation.map(r => r.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")).join(", ")}`}
+                                </Text>
+                            </Group>
+                            <Group gap="xs">
                                 <Text>Weapons: </Text>
                                 {
                                     leaderboardState.value.map(lb => {
