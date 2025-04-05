@@ -94,8 +94,14 @@ export async function getLeaderboardUsers(id: number, page: number = 1, limit: n
     return restoreProperties(await response.json())
 }
 
-export async function getLeaderboardDmgDistribution(_: number): Promise<{top: string, value: number}[]> {
-    throw new Error("Not implemented yet")
+export async function getLeaderboardDmgDistribution(id: number): Promise<{top: string, value: number}[]> {
+    const response = await fetch(url({
+        base: dataUrl,
+        path: `/leaderboard/${id}/distribution`
+    }))
+    if (response.status !== 200)
+        throw new Error(`${response.status}: ${response.statusText}. ${await response.text()}`)
+    return await response.json()
 }
 
 export async function pingDataServer() {

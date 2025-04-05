@@ -82,8 +82,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     <SimpleGrid cols={2} spacing="xl">
                         <Center>
                             {leaderboardDistributionState.error && 
-                                <Alert variant="light" color="red" title="Failed to load distribution" icon={<IconInfoCircle />}>
-                                    <Text ff="monospace">Error: {leaderboardDistributionState.error.message}</Text>
+                                <Alert variant="light" 
+                                    color={leaderboardDistributionState.error.message.includes("425") ? "orange" : "red"} 
+                                    title="Failed to load distribution" icon={<IconInfoCircle />}>
+                                    <Text ff="monospace">Error {leaderboardDistributionState.error.message}</Text>
                                 </Alert>
                             }
                             {leaderboardDistributionState.value &&
