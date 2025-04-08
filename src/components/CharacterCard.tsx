@@ -14,7 +14,7 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
     size = size || 16;
     const isActive = (lvl: number): string => (lvl <= level) ? "#fdf003" : "#4A4A4A";
     return (
-        <Group gap="4px" h="100%">
+        <Group gap="4px" h="100%" wrap="nowrap">
             <Mindscapes.Ms1 width={size} height={size} color={isActive(1)} />
             <Mindscapes.Ms2 width={size} height={size} color={isActive(2)} />
             <Mindscapes.Ms3 width={size} height={size} color={isActive(3)} />
@@ -27,7 +27,7 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
 
 function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }): React.ReactElement {
     return (
-        <Group gap="0" h="16px" align="center">
+        <Group gap="0" h="16px" align="center" wrap="nowrap">
             <div className="cc-level">
                 <Title order={6} fz="10px">Lv. {level}</Title>
             </div>
@@ -50,7 +50,7 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
     const { getLocalString } = useSettings()
     return (
         <Stack gap="0">
-            <Group gap="4px">
+            <Group gap="4px" wrap="nowrap">
                 <Title order={3} className="cc-character-name">{getLocalString(name)}</Title>
                 <ZenlessIcon elementName={element} size={16} />
                 <ProfessionIcon name={profession} />
@@ -71,7 +71,7 @@ interface ICharacterCardProps {
 function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
     const WeaponStat = ({ stat }: { stat: Property }) => {
         return (
-            <Group gap="6px" className="cc-weapon-stat">
+            <Group gap="6px" className="cc-weapon-stat" wrap="nowrap">
                 <ZenlessIcon id={stat.Id} size={12} />
                 <Title order={6} fz="9px">{stat.formatted}</Title>
             </Group>
@@ -82,7 +82,7 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
 
     return (
         <div className="cc-weapon">
-            <Group gap="8px">
+            <Group gap="8px" wrap="nowrap" >
                 <div className="cc-weapon-icon">
                     <Image src={weapon?.ImageUrl} />
                     <Image src={getRarityIcon(weapon?.Rarity ?? 0)} alt={weapon?.Rarity.toString()} />
@@ -90,12 +90,12 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
                 {weapon && 
                     <Stack gap="4px" justify="center"> 
                         <Title order={6} fz="11px">{getLocalString(weapon.Name)}</Title>
-                        <Group gap="16px" align="flex-end">
-                            <Group gap="4px">
+                        <Group gap="16px" align="flex-end" wrap="nowrap">
+                            <Group gap="4px" wrap="nowrap">
                                 <WeaponStat stat={weapon.MainStat} />
                                 <WeaponStat stat={weapon.SecondaryStat} />
                             </Group>
-                            <Group gap="4px">
+                            <Group gap="4px" wrap="nowrap">
                                 <div className="cc-weapon-stat level">
                                     <Title order={6} fz="8px">Lv. {weapon.Level}</Title>
                                 </div>
@@ -138,7 +138,7 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
 
 function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.ReactElement {
     return (
-        <Group className="cc-talents" gap="4px" justify="center" align="center">
+        <Group className="cc-talents" gap="4px" justify="center" align="center" wrap="nowrap">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
@@ -177,7 +177,7 @@ function SubStat({ stat }: { stat: Property }): React.ReactElement {
 
     return (
         <Stack className="cc-disc-stat" gap="1px">
-            <Group align="flex-start" gap="4px">
+            <Group align="flex-start" gap="4px" wrap="nowrap">
                 <ZenlessIcon id={stat.Id} size={12} />
                 <Title order={6} fz="11px" mt="-2px" h="12px">{stat.formatted}</Title>
             </Group>
