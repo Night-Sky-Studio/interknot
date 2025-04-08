@@ -227,6 +227,9 @@ html[lang="fr"] .cc-stat * {
 .cc-talent * {
     font-size: 6px;
 }
+.cc-talents.boosted .cc-talent-level {
+    color: var(--mantine-color-yellow-5);
+}
 .cc-talent-level {
     font-family: "zzz-jp", monospace !important;
     /* letter-spacing: -1px; */
