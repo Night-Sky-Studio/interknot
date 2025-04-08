@@ -136,29 +136,31 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
     )
 }
 
-function Talents({ talentLevels, boosted }: { talentLevels: CharacterTalents, boosted?: boolean }): React.ReactElement {
+function Talents({ talentLevels, mindscapeLevel }: { talentLevels: CharacterTalents, mindscapeLevel: number }): React.ReactElement {
+    // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
+    const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
     return (
-        <Group className={`cc-talents ${boosted ? "boosted" : ""}`} 
+        <Group className={`cc-talents ${mindscapeLevel > 2 ? "boosted" : ""}`} 
             gap="4px" justify="center" align="center" wrap="nowrap">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Dodge width="32px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Dash}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Dash + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Switch width="32px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Assist}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Skill width="32px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
                 <TalentIcons.Ultimate width="32px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Ultimate}</Title>
+                <Title order={6} className="cc-talent-level">{talentLevels.Ultimate + mindscapeBoost}</Title>
             </div>
         </Group>
     )
@@ -310,7 +312,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                 <div className="cc-cell cc-skills">
                     <Stack gap="6px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
-                        <Talents talentLevels={character.SkillLevels} boosted={character.MindscapeLevel >= 3} />
+                        <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel} />
                     </Stack>
                     <Stack gap="4px" justify="flex-end">
                         {
