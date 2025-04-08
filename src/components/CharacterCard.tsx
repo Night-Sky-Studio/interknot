@@ -136,9 +136,10 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
     )
 }
 
-function Talents({ talentLevels }: { talentLevels: CharacterTalents }): React.ReactElement {
+function Talents({ talentLevels, boosted }: { talentLevels: CharacterTalents, boosted?: boolean }): React.ReactElement {
     return (
-        <Group className="cc-talents" gap="4px" justify="center" align="center" wrap="nowrap">
+        <Group className={`cc-talents ${boosted ? "boosted" : ""}`} 
+            gap="4px" justify="center" align="center" wrap="nowrap">
             <div className="cc-talent">
                 <TalentIcons.NormalAtk width="32px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack}</Title>
@@ -309,7 +310,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                 <div className="cc-cell cc-skills">
                     <Stack gap="6px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
-                        <Talents talentLevels={character.SkillLevels} />
+                        <Talents talentLevels={character.SkillLevels} boosted={character.MindscapeLevel >= 3} />
                     </Stack>
                     <Stack gap="4px" justify="flex-end">
                         {
