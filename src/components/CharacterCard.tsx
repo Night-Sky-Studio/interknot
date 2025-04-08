@@ -269,10 +269,10 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                 if (!substatValueMap[subStat.Id]) {
                     substatValueMap[subStat.Id] = subStat.Value
                     substatNameMap[subStat.Id] = subStat.Name
-                    substatCountMap[subStat.Id] = 1
+                    substatCountMap[subStat.Id] = subStat.Level + 1
                 } else {
                     substatValueMap[subStat.Id] += subStat.Value
-                    substatCountMap[subStat.Id] += 1
+                    substatCountMap[subStat.Id] += subStat.Level + 1
                 }
             }
         }
