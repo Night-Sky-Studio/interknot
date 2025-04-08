@@ -50,13 +50,15 @@ export function UserHeader({ user, showDescription }: IUserHeaderProps): React.R
             <Group className="user-data">         
                 <Avatar className="namecard-avatar" src={user.ProfilePictureUrl} size="xl" mr="sm" />
                 <Stack align="flex-start" justify="flex-start" gap="4px"
-                    style={{ "--color-a": `#${user.Title.ColorA}`, "--color-b": `#${user.Title.ColorB}` }}>
+                    style={{ "--color-a": `#${user.Title?.ColorA ?? "FFFFFF"}`, "--color-b": `#${user.Title?.ColorB ?? "FFFFFF"}` }}>
                     <Title order={2} className="namecard-nickname" title={user.Nickname}>{user.Nickname}</Title>
-                    <Center className="namecard-title">
-                        <Title className="namecard-title" order={6}>
-                            {getLocalString(user.Title.Text)}
-                        </Title>
-                    </Center>
+                    {user.Title && 
+                        <Center className="namecard-title">
+                            <Title className="namecard-title" order={6}>
+                                {getLocalString(user.Title.Text)}
+                            </Title>
+                        </Center>
+                    }
                 </Stack>
                 <Stack className="user-achievements" align="flex-end" justify="flex-start" gap="4px">
                     <Group gap="4px">
