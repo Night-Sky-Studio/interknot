@@ -11,6 +11,7 @@ import { SettingsProvider } from "./components/SettingsProvider"
 import SettingsPage from "./pages/SettingsPage"
 import LeaderboardsPage from "./pages/LeaderboardsPage"
 import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
+import RenderErrorBoundary from "./components/RenderErrorBoundary"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -21,20 +22,22 @@ export default function App() {
     return (
         <MantineProvider theme={theme} defaultColorScheme="dark" 
             withStaticClasses withCssVariables withGlobalClasses>
-                <SettingsProvider>
-                    <BrowserRouter>
-                        <Routes>
-                            <Route element={<Shell />}>
-                                <Route index element={<HomePage />} />
-                                <Route path="/user/:uid" element={<ProfilePageWrapper />} />
-                                <Route path="*" element={<ErrorPage />}/>
-                                <Route path="settings" element={<SettingsPage />}/>
-                                <Route path="leaderboards" element={<LeaderboardsPage />} />
-                                <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                            </Route>
-                        </Routes>
-                    </BrowserRouter>
-                </SettingsProvider>
+                <RenderErrorBoundary>
+                    <SettingsProvider>
+                        <BrowserRouter>
+                            <Routes>
+                                <Route element={<Shell />}>
+                                    <Route index element={<HomePage />} />
+                                    <Route path="/user/:uid" element={<ProfilePageWrapper />} />
+                                    <Route path="*" element={<ErrorPage />}/>
+                                    <Route path="settings" element={<SettingsPage />}/>
+                                    <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                    <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+                                </Route>
+                            </Routes>
+                        </BrowserRouter>
+                    </SettingsProvider>
+                </RenderErrorBoundary>
         </MantineProvider>
     )
 }

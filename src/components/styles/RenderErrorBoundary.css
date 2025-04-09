@@ -1,0 +1,8 @@
+@media (max-width: 784px) {
+    .err-boundary-alert {
+        width: 100% !important;
+    }
+}
+.err-boundary-alert {
+    width: 75%;
+}
