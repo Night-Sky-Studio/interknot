@@ -34,7 +34,8 @@ export default function Shell(): React.ReactElement {
     const [navBarOpened, { toggle }] = useDisclosure(false)
 
     return (<>
-        <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl">
+        <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl"
+            data-nosnippet>
             <Grid grow columns={6}>
                 <Grid.Col span={2}>
                     <Image src={grace} w="236px" h="100%" fit="contain" alt="Grace" />

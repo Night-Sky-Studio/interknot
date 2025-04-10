@@ -19,10 +19,10 @@ export default function HomePage(): React.ReactElement {
         <title>Inter-Knot</title>
         <section>
             <Title order={1}>Welcome to Inter-Knot</Title>
-            <Text>A place for proxies to share their agents' builds.</Text>
+            <Text>A place for proxies to share their agents' builds and compare their drive discs.</Text>
             {!enkaAlertDismissed && <>
                 <Space h="lg" />
-                <Alert variant="light" withCloseButton color="blue" 
+                <Alert variant="light" withCloseButton color="blue" data-nosnippet
                     title="Enka.Network is finally available!" icon={<IconInfoCircle />}
                     onClose={() => setEnkaAlertDismissed(true)}>
                     <Text>You can use your own UID to test our website.</Text>
