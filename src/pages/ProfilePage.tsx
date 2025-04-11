@@ -4,13 +4,13 @@ import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { CharactersTableMemorized } from "../components/CharactersTable"
 import { useEffect, useState } from "react"
-import { ProfileInfo } from "@interknot/types"
 import { useAsyncRetry, useSearchParam } from "react-use"
 import { getUser, getUserLeaderboards } from "../api/data"
-import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload } from "@tabler/icons-react"
+import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
 import Timer from "../components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
+import { ProfileInfo } from "@interknot/types"
 
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
@@ -18,6 +18,7 @@ export default function ProfilePage(): React.ReactElement {
     
     const [needsUpdate, setNeedsUpdate] = useState(false)
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
+    const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
 
     const userState = useAsyncRetry(async () => {
         return await getUser(Number(uid), needsUpdate)
@@ -28,18 +29,27 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid])
 
     const [opened, { toggle }] = useDisclosure(true)
+    
+    const toggleIsFavorite = () => {
+        const userId = Number(uid)
+        if (favoriteUsers.includes(userId)) {
+            setFavoriteUsers(favoriteUsers.filter(u => u !== userId))
+        } else {
+            setFavoriteUsers([...favoriteUsers, userId])
+        }
+    }
 
     useEffect(() => {
         if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
-            setSavedUsers([...savedUsers ?? [], userState.value.Information])
+            setSavedUsers([...savedUsers ?? [], { ...userState.value.Information }])
         }
         setNeedsUpdate((userState.value?.Ttl ?? 0) !== 0)
     }, [userState.value])
 
     useEffect(() => {
         if (userState.value)
-            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}`)
-    }, [userState.value, needsUpdate])
+            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
+    }, [userState.value, needsUpdate, favoriteUsers])
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
@@ -58,7 +68,7 @@ export default function ProfilePage(): React.ReactElement {
             <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
             <Stack>
-                <Group justify="flex-end">
+                <Group justify="flex-end" gap="xs">
                     <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
                         setNeedsUpdate(true)
                         userState.retry()
@@ -70,6 +80,9 @@ export default function ProfilePage(): React.ReactElement {
                                 setNeedsUpdate(false)
                             }} />
                     </Button>
+                    <ActionIcon onClick={toggleIsFavorite}>
+                        { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
+                    </ActionIcon>
                     <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
                         component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
                         {""}

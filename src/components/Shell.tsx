@@ -1,5 +1,5 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconTrophyFilled, IconX } from '@tabler/icons-react'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink, useMantineTheme } from '@mantine/core'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -9,14 +9,40 @@ import nssImg from "../../assets/nss.svg"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import grace from "../../assets/grace.webp"
 import InterknotLogo from "./icons/Interknot"
+import { useContextMenu } from 'mantine-contextmenu'
 
 export default function Shell(): React.ReactElement {
+    const theme = useMantineTheme()
+    const { showContextMenu } = useContextMenu()
+
     const navigate = useNavigate()
     const location = useLocation()
     const { uid } = useParams()
 
     const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
+    const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
+
+    useEffect(() => {
+        if (users.length > 0 && favoriteUsers.length > 0) {
+            const currentUsers = [...users]
+            const favUsers: ProfileInfo[] = []
+            const nonFavUsers: ProfileInfo[] = []
+            
+            currentUsers.forEach(user => {
+                if (favoriteUsers.includes(user.Uid)) {
+                    favUsers.push(user)
+                } else {
+                    nonFavUsers.push(user)
+                }
+            })
+            
+            favUsers.sort((a, b) => 
+                favoriteUsers.indexOf(a.Uid) - favoriteUsers.indexOf(b.Uid))
+            
+            setSavedUsers([...favUsers, ...nonFavUsers])
+        }
+    }, [favoriteUsers, users.length])
 
     useEffect(() => {
         setSelectedUser(uid ?? "")
@@ -127,6 +153,7 @@ export default function Shell(): React.ReactElement {
                         users.map(u => <NavLink key={u.Uid} label={u.Nickname}
                             variant="filled"
                             autoContrast
+                            leftSection={favoriteUsers.includes(u.Uid) ? <IconStarFilled size="16px" /> : undefined}
                             active={`${u.Uid}` === selectedUser}
                             onClick={() => { 
                                 navigate(`/user/${u.Uid}`)
@@ -147,9 +174,26 @@ export default function Shell(): React.ReactElement {
                     {users.length !== 0 &&
                         <Tabs value={selectedUser} onChange={(value) => {
                             navigate(`/user/${value}`)
-                        }} variant="pills" mb="md">
-                            
-                            <Tabs.List className="list">
+                        }} variant="pills" mb="md" onContextMenu={showContextMenu([
+                            {
+                                key: "closeAll",
+                                icon: <IconClearAll />,
+                                title: "Close all",
+                                onClick: () => {
+                                    setSavedUsers([])
+                                    setFavoriteUsers([])
+                                }
+                            },
+                            {
+                                key: "closeAllUnfavorite",
+                                icon: <IconInputX />,
+                                title: "Close all unfavorite",
+                                onClick: () => {
+                                    setSavedUsers(users.filter(u => favoriteUsers.includes(u.Uid)))
+                                }
+                            }
+                        ])}>    
+                            <Tabs.List className="list" >
                                 {
                                     users.map(user => {
                                         if ((user as any).Characters !== undefined) {
@@ -159,12 +203,18 @@ export default function Shell(): React.ReactElement {
                                         return <Tabs.Tab key={user.Uid} component="div"
                                             value={user.Uid.toString()}
                                             className="tab"
+                                            leftSection={
+                                                favoriteUsers.includes(user.Uid) 
+                                                    ? <IconStarFilled size="20px" color={theme.colors["zzz"][0]} /> 
+                                                    : undefined
+                                            }
                                             rightSection={
                                                 <ActionIcon variant="transparent" onClick={(event) => {
                                                     event.stopPropagation()
                                                     setSavedUsers(users.filter(u => u.Uid !== user.Uid))
+                                                    setFavoriteUsers(favoriteUsers.filter(f => f !== user.Uid))
                                                 }}>
-                                                    <IconX />
+                                                    <IconX size="20px" />
                                                 </ActionIcon>
                                             }>
                                             {user.Nickname}
