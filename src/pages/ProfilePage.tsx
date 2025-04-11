@@ -39,11 +39,11 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid, favoriteUsers])
     
     const toggleIsFavorite = () => {
-        const userId = Number(uid);
+        const userId = Number(uid)
         if (favoriteUsers.includes(userId)) {
-            setFavoriteUsers(favoriteUsers.filter(u => u !== userId));
+            setFavoriteUsers(favoriteUsers.filter(u => u !== userId))
         } else {
-            setFavoriteUsers([...favoriteUsers, userId]);
+            setFavoriteUsers([...favoriteUsers, userId])
         }
     }
 
