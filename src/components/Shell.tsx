@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconTrophyFilled, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -17,6 +17,7 @@ export default function Shell(): React.ReactElement {
 
     const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
+    const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
 
     useEffect(() => {
         setSelectedUser(uid ?? "")
@@ -127,6 +128,7 @@ export default function Shell(): React.ReactElement {
                         users.map(u => <NavLink key={u.Uid} label={u.Nickname}
                             variant="filled"
                             autoContrast
+                            leftSection={favoriteUsers.includes(u.Uid) ? <IconStarFilled /> : undefined}
                             active={`${u.Uid}` === selectedUser}
                             onClick={() => { 
                                 navigate(`/user/${u.Uid}`)
@@ -159,10 +161,12 @@ export default function Shell(): React.ReactElement {
                                         return <Tabs.Tab key={user.Uid} component="div"
                                             value={user.Uid.toString()}
                                             className="tab"
+                                            leftSection={favoriteUsers.includes(user.Uid) ? <IconStarFilled /> : undefined}
                                             rightSection={
                                                 <ActionIcon variant="transparent" onClick={(event) => {
                                                     event.stopPropagation()
                                                     setSavedUsers(users.filter(u => u.Uid !== user.Uid))
+                                                    setFavoriteUsers(favoriteUsers.filter(f => f !== user.Uid))
                                                 }}>
                                                     <IconX />
                                                 </ActionIcon>
