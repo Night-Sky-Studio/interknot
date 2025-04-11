@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink, useMantineTheme } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
@@ -9,9 +9,11 @@ import nssImg from "../../assets/nss.svg"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import grace from "../../assets/grace.webp"
 import InterknotLogo from "./icons/Interknot"
+import { useContextMenu } from 'mantine-contextmenu'
 
 export default function Shell(): React.ReactElement {
     const theme = useMantineTheme()
+    const { showContextMenu } = useContextMenu()
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -172,9 +174,26 @@ export default function Shell(): React.ReactElement {
                     {users.length !== 0 &&
                         <Tabs value={selectedUser} onChange={(value) => {
                             navigate(`/user/${value}`)
-                        }} variant="pills" mb="md">
-                            
-                            <Tabs.List className="list">
+                        }} variant="pills" mb="md" onContextMenu={showContextMenu([
+                            {
+                                key: "closeAll",
+                                icon: <IconClearAll />,
+                                title: "Close all",
+                                onClick: () => {
+                                    setSavedUsers([])
+                                    setFavoriteUsers([])
+                                }
+                            },
+                            {
+                                key: "closeAllUnfavorite",
+                                icon: <IconInputX />,
+                                title: "Close all unfavorite",
+                                onClick: () => {
+                                    setSavedUsers(users.filter(u => favoriteUsers.includes(u.Uid)))
+                                }
+                            }
+                        ])}>    
+                            <Tabs.List className="list" >
                                 {
                                     users.map(user => {
                                         if ((user as any).Characters !== undefined) {
