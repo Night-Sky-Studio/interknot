@@ -20,6 +20,27 @@ export default function Shell(): React.ReactElement {
     const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
 
     useEffect(() => {
+        if (users.length > 0 && favoriteUsers.length > 0) {
+            const currentUsers = [...users]
+            const favUsers: ProfileInfo[] = []
+            const nonFavUsers: ProfileInfo[] = []
+            
+            currentUsers.forEach(user => {
+                if (favoriteUsers.includes(user.Uid)) {
+                    favUsers.push(user)
+                } else {
+                    nonFavUsers.push(user)
+                }
+            })
+            
+            favUsers.sort((a, b) => 
+                favoriteUsers.indexOf(a.Uid) - favoriteUsers.indexOf(b.Uid))
+            
+            setSavedUsers([...favUsers, ...nonFavUsers])
+        }
+    }, [favoriteUsers, users.length])
+
+    useEffect(() => {
         setSelectedUser(uid ?? "")
     }, [uid])
 
