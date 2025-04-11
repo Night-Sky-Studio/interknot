@@ -29,14 +29,6 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid])
 
     const [opened, { toggle }] = useDisclosure(true)
-
-    const [isFavorite, setIsFavorite] = useState(false)
-    
-    useEffect(() => {
-        if (uid) {
-            setIsFavorite(favoriteUsers.includes(Number(uid)))
-        }
-    }, [uid, favoriteUsers])
     
     const toggleIsFavorite = () => {
         const userId = Number(uid)
@@ -56,8 +48,8 @@ export default function ProfilePage(): React.ReactElement {
 
     useEffect(() => {
         if (userState.value)
-            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}, isFavorite: ${isFavorite}, favoriteUsers: ${favoriteUsers.join(',')}`)
-    }, [userState.value, needsUpdate, isFavorite, favoriteUsers])
+            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
+    }, [userState.value, needsUpdate, favoriteUsers])
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
@@ -89,7 +81,7 @@ export default function ProfilePage(): React.ReactElement {
                             }} />
                     </Button>
                     <ActionIcon onClick={toggleIsFavorite}>
-                        { isFavorite ? <IconStarFilled /> : <IconStar /> }
+                        { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
                     </ActionIcon>
                     <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
                         component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
