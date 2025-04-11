@@ -76,7 +76,7 @@ export default function ProfilePage(): React.ReactElement {
             <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
             <Stack>
-                <Group justify="flex-end">
+                <Group justify="flex-end" gap="xs">
                     <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
                         setNeedsUpdate(true)
                         userState.retry()
