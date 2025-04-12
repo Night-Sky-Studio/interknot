@@ -6,7 +6,7 @@ import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
-import React, { memo } from "react"
+import React, { memo, useMemo } from "react"
 import { type DriveDisc, DriveDiskSet } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 
@@ -261,7 +261,7 @@ function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
 }
 
 export default function CharacterCard({ ref, uid, username, character, substatsVisible }: ICharacterCardProps): React.ReactElement {
-    const collectSubstats = (): [number, Property][] => {
+    const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
         const substatNameMap: Record<number, string> = {}
@@ -272,10 +272,10 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                 if (!substatValueMap[subStat.Id]) {
                     substatValueMap[subStat.Id] = subStat.Value
                     substatNameMap[subStat.Id] = subStat.Name
-                    substatCountMap[subStat.Id] = subStat.Level + 1
+                    substatCountMap[subStat.Id] = subStat.Level
                 } else {
                     substatValueMap[subStat.Id] += subStat.Value
-                    substatCountMap[subStat.Id] += subStat.Level + 1
+                    substatCountMap[subStat.Id] += subStat.Level
                 }
             }
         }
@@ -285,7 +285,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
             result.push([substatCountMap[id], new Property(id, substatNameMap[id], value)])
         }
         return result
-    }
+    }, [character.DriveDisks])
 
     return (<Stack>
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
@@ -344,7 +344,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
             {substatsVisible && substatsVisible === true &&
                 <Card.Section m="0px" className="cc-sub-stats">
                     {
-                        collectSubstats().map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
+                        collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
                             data-count={"*".repeat(cnt + 1)} key={ss.Id}>
                             <Text fz="10px">{cnt}</Text>
                             <SubStat stat={ss} />
