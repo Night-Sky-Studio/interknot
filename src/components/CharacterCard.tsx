@@ -68,7 +68,7 @@ interface ICharacterCardProps {
     substatsVisible?: boolean
 }
 
-function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
+function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
     const WeaponStat = ({ stat }: { stat: Property }) => {
         return (
             <Group gap="6px" className="cc-weapon-stat" wrap="nowrap">
@@ -82,30 +82,28 @@ function WeaponEngine({ weapon }: { weapon?: Weapon }): React.ReactElement {
 
     return (
         <div className="cc-weapon">
-            <Group gap="8px" wrap="nowrap" >
+            <Group gap="8px" wrap="nowrap">
                 <div className="cc-weapon-icon">
-                    <Image src={weapon?.ImageUrl} />
-                    <Image src={getRarityIcon(weapon?.Rarity ?? 0)} alt={weapon?.Rarity.toString()} />
+                    <Image src={weapon.ImageUrl} />
+                    <Image src={getRarityIcon(weapon.Rarity ?? 0)} alt={weapon.Rarity.toString()} />
                 </div>
-                {weapon && 
-                    <Stack gap="4px" justify="center"> 
-                        <Title order={6} fz="11px">{getLocalString(weapon.Name)}</Title>
-                        <Group gap="16px" align="flex-end" wrap="nowrap">
-                            <Group gap="4px" wrap="nowrap">
-                                <WeaponStat stat={weapon.MainStat} />
-                                <WeaponStat stat={weapon.SecondaryStat} />
-                            </Group>
-                            <Group gap="4px" wrap="nowrap">
-                                <div className="cc-weapon-stat level">
-                                    <Title order={6} fz="8px">Lv. {weapon.Level}</Title>
-                                </div>
-                                <div className="cc-weapon-stat level">
-                                    <Title order={6} fz="8px">P{weapon.UpgradeLevel}</Title>
-                                </div>
-                            </Group>
+                <Stack gap="4px" justify="center"> 
+                    <Title order={6} fz="11px">{getLocalString(weapon.Name)}</Title>
+                    <Group gap="16px" align="flex-end" wrap="nowrap">
+                        <Group gap="4px" wrap="nowrap">
+                            <WeaponStat stat={weapon.MainStat} />
+                            <WeaponStat stat={weapon.SecondaryStat} />
                         </Group>
-                    </Stack>
-                }
+                        <Group gap="4px" wrap="nowrap">
+                            <div className="cc-weapon-stat level">
+                                <Title order={6} fz="8px">Lv. {weapon.Level}</Title>
+                            </div>
+                            <div className="cc-weapon-stat level">
+                                <Title order={6} fz="8px">P{weapon.UpgradeLevel}</Title>
+                            </div>
+                        </Group>
+                    </Group>
+                </Stack>
             </Group>
         </div>
     )
@@ -300,7 +298,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                         <CharacterName name={character.Name} 
                             element={character.ElementTypes[0]} profession={character.ProfessionType}
                             level={character.Level} msLevel={character.MindscapeLevel} />
-                        <WeaponEngine weapon={character.Weapon ?? undefined}/>
+                        {character.Weapon && <WeaponEngine weapon={character.Weapon} /> }
                     </Group>
                 </div>
                 <div className="cc-vignette" />
