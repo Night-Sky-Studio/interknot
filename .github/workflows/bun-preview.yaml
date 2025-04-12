@@ -36,7 +36,7 @@ jobs:
               
               // If we got here without an error, the user is a member
               console.log(`User ${username} is a member of ${orgName}`);
-              return true;
+              core.setOutput('is_member', 'true');
             } catch (error) {
               if (error.status === 404) {
                 console.log(`User ${context.payload.comment.user.login} is not a member of the organization`);
@@ -49,9 +49,10 @@ jobs:
                   body: `⚠️ @${context.payload.comment.user.login} - Only organization members can use the \`!gh run\` command.`
                 });
                 
-                return false;
+                core.setOutput('is_member', 'false');
+              } else {
+                throw error;
               }
-              throw error;
             }
   build:
     needs: check-membership
@@ -97,4 +98,3 @@ jobs:
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
           message: "Automatic commit, run id: ${{ github.run_id }}"
           push: true
-      
