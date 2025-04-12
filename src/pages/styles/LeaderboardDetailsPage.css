@@ -1,0 +1,5 @@
+@media (max-width: $mantine-breakpoint-lg) {
+    .is-narrow {
+        display: none;
+    }
+}
