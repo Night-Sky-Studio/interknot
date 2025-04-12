@@ -1,8 +1,11 @@
-name: Build@prod
+name: Build@preview
 
 on:
-  push:
-    branches: [ "main" ]
+  pull_request:
+    types: [opened]
+    branches:
+      - "gh/**"
+      - "dev/**"
 
 jobs:
   build:
@@ -14,12 +17,12 @@ jobs:
       - name: "Checkout repo"
         uses: actions/checkout@v4
 
-      - name: "Clone prod"
+      - name: "Clone preview"
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: prod
-          path: prod
+          ref: preview
+          path: preview
 
       - name: "Setup Bun"
         uses: oven-sh/setup-bun@v2
@@ -32,16 +35,16 @@ jobs:
 
       - name: Clean up previous build
         run: |
-          rm -rf ./prod/assets/*
+          rm -rf ./preview/*
       
-      - name: Copy production build
+      - name: Copy preview build
         run: |
-          rsync -a dist/* ./prod
+          rsync -a dist/* ./preview
 
       - name: Publish
         uses: EndBug/add-and-commit@v9
         with:
-          cwd: "prod"
+          cwd: "preview"
           add: "."
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
