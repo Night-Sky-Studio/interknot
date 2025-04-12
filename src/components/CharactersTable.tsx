@@ -1,9 +1,9 @@
 import { Character, LeaderboardAgent, Property } from "@interknot/types"
-import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch, em } from "@mantine/core"
-import "./styles/CharactersTable.css"
+import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch } from "@mantine/core"
+import "./styles/CharactersTable.pcss"
 import { CharacterCardMemorized } from "./CharacterCard"
 import { memo, useEffect, useMemo, useRef, useState } from "react"
-import { useDisclosure, useMediaQuery, useResizeObserver } from "@mantine/hooks"
+import { useDisclosure, useResizeObserver } from "@mantine/hooks"
 import { IconChevronDown, IconChevronUp, IconDownload } from "@tabler/icons-react"
 import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
@@ -34,8 +34,6 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
             <Text fw={700}>{level}</Text>
         </div>
     }
-
-    const isNarrow = useMediaQuery(`(max-width: ${em("1150px")})`)
 
     const CharacterRow = ({ c, i, isOpened }: { c: Character, i: number, isOpened: boolean }) => {
         // const [openedId, setOpenedId] = useState<number | null>(null)
@@ -95,7 +93,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
 
         return (
             <>
-                <Table.Tr style={{ borderBottom: isNarrow ? "unset" : undefined }} onClick={() => {
+                <Table.Tr onClick={() => {
                     // setOpenedId(openedId === c.Id ? null : c.Id)
                     toggle()
                 }}>
@@ -136,10 +134,10 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <CritCell cr={c.Stats.find(p => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
                             cd={c.Stats.find(p => p.Id === 21101)?.formatted.replace("%", "") ?? ""} cv={c.CritValue} />
                     </Table.Td>
-                    {!isNarrow && 
+                    {
                         stats.map(prop => {
                             return (
-                                <PropertyCell key={prop.Id} prop={prop} />
+                                <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />
                             )
                         })
                     }
@@ -208,12 +206,10 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <Table.Th>Weapon</Table.Th>
                         <Table.Th>Drive Disks</Table.Th>
                         <Table.Th>Crit Value</Table.Th>
-                        {!isNarrow && <>
-                            <Table.Th>Stats</Table.Th>
-                            <Table.Th></Table.Th>
-                            <Table.Th></Table.Th>
-                            <Table.Th></Table.Th>
-                        </>}
+                        <Table.Th className="is-narrow">Stats</Table.Th>
+                        <Table.Th className="is-narrow"></Table.Th>
+                        <Table.Th className="is-narrow"></Table.Th>
+                        <Table.Th className="is-narrow"></Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
