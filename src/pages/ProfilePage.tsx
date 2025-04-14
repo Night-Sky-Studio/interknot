@@ -25,8 +25,11 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid])
 
     const leaderboardsState = useAsyncRetry(async () => {
+        if (!userState.value) {
+            return undefined
+        }
         return await getUserLeaderboards(Number(uid), needsUpdate)
-    }, [uid])
+    }, [uid, userState.value])
 
     const [opened, { toggle }] = useDisclosure(true)
     
@@ -95,7 +98,7 @@ export default function ProfilePage(): React.ReactElement {
                             leaderboardsState.loading && <Center m="md"><Loader /></Center>
                         }
                         {
-                            !leaderboardsState.loading && !leaderboardsState.error && 
+                            !leaderboardsState.loading && !leaderboardsState.error &&
                                 <LeaderboardGridMemorized 
                                     profile={leaderboardsState.value} 
                                     characters={userState.value.Characters}
