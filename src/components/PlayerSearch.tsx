@@ -60,8 +60,12 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
                                     setError("Adding profile by Nickname is not supported")
                                     return
                                 }
-                                const user = await getUser(Number(value))
-                                search(user ? [user.Information] : [])
+                                try {
+                                    const user = await getUser(Number(value))
+                                    search(user ? [user.Information] : [])
+                                } catch (e: any) {
+                                    setError(e.message)
+                                }
                             }
                         }}
                         value={value}
