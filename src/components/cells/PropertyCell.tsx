@@ -1,6 +1,6 @@
 import { Property } from "@interknot/types"
 import { Group, Table } from "@mantine/core"
-import { ZenlessIcon } from "./icons/Icons"
+import { ZenlessIcon } from "../icons/Icons"
 
 export default function PropertyCell({ prop, className }: { prop: Property, className?: string }): React.ReactElement {
     return (
