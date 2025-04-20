@@ -3,12 +3,14 @@ import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
 import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, SimpleGrid } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
-import CritCell from "../components/CritCell"
+import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "../components/WeaponButton"
 import { useMemo } from "react"
-import { Character, Property } from "@interknot/types"
-import PropertyCell from "../components/PropertyCell"
+import { Property } from "@interknot/types"
+import PropertyCell from "../components/cells/PropertyCell"
+import WeaponCell from "../components/cells/WeaponCell"
+import DriveDiscsCell from "../components/cells/DriveDiscsCell"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -47,14 +49,14 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         return await getLeaderboardDmgDistribution(Number(id))
     }, [id])
 
-    const stats = (c: Character) => {
+    const stats = (displayProps: number[], baseStats: Property[]) => {
         const result: Property[] = []
         let skippedStats = 0
-        for (const prodId of c.DisplayProps) {
-            const stat = c.Stats.find(p => p.Id === prodId)
+        for (const prodId of displayProps) {
+            const stat = baseStats.find(p => p.Id === prodId)
             if (stat?.Value === 0) {
                 skippedStats++
-                if (c.DisplayProps.length - skippedStats >= 4)
+                if (displayProps.length - skippedStats >= 4)
                     continue
             }
             if (result.length >= 4)
@@ -133,6 +135,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 <Table.Th>#</Table.Th>
                                 <Table.Th>Owner</Table.Th>
                                 {/* <Table.Th>Character</Table.Th> */}
+                                <Table.Th>Weapon</Table.Th>
                                 <Table.Th>Drive Discs</Table.Th>
                                 <Table.Th>Crit Ratio</Table.Th>
                                 <Table.Th className="is-narrow">Stats</Table.Th>
@@ -153,34 +156,16 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                                 <Text>{user.Profile.Nickname}</Text>
                                             </Group>
                                         </Table.Td>
-                                        {/* <Table.Td>
-                                            <Group gap="sm">
-                                                <Image src={user.Character.CircleIconUrl} h="32px" />
-                                                <Text>{getLocalString(user.Character.Name)}</Text>
-                                                <div className="chip">Lv. {user.Character.Level}</div>
-                                            </Group>
-                                        </Table.Td> */}
-                                        <Table.Td>
-                                            <Group gap="8px">
-                                                {
-                                                    user.Character.DriveDisksSet.map(set => {
-                                                        return (
-                                                            <Group key={set.Set.Id} gap="-14px" align="flex-end">
-                                                                <Image src={set.Set.IconUrl} h="32px" />
-                                                                <Text size="10pt">{set.Count}</Text>
-                                                            </Group>
-                                                        )
-                                                    })
-                                                }
-                                            </Group>
-                                        </Table.Td>
+                                        <WeaponCell weapon={user.Character.Weapon} compareWith={currentLeaderboard?.Weapon} />
+                                        <DriveDiscsCell sets={user.Character.DriveDisksSet} />
                                         <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
-                                            <CritCell cr={user.Character.Stats.find(p => p.Id === 20101)?.formatted?.replace("%", "") ?? ""}
+                                            <CritCell cr={user.FinalStats.BaseStats.find(p => p.Id === 20101)?.formatted?.replace("%", "") ?? ""}
                                                 cd={user.Character.Stats.find(p => p.Id === 21101)?.formatted?.replace("%", "") ?? ""} 
                                                 cv={user.Character.CritValue} />
                                         </Table.Td>
                                         {
-                                            stats(user.Character).map(prop => <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />)
+                                            stats(user.Character.DisplayProps, user.FinalStats.BaseStats)
+                                                .map(prop => <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />)
                                         }
                                         <Table.Td w="128px" bg="rgba(0 0 0 / 25%)">
                                             <Text fz="12pt" fw={600}>{Math.round(user.TotalValue).toLocaleString()}</Text>
