@@ -9,8 +9,8 @@ import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
 import { DamageDistributionMemoized } from "./DamageDistribution"
 import { ExpandableRow } from "./ExpandableRow"
-import CritCell from "./CritCell"
-import PropertyCell from "./PropertyCell"
+import CritCell from "./cells/CritCell"
+import PropertyCell from "./cells/PropertyCell"
 
 interface ICharactersTableProps {
     uid: number
@@ -121,7 +121,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             {
                                 c.DriveDisksSet.map(set => {
                                     return (
-                                        <Group key={set.Set.Id} gap="-14px" align="flex-end">
+                                        <Group key={set.Set.Id} gap="-14px" align="flex-end" wrap="nowrap">
                                             <Image src={set.Set.IconUrl} h="32px" />
                                             <Text size="10pt">{set.Count}</Text>
                                         </Group>
