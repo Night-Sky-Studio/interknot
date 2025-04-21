@@ -1,7 +1,7 @@
 import { BaseWeapon } from "@interknot/types"
 import { ActionIcon, Image } from "@mantine/core"
-import { getLocalString } from "../localization/Localization"
 import { useNavigate } from "react-router"
+import { useSettings } from "./SettingsProvider"
 
 interface IWeaponButtonProps {
     id: number
@@ -11,6 +11,7 @@ interface IWeaponButtonProps {
 
 export default function WeaponButton({ id, weapon, selected } : IWeaponButtonProps): React.ReactElement {
     const navigate = useNavigate()
+    const { getLocalString } = useSettings()
     return (
         <ActionIcon variant={selected ? "filled" : "subtle"} p="0" style={{ overflow: "visible" }}
             onClick={(e) => {

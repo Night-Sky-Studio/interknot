@@ -3,3 +3,14 @@
         display: none;
     }
 }
+
+.name-clickable:hover {
+    color: var(--mantine-color-blue-7);
+    text-decoration: underline;
+}
+
+.final-stat {
+    font-family: "zzz", "zzz-jp", sans-serif;
+    background: rgba(0 0 0 / 25%) !important;
+    border-radius: 16px 8px 16px 8px;
+}

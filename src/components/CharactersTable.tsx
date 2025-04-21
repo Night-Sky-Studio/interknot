@@ -9,8 +9,8 @@ import { toPng } from "html-to-image"
 import { useSettings } from "./SettingsProvider"
 import { DamageDistributionMemoized } from "./DamageDistribution"
 import { ExpandableRow } from "./ExpandableRow"
-import CritCell from "./CritCell"
-import PropertyCell from "./PropertyCell"
+import CritCell from "./cells/CritCell"
+import PropertyCell from "./cells/PropertyCell"
 
 interface ICharactersTableProps {
     uid: number
@@ -121,7 +121,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             {
                                 c.DriveDisksSet.map(set => {
                                     return (
-                                        <Group key={set.Set.Id} gap="-14px" align="flex-end">
+                                        <Group key={set.Set.Id} gap="-14px" align="flex-end" wrap="nowrap">
                                             <Image src={set.Set.IconUrl} h="32px" />
                                             <Text size="10pt">{set.Count}</Text>
                                         </Group>
@@ -142,8 +142,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         })
                     }
                 </Table.Tr>
-                <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}
-                    style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
+                <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}>
                     <Stack gap="8px">
                         <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
                             <CharacterCardMemorized ref={cardRef}
@@ -204,7 +203,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <Table.Th>Name</Table.Th>
                         <Table.Th>Mindscape</Table.Th>
                         <Table.Th>Weapon</Table.Th>
-                        <Table.Th>Drive Disks</Table.Th>
+                        <Table.Th>Drive Discs</Table.Th>
                         <Table.Th>Crit Value</Table.Th>
                         <Table.Th className="is-narrow">Stats</Table.Th>
                         <Table.Th className="is-narrow"></Table.Th>

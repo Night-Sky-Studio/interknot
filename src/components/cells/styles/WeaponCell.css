@@ -1,0 +1,17 @@
+.weapon-cell {
+    display: flex;
+}
+.strike {
+    position: relative;
+}
+.strike::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    width: 100%;
+    background-color: var(--mantine-color-red-8);
+    transform: translateY(-50%) rotate(20deg);
+}

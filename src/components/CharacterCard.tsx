@@ -7,7 +7,7 @@ import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo, useMemo } from "react"
-import { type DriveDisc, DriveDiskSet } from "@interknot/types"
+import type { DriveDisc, DriveDiscSet } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
@@ -195,7 +195,7 @@ function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     </div>
 }
 
-function DriveDisc({ slot, disc }: { slot: number, disc: DriveDisc | null }): React.ReactElement {
+export function DriveDisc({ slot, disc }: { slot: number, disc: DriveDisc | null }): React.ReactElement {
     const theme = useMantineTheme()
 
     const cvColor = (cv: number) => {
@@ -247,7 +247,7 @@ function DriveDisc({ slot, disc }: { slot: number, disc: DriveDisc | null }): Re
     </>)
 }
 
-function DriveDiscSet({ set }: { set: DriveDiskSet }): React.ReactElement {
+function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
         <div className="cc-disc-set">
