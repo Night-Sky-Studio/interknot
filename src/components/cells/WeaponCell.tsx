@@ -18,7 +18,7 @@ export default function WeaponCell({ weapon, compareWith, ...props }: IWeaponCel
             {weapon && 
                 <Group gap="-14px" className={matches ? "strike" : ""} align="flex-end" wrap="nowrap">
                     <Image src={weapon.ImageUrl} h="32px" />
-                    <Text size="10pt" className={!matches && weapon.UpgradeLevel != 1 ? "strike" : ""}>P{weapon?.UpgradeLevel}</Text>
+                    <Text size="10pt" className={!matches && weapon.UpgradeLevel !== 1 ? "strike" : ""}>P{weapon?.UpgradeLevel}</Text>
                 </Group>
             }
         </Table.Td>
