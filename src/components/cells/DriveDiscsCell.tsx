@@ -1,7 +1,7 @@
-import { DriveDiskSet } from "@interknot/types";
+import { DriveDiscSet } from "@interknot/types";
 import { Group, Image, Table, Text } from "@mantine/core";
 
-export default function DriveDiscsCell({ sets }: { sets: DriveDiskSet[] }): React.ReactElement {
+export default function DriveDiscsCell({ sets }: { sets: DriveDiscSet[] }): React.ReactElement {
     return <Table.Td w="160px">
         <Group gap="8px" wrap="nowrap">
             {
