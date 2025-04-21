@@ -5,10 +5,13 @@ import { memo, useState } from "react"
 import { IconEqual, IconPlus } from "@tabler/icons-react"
 import DamageBar from "./DamageBar"
 import "./styles/DamageDistribution.css"
+import { useSettings } from "./SettingsProvider"
 
 export default function DamageDistribution({ entries, index }: { entries: LeaderboardAgent[], index?: number }): React.ReactElement {
     const [lbIdx, setLbIdx] = useState<number>(index ?? 0)
     const [hoverIdx, setHoverIdx] = useState<number>(-1)
+
+    const { getLocalString } = useSettings()
 
     const DmgChipPart = ({ action, idx } : any) => {
         return (<>
@@ -33,7 +36,7 @@ export default function DamageDistribution({ entries, index }: { entries: Leader
         <Stack ml="xl" mr="xl" mb="xl" w="75%" align="flex-start">
             <Select label="Select Leaderboard" w="30%" data={entries.map((e, i) => {
                 return {
-                    label: e.LeaderboardName,
+                    label: `${e.LeaderboardName} - ${getLocalString(e.Weapon.Name)}`,
                     value: i.toString()
                 }
             })} value={lbIdx.toString()} allowDeselect={false} onChange={(v) => setLbIdx(Number(v))} />
