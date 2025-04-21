@@ -142,8 +142,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         })
                     }
                 </Table.Tr>
-                <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}
-                    style={{ borderBottomWidth: isCardVisible ? "1px" : "0" }}>
+                <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}>
                     <Stack gap="8px">
                         <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
                             <CharacterCardMemorized ref={cardRef}
@@ -204,7 +203,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <Table.Th>Name</Table.Th>
                         <Table.Th>Mindscape</Table.Th>
                         <Table.Th>Weapon</Table.Th>
-                        <Table.Th>Drive Disks</Table.Th>
+                        <Table.Th>Drive Discs</Table.Th>
                         <Table.Th>Crit Value</Table.Th>
                         <Table.Th className="is-narrow">Stats</Table.Th>
                         <Table.Th className="is-narrow"></Table.Th>
