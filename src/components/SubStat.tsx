@@ -1,7 +1,8 @@
 import { Property } from "@interknot/types"
-import { SimpleGrid, Stack, Group, Title } from "@mantine/core"
+import { SimpleGrid, Stack, Group, Title, Tooltip } from "@mantine/core"
 import { ZenlessIcon } from "./icons/Icons"
 import "./styles/SubStat.css"
+import { useSettings } from "./SettingsProvider"
 
 export function SubStat({ stat }: { stat: Property }): React.ReactElement {
     const SubStatLevel = ({ level }: { level: number }) => {
@@ -15,13 +16,17 @@ export function SubStat({ stat }: { stat: Property }): React.ReactElement {
         </SimpleGrid>
     }
 
+    const { getLocalString } = useSettings()
+
     return (
-        <Stack className="cc-disc-stat" gap="1px">
-            <Group align="flex-start" gap="4px" wrap="nowrap">
-                <ZenlessIcon id={stat.Id} size={12} />
-                <Title order={6} fz="11px" mt="-2px" h="12px">{stat.formatted}</Title>
-            </Group>
-            <SubStatLevel level={stat.Level}/>
-        </Stack>
+        <Tooltip label={getLocalString(stat.simpleName)} openDelay={500}>
+            <Stack className="cc-disc-stat" gap="1px">
+                <Group align="flex-start" gap="4px" wrap="nowrap">
+                    <ZenlessIcon id={stat.Id} size={12} />
+                    <Title order={6} fz="11px" mt="-2px" h="12px">{stat.formatted}</Title>
+                </Group>
+                <SubStatLevel level={stat.Level}/>
+            </Stack>
+        </Tooltip>
     )
 }
