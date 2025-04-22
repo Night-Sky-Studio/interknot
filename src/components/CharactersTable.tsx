@@ -11,6 +11,8 @@ import { DamageDistributionMemoized } from "./DamageDistribution"
 import { ExpandableRow } from "./ExpandableRow"
 import CritCell from "./cells/CritCell"
 import PropertyCell from "./cells/PropertyCell"
+import WeaponCell from "./cells/WeaponCell"
+import DriveDiscsCell from "./cells/DriveDiscsCell"
 
 interface ICharactersTableProps {
     uid: number
@@ -108,28 +110,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                     <Table.Td>
                         {mindscapeChip(c.MindscapeLevel)}
                     </Table.Td>
-                    <Table.Td w="56px">
-                        {c.Weapon &&
-                            <Group gap="-14px" align="flex-end" wrap="nowrap">
-                                <Image src={c.Weapon?.ImageUrl} h="32px" />
-                                <Text size="10pt">P{c.Weapon?.UpgradeLevel}</Text>
-                            </Group>
-                        }
-                    </Table.Td>
-                    <Table.Td>
-                        <Group gap="8px" wrap="nowrap">
-                            {
-                                c.DriveDisksSet.map(set => {
-                                    return (
-                                        <Group key={set.Set.Id} gap="-14px" align="flex-end" wrap="nowrap">
-                                            <Image src={set.Set.IconUrl} h="32px" />
-                                            <Text size="10pt">{set.Count}</Text>
-                                        </Group>
-                                    )
-                                })
-                            }
-                        </Group>
-                    </Table.Td>
+                    <WeaponCell weapon={c.Weapon} />
+                    <DriveDiscsCell sets={c.DriveDisksSet} />
                     <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
                         <CritCell cr={c.Stats.find(p => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
                             cd={c.Stats.find(p => p.Id === 21101)?.formatted.replace("%", "") ?? ""} cv={c.CritValue} />

@@ -1,7 +1,8 @@
 import { Weapon, BaseWeapon } from "@interknot/types"
-import { Group, Table, Image, Text, TableTdProps } from "@mantine/core"
+import { Group, Table, Image, Text, TableTdProps, Tooltip } from "@mantine/core"
 import "./styles/WeaponCell.css"
 import { useMemo } from "react"
+import { useSettings } from "../SettingsProvider"
 
 interface IWeaponCellProps extends TableTdProps {
     weapon: Weapon | null
@@ -10,16 +11,19 @@ interface IWeaponCellProps extends TableTdProps {
 
 export default function WeaponCell({ weapon, compareWith, ...props }: IWeaponCellProps): React.ReactElement {
     const matches = useMemo(() => {
-        if (!compareWith) return true
-        return weapon?.Id !== compareWith?.Id
-    }, [weapon, compareWith])
+        if (!compareWith) return false;
+        return weapon?.Id !== compareWith.Id;
+    }, [weapon, compareWith]);
+    const { getLocalString } = useSettings()
     return (
-        <Table.Td {...props} className="weapon-cell">
+        <Table.Td className="weapon-cell" {...props}>
             {weapon && 
-                <Group gap="-14px" className={matches ? "strike" : ""} align="flex-end" wrap="nowrap">
-                    <Image src={weapon.ImageUrl} h="32px" />
-                    <Text size="10pt" className={!matches && weapon.UpgradeLevel !== 1 ? "strike" : ""}>P{weapon?.UpgradeLevel}</Text>
-                </Group>
+                <Tooltip label={getLocalString(weapon.Name)} openDelay={500}>
+                    <Group gap="-14px" className={compareWith && matches ? "strike" : ""} align="flex-end" w="fit-content" wrap="nowrap">
+                        <Image src={weapon.ImageUrl} h="32px" />
+                        <Text size="10pt" className={compareWith && !matches && weapon.UpgradeLevel !== 1 ? "strike" : ""}>P{weapon?.UpgradeLevel}</Text>
+                    </Group>
+                </Tooltip>
             }
         </Table.Td>
     )
