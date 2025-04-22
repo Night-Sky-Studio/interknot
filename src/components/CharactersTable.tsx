@@ -103,7 +103,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                     <Table.Td w="30%">
                         <Group gap="sm" wrap="nowrap">
                             <Image src={c.CircleIconUrl} h="32px" />
-                            <Text>{getLocalString(c.Name)}</Text>
+                            <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
                             <div className="chip">Lv. {c.Level}</div>
                         </Group>
                     </Table.Td>
