@@ -1,9 +1,10 @@
 import { BaseAvatar, BaseWeapon } from "@interknot/types"
-import { Group, UnstyledButton, Image, Title, Stack, Popover, Button } from "@mantine/core"
+import { Group, UnstyledButton, Image, Title, Stack, Popover, Button, Tooltip } from "@mantine/core"
 import "./styles/LeaderboardButton.css"
 import { useSettings } from "./SettingsProvider"
 import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
+import { useMemo } from "react"
 
 interface ILeaderboardButtonProps {
     id: number
@@ -39,25 +40,36 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
 
     const [opened, { toggle, close }] = useDisclosure(false)
 
+    const buttonLabel = useMemo(() => {
+        switch (type) {
+            case 0: return `Leaderboard matches equipped weapon - ${getLocalString(weapon.Name)}`
+            case 1: return `Equipped weapon matches leaderboard's weapon's secondary stat - ${getLocalString(weapon.Name)}: ${getLocalString(weapon.SecondaryStat.simpleName)}`
+            case 2: return "Equipped weapon doesn't match leaderboard's weapon"
+            default: return ""
+        }
+    }, [type])
+
     return (
         <Popover opened={opened} withArrow onDismiss={close}>
             <Popover.Target>
-                <UnstyledButton className="lb-button" data-type={type} onClick={() => {
-                    toggle()
-                    onClick?.()
-                }}>
-                    <Group gap="4px" wrap="nowrap">
-                        <Group className="lb-avatar" wrap="nowrap" gap="0">
-                            <Image src={agent.CircleIconUrl} alt={getLocalString(agent.Name)} />
-                            <Image src={weapon.ImageUrl} alt={getLocalString(weapon.Name)} />
+                <Tooltip label={buttonLabel} openDelay={500} position="bottom" w={256} multiline>
+                    <UnstyledButton className="lb-button" data-type={type} onClick={() => {
+                        toggle()
+                        onClick?.()
+                    }}>
+                        <Group gap="4px" wrap="nowrap">
+                            <Group className="lb-avatar" wrap="nowrap" gap="0">
+                                <Image src={agent.CircleIconUrl} alt={getLocalString(agent.Name)} />
+                                <Image src={weapon.ImageUrl} alt={getLocalString(weapon.Name)} />
+                            </Group>
+                            <Stack gap="0px" className="lb-info">
+                                <Title order={6} fz="12px">{name}</Title>
+                                <Title order={6} fz="14px" ff="zzz-jp">Top {((rank / total) * 100).toFixed(decimalPlaces)}%</Title>
+                                <Title order={6} fz="10px" ff="zzz-jp">{rank} / {nFormatter(total, 1)}</Title>
+                            </Stack>
                         </Group>
-                        <Stack gap="0px" className="lb-info">
-                            <Title order={6} fz="12px">{name}</Title>
-                            <Title order={6} fz="14px" ff="zzz-jp">Top {((rank / total) * 100).toFixed(decimalPlaces)}%</Title>
-                            <Title order={6} fz="10px" ff="zzz-jp">{rank} / {nFormatter(total, 1)}</Title>
-                        </Stack>
-                    </Group>
-                </UnstyledButton>
+                    </UnstyledButton>
+                </Tooltip>
             </Popover.Target>
             <Popover.Dropdown>
                 <Button onClick={() => navigate(`/leaderboards/${id}`)}>Open leaderboard</Button>
