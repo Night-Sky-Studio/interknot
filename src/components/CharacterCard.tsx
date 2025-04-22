@@ -10,7 +10,7 @@ import React, { memo, useMemo } from "react"
 import type { DriveDiscSet } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 import { DriveDisc } from "./DriveDisc"
-import { SubStat } from "./Substat"
+import { SubStat } from "./SubStat"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
