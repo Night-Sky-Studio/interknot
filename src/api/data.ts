@@ -1,4 +1,4 @@
-import { Leaderboard, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
@@ -94,14 +94,14 @@ export async function getLeaderboardUsers(id: number, page: number = 1, limit: n
     return restoreProperties(await response.json())
 }
 
-export async function getLeaderboardDmgDistribution(id: number): Promise<{top: string, value: number}[]> {
+export async function getLeaderboardDmgDistribution(id: number): Promise<LeaderboardDistribution> {
     const response = await fetch(url({
         base: dataUrl,
         path: `/leaderboard/${id}/distribution`
     }))
     if (response.status !== 200)
         throw new Error(`${response.status}: ${await response.text()}`)
-    return await response.json()
+    return restoreProperties(await response.json())
 }
 
 export async function pingDataServer() {
