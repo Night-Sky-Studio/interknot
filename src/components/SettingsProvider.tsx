@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect } from "react"
 import { useLocalStorage } from "@mantine/hooks"
-import { Localizations, AdditionalProps } from "../localization/Localization"
+import { Localizations, AdditionalProps, AvailableLocs } from "../localization/Localization"
 
 type InterknotSettingsBase = {
     decimalPlaces: number,
@@ -15,9 +15,11 @@ type InterknotSettings = InterknotSettingsBase & {
     setLbButtonVariant: (value: number) => void
 }
 
+const navigatorLanguage = navigator.language.split("-")[0]
+
 const defaultSettings: InterknotSettingsBase = {
     decimalPlaces: 1,
-    language: navigator.language.split("-")[0],
+    language: AvailableLocs.includes(navigatorLanguage) ? navigatorLanguage : "en",
     lbButtonVariant: 0
 }
 
