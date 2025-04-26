@@ -41,6 +41,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const setLbButtonVariant = (lbButtonVariant: number) => setSettings((prev => ({ ...prev, lbButtonVariant })))
 
     useEffect(() => {
+        if (!AvailableLocs.includes(settings.language)) {
+            setLanguage(navigatorLanguage)
+            return
+        }
         document.documentElement.setAttribute("lang", settings.language)
     }, [settings.language])
 
