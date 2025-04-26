@@ -47,3 +47,47 @@ export function getTagShortName(tag: SkillTag): string {
     const enumValue = SkillTag[tag as unknown as keyof typeof SkillTag]
     return tagShortNameMap[enumValue]
 }
+
+const ShortPropertyNameMap: Record<number, string> = {
+    11101: "HP",
+    11102: "HP%",
+    11103: "HP",
+    12101: "ATK",
+    12102: "ATK%",
+    12103: "ATK",
+    12201: "Impact",
+    12202: "Impact%",
+    13101: "DEF",
+    13102: "DEF%",
+    13103: "DEF",
+    20101: "CRIT Rate",
+    20103: "CRIT Rate",
+    21101: "CRIT DMG",
+    21103: "CRIT DMG",
+    23101: "PEN%",
+    23103: "PEN%",
+    23201: "PEN",
+    23203: "PEN",
+    30501: "ER",
+    30502: "ER%",
+    30503: "ER",
+    31201: "AP",
+    31203: "AP",
+    31401: "AM",
+    31402: "AM%",
+    31403: "AM",
+    31501: "Physical DMG",
+    31503: "Physical DMG",
+    31601: "Fire DMG",
+    31603: "Fire DMG",
+    31701: "Ice DMG",
+    31703: "Ice DMG",
+    31801: "Electric DMG",
+    31803: "Electric DMG",
+    31901: "Ether DMG",
+    31903: "Ether DMG",
+}
+
+export function getShortPropertyName(id: number): string {
+    return ShortPropertyNameMap[id] ?? id.toString()
+}
