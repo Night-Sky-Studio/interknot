@@ -11,9 +11,9 @@
     },
     "dependencies": {
         "@interknot/types": "git+https://github.com/Night-Sky-Studio/interknot-types.git#main",
-        "@mantine/charts": "^7.17.3",
-        "@mantine/core": "^7.17.3",
-        "@mantine/hooks": "^7.17.3",
+        "@mantine/charts": "^7.17.5",
+        "@mantine/core": "^7.17.5",
+        "@mantine/hooks": "^7.17.5",
         "@tabler/icons-react": "^3.30.0",
         "babel-plugin-react-compiler": "^19.0.0-beta-bafa41b-20250307",
         "html-to-image": "^1.11.13",
@@ -36,5 +36,8 @@
         "typescript": "^5.7.3",
         "vite": "^6.1.0"
     },
-    "packageManager": "bun@1.2.3"
+    "packageManager": "bun@1.2.3",
+    "trustedDependencies": [
+        "core-js-pure"
+    ]
 }
