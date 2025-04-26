@@ -1,4 +1,5 @@
-import { BackgroundImage, Card, Group, Image, Stack, Title, Text } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch } from "@mantine/core"
+import { RadarChart } from "@mantine/charts"
 import { Character, Talents as CharacterTalents } from "@interknot/types"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "./icons/Icons"
@@ -7,10 +8,13 @@ import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo, useMemo } from "react"
-import type { DriveDiscSet } from "@interknot/types"
+import type { DriveDiscSet, LeaderboardAgent } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 import { DriveDisc } from "./DriveDisc"
 import { SubStat } from "./SubStat"
+import { useAsync } from "react-use"
+import { getLeaderboardDmgDistribution } from "../api/data"
+import { getShortPropertyName } from "../localization/Localization"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -67,6 +71,7 @@ interface ICharacterCardProps {
     uid: number
     username: string
     character: Character
+    leaderboard?: LeaderboardAgent
     substatsVisible?: boolean
 }
 
@@ -177,7 +182,102 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character, substatsVisible }: ICharacterCardProps): React.ReactElement {
+function StatsGraph({ leaderboard, stats }: { leaderboard: LeaderboardAgent, stats: Property[] }): React.ReactElement {
+    const { getLocalString } = useSettings()
+
+    const graphState = useAsync(async () => {
+        return await getLeaderboardDmgDistribution(leaderboard.LeaderboardId)
+    })
+
+    const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0), [graphState.value?.Top1AvgStats])
+
+    const relativeStats = useMemo(() => {
+        // assume top1stats are 100%
+        // then calculate stats relative to top1stats
+
+        const result: Property[] = []
+        for (const stat of stats) {
+            const top1Stat = top1stats?.find(s => s.Id === stat.Id)
+            if (top1Stat) {
+                const relativeStat = new Property(stat.Id, stat.Name, (stat.Value / top1Stat.Value))
+                result.push(relativeStat)
+            }
+        }
+        return result.filter(s => s.Value > 0)
+    }, [top1stats, stats])
+
+
+    // stats to show:
+    // hp, atk, def, cr, cd, impact, elementalDmg,
+
+    return (
+        <div className="cc-stats-graph">
+            {top1stats &&
+                <RadarChart h={200} w={200}
+                    data={top1stats.map(prop => {
+                        let name = getLocalString(prop.simpleName)
+                        if (name.length > 6) {
+                            name = getShortPropertyName(prop.Id)
+                        }
+                        return {
+                            name: name,
+                            prop: prop,
+                            currentProp: stats.find(s => s.Id === prop.Id),
+                            value: relativeStats.find(s => s.Id === Number(prop.Id))?.Value ?? 0,
+                            top1: 1
+                        }
+                    })}
+                    textColor="white"
+                    tooltipProps={{
+                        content: ({ label, payload }) => {
+                            if (!payload) return null
+
+                            return (
+                                <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
+                                    transform: "scale(calc(1 / var(--scale) + 0.1))",
+                                    transformOrigin: "top left",
+                                }}>
+                                    <Text fw={500} mb={5} fz="xs">
+                                        {label}
+                                    </Text>
+                                    <Stack gap="4px">
+                                    {payload.map((item: any, idx: number) => {
+                                        let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
+                                        let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
+                                        return <Group key={item.name}>
+                                            <ColorSwatch color={item.color} size={16} />
+                                            <Text fz="8px">
+                                                {topOrCurrent}
+                                            </Text>
+                                            <Text fz="8px">
+                                                {topOrCurrentValue}
+                                            </Text>
+                                        </Group>
+                                    })}
+                                    </Stack>
+                                </Paper>
+                            )
+                        },
+                        // labelStyle: {
+                        //     color: "white",
+                        //     fontSize: "12px",
+                        // },
+                        // position: { x: 100, y: 140 }
+                        allowEscapeViewBox: { x: true, y: true },
+                    }}
+                    polarAngleAxisProps={{
+                    }}
+                    dataKey="name"
+                    series={[
+                        { name: "top1", color: "var(--mantine-color-dark-2)", opacity: 0.1 },
+                        { name: "value", color: "var(--accent)", opacity: 0.25 }
+                    ]} />
+            }   
+        </div>
+    )
+}
+
+export default function CharacterCard({ ref, uid, username, character, leaderboard, substatsVisible }: ICharacterCardProps): React.ReactElement {
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
@@ -206,7 +306,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
 
     return (<Stack>
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
-            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent }}>
+            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
             <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
                     <BackgroundImage mt="xs" className="character-img" src={character.ImageUrl} />
@@ -256,6 +356,11 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                     <Title className="cc-cv" fz="12px" mt="-4px" component="span">
                         CV {character.CritValue}
                     </Title>
+                </div>
+                <div className="cc-leaderboard">
+                    {leaderboard &&
+                        <StatsGraph leaderboard={leaderboard} stats={character.Stats} />
+                    }
                 </div>
             </Card.Section>
             {substatsVisible && substatsVisible === true &&

@@ -1,15 +1,25 @@
 import { LeaderboardAgent } from "@interknot/types"
 import { Stack, Group, Select, Center } from "@mantine/core"
 import DamageChip from "./DamageChip"
-import { memo, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import { IconEqual, IconPlus } from "@tabler/icons-react"
 import DamageBar from "./DamageBar"
 import "./styles/DamageDistribution.css"
 import { useSettings } from "./SettingsProvider"
 
-export default function DamageDistribution({ entries, index }: { entries: LeaderboardAgent[], index?: number }): React.ReactElement {
+interface IDamageDistributionProps {
+    entries: LeaderboardAgent[]
+    index?: number
+    onLeaderboardSelect?: (lb: LeaderboardAgent) => void
+}
+
+export default function DamageDistribution({ entries, index, onLeaderboardSelect }: IDamageDistributionProps): React.ReactElement {
     const [lbIdx, setLbIdx] = useState<number>(index ?? 0)
     const [hoverIdx, setHoverIdx] = useState<number>(-1)
+
+    useEffect(() => {
+        onLeaderboardSelect?.(entries[lbIdx])
+    }, [lbIdx, entries, onLeaderboardSelect])
 
     const { getLocalString } = useSettings()
 

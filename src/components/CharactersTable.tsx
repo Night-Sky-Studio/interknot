@@ -93,6 +93,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
             return result
         }, [c.DisplayProps, c.Stats])
 
+        const [selectedLeaderboard, setSelectedLeaderboard] = useState<LeaderboardAgent | undefined>(undefined)
+
         return (
             <>
                 <Table.Tr onClick={() => {
@@ -129,7 +131,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
                             <CharacterCardMemorized ref={cardRef}
                                 uid={uid} username={username}
-                                character={c} substatsVisible={isSubstatsVisible} />
+                                character={c} substatsVisible={isSubstatsVisible} leaderboard={selectedLeaderboard} />
                         </div>
                         <Stack>
                             <Group m="xl">
@@ -165,7 +167,9 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             </Group>
                             <Collapse in={isDmgDistributionVisible}>
                                 { agentLeaderboards.length > 0 &&
-                                    <DamageDistributionMemoized entries={agentLeaderboards} />
+                                    <DamageDistributionMemoized entries={agentLeaderboards} onLeaderboardSelect={(lb) => {
+                                        setSelectedLeaderboard(lb)
+                                    }} />
                                 }
                             </Collapse>
                         </Stack>
