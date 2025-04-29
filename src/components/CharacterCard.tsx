@@ -213,8 +213,8 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
     // hp, atk, def, cr, cd, impact, elementalDmg,
 
     const radarRef = useRef<HTMLDivElement | null>(null)
-
     const theme = useMantineTheme()
+    const [scroll, _] = useWindowScroll()
 
     return (
         <div className="cc-stats-graph" ref={radarRef}>
@@ -242,14 +242,13 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                             content: ({ label, payload, coordinate, active }) => {
                                 if (!payload) return null
 
-                                const [scroll, _] = useWindowScroll()
                                 const radarRect = radarRef?.current?.getBoundingClientRect()
                                 if (!radarRect) return null
                                 if (!coordinate || !coordinate.x || !coordinate.y) return null
 
                                 // console.log(radarRect)
-                                const x = radarRect.left + scroll.x + coordinate.x + 50
-                                const y = radarRect.top + scroll.y + coordinate.y + 50
+                                const x = radarRect.left + scroll.x + coordinate.x
+                                const y = radarRect.top + scroll.y + coordinate.y
 
                                 return (
                                     <Portal>{active && 
@@ -258,6 +257,8 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                                             left: x,
                                             top: y,
                                             zIndex: 1000,
+                                            userSelect: "none",
+                                            backgroundColor: `color-mix(in srgb-linear, ${theme.colors.dark[7]} 100%, transparent 7.5%)`,
                                         }}>
                                             <Text fw={500} mb={5} fz="sm" ff="zzz, sans-serif">
                                                 {getLocalString(payload[0]?.payload?.prop?.simpleName ?? label)}
