@@ -193,20 +193,29 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
 
     const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0.1), [graphState.value?.Top1AvgStats])
 
+    const filteredStats = useMemo(() => {
+        return stats.filter(s => s.Value > 0.1)
+    }, [stats])
+
+    // if stat in top1stats is not present in filteredStats, remove it
+    const filteredTop1Stats = useMemo(() => {
+        return top1stats?.filter(s => filteredStats.some(fs => fs.Id === s.Id)) ?? []
+    }, [top1stats, filteredStats])
+
     const relativeStats = useMemo(() => {
         // assume top1stats are 100%
         // then calculate stats relative to top1stats
 
         const result: Property[] = []
-        for (const stat of stats.filter(s => s.Value > 0.1)) {
-            const top1Stat = top1stats?.find(s => s.Id === stat.Id)
+        for (const stat of filteredStats) {
+            const top1Stat = filteredTop1Stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
                 const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.2))
                 result.push(relativeStat)
             }
         }
-        return result.filter(s => s.Value > 0.1)
-    }, [top1stats, stats])
+        return result
+    }, [filteredTop1Stats, filteredStats])
 
 
     // stats to show:
@@ -221,7 +230,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
             {top1stats &&
                 <Stack gap="0px">
                     <RadarChart h={168} w={200}
-                        data={top1stats.map(prop => {
+                        data={filteredTop1Stats.map(prop => {
                             let name = getLocalString(prop.simpleName)
                             if (name.length > 6) {
                                 name = getShortPropertyName(prop.Id)
