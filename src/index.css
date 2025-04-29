@@ -29,3 +29,7 @@
 .mantine-Table-tr:not(.expandable-row):not(.mantine-Table-thead > .mantine-Table-tr):hover {
     background-color: var(--table-hover-color);
 }
+
+text {
+    fill: white
+}

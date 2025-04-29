@@ -342,10 +342,21 @@ html[lang="fr"] .cc-stat * {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 52px;
     margin-right: 8px;
 }
 .cc-stats-graph * {
     font-family: "zzz", "zzz-jp", sans-serif;
     overflow: visible;
     font-size: 6px;
+    color: white;
+    z-index: 100;
+}
+.cc-graph-lb {
+    color: white;
+    font-family: "zzz-jp", monospace;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    background-color: color-mix(in oklab, black 10%, var(--accent) 100%);
 }
