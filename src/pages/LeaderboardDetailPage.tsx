@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, SimpleGrid, Tooltip, ActionIcon, Popover } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch } from "@mantine/core"
 import { IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
@@ -52,6 +52,19 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const leaderboardDistributionState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(Number(id))
     }, [id])
+
+    const leaderboardDistribution = useMemo(() => { return leaderboardDistributionState.value }, [leaderboardDistributionState.value])
+    const distributionDomain = useMemo(() => {
+        if (leaderboardDistribution) {
+            const values = Object.values(leaderboardDistribution.Data)
+            // adjust to closest 1000
+            const min = Math.min(...values) - Math.min(...values) % 100000
+            const max = Math.max(...values) + (100000 - Math.max(...values) % 100000)
+            return [min, max]
+        }
+        return [0, 100]
+    }
+    , [leaderboardDistribution])
 
     const stats = (displayProps: number[], baseStats: Property[]) => {
         const result: Property[] = []
@@ -148,6 +161,26 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         </>)
     }
 
+    const DistributionTooltip = ({ label, payload }: { label: string, payload: Record<string, any>[] | undefined }) => {
+        if (!payload) return null;
+
+        return (
+            <Paper px="md" py="sm" withBorder shadow="md" radius="sm">
+                <Text fw={500} mb={5}>
+                    Top {label}%
+                </Text>
+                {payload.map((item: any) => (
+                    <Group key={item.name}>
+                        <ColorSwatch color={item.color} size={16} />
+                        <Text fz="sm">
+                            {item.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </Text>
+                    </Group>
+                ))}
+            </Paper>
+        );
+    }
+
     return (<>
         <title>{`${currentLeaderboard?.FullName} | Inter-Knot`}</title>
         <Stack>
@@ -158,48 +191,67 @@ export default function LeaderboardDetailPage(): React.ReactElement {
             }
             {leaderboardState.value && currentLeaderboard &&
                 <Card withBorder>
-                    <SimpleGrid cols={2} spacing="xl">
-                        <Center>
-                            {leaderboardDistributionState.error && 
-                                <Alert variant="light" 
-                                    color={leaderboardDistributionState.error.message.includes("425") ? "orange" : "red"} 
-                                    title="Failed to load distribution" icon={<IconInfoCircle />}>
-                                    <Text ff="monospace">Error {leaderboardDistributionState.error.message}</Text>
-                                </Alert>
-                            }
-                            {leaderboardDistributionState.value &&
-                                <LineChart h="300px" w="100%"
-                                    data={leaderboardDistributionState.value} 
-                                    series={[{ name: "value", color: "blue.6" }]}
-                                    dataKey="top" 
-                                    tickLine="xy"
-                                    gridAxis="xy"
-                                    curveType="natural" />
-                            }
-                        </Center>
-                        <Stack>
-                            <Title order={2}>{currentLeaderboard?.FullName}</Title>
-                            {currentLeaderboard?.Description &&
-                                <Text fz="12pt">{currentLeaderboard?.Description}</Text>
-                            }
-                            <Group gap="xs">
-                                <Text>
-                                    Rotation: 
-                                    {` ${currentLeaderboard?.Rotation.map(r => r.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")).join(", ")}`}
-                                </Text>
-                            </Group>
-                            <Group gap="xs">
-                                <Text>Weapons: </Text>
-                                {
-                                    leaderboardState.value.map(lb => {
-                                        return (
-                                            <WeaponButton id={lb.Id} weapon={lb.Weapon} selected={lb.Id === Number(id)} />
-                                        )
-                                    })
+                    <Grid gutter="xl">
+                        <Grid.Col span={{ base: 12, md: 7, lg: "auto" }}>
+                            <Center h="100%">
+                                {leaderboardDistributionState.error && 
+                                    <Alert variant="light" 
+                                        color={leaderboardDistributionState.error.message.includes("425") ? "orange" : "red"} 
+                                        title="Failed to load distribution" icon={<IconInfoCircle />}>
+                                        <Text ff="monospace">Error {leaderboardDistributionState.error.message}</Text>
+                                    </Alert>
                                 }
-                            </Group>
-                        </Stack>
-                    </SimpleGrid>
+                                {leaderboardDistributionState.value && leaderboardDistribution &&
+                                    <Stack gap="0">
+                                        <LineChart h="300px" w="100%" m="sm"
+                                            data={Object.entries(leaderboardDistribution.Data).map(([key, value]) => ({
+                                                top: key,
+                                                value: value
+                                            }))} 
+                                            series={[{ name: "value", color: "blue.6" }]}
+                                            xAxisProps={{ tickFormatter: (value) => `top ${value}%`}}
+                                            yAxisProps={{ domain: distributionDomain, tickCount: 14, tickFormatter: (value) => value.toLocaleString() }}
+                                            dataKey="top" 
+                                            tooltipAnimationDuration={250}
+                                            tooltipProps={{ 
+                                                content: ({ label, payload }) => <DistributionTooltip label={label} payload={payload} />,
+                                            }}
+                                            tickLine="xy"
+                                            strokeDasharray="0"
+                                            gridAxis="xy"
+                                            curveType="natural" />
+                                        <Text fz="8pt" c="dimmed">
+                                            Updated: {new Date(leaderboardDistribution.UpdatedAt).toLocaleString()}
+                                        </Text>
+                                    </Stack>
+                                }
+                            </Center>
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, md: 5, lg: "auto" }}>
+                            <Stack>
+                                <Title order={2}>{currentLeaderboard?.FullName}</Title>
+                                {currentLeaderboard?.Description &&
+                                    <Text fz="12pt">{currentLeaderboard?.Description}</Text>
+                                }
+                                <Group gap="xs">
+                                    <Text>
+                                        Rotation: 
+                                        {` ${currentLeaderboard?.Rotation.map(r => r.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")).join(", ")}`}
+                                    </Text>
+                                </Group>
+                                <Group gap="xs">
+                                    <Text>Weapons: </Text>
+                                    {
+                                        leaderboardState.value.map(lb => {
+                                            return (
+                                                <WeaponButton id={lb.Id} weapon={lb.Weapon} selected={lb.Id === Number(id)} />
+                                            )
+                                        })
+                                    }
+                                </Group>
+                            </Stack>
+                        </Grid.Col>
+                    </Grid>
                 </Card>
             }
             {leaderboardUsersState.loading && !leaderboardUsersState.value &&

@@ -1,4 +1,4 @@
-import { Character, LeaderboardAgent, Property } from "@interknot/types"
+import { Character, BaseLeaderboardEntry, Property } from "@interknot/types"
 import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch } from "@mantine/core"
 import "./styles/CharactersTable.pcss"
 import { CharacterCardMemorized } from "./CharacterCard"
@@ -18,7 +18,7 @@ interface ICharactersTableProps {
     uid: number
     username: string
     characters: Character[]
-    lbAgents?: LeaderboardAgent[],
+    lbAgents?: BaseLeaderboardEntry[],
     openedId?: number | null
 }
 
@@ -58,7 +58,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
         
         const cardRef = useRef<HTMLDivElement | null>(null)
 
-        const agentLeaderboards = lbAgents?.filter(l => l.Agent.Id === c.Id) ?? []
+        const agentLeaderboards = lbAgents?.filter(l => l.Leaderboard.Character.Id === c.Id) ?? []
 
         // Scroll card into view when opened
         /*
@@ -92,6 +92,8 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
             }
             return result
         }, [c.DisplayProps, c.Stats])
+
+        const [selectedLeaderboard, setSelectedLeaderboard] = useState<BaseLeaderboardEntry | undefined>(undefined)
 
         return (
             <>
@@ -129,7 +131,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
                             <CharacterCardMemorized ref={cardRef}
                                 uid={uid} username={username}
-                                character={c} substatsVisible={isSubstatsVisible} />
+                                character={c} substatsVisible={isSubstatsVisible} leaderboard={selectedLeaderboard} />
                         </div>
                         <Stack>
                             <Group m="xl">
@@ -140,13 +142,19 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                                     const cs = cardScale
                                     setCardScale(1.0)
 
+                                    cardRef.current
+                                        .querySelectorAll("g.recharts-layer.recharts-polar-angle-axis.angleAxis > g > g > text")
+                                        .forEach((el) => {
+                                            el.setAttribute("fill", "#FFFFFF")
+                                        })
+
                                     const dataUrl = await toPng(cardRef.current, {
                                         quality: 1.0,
                                         canvasHeight: (cardRect.height) * 2,
                                         canvasWidth: (cardRect.width) * 2,
                                         backgroundColor: "transparent",
                                         style: {
-                                            margin: "var(--mantine-spacing-lg)"
+                                            margin: "var(--mantine-spacing-lg)",
                                         }
                                     })
 
@@ -165,7 +173,9 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             </Group>
                             <Collapse in={isDmgDistributionVisible}>
                                 { agentLeaderboards.length > 0 &&
-                                    <DamageDistributionMemoized entries={agentLeaderboards} />
+                                    <DamageDistributionMemoized entries={agentLeaderboards} onLeaderboardSelect={(lb) => {
+                                        setSelectedLeaderboard(lb)
+                                    }} />
                                 }
                             </Collapse>
                         </Stack>

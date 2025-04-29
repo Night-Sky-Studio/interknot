@@ -30,11 +30,11 @@ export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeader
         
         // Group agents by their Agent.Id
         const agentGroups = profile.Agents.reduce((groups, agent) => {
-            const character = characters.find(c => c.Id === agent.Agent.Id)
+            const character = characters.find(c => c.Id === agent.Leaderboard.Character.Id)
             if (!character) return groups
             
-            const type = buttonType(character, agent.Weapon)
-            const agentId = agent.Agent.Id
+            const type = buttonType(character, agent.Leaderboard.Weapon)
+            const agentId = agent.Leaderboard.Character.Id
             
             if (!groups[agentId] || type < groups[agentId].type) {
                 groups[agentId] = { agent, type }
@@ -53,16 +53,16 @@ export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeader
             <div className="lb-grid">
                 {
                     prioritizedAgents.map(a => {
-                        return <LeaderboardButton key={a.LeaderboardId} 
-                            id={a.LeaderboardId}
-                            agent={a.Agent} 
-                            weapon={a.Weapon} 
-                            name={a.LeaderboardName}
+                        return <LeaderboardButton key={a.Leaderboard.Id} 
+                            id={a.Leaderboard.Id}
+                            agent={a.Leaderboard.Character} 
+                            weapon={a.Leaderboard.Weapon} 
+                            name={a.Leaderboard.Name}
                             rank={a.Rank}
                             total={a.Total}
-                            type={buttonType(characters.find(c => c.Id === a.Agent.Id)!, a.Weapon)}
+                            type={buttonType(characters.find(c => c.Id === a.Leaderboard.Character.Id)!, a.Leaderboard.Weapon)}
                             onClick={() => {
-                                onProfileClick?.(a.Agent.Id)
+                                onProfileClick?.(a.Leaderboard.Character.Id)
                             }} />
                     })
                 }

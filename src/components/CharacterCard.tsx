@@ -1,4 +1,5 @@
-import { BackgroundImage, Card, Group, Image, Stack, Title, Text } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme } from "@mantine/core"
+import { RadarChart } from "@mantine/charts"
 import { Character, Talents as CharacterTalents } from "@interknot/types"
 import "./styles/CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "./icons/Icons"
@@ -6,11 +7,16 @@ import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
-import React, { memo, useMemo } from "react"
-import type { DriveDiscSet } from "@interknot/types"
+import React, { memo, useMemo, useRef } from "react"
+import type { DriveDiscSet, BaseLeaderboardEntry } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 import { DriveDisc } from "./DriveDisc"
 import { SubStat } from "./SubStat"
+import { useAsync } from "react-use"
+import { getLeaderboardDmgDistribution } from "../api/data"
+import { getShortPropertyName } from "../localization/Localization"
+import { useWindowScroll } from "@mantine/hooks"
+import { Team } from "./Team"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -67,6 +73,7 @@ interface ICharacterCardProps {
     uid: number
     username: string
     character: Character
+    leaderboard?: BaseLeaderboardEntry
     substatsVisible?: boolean
 }
 
@@ -177,7 +184,137 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character, substatsVisible }: ICharacterCardProps): React.ReactElement {
+function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboardEntry, stats: Property[], color: string }): React.ReactElement {
+    const { getLocalString, decimalPlaces } = useSettings()
+
+    const graphState = useAsync(async () => {
+        return await getLeaderboardDmgDistribution(leaderboard.Leaderboard.Id)
+    })
+
+    const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0), [graphState.value?.Top1AvgStats])
+
+    const relativeStats = useMemo(() => {
+        // assume top1stats are 100%
+        // then calculate stats relative to top1stats
+
+        const result: Property[] = []
+        for (const stat of stats) {
+            const top1Stat = top1stats?.find(s => s.Id === stat.Id)
+            if (top1Stat) {
+                const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.2))
+                result.push(relativeStat)
+            }
+        }
+        return result.filter(s => s.Value > 0)
+    }, [top1stats, stats])
+
+
+    // stats to show:
+    // hp, atk, def, cr, cd, impact, elementalDmg,
+
+    const radarRef = useRef<HTMLDivElement | null>(null)
+    const theme = useMantineTheme()
+    const [scroll, _] = useWindowScroll()
+
+    return (
+        <div className="cc-stats-graph" ref={radarRef}>
+            {top1stats &&
+                <Stack gap="0px">
+                    <RadarChart h={168} w={200}
+                        data={top1stats.map(prop => {
+                            let name = getLocalString(prop.simpleName)
+                            if (name.length > 6) {
+                                name = getShortPropertyName(prop.Id)
+                            }
+                            return {
+                                name: name,
+                                prop: prop,
+                                currentProp: stats.find(s => s.Id === prop.Id),
+                                value: relativeStats.find(s => s.Id === Number(prop.Id))?.Value ?? 0,
+                                top1: 1
+                            }
+                        })}
+                        textColor="white"
+                        gridColor={`${theme.colors.dark[4]}`}
+                        withDots
+                        withTooltip
+                        tooltipProps={{
+                            content: ({ label, payload, coordinate, active }) => {
+                                if (!payload) return null
+
+                                const radarRect = radarRef?.current?.getBoundingClientRect()
+                                if (!radarRect) return null
+                                if (!coordinate || !coordinate.x || !coordinate.y) return null
+
+                                // console.log(radarRect)
+                                const x = radarRect.left + scroll.x + coordinate.x
+                                const y = radarRect.top + scroll.y + coordinate.y
+
+                                return (
+                                    <Portal>
+                                        {active && 
+                                            <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
+                                                position: "absolute",
+                                                left: x,
+                                                top: y,
+                                                zIndex: 1000,
+                                                userSelect: "none",
+                                                backgroundColor: `color-mix(in srgb-linear, ${theme.colors.dark[7]} 100%, transparent 7.5%)`,
+                                            }}>
+                                                <Text fw={500} mb={5} fz="sm" ff="zzz, sans-serif">
+                                                    {getLocalString(payload[0]?.payload?.prop?.simpleName ?? label)}
+                                                </Text>
+                                                <Stack gap="4px">
+                                                {payload.map((item: any, idx: number) => {
+                                                    let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
+                                                    let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
+                                                    return <Group key={item.name} justify="space-between">
+                                                        <Group>
+                                                            <ColorSwatch color={item.color} size={16} />
+                                                            <Text fz="sm">
+                                                                {topOrCurrent}
+                                                            </Text>
+                                                        </Group>
+                                                        <Text fz="sm">
+                                                            {topOrCurrentValue}
+                                                        </Text>
+                                                    </Group>
+                                                })}
+                                                </Stack>
+                                            </Paper>
+                                        }
+                                    </Portal>
+                                )
+                            },
+                            allowEscapeViewBox: { x: true, y: true },
+                        }}
+                        dataKey="name"
+                        series={[
+                            { name: "top1", color: `${theme.colors.dark[2]}`, opacity: 0.1 },
+                            { name: "value", color: color, opacity: 0.25 }
+                        ]} />
+                    <Stack gap="4px" mt="-8px" align="center">
+                        <Group gap="2px">
+                            <div className="cc-graph-lb">
+                                Top {(leaderboard.Rank / leaderboard.Leaderboard.Total * 100).toFixed(decimalPlaces)}%
+                            </div>
+                            <Group className="cc-graph-lb" gap="4px">
+                                <Image h="12px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
+                                <Title order={6} m="0" fz="8px">{leaderboard.Leaderboard.Name}</Title>
+                            </Group>
+                        </Group>
+                        <Team team={[leaderboard.Leaderboard.Character, ...leaderboard.Leaderboard.Team]} />
+                        <div className="cc-graph-lb">
+                            {leaderboard.Rank} / {leaderboard.Leaderboard.Total}
+                        </div>
+                    </Stack>
+                </Stack>
+            }   
+        </div>
+    )
+}
+
+export default function CharacterCard({ ref, uid, username, character, leaderboard, substatsVisible }: ICharacterCardProps): React.ReactElement {
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
@@ -206,7 +343,7 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
 
     return (<Stack>
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
-            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent }}>
+            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
             <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
                     <BackgroundImage mt="xs" className="character-img" src={character.ImageUrl} />
@@ -256,6 +393,11 @@ export default function CharacterCard({ ref, uid, username, character, substatsV
                     <Title className="cc-cv" fz="12px" mt="-4px" component="span">
                         CV {character.CritValue}
                     </Title>
+                </div>
+                <div className="cc-leaderboard">
+                    {leaderboard &&
+                        <StatsGraph leaderboard={leaderboard} stats={character.Stats} color={character.Colors.Mindscape} />
+                    }
                 </div>
             </Card.Section>
             {substatsVisible && substatsVisible === true &&
