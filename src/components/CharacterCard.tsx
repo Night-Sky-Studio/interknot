@@ -191,21 +191,21 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
         return await getLeaderboardDmgDistribution(leaderboard.Leaderboard.Id)
     })
 
-    const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0), [graphState.value?.Top1AvgStats])
+    const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0.1), [graphState.value?.Top1AvgStats])
 
     const relativeStats = useMemo(() => {
         // assume top1stats are 100%
         // then calculate stats relative to top1stats
 
         const result: Property[] = []
-        for (const stat of stats.filter(s => s.Value > 0)) {
+        for (const stat of stats.filter(s => s.Value > 0.1)) {
             const top1Stat = top1stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
                 const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.2))
                 result.push(relativeStat)
             }
         }
-        return result.filter(s => s.Value > 0)
+        return result.filter(s => s.Value > 0.1)
     }, [top1stats, stats])
 
 
