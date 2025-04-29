@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@interknot/types": "git+https://github.com/Night-Sky-Studio/interknot-types.git#main",
-        "@mantine/charts": "^7.17.5",
+        "@mantine/charts": "deps/mantine-charts-7.17.5-radar.7749.tgz",
         "@mantine/core": "^7.17.5",
         "@mantine/hooks": "^7.17.5",
         "@tabler/icons-react": "^3.30.0",

@@ -5,11 +5,11 @@
       "name": "vite-min-template",
       "dependencies": {
         "@interknot/types": "git+https://github.com/Night-Sky-Studio/interknot-types.git#main",
-        "@mantine/charts": "^7.17.5",
         "@mantine/core": "^7.17.5",
         "@mantine/hooks": "^7.17.5",
         "@tabler/icons-react": "^3.30.0",
         "babel-plugin-react-compiler": "^19.0.0-beta-bafa41b-20250307",
+        "@mantine/charts": "deps/mantine-charts-7.17.5-radar.7749.tgz",
         "html-to-image": "^1.11.13",
         "mantine-contextmenu": "^7.17.1",
         "react": "^19.0.0",
@@ -145,7 +145,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
 
-    "@mantine/charts": ["@mantine/charts@7.17.5", "", { "peerDependencies": { "@mantine/core": "7.17.5", "@mantine/hooks": "7.17.5", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x", "recharts": "^2.13.3" } }, "sha512-VDDRwUqTsZYqYSYqcc8wXrdiKIvkqRcoDQXKdiuSin7ebQtk29QnPDQmcM536HQpVlUuemI7iTJNTUmhdc7ALQ=="],
+    "@mantine/charts": ["@mantine/charts@deps/mantine-charts-7.17.5-radar.7749.tgz", { "peerDependencies": { "@mantine/core": "7.17.5", "@mantine/hooks": "7.17.5", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x", "recharts": "^2.13.3" } }],
 
     "@mantine/core": ["@mantine/core@7.17.5", "", { "dependencies": { "@floating-ui/react": "^0.26.28", "clsx": "^2.1.1", "react-number-format": "^5.4.3", "react-remove-scroll": "^2.6.2", "react-textarea-autosize": "8.5.9", "type-fest": "^4.27.0" }, "peerDependencies": { "@mantine/hooks": "7.17.5", "react": "^18.x || ^19.x", "react-dom": "^18.x || ^19.x" } }, "sha512-66g/lr281cDPfucjtPw8gFo/yNS9G5iSKqysvPGuDpUBG2bEw8FsJMIsU0bMXtravToIpa3vJRrFUuPndPGnpQ=="],
 
