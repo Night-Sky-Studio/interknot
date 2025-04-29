@@ -1,9 +1,15 @@
-.empty-member {
+.member {
+    aspect-ratio: 180 / 250;
     height: 100%;
-    background-color: var(--mantine-color-dark-8);
-    aspect-ratio: 1;
-    border-radius: 50%;
+    border-radius: 2px 4px 2px 4px;
+    transform: skew(16deg);
+    background-color: var(--mantine-color-dark-9);
+    outline: var(--mantine-color-dark-5) solid 1px;
     position: relative;
+    overflow: hidden;
+}
+.member > * {
+    transform: skew(-16deg);
 }
 .empty-member::before {
     color: white;
@@ -13,5 +19,5 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) skew(-16deg);
 }
