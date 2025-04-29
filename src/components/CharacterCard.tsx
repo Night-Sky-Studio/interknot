@@ -198,7 +198,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
         // then calculate stats relative to top1stats
 
         const result: Property[] = []
-        for (const stat of stats) {
+        for (const stat of stats.filter(s => s.Value > 0)) {
             const top1Stat = top1stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
                 const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.2))
