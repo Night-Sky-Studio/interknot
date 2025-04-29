@@ -251,36 +251,38 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                                 const y = radarRect.top + scroll.y + coordinate.y
 
                                 return (
-                                    <Portal>{active && 
-                                        <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
-                                            position: "absolute",
-                                            left: x,
-                                            top: y,
-                                            zIndex: 1000,
-                                            userSelect: "none",
-                                            backgroundColor: `color-mix(in srgb-linear, ${theme.colors.dark[7]} 100%, transparent 7.5%)`,
-                                        }}>
-                                            <Text fw={500} mb={5} fz="sm" ff="zzz, sans-serif">
-                                                {getLocalString(payload[0]?.payload?.prop?.simpleName ?? label)}
-                                            </Text>
-                                            <Stack gap="4px">
-                                            {payload.map((item: any, idx: number) => {
-                                                let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
-                                                let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
-                                                return <Group key={item.name} justify="space-between">
-                                                    <Group>
-                                                        <ColorSwatch color={item.color} size={16} />
+                                    <Portal>
+                                        {active && 
+                                            <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
+                                                position: "absolute",
+                                                left: x,
+                                                top: y,
+                                                zIndex: 1000,
+                                                userSelect: "none",
+                                                backgroundColor: `color-mix(in srgb-linear, ${theme.colors.dark[7]} 100%, transparent 7.5%)`,
+                                            }}>
+                                                <Text fw={500} mb={5} fz="sm" ff="zzz, sans-serif">
+                                                    {getLocalString(payload[0]?.payload?.prop?.simpleName ?? label)}
+                                                </Text>
+                                                <Stack gap="4px">
+                                                {payload.map((item: any, idx: number) => {
+                                                    let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
+                                                    let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
+                                                    return <Group key={item.name} justify="space-between">
+                                                        <Group>
+                                                            <ColorSwatch color={item.color} size={16} />
+                                                            <Text fz="sm">
+                                                                {topOrCurrent}
+                                                            </Text>
+                                                        </Group>
                                                         <Text fz="sm">
-                                                            {topOrCurrent}
+                                                            {topOrCurrentValue}
                                                         </Text>
                                                     </Group>
-                                                    <Text fz="sm">
-                                                        {topOrCurrentValue}
-                                                    </Text>
-                                                </Group>
-                                            })}
-                                            </Stack>
-                                        </Paper>}
+                                                })}
+                                                </Stack>
+                                            </Paper>
+                                        }
                                     </Portal>
                                 )
                             },
