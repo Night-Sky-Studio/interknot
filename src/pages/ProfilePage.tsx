@@ -11,6 +11,7 @@ import Timer from "../components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
 import { ProfileInfo } from "@interknot/types"
+import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
@@ -70,53 +71,55 @@ export default function ProfilePage(): React.ReactElement {
         {userState.value && <>
             <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
-            <Stack>
-                <Group justify="flex-end" gap="xs">
-                    <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
-                        setNeedsUpdate(true)
-                        userState.retry()
-                        leaderboardsState.retry()
-                    }}>
-                        <Timer key={uid} title="Update" isEnabled={needsUpdate}
-                            endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
-                            onTimerEnd={() => {
-                                setNeedsUpdate(false)
-                            }} />
-                    </Button>
-                    <ActionIcon onClick={toggleIsFavorite}>
-                        { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
-                    </ActionIcon>
-                    <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
-                        component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
-                        {""}
-                    </ActionIcon>
-                </Group>
-                <Stack gap="0px" align="center">
-                    <UserHeaderMemorized user={userState.value.Information} showDescription={userState.value.Information.Description !== ""} />
-                    <Collapse in={opened} className="leaderboards" data-open={opened}>
-                        {
-                            leaderboardsState.loading && <Center m="md"><Loader /></Center>
-                        }
-                        {
-                            !leaderboardsState.loading && !leaderboardsState.error &&
-                                <LeaderboardGridMemorized 
-                                    profile={leaderboardsState.value} 
-                                    characters={userState.value.Characters}
-                                    onProfileClick={(agentId) => {
-                                        setOpenedId(agentId === openedId ? null : agentId)
-                                    }} />
-                        }
-                        {
-                            leaderboardsState.error && <Center m="md">Failed to load leaderboards</Center>
-                        }
-                    </Collapse>
-                    <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>
-                        Leaderboards
-                    </Button>
+            <LeaderboardProvider>
+                <Stack>
+                    <Group justify="flex-end" gap="xs">
+                        <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
+                            setNeedsUpdate(true)
+                            userState.retry()
+                            leaderboardsState.retry()
+                        }}>
+                            <Timer key={uid} title="Update" isEnabled={needsUpdate}
+                                endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
+                                onTimerEnd={() => {
+                                    setNeedsUpdate(false)
+                                }} />
+                        </Button>
+                        <ActionIcon onClick={toggleIsFavorite}>
+                            { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
+                        </ActionIcon>
+                        <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
+                            component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
+                            {""}
+                        </ActionIcon>
+                    </Group>
+                    <Stack gap="0px" align="center">
+                        <UserHeaderMemorized user={userState.value.Information} showDescription={userState.value.Information.Description !== ""} />
+                        <Collapse in={opened} className="leaderboards" data-open={opened}>
+                            {
+                                leaderboardsState.loading && <Center m="md"><Loader /></Center>
+                            }
+                            {
+                                !leaderboardsState.loading && !leaderboardsState.error &&
+                                    <LeaderboardGridMemorized 
+                                        profile={leaderboardsState.value} 
+                                        characters={userState.value.Characters}
+                                        onProfileClick={(agentId) => {
+                                            setOpenedId(agentId === openedId ? null : agentId)
+                                        }} />
+                            }
+                            {
+                                leaderboardsState.error && <Center m="md">Failed to load leaderboards</Center>
+                            }
+                        </Collapse>
+                        <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>
+                            Leaderboards
+                        </Button>
+                    </Stack>
+                    <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
+                        characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
                 </Stack>
-                <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
-                    characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
-            </Stack>
+            </LeaderboardProvider>
         </>
     }
     </>)

@@ -52,7 +52,7 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
     return (
         <Popover opened={opened} withArrow onDismiss={close}>
             <Popover.Target>
-                <Tooltip label={buttonLabel} openDelay={500} position="bottom" w={256} multiline>
+                <Tooltip label={buttonLabel} openDelay={500} position="top" w={256} multiline>
                     <UnstyledButton className="lb-button" data-type={type} onClick={() => {
                         toggle()
                         onClick?.()

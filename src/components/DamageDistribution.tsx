@@ -6,15 +6,19 @@ import { IconEqual, IconPlus } from "@tabler/icons-react"
 import DamageBar from "./DamageBar"
 import "./styles/DamageDistribution.css"
 import { useSettings } from "./SettingsProvider"
+import { useLeaderboards } from "./LeaderboardProvider"
 
 interface IDamageDistributionProps {
     entries: BaseLeaderboardEntry[]
-    index?: number
     onLeaderboardSelect?: (lb: BaseLeaderboardEntry) => void
 }
 
-export default function DamageDistribution({ entries, index, onLeaderboardSelect }: IDamageDistributionProps): React.ReactElement {
-    const [lbIdx, setLbIdx] = useState<number>(index ?? 0)
+export default function DamageDistribution({ entries, onLeaderboardSelect }: IDamageDistributionProps): React.ReactElement {
+    const leaderboards = useLeaderboards()
+    const characterId = entries[0].Leaderboard.Character.Id
+    const idx = entries.findIndex(e => e.Leaderboard.Id === leaderboards.agents.find(c => c.Leaderboard.Character.Id === characterId)?.Leaderboard.Id)
+
+    const [lbIdx, setLbIdx] = useState<number>(idx)
     const [hoverIdx, setHoverIdx] = useState<number>(-1)
 
     useEffect(() => {

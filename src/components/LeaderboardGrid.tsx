@@ -3,6 +3,7 @@ import { Center, Title } from "@mantine/core"
 import { LeaderboardButton } from "./LeaderboardButton"
 import "./styles/LeaderboardGrid.css"
 import { memo, useMemo } from "react"
+import { useLeaderboards } from "./LeaderboardProvider"
 
 export const shouldShowLeaderboards = (p?: LeaderboardProfile) => 
     p?.Agents?.some(a => a.Total > 20) ?? false
@@ -14,6 +15,8 @@ interface ILeaderboardGridProps {
 }
 
 export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeaderboardGridProps) {
+    const leaderboards = useLeaderboards()
+
     const buttonType = (c: Character, w: BaseWeapon): number => {
         if (c.Weapon?.Id == w.Id) {
             return 0 // matches weapon
@@ -36,15 +39,32 @@ export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeader
             const type = buttonType(character, agent.Leaderboard.Weapon)
             const agentId = agent.Leaderboard.Character.Id
             
-            if (!groups[agentId] || type < groups[agentId].type) {
-                groups[agentId] = { agent, type }
+            if (!groups[agentId]) {
+                groups[agentId] = {}
+            }
+            
+            // Group by button type first
+            if (!groups[agentId][type]) {
+                groups[agentId][type] = agent
+            } else {
+                // If we already have an agent of this type, keep the one with the higher rank (lower number)
+                if (agent.Rank < groups[agentId][type].Rank) {
+                    groups[agentId][type] = agent
+                }
             }
             
             return groups
-        }, {} as Record<string, { agent: typeof profile.Agents[0], type: number }>)
+        }, {} as Record<string, Record<number, typeof profile.Agents[0]>>)
         
-        // Extract only the highest priority agent for each ID
-        return Object.values(agentGroups).map(g => g.agent)
+        const result = Object.entries(agentGroups).map(([_, typeGroups]) => {
+            // Get the lowest type number (highest priority) available
+            const bestType = Math.min(...Object.keys(typeGroups).map(Number))
+            return typeGroups[bestType]
+        })
+
+        leaderboards.setProfiles(result)
+        
+        return result
     }, [profile?.Agents, characters])
 
     return (<>

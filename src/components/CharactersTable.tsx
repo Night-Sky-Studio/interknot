@@ -13,6 +13,7 @@ import CritCell from "./cells/CritCell"
 import PropertyCell from "./cells/PropertyCell"
 import WeaponCell from "./cells/WeaponCell"
 import DriveDiscsCell from "./cells/DriveDiscsCell"
+import { useLeaderboards } from "./LeaderboardProvider"
 
 interface ICharactersTableProps {
     uid: number
@@ -93,7 +94,9 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
             return result
         }, [c.DisplayProps, c.Stats])
 
-        const [selectedLeaderboard, setSelectedLeaderboard] = useState<BaseLeaderboardEntry | undefined>(undefined)
+
+        const leaderboards = useLeaderboards()
+        const [selectedLeaderboard, setSelectedLeaderboard] = useState<BaseLeaderboardEntry | undefined>(leaderboards.agents.find(l => l.Leaderboard.Character.Id === c.Id))
 
         return (
             <>
@@ -180,7 +183,6 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                             </Collapse>
                         </Stack>
                     </Stack>
-
                 </ExpandableRow>
             </>
         )
