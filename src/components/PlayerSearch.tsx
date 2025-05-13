@@ -1,5 +1,5 @@
-import { Card, Center, CloseButton, TextInput, Title, Text, Group, Alert, Image } from "@mantine/core"
-import { IconInfoCircle, IconSearch } from "@tabler/icons-react"
+import { Card, CloseButton, TextInput, Title, Text, Group, Alert, Image, ActionIcon } from "@mantine/core"
+import { IconInfoCircle, IconSearch, IconSend2 } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
 import { getUser, pingDataServer, searchUsers } from "../api/data"
@@ -31,6 +31,25 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
         search(await searchUsers(val))
     }
 
+    const onUidSubmit = async () => {
+        setError("")
+        const isNumeric = (str: any): boolean => {
+            if (typeof str != "string") return false 
+            return !isNaN(str as any) &&
+                    !isNaN(parseFloat(str))
+        }
+        if (!isNumeric(value)) { 
+            setError("Adding profile by Nickname is not supported")
+            return
+        }
+        try {
+            const user = await getUser(Number(value))
+            search(user ? [user.Information] : [])
+        } catch (e: any) {
+            setError(e.message)
+        }
+    }
+
     return (
         <Card shadow="md" m="2rem 0" p="xl">
             {alertVisible && 
@@ -46,40 +65,27 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
             }
             <Card.Section>
                 <Title order={3} ta="center">Proxy search</Title>
-                <Center>
+                <Group gap="xs" align="center" justify="center" mt="md">
                     <TextInput placeholder="Enter UID / Nickname..."
                         onKeyUp={async (event) => {
                             if (event.key === "Enter") {
-                                setError("")
-                                const isNumeric = (str: any): boolean => {
-                                    if (typeof str != "string") return false 
-                                    return !isNaN(str as any) &&
-                                           !isNaN(parseFloat(str))
-                                }
-                                if (!isNumeric(value)) { 
-                                    setError("Adding profile by Nickname is not supported")
-                                    return
-                                }
-                                try {
-                                    const user = await getUser(Number(value))
-                                    search(user ? [user.Information] : [])
-                                } catch (e: any) {
-                                    setError(e.message)
-                                }
+                                onUidSubmit()
                             }
                         }}
                         value={value}
                         error={error}
-                        onChange={(event) => {onSearchChange(event.currentTarget.value)}}
+                        onChange={async (event) => { await onSearchChange(event.currentTarget.value)} }
                         rightSectionPointerEvents="all"
-                        mt="md"
                         leftSection={<IconSearch />}
                         rightSection={
                             <CloseButton aria-label="Clear input"
                                 onClick={() => setValue('')}
                                 style={{ display: value ? undefined : 'none' }} />
                         } />
-                </Center>
+                    <ActionIcon variant="subtle" onClick={onUidSubmit}>
+                        <IconSend2 />
+                    </ActionIcon>
+                </Group>
             </Card.Section>
         </Card>
     )
