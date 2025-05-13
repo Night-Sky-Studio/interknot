@@ -7,6 +7,8 @@
     outline: var(--mantine-color-dark-5) solid 1px;
     position: relative;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
 }
 .member > * {
     transform: skew(-16deg);

@@ -6,7 +6,7 @@ import { useSettings } from "./SettingsProvider"
 function TeamMember({ ref, avatar }: { ref?: any, avatar: BaseAvatar }) {
     return (
         <div className="member" ref={ref}>
-            <Image h="100%" ml="-5px" src={avatar.CircleIconUrl.replace("Circle", "Select")} alt={avatar.Name} />
+            <Image h="100%" src={avatar.CircleIconUrl.replace("Circle", "Select")} alt={avatar.Name} />
         </div>
     )
 }
