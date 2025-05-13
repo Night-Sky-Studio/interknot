@@ -1,9 +1,3 @@
-@media (max-width: $mantine-breakpoint-lg) {
-    .is-narrow {
-        display: none;
-    }
-}
-
 .name-clickable:hover {
     color: var(--mantine-color-blue-7);
     text-decoration: underline;
@@ -13,4 +7,26 @@
     font-family: "zzz", "zzz-jp", sans-serif;
     background: rgba(0 0 0 / 25%) !important;
     border-radius: 16px 8px 16px 8px;
+}
+
+.background-img {
+    position: absolute;
+    top: 0;
+    right: -1500px;
+    height: 100%;
+    mask-image: linear-gradient(215deg, rgba(0 0 0 / 1) 40%, rgba(0 0 0 / 0) 75%);
+    mask-position: 65% 50%;
+    mask-size: 45% 100%;
+    mask-repeat: no-repeat;
+}
+
+@media (max-width: $mantine-breakpoint-lg) {
+    .is-narrow {
+        display: none;
+    }
+
+    .background-img {
+        right: -1250px;
+        height: 50%;
+    }
 }

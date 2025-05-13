@@ -15,6 +15,7 @@ import { useDisclosure } from "@mantine/hooks"
 import { ExpandableRow } from "../components/ExpandableRow"
 import "./styles/LeaderboardDetailsPage.css"
 import { useSettings } from "../components/SettingsProvider"
+import { Team } from "../components/Team"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -190,8 +191,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                 </Alert>
             }
             {leaderboardState.value && currentLeaderboard &&
-                <Card withBorder>
-                    <Grid gutter="xl">
+                <Card withBorder style={{ position: "relative" }}>
+                    <Image src={currentLeaderboard.BackgroundUrl} alt="" className="background-img" />
+                    <Grid gutter="xl" style={{ zIndex: 10 }}>
                         <Grid.Col span={{ base: 12, md: 7, lg: "auto" }}>
                             <Center h="100%">
                                 {leaderboardDistributionState.error && 
@@ -228,7 +230,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                             </Center>
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 5, lg: "auto" }}>
-                            <Stack>
+                            <Stack c="white">
                                 <Title order={2}>{currentLeaderboard?.FullName}</Title>
                                 {currentLeaderboard?.Description &&
                                     <Text fz="12pt">{currentLeaderboard?.Description}</Text>
@@ -248,6 +250,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             )
                                         })
                                     }
+                                </Group>
+                                <Group gap="xs">
+                                    <Title order={5}>Team</Title>
+                                    <Team h="64px" team={[currentLeaderboard.Character, ...currentLeaderboard.Team]} />
                                 </Group>
                             </Stack>
                         </Grid.Col>
