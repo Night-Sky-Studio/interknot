@@ -15,6 +15,7 @@ import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
 import RenderErrorBoundary from "./components/RenderErrorBoundary"
 import { ContextMenuProvider } from "mantine-contextmenu"
 import AuthCallback from "./pages/auth/AuthCallback"
+import { AuthProvider } from "./components/AuthProvider"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -28,20 +29,22 @@ export default function App() {
                 <ContextMenuProvider shadow="md" borderRadius="md">
                     <RenderErrorBoundary>
                         <SettingsProvider>
-                            <BrowserRouter>
-                                <Routes>
-                                    <Route element={<Shell />}>
-                                        <Route index element={<HomePage />} />
-                                        <Route path="/user/:uid" element={<ProfilePageWrapper />} />
-                                        <Route path="*" element={<ErrorPage />}/>
-                                        <Route path="settings" element={<SettingsPage />}/>
-                                        <Route path="leaderboards" element={<LeaderboardsPage />} />
-                                        <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+                            <AuthProvider>
+                                <BrowserRouter>
+                                    <Routes>
+                                        <Route element={<Shell />}>
+                                            <Route index element={<HomePage />} />
+                                            <Route path="/user/:uid" element={<ProfilePageWrapper />} />
+                                            <Route path="*" element={<ErrorPage />}/>
+                                            <Route path="settings" element={<SettingsPage />}/>
+                                            <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                            <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
 
-                                        <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
-                                    </Route>
-                                </Routes>
-                            </BrowserRouter>
+                                            <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
+                                        </Route>
+                                    </Routes>
+                                </BrowserRouter>
+                            </AuthProvider>
                         </SettingsProvider>
                     </RenderErrorBoundary>
                 </ContextMenuProvider>

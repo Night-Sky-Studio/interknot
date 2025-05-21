@@ -102,7 +102,7 @@ export default function Shell(): React.ReactElement {
             withCloseButton={true} 
             closeOnClickOutside={true} 
             closeOnEscape={true} centered
-            data-nosnippet title={<Title order={2}>Log in</Title>}>
+            data-nosnippet title="Log in">
             <Stack>
                 <Text>Select authentication method</Text>
                 <Group grow>

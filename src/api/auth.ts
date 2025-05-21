@@ -4,11 +4,16 @@ import { dataUrl } from "./data"
 export default async function authenticateDiscord(code: string) {
     const response = await fetch(url({
         base: dataUrl,
-        path: "/auth/discord",
-        query: [
-            { code }
-        ]
-    }))
+        path: "/auth/discord"
+    }), {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            code: code
+        }),
+    })
     if (response.status !== 200) {
         throw new Error(`${response.status}: ${await response.text()}`)
     }

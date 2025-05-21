@@ -1,9 +1,11 @@
-import { Group, Stack, Loader, Title, Center } from '@mantine/core'
-import React, { useEffect, useState } from 'react'
+import { Group, Stack, Loader, Title, Center, Text } from '@mantine/core'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useSearchParam } from 'react-use'
 import authenticateDiscord from '../../api/auth'
 import { useAuth } from '../../components/AuthProvider'
+
+const REDIRECT_TIMEOUT = 5 * 1000
 
 interface IAuthCallbackProps {
     title: string
@@ -32,43 +34,55 @@ const DiscordAuthCallback = () => {
 
     const code = useSearchParam("code")
 
-    const [isLoading, setIsLoading] = useState(true)
     const [status, setStatus] = useState("Authenticating you with Discord...")
-    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<Error | null>(null)
+    const [userData, setUserData] = useState(null)
+
+    const authAttemptedRef = useRef(false)
 
     useEffect(() => {
-        if (!code) {
-            setIsLoading(false)
-            setStatus("Authentication failed, redirecting you back...")
-            setError("Error: No auth code was found.")
-            setTimeout(() => {
-                navigate("/")
-            }, 2000)
-            return
+        if (code && !authAttemptedRef.current) {
+            authAttemptedRef.current = true
+            setLoading(true)
+            
+            authenticateDiscord(code)
+                .then(data => {
+                    setUserData(data)
+                })
+                .catch(err => {
+                    setError(err)
+                })
+                .finally(() => {
+                    setLoading(false)
+                })
         }
-
-        authenticateDiscord(code)
-            .then((result) => {
-                saveAccount(result)
-                setStatus("Authenticated successfully, redirecting you back...")
-                setTimeout(() => {
-                    navigate("/")
-                }, 2000)
-            })
-            .catch((err) => {
-                console.error(err)
-                setIsLoading(false)
-                setStatus("Authentication failed, redirecting you back...")
-                setError("Error: " + err.message)
-                setTimeout(() => {
-                    navigate("/")
-                }, 2000)
-            })
     }, [code])
 
-    return <AuthCallback isLoading={isLoading} title={status}>
-        {error}
-    </AuthCallback>
+    useEffect(() => {
+        if (error) {
+            setStatus("Authentication failed, redirecting you back...")
+            setTimeout(() => {
+                navigate("/")
+            }, REDIRECT_TIMEOUT)
+            return;
+        }
+        
+        if (userData) {
+            saveAccount(userData);
+            setStatus("Authenticated successfully, redirecting you back...")
+            setTimeout(() => {
+                navigate("/")
+            }, REDIRECT_TIMEOUT)
+            return;
+        }
+    }, [userData, error, navigate, saveAccount])
+
+    return (
+        <AuthCallback isLoading={loading} title={status}>
+            {error && <Text>Authentication failed. Reason: {error.message}</Text>}
+        </AuthCallback>
+    )
 }
 
 AuthCallback.Discord = DiscordAuthCallback
