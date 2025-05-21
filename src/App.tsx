@@ -14,6 +14,7 @@ import LeaderboardsPage from "./pages/LeaderboardsPage"
 import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
 import RenderErrorBoundary from "./components/RenderErrorBoundary"
 import { ContextMenuProvider } from "mantine-contextmenu"
+import AuthCallback from "./pages/auth/AuthCallback"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -36,6 +37,8 @@ export default function App() {
                                         <Route path="settings" element={<SettingsPage />}/>
                                         <Route path="leaderboards" element={<LeaderboardsPage />} />
                                         <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+
+                                        <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
                                     </Route>
                                 </Routes>
                             </BrowserRouter>

@@ -1,8 +1,8 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink, useMantineTheme } from '@mantine/core'
+import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Grid, Burger, NavLink, useMantineTheme, Tooltip } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
-import { ProfileInfo } from "@interknot/types"
+import { ProfileInfo, url } from "@interknot/types"
 import "./styles/Shell.pcss"
 import enkaImg from "../../assets/Enka.svg"
 import nssImg from "../../assets/nss.svg"
@@ -10,6 +10,7 @@ import { useDisclosure, useLocalStorage } from '@mantine/hooks'
 import grace from "../../assets/grace.webp"
 import InterknotLogo from "./icons/Interknot"
 import { useContextMenu } from 'mantine-contextmenu'
+import { getDiscordAuthUrl } from '../api/discord'
 
 export default function Shell(): React.ReactElement {
     const theme = useMantineTheme()
@@ -59,6 +60,8 @@ export default function Shell(): React.ReactElement {
 
     const [navBarOpened, { toggle }] = useDisclosure(false)
 
+    const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] = useDisclosure(false)
+
     return (<>
         <Modal opened={opened} onClose={close} withCloseButton={false} closeOnClickOutside={false} closeOnEscape={false} size="xl"
             data-nosnippet>
@@ -95,6 +98,33 @@ export default function Shell(): React.ReactElement {
             </Group>
         </Modal>
 
+        <Modal opened={loginModalOpened} onClose={closeLoginModal} 
+            withCloseButton={true} 
+            closeOnClickOutside={true} 
+            closeOnEscape={true} centered
+            data-nosnippet title={<Title order={2}>Log in</Title>}>
+            <Stack>
+                <Text>Select authentication method</Text>
+                <Group grow>
+                    <ActionIcon component="a" variant="filled" h={96} color="#5865f2"
+                        href={getDiscordAuthUrl()}>
+                        <Stack gap="0" align="center">
+                            <IconBrandDiscordFilled size="32px" />
+                            <Title order={4}>Discord</Title>
+                        </Stack>
+                    </ActionIcon>
+                    <Tooltip label="Coming soon!" position="top" withArrow>
+                        <ActionIcon component="a" variant="subtle" h={96} disabled>
+                            <Stack gap="0" align="center">
+                                <IconBrandPatreonFilled size="32px" />
+                                <Title order={4}>Patreon</Title>
+                            </Stack>
+                        </ActionIcon>
+                    </Tooltip>
+                </Group>
+            </Stack>
+        </Modal>
+
         <AppShell header={{ height: 60 }} aside={{
             width: 500,
             breakpoint: "md",
@@ -126,7 +156,7 @@ export default function Shell(): React.ReactElement {
                             <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
-                            <Button leftSection={<IconLogin />}>Log in</Button>
+                            <Button leftSection={<IconLogin />} onClick={openLoginModal}>Log in</Button>
                         </Group>
                     </Flex>
                 </Container>
@@ -141,7 +171,7 @@ export default function Shell(): React.ReactElement {
                         navigate("/leaderboards")
                         toggle()
                     }} />
-                <NavLink label="Log in" leftSection={<IconLogin />} />
+                <NavLink label="Log in" leftSection={<IconLogin />} onClick={openLoginModal} />
                 <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
                     navigate("/settings")
                     toggle()
