@@ -2,23 +2,27 @@ import { Group, Stack, Loader, Title, Center, Text } from '@mantine/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useSearchParam } from 'react-use'
-import authenticateDiscord from '../../api/auth'
-import { useAuth } from '../../components/AuthProvider'
+import { authenticateDiscord } from '../../api/auth'
+// import { useAuth } from '../../components/AuthProvider'
+import { IconCheck } from '@tabler/icons-react'
+import { Account } from '@interknot/types'
 
 const REDIRECT_TIMEOUT = 5 * 1000
 
 interface IAuthCallbackProps {
     title: string
-    isLoading?: boolean
+    success?: boolean
+    loading?: boolean
     children?: React.ReactNode
 }
 
-const AuthCallback = ({ title, isLoading, children }: IAuthCallbackProps) => {
+const AuthCallback = ({ title, success, loading, children }: IAuthCallbackProps) => {
     return (
         <Center>
             <Stack>
                 <Group>
-                    {(isLoading ?? true) && <Loader />}
+                    {(loading ?? true) && <Loader />}
+                    {(success ?? false) && <IconCheck />}
                     <Title order={3}>{title}</Title>
                 </Group>
                 {children}
@@ -30,14 +34,15 @@ const AuthCallback = ({ title, isLoading, children }: IAuthCallbackProps) => {
 const DiscordAuthCallback = () => {
     const navigate = useNavigate()
 
-    const { saveAccount } = useAuth()
+    // const { account } = useAuth()
 
     const code = useSearchParam("code")
 
     const [status, setStatus] = useState("Authenticating you with Discord...")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
-    const [userData, setUserData] = useState(null)
+    const [userData, setUserData] = useState<Account | null>(null)
+    const [success, setSuccess] = useState(false)
 
     const authAttemptedRef = useRef(false)
 
@@ -48,6 +53,7 @@ const DiscordAuthCallback = () => {
             
             authenticateDiscord(code)
                 .then(data => {
+                    setSuccess(true)
                     setUserData(data)
                 })
                 .catch(err => {
@@ -69,17 +75,16 @@ const DiscordAuthCallback = () => {
         }
         
         if (userData) {
-            saveAccount(userData);
             setStatus("Authenticated successfully, redirecting you back...")
             setTimeout(() => {
                 navigate("/")
             }, REDIRECT_TIMEOUT)
             return;
         }
-    }, [userData, error, navigate, saveAccount])
+    }, [userData, error, navigate])
 
     return (
-        <AuthCallback isLoading={loading} title={status}>
+        <AuthCallback loading={loading} success={success} title={status}>
             {error && <Text>Authentication failed. Reason: {error.message}</Text>}
         </AuthCallback>
     )
