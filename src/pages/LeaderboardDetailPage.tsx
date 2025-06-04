@@ -13,13 +13,12 @@ import WeaponCell from "../components/cells/WeaponCell"
 import DriveDiscsCell from "../components/cells/DriveDiscsCell"
 import { useDisclosure } from "@mantine/hooks"
 import { ExpandableRow } from "../components/ExpandableRow"
-import "./styles/LeaderboardDetailsPage.css"
+import "./styles/LeaderboardDetailsPage.pcss"
 import { useSettings } from "../components/SettingsProvider"
 import { Team } from "../components/Team"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
-
     const { id } = useParams()
 
     const [searchParams, _] = useSearchParams()
@@ -38,6 +37,8 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         newParams.set("limit", limit.toString())
         navigate(`?${newParams.toString()}`, { replace: false })
     }
+
+    const { getLocalString } = useSettings()
 
     const leaderboardState = useAsync(async () => {
         return await getLeaderboard(Number(id))
@@ -87,7 +88,6 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     }
 
     const LeaderboardEntryRow = ({ user }: { user: LeaderboardEntry }) => {
-        const { getLocalString } = useSettings()
         const [isExpanded, { toggle }] = useDisclosure(false)
         return (<>
             <Table.Tr onClick={toggle}>
@@ -192,7 +192,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
             }
             {leaderboardState.value && currentLeaderboard &&
                 <Card withBorder style={{ position: "relative" }}>
-                    <Image src={currentLeaderboard.BackgroundUrl} alt="" className="background-img" />
+                    <Image src={currentLeaderboard.BackgroundUrl} 
+                        alt={getLocalString(currentLeaderboard.Character.Name)} 
+                        className="background-img"
+                        data-cid={currentLeaderboard.Character.Id} />
                     <Grid gutter="xl" style={{ zIndex: 10 }}>
                         <Grid.Col span={{ base: 12, md: 7, lg: "auto" }}>
                             <Center h="100%">

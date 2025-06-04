@@ -20,7 +20,17 @@
     mask-repeat: no-repeat;
 }
 
-@media (max-width: $mantine-breakpoint-lg) {
+.background-img[data-cid="1201"] {
+    right: -1800px;
+    mask-position: 45% 50%;
+}
+
+.background-img[data-cid="1321"] {
+    right: -1650px;
+    mask-position: 55% 50%;
+}
+
+@media (max-width: $mantine-breakpoint-md) {
     .is-narrow {
         display: none;
     }
@@ -29,4 +39,10 @@
         right: -1250px;
         height: 50%;
     }
+
+    .background-img[data-cid="1321"] {
+        right: -1500px;
+        mask-position: 55% 50%;
+    }
+
 }
