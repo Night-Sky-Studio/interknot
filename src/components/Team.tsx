@@ -14,7 +14,7 @@ function TeamMember({ ref, avatar }: { ref?: any, avatar: BaseAvatar }) {
 export function Team({ team, h }: { team: BaseAvatar[], h?: string }) {
     const { getLocalString } = useSettings()
     return (
-        <Group gap="4px" h={h ?? "32px"}>
+        <Group gap="4px" h={h ?? "32px"} wrap="nowrap">
             {team.map((avatar) => (
                 <Tooltip key={avatar.Id} label={getLocalString(avatar.Name)}>
                     <TeamMember avatar={avatar} />
