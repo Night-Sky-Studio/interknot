@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 import { UserHeaderMemorized } from "../components/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text } from "@mantine/core"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { CharactersTableMemorized } from "../components/CharactersTable"
 import { useEffect, useState } from "react"
@@ -14,6 +14,8 @@ import { ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
+    const updateEnabled = false
+
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
     
@@ -74,17 +76,24 @@ export default function ProfilePage(): React.ReactElement {
             <LeaderboardProvider>
                 <Stack>
                     <Group justify="flex-end" gap="xs">
-                        <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
-                            setNeedsUpdate(true)
-                            userState.retry()
-                            leaderboardsState.retry()
-                        }}>
-                            <Timer key={uid} title="Update" isEnabled={needsUpdate}
-                                endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
-                                onTimerEnd={() => {
-                                    setNeedsUpdate(false)
-                                }} />
-                        </Button>
+                        {!updateEnabled && 
+                            <Tooltip label="Enka is on maintenance, updates are temporarily disabled" withArrow>
+                                <Button rightSection={<IconReload />} disabled>Update</Button>
+                            </Tooltip>
+                        }
+                        {updateEnabled &&
+                            <Button rightSection={<IconReload />} disabled={!updateEnabled || needsUpdate} onClick={() => {
+                                setNeedsUpdate(true)
+                                userState.retry()
+                                leaderboardsState.retry()
+                            }}>
+                                <Timer key={uid} title="Update" isEnabled={needsUpdate}
+                                    endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
+                                    onTimerEnd={() => {
+                                        setNeedsUpdate(false)
+                                    }} />
+                            </Button>
+                        }
                         <ActionIcon onClick={toggleIsFavorite}>
                             { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
                         </ActionIcon>
