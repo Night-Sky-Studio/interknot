@@ -6,7 +6,7 @@ import "./styles/HomePage.css"
 import { useNavigate } from "react-router"
 import { ProfileInfo } from "@interknot/types"
 import { useLocalStorage } from "@mantine/hooks"
-import { IconAlertTriangle } from "@tabler/icons-react"
+import { IconInfoCircle } from "@tabler/icons-react"
 
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
@@ -20,11 +20,12 @@ export default function HomePage(): React.ReactElement {
             <Title order={1}>Welcome to Inter-Knot</Title>
             <Text>A place for proxies to share their agents' builds and compare their drive discs.</Text>
             <Space h="lg" />
-            <Alert variant="light" color="orange" data-nosnippet
-                title="Enka.Network is on maintenance" icon={<IconAlertTriangle />}>
+            <Alert variant="light" color="blue" data-nosnippet
+                title="2.0 Version is here!" icon={<IconInfoCircle />}>
                 <Text>
-                    Version 2.0 brought significant API changes. 
-                    New profiles addition and profile refreshing is <b>disabled temporarily</b>.
+                    Enka is back, which means that we're back too!
+                    <br />
+                    You can use your UID to add your profile to the Inter-Knot.
                 </Text>
                 <Text>
                     Please inform <Text c="blue" component="span"> @lilystilson </Text> on Discord about any encountered bugs. 

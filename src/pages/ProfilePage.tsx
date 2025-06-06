@@ -14,7 +14,7 @@ import { ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
-    const updateEnabled = false
+    const updateEnabled = true
 
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
@@ -118,7 +118,7 @@ export default function ProfilePage(): React.ReactElement {
                                         }} />
                             }
                             {
-                                leaderboardsState.error && <Center m="md">Failed to load leaderboards</Center>
+                                leaderboardsState.error && <Center m="md">Failed to load leaderboards. Cause: {leaderboardsState.error.message}</Center>
                             }
                         </Collapse>
                         <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>
