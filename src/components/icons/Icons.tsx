@@ -8,6 +8,7 @@ import attack from "../../../assets/icons/spec/attack.webp"
 import defense from "../../../assets/icons/spec/defense.webp"
 import stun from "../../../assets/icons/spec/stun.webp"
 import support from "../../../assets/icons/spec/support.webp"
+import rupture from "../../../assets/icons/spec/rupture.webp"
 
 import b_rarity from "../../../assets/icons/rarity/ItemRarityB.png"
 import a_rarity from "../../../assets/icons/rarity/ItemRarityA.png"
@@ -20,6 +21,7 @@ const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVG
     "Elec": Elements.Elec,
     "Ether": Elements.Ether,
     "FireFrost": Elements.Firefrost,
+    "AuricEther": Elements.AuricEther,
 }
 
 const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
@@ -35,6 +37,8 @@ const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SV
     31201: Stats.AnomalyProficiency, 31202: Stats.AnomalyProficiency, 31203: Stats.AnomalyProficiency,
     23101: Stats.PenRatio, 23103: Stats.PenRatio, 23105: Stats.PenRatio,
     23201: Stats.Pen, 23203: Stats.Pen, 23205: Stats.Pen,
+    12301: Stats.Sheer, 12303: Stats.Sheer, 12305: Stats.Sheer,
+    32001: Stats.Adr, 32003: Stats.Adr, 32005: Stats.Adr,
 
     // Elements
     31501: Elements.Physics, 31503: Elements.Physics, 31505: Elements.Physics, 
@@ -54,6 +58,7 @@ interface IZenlessIconProps {
 }
 
 export function ZenlessIcon({ id, elementName, size, color, className, style }: IZenlessIconProps): React.ReactElement {
+    console.log(elementName)
     const Icon = id ? PropertyTypesMap[id] : elementName ? ElementTypesMap[elementName] : undefined;
     
     if (!Icon) {
@@ -70,6 +75,7 @@ const ProfessionsMap: Record<string, string> = {
     "Defense": defense,
     "Stun": stun,
     "Support": support,
+    "Rupture": rupture,
 }
 
 interface IProfessionIconProps {
@@ -110,7 +116,9 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     32700: ["#59b8ed", "#25b7b6", "#1f77aa"],    // Branch & Blade Song
     32800: ["#9f1011", "#9f1011", "#835500"],    // Astral Voice
     32900: ["#ffca3f", "#ff8200"],    // Shadow Harmony
-    33000: ["#9d7cff", "#ad57ff", "#6c48df"] // Phaethon's Melody
+    33000: ["#9d7cff", "#ad57ff", "#6c48df"], // Phaethon's Melody,
+    33100: ["#ddb16e", "#976331"],    // Yunkui Tales 
+    33200: ["#a26a06", "#ef9c09"]     // King of the Summit
 }
 
 export function getDriveDiscGradient(id: number) {
