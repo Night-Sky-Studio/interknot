@@ -121,9 +121,9 @@ function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
 function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
-        <div className="cc-stat">
+        <div className="cc-stat" data-id={stat.Id}>
             <ZenlessIcon id={stat.Id} size={12} />
-            <Title order={6} ml="4px" className={(highlight ? "cc-highlight" : "")}>{getLocalString(stat.simpleName)}</Title>
+            <Title order={6} ml="4px" className={(highlight ? "cc-stat-name cc-highlight" : "cc-stat-name")}>{getLocalString(stat.simpleName)}</Title>
             <Title order={6} className={(highlight ? "cc-highlight" : "")}>{stat.formatted}</Title>
         </div>
     )

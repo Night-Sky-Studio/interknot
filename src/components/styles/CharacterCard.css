@@ -150,6 +150,11 @@ html[lang="vi"] .cc-character-name {
 }
 .cc-stat * {
     font-size: 9px;
+    line-height: 1em;
+}
+.cc-stat[data-id="32001"] .cc-stat-name {
+    font-size: 7px;
+    width: 90%;
 }
 html[lang="ru"] .cc-stat *,
 html[lang="fr"] .cc-stat * {
@@ -165,6 +170,8 @@ html[lang="fr"] .cc-stat * {
     grid-template-rows: 1fr;
     padding: 2px 4px;
     box-shadow: 1px 1px 0 var(--accent);
+    align-content: center;
+    align-items: center;
 }
 
 .cc-stat > *:nth-child(1) {
