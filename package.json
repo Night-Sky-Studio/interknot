@@ -7,7 +7,7 @@
         "dev": "vite --host",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "svgr": "bunx @svgr/cli --out-dir 'src/components/icons' --ignore-existing --typescript -- 'assets/icons' "
+        "svgr": "bun x @svgr/cli --out-dir 'src/components/icons' --ignore-existing --typescript -- 'assets/icons' "
     },
     "dependencies": {
         "@interknot/types": "git+https://github.com/Night-Sky-Studio/interknot-types.git#main",

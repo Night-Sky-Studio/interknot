@@ -22,8 +22,7 @@
         "noFallthroughCasesInSwitch": true
     },
     "include": [
-        "src",
-        "backend"
+        "src"
     ],
     "references": [
         {

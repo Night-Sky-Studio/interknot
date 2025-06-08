@@ -143,7 +143,15 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
     )
 }
 
-function Talents({ talentLevels, mindscapeLevel }: { talentLevels: CharacterTalents, mindscapeLevel: number }): React.ReactElement {
+function Talents({ 
+    talentLevels, 
+    mindscapeLevel, 
+    isRupture 
+}: { 
+    talentLevels: CharacterTalents, 
+    mindscapeLevel: number, 
+    isRupture: boolean 
+}): React.ReactElement {
     // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
     const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
     return (
@@ -162,7 +170,7 @@ function Talents({ talentLevels, mindscapeLevel }: { talentLevels: CharacterTale
                 <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
-                <TalentIcons.Skill width="32px" />
+                { isRupture ? <TalentIcons.RuptureSkill width="32px" /> : <TalentIcons.Skill width="32px" /> }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
@@ -375,7 +383,8 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                 <div className="cc-cell cc-skills">
                     <Stack gap="6px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
-                        <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel} />
+                        <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
+                            isRupture={character.ProfessionType === "Rupture"} />
                     </Stack>
                     <Stack gap="4px" justify="flex-end">
                         {
