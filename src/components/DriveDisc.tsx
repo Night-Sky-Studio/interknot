@@ -33,30 +33,30 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                     <div className="cc-disc-icon">
                         <Image src={disc.IconUrl} alt={disc.Name} />
                         <Image src={getRarityIcon(disc.Rarity)} alt={disc.Rarity.toString()} />
-                        <Title order={6} fz="6px" ff="zzz-jp">{slot}</Title>
+                        <Title order={6} fz="11px" ff="zzz-jp">{slot}</Title>
                     </div>
-                    <Stack gap="0px" justify="space-evenly" style={{ zIndex: "100" }}>
-                        <Title order={6} fz="8px">Lv. {disc.Level}</Title>
+                    <Stack gap="0px" justify="justify-evenly" style={{ zIndex: "100" }}>
+                        <Title order={6} fz="14px">Lv. {disc.Level}</Title>
                         <Group gap="2px" wrap="nowrap">
-                            <ZenlessIcon id={disc.MainStat.Id} size="18px"/>
-                            <Title order={6} fz="14px">{disc.MainStat.formatted}</Title>
+                            <ZenlessIcon id={disc.MainStat.Id} size="32px"/>
+                            <Title order={6} fz="24px">{disc.MainStat.formatted}</Title>
                         </Group>
-                        <Title order={6} fz="8px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
+                        <Title order={6} fz="14px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
                     </Stack>
                 </Group>
-                <SimpleGrid cols={2} spacing="4px" verticalSpacing="4px" className="cc-disc-stats">
+                <SimpleGrid cols={2} spacing="8px" verticalSpacing="8px" className="cc-disc-stats">
                     {
                         disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} />)
                     }
                 </SimpleGrid>
             </div>
         : <div className="cc-disc" style={{ "--disc-gradient": "linear-gradient(135deg, #404040, #202020)" } as React.CSSProperties}>
-            <Group gap="4px" className="cc-disc-main" style={{ borderRadius: "26px" }} wrap="nowrap">
+            <Group gap="4px" className="cc-disc-main" style={{ borderRadius: "48px" }} wrap="nowrap">
                 <div className="cc-disc-icon">
                     <SlotIcon slot={slot}  />
                 </div>
                 <Center style={{ zIndex: 100 }}>
-                    <Title order={6} fz="10px" pl="sm">Empty</Title>
+                    <Title order={6} fz="18px" pl="sm">Empty</Title>
                 </Center>
             </Group>
         </div>
