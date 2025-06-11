@@ -1,14 +1,22 @@
 .cc-disc-stat {
     overflow: hidden;
-    height: 20px;
-    width: 64px;
+    height: 36px;
+    width: 112px;
     background-color: var(--mantine-color-dark-5);
-    padding: 4px;
-    border-radius: 8px 4px 8px 4px;
+    padding: 6px;
+    border-radius: 16px 8px 16px 8px;
+    position: relative;
+}
+.cc-disc-stat-levels {
+    position: absolute;
+    bottom: 4px;
+    left: 8px;
+    width: calc(100% - 16px);
 }
 .cc-disc-stat-level {
-    height: 1px;
+    height: 2px;
     background-color: #FF922B;
+    border-radius: 2px;
 }
 .cc-disc-stat-level[data-active="false"] {
     display: none;
