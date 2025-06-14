@@ -58,7 +58,6 @@ interface IZenlessIconProps {
 }
 
 export function ZenlessIcon({ id, elementName, size, color, className, style }: IZenlessIconProps): React.ReactElement {
-    console.log(elementName)
     const Icon = id ? PropertyTypesMap[id] : elementName ? ElementTypesMap[elementName] : undefined;
     
     if (!Icon) {
