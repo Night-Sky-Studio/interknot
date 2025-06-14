@@ -24,7 +24,7 @@ interface ICharactersTableProps {
 }
 
 export default function CharactersTable({ uid, username, characters, lbAgents, openedId }: ICharactersTableProps): React.ReactElement {
-    const { getLocalString } = useSettings()
+    const { getLocalString, getLevel } = useSettings()
 
     // const [sortMode, setSortMode] = useState(0)
 
@@ -40,9 +40,9 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
 
     const CharacterRow = ({ c, i, isOpened }: { c: Character, i: number, isOpened: boolean }) => {
         // const [openedId, setOpenedId] = useState<number | null>(null)
-        const CARD_ASPECT_RATIO = 21 / 43
+        const CARD_ASPECT_RATIO = 1 / 2
         const [cardScale, setCardScale] = useState(1)
-        const [cardContainerHeight, setCardContainerHeight] = useState(860 * CARD_ASPECT_RATIO)
+        const [cardContainerHeight, setCardContainerHeight] = useState(750 * CARD_ASPECT_RATIO)
         const [cardContainerRef, cardContainerRect] = useResizeObserver()
 
         const [isCardVisible, { toggle }] = useDisclosure(isOpened)
@@ -51,9 +51,14 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
 
         useEffect(() => {
             if (cardContainerRect.width) {
-                const newScale = Math.max(cardContainerRect.width / 900, 1)
-                setCardScale(newScale)
-                setCardContainerHeight(Math.round(cardContainerRect.width * CARD_ASPECT_RATIO) + 20 + (isSubstatsVisible ? 24 : 0))
+                let scaleFactor = (cardContainerRect.width - 40) / 1500
+                scaleFactor = Math.min(Math.max(scaleFactor, 0.5), 1.05)
+
+                let containerHeight = Math.round(cardContainerRect.width * CARD_ASPECT_RATIO) + (isSubstatsVisible ? 48 : 0)
+                containerHeight = Math.max(containerHeight, 448)
+
+                setCardScale(scaleFactor)
+                setCardContainerHeight(containerHeight)
             }
         }, [cardContainerRect.width, isSubstatsVisible])
         
@@ -109,7 +114,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                         <Group gap="sm" wrap="nowrap">
                             <Image src={c.CircleIconUrl} h="32px" />
                             <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
-                            <div className="chip">Lv. {c.Level}</div>
+                            <div className="chip">{getLevel(c.Level)}</div>
                         </Group>
                     </Table.Td>
                     <Table.Td>
@@ -131,7 +136,7 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                 </Table.Tr>
                 <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}>
                     <Stack gap="8px">
-                        <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 32}px`, display: "flex", justifyContent: "center", alignItems: "flex-start" } as React.CSSProperties}>
+                        <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>
                             <CharacterCardMemorized ref={cardRef}
                                 uid={uid} username={username}
                                 character={c} substatsVisible={isSubstatsVisible} leaderboard={selectedLeaderboard} />
