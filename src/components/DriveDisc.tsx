@@ -3,6 +3,7 @@ import { getDriveDiscGradient, getRarityIcon, ZenlessIcon } from "./icons/Icons"
 import { DriveDisc as DD } from "@interknot/types"
 import { SubStat } from "./SubStat"
 import "./styles/DriveDisc.css"
+import { useSettings } from "./SettingsProvider"
 
 function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     return <div className="cc-disc-slot">
@@ -14,6 +15,8 @@ function SlotIcon({ slot }: { slot: number }): React.ReactElement {
 
 export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): React.ReactElement {
     const theme = useMantineTheme()
+
+    const { getLevel } = useSettings()
 
     const cvColor = (cv: number) => {
         switch(true) {
@@ -36,7 +39,7 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                         <Title order={6} fz="11px" ff="zzz-jp">{slot}</Title>
                     </div>
                     <Stack gap="0px" justify="justify-evenly" style={{ zIndex: "100" }}>
-                        <Title order={6} fz="14px">Lv. {disc.Level}</Title>
+                        <Title order={6} fz="14px">{getLevel(disc.Level)}</Title>
                         <Group gap="2px" wrap="nowrap">
                             <ZenlessIcon id={disc.MainStat.Id} size="32px"/>
                             <Title order={6} fz="24px">{disc.MainStat.formatted}</Title>
