@@ -16,12 +16,12 @@ export function Team({ team, h }: { team: BaseAvatar[], h?: string }) {
     return (
         <Group gap="4px" h={h ?? "32px"} wrap="nowrap">
             {team.map((avatar) => (
-                <Tooltip key={avatar.Id} label={getLocalString(avatar.Name)}>
+                <Tooltip key={avatar.Id} label={getLocalString(avatar.Name)} portalProps={{ reuseTargetNode: true }}>
                     <TeamMember avatar={avatar} />
                 </Tooltip>
             ))}
             {Array.from({ length: 3 - team.length }, (_, i) => (
-                <Tooltip key={i} label={"Any agent"}>
+                <Tooltip key={i} label={"Any agent"} portalProps={{ reuseTargetNode: true }}>
                     <div className="member empty-member" />
                 </Tooltip>
             ))}

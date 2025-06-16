@@ -13,7 +13,8 @@ export default function DriveDiscsCell({ sets, ...props }: IDriveDiscsCellProps)
             {
                 sets.map(set => {
                     return (
-                        <Tooltip key={set.Set.Id} label={getLocalString(set.Set.Name)} openDelay={500}>
+                        <Tooltip key={set.Set.Id} label={getLocalString(set.Set.Name)} openDelay={500} 
+                            portalProps={{ reuseTargetNode: true }}>
                             <Group gap="-14px" align="flex-end" wrap="nowrap">
                                 <Image src={set.Set.IconUrl} h="32px" /> 
                                 <Text size="10pt">{set.Count}</Text>

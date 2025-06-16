@@ -34,13 +34,14 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
 }
 
 function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }): React.ReactElement {
+    const { getLevel } = useSettings()
     return (
-        <Group gap="0" h="16px" align="center" wrap="nowrap">
-            <div className="cc-level">
-                <Title order={6} fz="10px">Lv. {level}</Title>
+        <Group gap="0" h="28px" align="center" wrap="nowrap">
+            <div className="cc-level" style={{ display: "flex", alignItems: "center" }}>
+                <Title order={6} fz="16px">{getLevel(level)}</Title>
             </div>
             <div className="cc-mindscape">
-                <MindscapeIcons size={12} level={msLevel} />
+                <MindscapeIcons size={20} level={msLevel} />
             </div>
         </Group>
     )
@@ -59,9 +60,9 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
     return (
         <Stack gap="0">
             <Group gap="4px" wrap="nowrap">
-                <Title order={3} className="cc-character-name">{getLocalString(name)}</Title>
-                <ZenlessIcon elementName={element} size={16} />
-                <ProfessionIcon name={profession} />
+                <Title order={1} fz="36px" className="cc-character-name">{getLocalString(name)}</Title>
+                <ZenlessIcon elementName={element} size={28} />
+                <ProfessionIcon name={profession} size={28} />
             </Group>
             <CharacterLevel level={level} msLevel={msLevel}/>
         </Stack>
@@ -80,35 +81,35 @@ interface ICharacterCardProps {
 function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
     const WeaponStat = ({ stat }: { stat: Property }) => {
         return (
-            <Group gap="6px" className="cc-weapon-stat" wrap="nowrap">
-                <ZenlessIcon id={stat.Id} size={12} />
-                <Title order={6} fz="9px">{stat.formatted}</Title>
+            <Group gap="8px" className="cc-weapon-stat" wrap="nowrap">
+                <ZenlessIcon id={stat.Id} size={20} />
+                <Title order={6} fz="14px">{stat.formatted}</Title>
             </Group>
         )
     }
 
-    const { getLocalString } = useSettings()
+    const { getLocalString, getLevel } = useSettings()
 
     return (
         <div className="cc-weapon">
-            <Group gap="8px" wrap="nowrap">
+            <Group gap="12px" wrap="nowrap">
                 <div className="cc-weapon-icon">
-                    <Image src={weapon.ImageUrl} />
+                    <Image src={weapon.ImageUrl} p="4px" />
                     <Image src={getRarityIcon(weapon.Rarity ?? 0)} alt={weapon.Rarity.toString()} />
                 </div>
-                <Stack gap="4px" justify="center"> 
-                    <Title order={6} fz="11px">{getLocalString(weapon.Name)}</Title>
-                    <Group gap="16px" align="flex-end" wrap="nowrap">
-                        <Group gap="4px" wrap="nowrap">
+                <Stack gap="8px" justify="center"> 
+                    <Title order={6} fz="20px">{getLocalString(weapon.Name)}</Title>
+                    <Group gap="24px" align="flex-end" wrap="nowrap">
+                        <Group gap="8px" wrap="nowrap">
                             <WeaponStat stat={weapon.MainStat} />
                             <WeaponStat stat={weapon.SecondaryStat} />
                         </Group>
-                        <Group gap="4px" wrap="nowrap">
+                        <Group gap="8px" wrap="nowrap">
                             <div className="cc-weapon-stat level">
-                                <Title order={6} fz="8px">Lv. {weapon.Level}</Title>
+                                <Title order={6} fz="12px">{getLevel(weapon.Level)}</Title>
                             </div>
                             <div className="cc-weapon-stat level">
-                                <Title order={6} fz="8px">P{weapon.UpgradeLevel}</Title>
+                                <Title order={6} fz="12px">P{weapon.UpgradeLevel}</Title>
                             </div>
                         </Group>
                     </Group>
@@ -122,7 +123,7 @@ function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): Rea
     const { getLocalString } = useSettings()
     return (
         <div className="cc-stat" data-id={stat.Id}>
-            <ZenlessIcon id={stat.Id} size={12} />
+            <ZenlessIcon id={stat.Id} size={20} />
             <Title order={6} ml="4px" className={(highlight ? "cc-stat-name cc-highlight" : "cc-stat-name")}>{getLocalString(stat.simpleName)}</Title>
             <Title order={6} className={(highlight ? "cc-highlight" : "")}>{stat.formatted}</Title>
         </div>
@@ -133,12 +134,12 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
     const isActive = (lvl: number): string => (lvl <= level) ? "var(--accent)" : "var(--mantine-color-dark-9)"
     return (
         <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap">
-            <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill="white" height="12px" /></div>
-            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill="white" height="12px" /></div>
-            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill="white" height="12px" /></div>
-            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.D fill="white" height="12px" /></div>
-            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.E fill="white" height="12px" /></div>
-            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.F fill="white" height="12px" /></div>
+            <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.D fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.E fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.F fill="white" height="20px" /></div>
         </Group>
     )
 }
@@ -156,25 +157,25 @@ function Talents({
     const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
     return (
         <Group className={`cc-talents ${mindscapeLevel > 2 ? "boosted" : ""}`} 
-            gap="4px" justify="center" align="center" wrap="nowrap">
+            gap="10px" justify="center" align="center" wrap="nowrap">
             <div className="cc-talent">
-                <TalentIcons.NormalAtk width="32px" />
+                <TalentIcons.NormalAtk width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
-                <TalentIcons.Dodge width="32px" />
+                <TalentIcons.Dodge width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Dash + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
-                <TalentIcons.Switch width="32px" />
+                <TalentIcons.Switch width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
-                { isRupture ? <TalentIcons.RuptureSkill width="32px" /> : <TalentIcons.Skill width="32px" /> }
+                { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent">
-                <TalentIcons.Ultimate width="32px" />
+                <TalentIcons.Ultimate width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Ultimate + mindscapeBoost}</Title>
             </div>
         </Group>
@@ -185,9 +186,9 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
         <div className="cc-disc-set">
-            <Image h="18px" src={set.Set.IconUrl} alt={set.Set.Name} />
-            <Title order={6} fz="8px">{getLocalString(set.Set.Name)}</Title>
-            <Title order={6} fz="8px">x{set.Count}</Title>
+            <Image h="28px" src={set.Set.IconUrl} alt={set.Set.Name} />
+            <Title order={6} fz="14px">{getLocalString(set.Set.Name)}</Title>
+            <Title order={6} fz="14px">x{set.Count}</Title>
         </div>
     )
 }
@@ -237,7 +238,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
         <div className="cc-stats-graph" ref={radarRef}>
             {top1stats &&
                 <Stack gap="0px">
-                    <RadarChart h={168} w={200}
+                    <RadarChart h={286} w={300}
                         data={filteredTop1Stats.map(prop => {
                             let name = getLocalString(prop.simpleName)
                             if (name.length > 6) {
@@ -253,7 +254,16 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                         })}
                         textColor="white"
                         gridColor={`${theme.colors.dark[4]}`}
+                        polarGridProps={{
+                            strokeWidth: 2
+                        }}
                         withDots
+                        radarProps={{
+                            strokeWidth: 2,
+                        }}
+                        dotProps={{
+                            r: 4
+                        }}
                         withTooltip
                         tooltipProps={{
                             content: ({ label, payload, coordinate, active }) => {
@@ -268,7 +278,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                                 const y = radarRect.top + scroll.y + coordinate.y
 
                                 return (
-                                    <Portal>
+                                    <Portal reuseTargetNode>
                                         {active && 
                                             <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
                                                 position: "absolute",
@@ -310,17 +320,17 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                             { name: "top1", color: `${theme.colors.dark[2]}`, opacity: 0.1 },
                             { name: "value", color: color, opacity: 0.25 }
                         ]} />
-                    <Stack gap="4px" mt="-8px" align="center">
-                        <Group gap="2px">
+                    <Stack gap="8px" mt="-8px" align="center">
+                        <Group gap="4px">
                             <div className="cc-graph-lb">
                                 Top {(leaderboard.Rank / leaderboard.Leaderboard.Total * 100).toFixed(decimalPlaces)}%
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
-                                <Image h="12px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
-                                <Title order={6} m="0" fz="8px">{leaderboard.Leaderboard.Name}</Title>
+                                <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
+                                <Title order={6} m="0" fz="14px">{leaderboard.Leaderboard.Name}</Title>
                             </Group>
                         </Group>
-                        <Team team={[leaderboard.Leaderboard.Character, ...leaderboard.Leaderboard.Team]} />
+                        <Team h="64px" team={[leaderboard.Leaderboard.Character, ...leaderboard.Leaderboard.Team]} />
                         <div className="cc-graph-lb">
                             {leaderboard.Rank} / {leaderboard.Leaderboard.Total}
                         </div>
@@ -358,7 +368,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
         return result
     }, [character.DriveDisks])
 
-    return (<Stack>
+    return (
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
             style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
             <Card.Section m="0" className="cc-grid">
@@ -381,7 +391,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                     }
                 </div>
                 <div className="cc-cell cc-skills">
-                    <Stack gap="6px">
+                    <Stack gap="12px">
                         <CoreSkill level={character.CoreSkillEnhancement} />
                         <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
                             isRupture={character.ProfessionType === "Rupture"} />
@@ -405,10 +415,10 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                 </div>
                 <div className="cc-user">
                     <Stack gap="0px" className="cc-info-user">
-                        <Text fz="8px">{uid}</Text>
-                        <Text fz="12px" fw={600} mt="-2px">{username}</Text>
+                        <Text fz="14px">{uid}</Text>
+                        <Text fz="20px" fw={600} mt="-2px">{username}</Text>
                     </Stack>
-                    <Title className="cc-cv" fz="12px" mt="-4px" component="span">
+                    <Title className="cc-cv" fz="18px" mt="-4px" component="span">
                         CV {character.CritValue}
                     </Title>
                 </div>
@@ -423,15 +433,14 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                     {
                         collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
                             data-count={"*".repeat(cnt + 1)} key={ss.Id}>
-                            <Text fz="10px">{cnt}</Text>
+                            <Text fz="16px">{cnt}</Text>
                             <SubStat stat={ss} />
                         </Group>)
                     }
                 </Card.Section>
             }
         </Card>
-        
-    </Stack>)
+    )
 }
 
 export const CharacterCardMemorized = memo(CharacterCard)

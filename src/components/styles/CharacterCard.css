@@ -1,9 +1,11 @@
 .character-card {
-    /* aspect-ratio: 43 / 21; */
-    width: 860px;
-    transform-origin: 50% 0;
+    aspect-ratio: 2 / 1;
+    width: 1500px;
+    transform-origin: 0 0;
     transform: scale(var(--scale));
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 .cc-grid {
     width: 100%;
@@ -13,27 +15,25 @@
     /* grid-template-columns: 1.5fr 2fr 1fr;
     grid-template-rows: 2fr 1fr 1.5fr; */
 
-    grid-template-columns: 258px 2fr 1fr;
-    grid-template-rows: 64px 2fr 1fr 128px;
+    grid-template-columns: 450px 2fr 1fr;
+    grid-template-rows: 112px 2fr 1fr 224px;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 }
 
 .cc-sub-stats {
-    height: 28px;
-    padding: 4px;
+    height: 48px;
+    padding: 8px;
     background-color: var(--mantine-color-dark-8);
     z-index: 100;
     display: flex;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 12px;
     justify-content: flex-end;
 }
-
 .cc-sub-stats > div[data-count^="*"] {
     color: var(--mantine-color-gray-6);
 }
-
 .cc-sub-stats > div[data-count^="***"] {
     color: var(--mantine-color-gray-4);
 }
@@ -47,18 +47,18 @@
     left: 0;
     width: 100%;
     grid-area: 3 / 1 / 5 / 4;
-    height: 200px;
+    height: 350px;
     background: linear-gradient(0deg, rgba(0 0 0 / 75%), transparent);
     z-index: 0;
 }
 
 .cc-cell {
-    padding: 8px 12px 0px 12px;
+    padding: 12px 18px 0px 18px;
 }
 
 .cc-image {
     grid-area: 1 / 1 / 5 / 2;
-    background-size: 8px;
+    background-size: 16px;
     background-image: url("/assets/pattern.png"),
         linear-gradient(var(--accent), color-mix(in oklab, black 100%, var(--accent) 100%));
 }
@@ -68,10 +68,10 @@
 
 .cc-info-bg {
     grid-area: 1 / 2 / 5 / 4;
-    background-size: 8px;
+    background-size: 16px;
     background-image: url("/assets/pattern2.png"),
         linear-gradient(135deg, #353535, #252525);
-    box-shadow: 0 0 64px rgb(0 0 0 / 50%);
+    box-shadow: 0 0 96px rgb(0 0 0 / 50%);
 }
 
 .cc-info {
@@ -88,7 +88,7 @@
 html[lang="de"] .cc-character-name,
 html[lang="pt"] .cc-character-name,
 html[lang="vi"] .cc-character-name {
-    font-size: 1.125rem;
+    font-size: 2rem !important;
 }
 
 .cc-level, .cc-mindscape {
@@ -96,48 +96,48 @@ html[lang="vi"] .cc-character-name {
     background-color: var(--mantine-color-dark-9);
 }
 .cc-level {
-    border-radius: 16px 0 0 16px;
-    padding: 0 8px 0 8px;
+    border-radius: 28px 0 0 28px;
+    padding: 0 12px 0 12px;
     clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0% 100%);
 }
 .cc-mindscape {
-    border-radius: 0 16px 16px 0;
-    padding: 0 2px 0 8px;
+    border-radius: 0 28px 28px 0;
+    padding: 0 4px 0 8px;
     margin-left: -6px;
     clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .cc-weapon {
-    height: 52px;
+    height: 90px;
     background-color: var(--mantine-color-dark-7);
-    border-radius: 26px 8px 8px 26px;
-    padding-right: 4px;
+    border-radius: 45px 16px 16px 45px;
+    padding-right: 8px;
 }
 .cc-weapon-icon {
     position: relative;
     aspect-ratio: 1;
     background-color: var(--mantine-color-dark-9);
-    border-radius: 26px;
-    box-shadow: inset -2px 2px 8px var(--accent);
+    border-radius: 45px;
+    box-shadow: inset -4px 4px 16px var(--accent);
 }
 .cc-weapon-icon img:first-child {
-    height: 52px;
+    height: 90px;
 }
 .cc-weapon-icon img:last-child {
     position: absolute;
     bottom: 0;
     right: 0;
-    height: 16px;
+    height: 32px;
 }
 .cc-weapon-stat {
     background-color: var(--mantine-color-dark-9);
-    padding: 2px 4px;
-    border-radius: 10px 5px 10px 5px;
-    box-shadow: 0.5px 0.5px 0 0.5px var(--accent);
+    padding: 4px 8px;
+    border-radius: 12px 8px 12px 8px;
+    box-shadow: 1px 1px 0 1px var(--accent);
 }
 .cc-weapon-stat.level {
-    height: 14px;
-    border-radius: 7px 4px 7px 4px;
+    height: 24px;
+    border-radius: 12px 8px 12px 8px;
 }
 
 .cc-stats {
@@ -146,30 +146,30 @@ html[lang="vi"] .cc-character-name {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(6, 1fr);
     grid-auto-flow: column;
-    gap: 8px;
+    gap: 12px;
 }
 .cc-stat * {
-    font-size: 9px;
+    font-size: 16px;
     line-height: 1em;
 }
 .cc-stat[data-id="32001"] .cc-stat-name {
-    font-size: 7px;
+    font-size: 12px;
     width: 90%;
 }
 html[lang="ru"] .cc-stat *,
 html[lang="fr"] .cc-stat * {
-    font-size: 8px;
+    font-size: 14px;
 }
 .cc-stat {
     color: white;
-    height: 16px;
+    /* height: 24px; */
     background-color: var(--mantine-color-dark-7);
-    border-radius: 8px 4px 8px 4px;
+    border-radius: 14px 7px 14px 7px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 1fr;
-    padding: 2px 4px;
-    box-shadow: 1px 1px 0 var(--accent);
+    padding: 2px 8px;
+    box-shadow: 2px 2px 0 var(--accent);
     align-content: center;
     align-items: center;
 }
@@ -194,36 +194,39 @@ html[lang="fr"] .cc-stat * {
     grid-template-columns: repeat(2, 1fr);
 }
 .cc-core {
-    width: 190px;
+    width: 100%;
 }
 .cc-core > * {
-    padding: 0 10px;
+    padding: 0 18px;
     margin-left: -2px;
-    height: 20px;
+    height: 32px;
     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .cc-core > *:first-child {
     margin-left: unset;
     clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
-    border-radius: 10px 0 0 10px;
+    border-radius: 20px 0 0 20px;
 }
 .cc-core > *:last-child {
     clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 20px 20px 0;
 }
 
 .cc-talents {
     position: relative;
-    height: 40px;
+    height: 64px;
     background: linear-gradient(0deg, var(--mantine-color-dark-9), var(--mantine-color-dark-5));
-    border-radius: 20px;
+    border-radius: 32px;
 }
 .cc-talents::before {
     content: "";
     position: absolute;
-    height: 38px;
-    width: calc(100% - 2px);
-    border-radius: 20px;
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+    border-radius: 32px;
     background: linear-gradient(0deg, var(--mantine-color-dark-5), var(--mantine-color-dark-9));
 }
 .cc-talent {
@@ -232,7 +235,7 @@ html[lang="fr"] .cc-stat * {
     align-items: center;
 }
 .cc-talent * {
-    font-size: 6px;
+    font-size: 10px;
 }
 .cc-talents.boosted .cc-talent-level {
     color: var(--mantine-color-yellow-5);
@@ -242,30 +245,30 @@ html[lang="fr"] .cc-stat * {
     /* letter-spacing: -1px; */
     color: white;
     position: absolute;
-    bottom: -1px;
+    bottom: 0px;
     left: 50%;
     text-align: center;
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
-    padding: 0 6px;
+    padding: 0 12px;
 
     background-color: var(--mantine-color-dark-9);
-    border-radius: 2px;
-    box-shadow: 0 0 8px rgb(0 0 0 / 50%);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 50%);
 }
 
 .cc-disc-set {
     color: white;
-    height: 18px;
+    height: 28px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     grid-template-rows: 1fr;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     background-color: rgba(0 0 0 / 75%);
-    border-radius: 12px 6px 12px 12px;
-    padding: 0 4px 0 0;
-    margin-left: 4px;
+    border-radius: 14px 7px 14px 14px;
+    padding: 0 8px 0 0;
+    margin-left: 6px;
     z-index: 100;
 }
 
@@ -291,12 +294,12 @@ html[lang="fr"] .cc-stat * {
 }
 
 .cc-discs-grid {
-    width: calc(100% - 24px);
+    width: calc(100% - 32px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     justify-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .cc-graph {
@@ -314,20 +317,20 @@ html[lang="fr"] .cc-stat * {
     grid-area: 1 / 3 / 4 / 4;
     position: relative;
     color: white;
-    font-family: "zzz";
+    font-family: "zzz", "zzz-jp", sans-serif;
 }
 
 .cc-info-user {
     position: absolute;
-    top: 4px;
-    right: 8px;
+    top: 8px;
+    right: 12px;
     text-align: right;
 }
 
 .cc-cv {
     position: absolute;
     bottom: 0;
-    right: 8px;
+    right: 16px;
 }
 
 .character-img {
@@ -335,6 +338,7 @@ html[lang="fr"] .cc-stat * {
     width: 100%;
     background-repeat: no-repeat;
     background-position: center top;
+    transform: translate3d(0px, 0px, -1px);
 }
 
 .cc-leaderboard {
@@ -345,7 +349,7 @@ html[lang="fr"] .cc-stat * {
     align-items: center;
 }
 .cc-stats-graph {
-    width: 192px;
+    width: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -355,15 +359,14 @@ html[lang="fr"] .cc-stat * {
 .cc-stats-graph * {
     font-family: "zzz", "zzz-jp", sans-serif;
     overflow: visible;
-    font-size: 6px;
     color: white;
     z-index: 100;
 }
 .cc-graph-lb {
     color: white;
     font-family: "zzz-jp", monospace;
-    font-size: 8px;
-    padding: 2px 4px;
-    border-radius: 2px;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
     background-color: color-mix(in oklab, black 10%, var(--accent) 100%);
 }

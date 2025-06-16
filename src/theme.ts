@@ -9,7 +9,7 @@ const theme = createTheme({
         Title: Title.extend({
             styles: {
                 root: {
-                    fontFamily: "'zzz', 'zzz-jp', system-ui, sans-serif"
+                    fontFamily: "'zzz', 'zzz-jp', 'zzz-kr', 'zzz-cn', 'zzz-tw', system-ui, sans-serif"
                 }
             }
         }),

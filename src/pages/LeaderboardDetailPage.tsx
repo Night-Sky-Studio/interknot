@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space } from "@mantine/core"
 import { IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
@@ -16,6 +16,7 @@ import { ExpandableRow } from "../components/ExpandableRow"
 import "./styles/LeaderboardDetailsPage.pcss"
 import { useSettings } from "../components/SettingsProvider"
 import { Team } from "../components/Team"
+import { DriveDisc } from "../components/DriveDisc"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -141,14 +142,17 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     <Group gap="xs">
                         {user.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
                             return (
-                                <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id}>
+                                <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
                                     <PropertyCell className="final-stat" useDiv prop={stat} />
                                 </Tooltip>
                             )
                         })}
                     </Group>
 
-                    {/* <div className="cc-discs-grid">
+                    <Space h="md" />
+
+                    <Title order={4}>Drive Discs</Title>
+                    <Group w="100%" justify="space-evenly" gap="xs">
                         {
                             Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
                                 const disc = user.Character.DriveDisks.find(dd => dd.Slot === idx)
@@ -156,7 +160,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     slot={disc ? disc.Slot : idx} disc={disc ?? null} />
                             })
                         }
-                    </div> */}
+                    </Group>
                 </Stack>
             </ExpandableRow>
         </>)
