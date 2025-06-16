@@ -142,7 +142,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     <Group gap="xs">
                         {user.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
                             return (
-                                <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id}>
+                                <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
                                     <PropertyCell className="final-stat" useDiv prop={stat} />
                                 </Tooltip>
                             )

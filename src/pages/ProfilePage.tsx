@@ -77,7 +77,7 @@ export default function ProfilePage(): React.ReactElement {
                 <Stack>
                     <Group justify="flex-end" gap="xs">
                         {!updateEnabled && 
-                            <Tooltip label="Enka is on maintenance, updates are temporarily disabled" withArrow>
+                            <Tooltip label="Enka is on maintenance, updates are temporarily disabled" withArrow portalProps={{ reuseTargetNode: true }}>
                                 <Button rightSection={<IconReload />} disabled>Update</Button>
                             </Tooltip>
                         }

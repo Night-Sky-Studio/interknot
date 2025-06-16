@@ -19,7 +19,7 @@ export function SubStat({ stat }: { stat: Property }): React.ReactElement {
     const { getLocalString } = useSettings()
 
     return (
-        <Tooltip label={getLocalString(stat.simpleName)} openDelay={500}>
+        <Tooltip label={getLocalString(stat.simpleName)} openDelay={500} portalProps={{ reuseTargetNode: true }}>
             <Stack className="cc-disc-stat" gap="4px" justify="center">
                 <Group align="center" gap="4px" wrap="nowrap">
                     <ZenlessIcon id={stat.Id} size={20} />

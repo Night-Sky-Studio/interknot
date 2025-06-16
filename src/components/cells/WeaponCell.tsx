@@ -18,7 +18,7 @@ export default function WeaponCell({ weapon, compareWith, ...props }: IWeaponCel
     return (
         <Table.Td className="weapon-cell" {...props}>
             {weapon && 
-                <Tooltip label={getLocalString(weapon.Name)} openDelay={500}>
+                <Tooltip label={getLocalString(weapon.Name)} openDelay={500} portalProps={{ reuseTargetNode: true }}>
                     <Group gap="-14px" className={compareWith && matches ? "strike" : ""} align="flex-end" w="fit-content" wrap="nowrap">
                         <Image src={weapon.ImageUrl} h="32px" />
                         <Text size="10pt" className={compareWith && !matches && weapon.UpgradeLevel !== 1 ? "strike" : ""}>P{weapon?.UpgradeLevel}</Text>

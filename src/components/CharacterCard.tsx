@@ -278,7 +278,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                                 const y = radarRect.top + scroll.y + coordinate.y
 
                                 return (
-                                    <Portal>
+                                    <Portal reuseTargetNode>
                                         {active && 
                                             <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
                                                 position: "absolute",
