@@ -38,7 +38,7 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                         <Image src={getRarityIcon(disc.Rarity)} alt={disc.Rarity.toString()} />
                         <Title order={6} fz="11px" ff="zzz-jp">{slot}</Title>
                     </div>
-                    <Stack gap="0px" justify="justify-evenly" style={{ zIndex: "100" }}>
+                    <Stack gap="0px" justify="space-evenly" style={{ zIndex: "100" }}>
                         <Title order={6} fz="14px">{getLevel(disc.Level)}</Title>
                         <Group gap="2px" wrap="nowrap">
                             <ZenlessIcon id={disc.MainStat.Id} size="32px"/>
