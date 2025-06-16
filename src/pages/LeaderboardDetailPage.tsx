@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar } from "@mantine/core"
 import { IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
@@ -99,7 +99,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                             e.stopPropagation()
                             navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
                         }}>
-                        <Image src={user.Profile.ProfilePictureUrl} h="32px" />
+                        <Avatar src={user.Profile.ProfilePictureUrl} size="md" />
                         <Text>{user.Profile.Nickname}</Text>
                     </Group>
                 </Table.Td>
