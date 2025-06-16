@@ -187,8 +187,8 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     return (
         <div className="cc-disc-set">
             <Image h="28px" src={set.Set.IconUrl} alt={set.Set.Name} />
-            <Title order={6} fz="12px">{getLocalString(set.Set.Name)}</Title>
-            <Title order={6} fz="12px">x{set.Count}</Title>
+            <Title order={6} fz="14px">{getLocalString(set.Set.Name)}</Title>
+            <Title order={6} fz="14px">x{set.Count}</Title>
         </div>
     )
 }

@@ -88,7 +88,7 @@
 html[lang="de"] .cc-character-name,
 html[lang="pt"] .cc-character-name,
 html[lang="vi"] .cc-character-name {
-    font-size: 1.125rem;
+    font-size: 2rem !important;
 }
 
 .cc-level, .cc-mindscape {
