@@ -15,6 +15,21 @@
     src: url("/assets/zzz-jp.woff2");
 }
 
+@font-face {
+    font-family: "zzz-cn";
+    src: url("/assets/zzz-cn.woff2");
+}
+
+@font-face {
+    font-family: "zzz-tw";
+    src: url("/assets/zzz-tw.woff2");
+}
+
+@font-face {
+    font-family: "zzz-kr";
+    src: url("/assets/zzz-kr.woff2");
+}
+
 :root {
     font-synthesis: none;
     text-rendering: optimizeLegibility;
