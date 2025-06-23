@@ -1,5 +1,5 @@
 .character-card {
-    aspect-ratio: 2 / 1;
+    /* aspect-ratio: 2 / 1; */
     width: 1500px;
     transform-origin: 0 0;
     transform: scale(var(--scale));
