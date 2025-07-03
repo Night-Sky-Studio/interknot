@@ -25,7 +25,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const [searchParams, _] = useSearchParams()
 
     const page = Number(searchParams.get("page") || "1")
-    const limit = Number(searchParams.get("limit") || "10")
+    const limit = Number(searchParams.get("limit") || "20")
 
     const setPage = (page: number) => {
         const newParams = new URLSearchParams(searchParams)
@@ -303,7 +303,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         total={leaderboardUsersState.value.totalPages} 
                         value={page} onChange={setPage} />
                     <Select w="128px"
-                        data={[10, 30, 60, 100].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
+                        data={[20, 50, 75].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
                         value={limit.toString()}
                         onChange={(value) => {
                             value && setLimit(Number(value))

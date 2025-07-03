@@ -58,7 +58,7 @@ export default function LeaderboardsPage(): React.ReactElement {
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {leaderboardsState.value.map((leaderboard, index) => {
+                            {leaderboardsState.value.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
                                 return (
                                     <Table.Tr key={leaderboard.Id} onClick={() => {
                                         navigate(`/leaderboards/${leaderboard.Id}`)
