@@ -14,7 +14,7 @@ import { ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
-    const updateEnabled = true
+    const updateEnabled = false
 
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
