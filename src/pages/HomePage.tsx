@@ -23,8 +23,8 @@ export default function HomePage(): React.ReactElement {
             <Alert variant="light" color="orange" data-nosnippet
                 title="Enka is on maintenance!" icon={<IconInfoTriangle />}>
                 <Text>
-                    Enka.Network is currently undergoing maintenance, profile updates are temporarily disabled.
-                    You can still view your cached profile data.
+                    Enka.Network is currently undergoing maintenance, profile addition and updates are temporarily disabled.
+                    You can still view your cached profile data, if you have added it previously.
                 </Text>
                 <Text>
                     Please inform <Text c="blue" component="span"> @lilystilson </Text> on Discord about any encountered bugs. 
