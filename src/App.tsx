@@ -1,6 +1,7 @@
 import "@mantine/core/styles.css"
 import "@mantine/charts/styles.css"
 import "mantine-contextmenu/styles.css"
+import "@mantine/notifications/styles.css"
 import { MantineProvider } from "@mantine/core"
 import theme from "./theme"
 import Shell from "./components/Shell"
@@ -14,6 +15,8 @@ import LeaderboardsPage from "./pages/LeaderboardsPage"
 import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
 import RenderErrorBoundary from "./components/RenderErrorBoundary"
 import { ContextMenuProvider } from "mantine-contextmenu"
+import TestPage from "./pages/TestPage"
+import { Notifications } from "@mantine/notifications"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -24,6 +27,7 @@ export default function App() {
     return (
         <MantineProvider theme={theme} defaultColorScheme="dark" 
             withStaticClasses withCssVariables withGlobalClasses>
+                <Notifications />
                 <ContextMenuProvider shadow="md" borderRadius="md">
                     <RenderErrorBoundary>
                         <SettingsProvider>
@@ -36,6 +40,7 @@ export default function App() {
                                         <Route path="settings" element={<SettingsPage />}/>
                                         <Route path="leaderboards" element={<LeaderboardsPage />} />
                                         <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+                                        <Route path="test" element={<TestPage />} />
                                     </Route>
                                 </Routes>
                             </BrowserRouter>

@@ -1,8 +1,8 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar } from "@mantine/core"
-import { IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar, Chip, Collapse, Button } from "@mantine/core"
+import { IconCheck, IconChevronDown, IconChevronUp, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "../components/WeaponButton"
@@ -17,6 +17,7 @@ import "./styles/LeaderboardDetailsPage.pcss"
 import { useSettings } from "../components/SettingsProvider"
 import { Team } from "../components/Team"
 import { DriveDisc } from "../components/DriveDisc"
+import { notifications } from '@mantine/notifications'
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -186,6 +187,29 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         );
     }
 
+    const parseRotation = (rotation: string) => {
+        const parts = rotation.trim().split(/\s+/)
+        const [main, maybeNumber] = parts
+        const result: string[] = []
+
+        const dotSplit = main.split(".")
+        const namePart = dotSplit.pop()!
+        const prefix = dotSplit.length ? dotSplit.join(".") : null
+
+        if (prefix) result.push(getLocalString(prefix));
+        result.push(
+            namePart
+            .split("_")
+            .map(word => word[0].toUpperCase() + word.slice(1))
+            .join(" ")
+        )
+        if (maybeNumber && /^\d+$/.test(maybeNumber)) result.push(maybeNumber)
+
+        return result
+    }
+
+    const [rotationOpened, { toggle: toggleRotation }] = useDisclosure(false)
+
     return (<>
         <title>{`${currentLeaderboard?.FullName} | Inter-Knot`}</title>
         <Stack>
@@ -243,13 +267,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Text fz="12pt">{currentLeaderboard?.Description}</Text>
                                 }
                                 <Group gap="xs">
-                                    <Text>
-                                        Rotation: 
-                                        {` ${currentLeaderboard?.Rotation.map(r => r.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")).join(", ")}`}
-                                    </Text>
-                                </Group>
-                                <Group gap="xs">
-                                    <Text>Weapons: </Text>
+                                    <Title order={5}>Weapons: </Title>
                                     {
                                         leaderboardState.value.map(lb => {
                                             return (
@@ -262,6 +280,43 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Title order={5}>Team</Title>
                                     <Team h="64px" team={[currentLeaderboard.Character, ...currentLeaderboard.Team]} />
                                 </Group>
+                                <Stack gap="xs" align="flex-start">
+                                    <Button variant="transparent" c="white" onClick={toggleRotation} p="0"
+                                        rightSection={rotationOpened ? <IconChevronUp /> : <IconChevronDown />}>
+                                        <Title order={5}>Rotation</Title>
+                                    </Button>
+                                    <Collapse in={rotationOpened}>
+                                        <Group gap="4px">
+                                            {
+                                                currentLeaderboard?.Rotation
+                                                    .map(parseRotation)
+                                                    .map((r, idx) => 
+                                                        <Chip key={`${r.join(" ")}_${idx}`} checked={false}
+                                                            radius="sm"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                navigator.clipboard.writeText(r.join(" / "))
+                                                                notifications.show({
+                                                                    message: `Copied action "${r.join(" / ")}" to clipboard`,
+                                                                    color: "blue",
+                                                                    autoClose: 4000,
+                                                                    icon: <IconCheck size={16} />,
+                                                                    position: "bottom-center",
+                                                                }) 
+                                                            }}>
+                                                            {
+                                                                r.map((part, i) => 
+                                                                    r.length === 3 && i === 0
+                                                                        ? <span key={`${part}_${i}`}><b>{part}</b> / </span>
+                                                                        : <span key={`${part}_${i}`}>{part}{i === r.length - 1 ? "" : " / "}</span>
+                                                                )
+                                                            }
+                                                        </Chip>
+                                                    )
+                                            }
+                                        </Group>
+                                    </Collapse>
+                                </Stack>
                             </Stack>
                         </Grid.Col>
                     </Grid>
