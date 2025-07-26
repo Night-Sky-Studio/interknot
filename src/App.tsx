@@ -15,7 +15,7 @@ import LeaderboardsPage from "./pages/LeaderboardsPage"
 import LeaderboardDetailPage from "./pages/LeaderboardDetailPage"
 import RenderErrorBoundary from "./components/RenderErrorBoundary"
 import { ContextMenuProvider } from "mantine-contextmenu"
-import TestPage from "./pages/TestPage"
+// import TestPage from "./pages/TestPage"
 import { Notifications } from "@mantine/notifications"
 
 const ProfilePageWrapper = () => {
@@ -40,7 +40,7 @@ export default function App() {
                                         <Route path="settings" element={<SettingsPage />}/>
                                         <Route path="leaderboards" element={<LeaderboardsPage />} />
                                         <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                                        <Route path="test" element={<TestPage />} />
+                                        {/* <Route path="test" element={<TestPage />} /> */}
                                     </Route>
                                 </Routes>
                             </BrowserRouter>
