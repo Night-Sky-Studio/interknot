@@ -10,11 +10,11 @@ import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, I
 import Timer from "../components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
-import { ProfileInfo } from "@interknot/types"
+import { LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
-    const updateEnabled = false
+    const updateEnabled = true
 
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
@@ -22,17 +22,25 @@ export default function ProfilePage(): React.ReactElement {
     const [needsUpdate, setNeedsUpdate] = useState(false)
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
+    const [profileBackup, setProfileBackup] = useState<Profile | null>(null)
+    const [leaderboardsBackup, setLeaderboardsBackup] = useState<LeaderboardProfile | null>(null)
 
     const userState = useAsyncRetry(async () => {
-        return await getUser(Number(uid), needsUpdate)
-    }, [uid])
+        const result = await getUser(Number(uid), needsUpdate)
+        setProfileBackup(result) // Store successful result as backup
+        return result
+    }, [uid, needsUpdate])
 
     const leaderboardsState = useAsyncRetry(async () => {
-        if (!userState.value) {
+        if (!profileBackup) {
             return undefined
         }
-        return await getUserLeaderboards(Number(uid), needsUpdate)
-    }, [uid, userState.value])
+        const result = await getUserLeaderboards(Number(uid), needsUpdate)
+        if (result) {
+            setLeaderboardsBackup(result) // Store successful result as backup
+        }
+        return result
+    }, [uid, profileBackup, needsUpdate])
 
     const [opened, { toggle }] = useDisclosure(true)
     
@@ -46,21 +54,34 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Uid.toString() === uid) && userState.value) { 
-            setSavedUsers([...savedUsers ?? [], { ...userState.value.Information }])
+        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profileBackup) { 
+            setSavedUsers([...savedUsers ?? [], { ...profileBackup.Information }])
         }
-        setNeedsUpdate((userState.value?.Ttl ?? 0) !== 0)
-    }, [userState.value])
+        setNeedsUpdate((profileBackup?.Ttl ?? 0) !== 0)
+    }, [profileBackup])
+
+    // Initialize backups when profile loads successfully
+    useEffect(() => {
+        if (profileBackup && !userState.error) {
+            setProfileBackup(profileBackup)
+        }
+    }, [profileBackup, userState.error])
 
     useEffect(() => {
-        if (userState.value)
-            console.log(`User ${userState.value.Information.Uid}, TTL: ${userState.value.Ttl}, needsUpdate: ${needsUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
-    }, [userState.value, needsUpdate, favoriteUsers])
+        if (leaderboardsState.value && !leaderboardsState.error) {
+            setLeaderboardsBackup(leaderboardsState.value)
+        }
+    }, [leaderboardsState.value, leaderboardsState.error])
+
+    useEffect(() => {
+        if (profileBackup)
+            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${needsUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
+    }, [profileBackup, needsUpdate, favoriteUsers])
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
     return (<> 
-        {userState.loading && !userState.value && <>
+        {userState.loading && !profileBackup && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
             <Center><Loader /></Center>
         </>}
@@ -70,9 +91,9 @@ export default function ProfilePage(): React.ReactElement {
                 <Text ff="monospace">Error: {userState.error.message}</Text>
             </Alert>
         </>}
-        {userState.value && <>
-            <title>{`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`}</title>
-            <meta name="description" content={`${userState.value?.Information.Nickname}'s Profile | Inter-Knot`} />
+        {profileBackup && <>
+            <title>{`${profileBackup?.Information.Nickname}'s Profile | Inter-Knot`}</title>
+            <meta name="description" content={`${profileBackup?.Information.Nickname}'s Profile | Inter-Knot`} />
             <LeaderboardProvider>
                 <Stack>
                     <Group justify="flex-end" gap="xs">
@@ -88,7 +109,7 @@ export default function ProfilePage(): React.ReactElement {
                                 leaderboardsState.retry()
                             }}>
                                 <Timer key={uid} title="Update" isEnabled={needsUpdate}
-                                    endTime={userState.value.Ttl === 0 ? 60 : userState.value.Ttl} 
+                                    endTime={profileBackup.Ttl === 0 ? 60 : profileBackup.Ttl} 
                                     onTimerEnd={() => {
                                         setNeedsUpdate(false)
                                     }} />
@@ -103,16 +124,16 @@ export default function ProfilePage(): React.ReactElement {
                         </ActionIcon>
                     </Group>
                     <Stack gap="0px" align="center">
-                        <UserHeaderMemorized user={userState.value.Information} showDescription={userState.value.Information.Description !== ""} />
+                        <UserHeaderMemorized user={profileBackup.Information} showDescription={profileBackup.Information.Description !== ""} />
                         <Collapse in={opened} className="leaderboards" data-open={opened}>
                             {
                                 leaderboardsState.loading && <Center m="md"><Loader /></Center>
                             }
                             {
-                                !leaderboardsState.loading && !leaderboardsState.error &&
+                                leaderboardsBackup &&
                                     <LeaderboardGridMemorized 
-                                        profile={leaderboardsState.value} 
-                                        characters={userState.value.Characters}
+                                        profile={leaderboardsBackup} 
+                                        characters={profileBackup.Characters}
                                         onProfileClick={(agentId) => {
                                             setOpenedId(agentId === openedId ? null : agentId)
                                         }} />
@@ -125,8 +146,8 @@ export default function ProfilePage(): React.ReactElement {
                             Leaderboards
                         </Button>
                     </Stack>
-                    <CharactersTableMemorized uid={userState.value.Information.Uid} username={userState.value.Information.Nickname} 
-                        characters={userState.value.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                    <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
+                        characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
                 </Stack>
             </LeaderboardProvider>
         </>
