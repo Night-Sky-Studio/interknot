@@ -39,7 +39,7 @@ export async function getUser(uid: number, update: boolean = false) : Promise<Pr
         }]
     }))
     if (response.status !== 200) 
-        throw new Error(await response.json())
+        throw new Error(JSON.stringify(await response.json()))
 
     const json = await response.json()
 

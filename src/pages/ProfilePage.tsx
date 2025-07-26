@@ -10,7 +10,7 @@ import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, I
 import Timer from "../components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
-import { LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
+import { Error as BackendError, LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 
 export default function ProfilePage(): React.ReactElement {
@@ -80,6 +80,16 @@ export default function ProfilePage(): React.ReactElement {
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
+    const errorHandler = (error: string) => {
+        // try parse
+        try {
+            const parsedError = JSON.parse(error) as unknown as BackendError
+            return `Error ${parsedError.Code}: ${parsedError.Message}\n${parsedError.Details}`
+        } catch {
+            return `Error: ${error}`
+        }
+    }
+
     return (<> 
         {userState.loading && !profileBackup && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
@@ -87,8 +97,8 @@ export default function ProfilePage(): React.ReactElement {
         </>}
         {userState.error && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
-            <Alert variant="light" color="red" title="Failed to load profile" icon={<IconInfoCircle />}>
-                <Text ff="monospace">Error: {userState.error.message}</Text>
+            <Alert variant="light" color="red" title="Failed to load profile" icon={<IconInfoCircle />} mb="md">
+                <Text ff="monospace">{errorHandler(userState.error.message)}</Text>
             </Alert>
         </>}
         {profileBackup && <>
