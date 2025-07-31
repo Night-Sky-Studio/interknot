@@ -1,5 +1,23 @@
 import { Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
+export interface BackendState {
+    params: {
+        status: string
+        title: string
+        message: string
+        update_enabled: boolean
+        update_disabled_msg: string
+        search_enabled: boolean
+    }
+    version: string
+    uptime: number
+    currentDate: string
+}
+export interface BackendError {
+    message: string
+    code?: number
+}
+
 const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
 
 // This should restore Property classes that's lost 
@@ -104,9 +122,27 @@ export async function getLeaderboardDmgDistribution(id: number): Promise<Leaderb
     return restoreProperties(await response.json())
 }
 
-export async function pingDataServer() {
-    const response = await fetch(url({
-        base: dataUrl
-    }))
-    return response
+export async function getStatus(): Promise<BackendState> {
+    let response: Response
+
+    try {
+        response = await fetch(url({
+            base: dataUrl,
+            path: "/status"
+        }))
+    } catch (e: any) {
+        throw new Error(JSON.stringify({
+            code: 520,
+            message: e.message
+        } satisfies BackendError))
+    }
+
+    if (response.status !== 200)
+        throw new Error(JSON.stringify({
+            code: response.status,
+            message: await response.text()
+        } satisfies BackendError))
+
+    return response.json()
+
 }

@@ -1,37 +1,27 @@
-import { Card, CloseButton, TextInput, Title, Text, Group, Alert, Image, ActionIcon } from "@mantine/core"
-import { IconInfoCircle, IconSearch, IconSend2 } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
+import { Card, CloseButton, TextInput, Title, Group, ActionIcon } from "@mantine/core"
+import { IconSearch, IconSend2 } from "@tabler/icons-react"
+import { useMemo, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
-import { getUser, pingDataServer, searchUsers } from "../api/data"
-import { useAsync } from "react-use"
-import { useDisclosure } from "@mantine/hooks"
-import fairy from "../../assets/fairy.png"
+import { getUser, searchUsers } from "../api/data"
+import { useBackend } from "./BackendProvider"
 
 export default function PlayerSearch({ search }: { search: (result: ProfileInfo[]) => void }): React.ReactElement {
     const [value, setValue] = useState(""),
-        [error, setError] = useState(""),
-        [alertVisible, { open, close }] = useDisclosure(false)
+        [error, setError] = useState("")
 
-    const dataServer = useAsync(async () => {
-        return await pingDataServer()
-    }, [])
-
-    useEffect(() => {
-        if (dataServer.error) {
-            setError(dataServer.error?.message ?? "...stack trace must be here")
-            open()
-        } else {
-            close()
-        }
-    }, [dataServer.error])
+    const backend = useBackend()
+    const searchEnabled = useMemo(() => backend.state?.params.search_enabled ?? false, [backend.state])
+    const updateEnabled = useMemo(() => backend.state?.params.update_enabled ?? false, [backend.state])
 
     const onSearchChange = async (val: string) => {
         setError("")
         setValue(val)
+        if (!searchEnabled) return
         search(await searchUsers(val))
     }
 
     const onUidSubmit = async () => {
+        if (!updateEnabled) return
         setError("")
         const isNumeric = (str: any): boolean => {
             if (typeof str != "string") return false 
@@ -52,17 +42,6 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
 
     return (
         <Card shadow="md" m="2rem 0" p="xl">
-            {alertVisible && 
-                <Card.Section>
-                    <Alert variant="light" color="red" title="Inter-knot data server is unavailable" icon={<IconInfoCircle />}>
-                        <Group mb="md">
-                            <Image src={fairy} h="64px" alt="Fairy" />
-                            <Text fs="italic">Looks like we forgot to pay our electricity bills...</Text>
-                        </Group>
-                        <Text ff="monospace">Error: {error}</Text>
-                    </Alert>
-                </Card.Section>
-            }
             <Card.Section>
                 <Title order={3} ta="center">Proxy search</Title>
                 <Group gap="xs" align="center" justify="center" mt="md">
@@ -74,7 +53,9 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
                         }}
                         value={value}
                         error={error}
-                        onChange={async (event) => { await onSearchChange(event.currentTarget.value)} }
+                        onChange={async (event) => {
+                            await onSearchChange(event.currentTarget.value)
+                        }}
                         rightSectionPointerEvents="all"
                         leftSection={<IconSearch />}
                         rightSection={
@@ -82,7 +63,7 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
                                 onClick={() => setValue('')}
                                 style={{ display: value ? undefined : 'none' }} />
                         } />
-                    <ActionIcon variant="subtle" onClick={onUidSubmit}>
+                    <ActionIcon variant="subtle" disabled={!searchEnabled} onClick={onUidSubmit}>
                         <IconSend2 />
                     </ActionIcon>
                 </Group>

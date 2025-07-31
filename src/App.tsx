@@ -17,6 +17,7 @@ import RenderErrorBoundary from "./components/RenderErrorBoundary"
 import { ContextMenuProvider } from "mantine-contextmenu"
 // import TestPage from "./pages/TestPage"
 import { Notifications } from "@mantine/notifications"
+import { BackendProvider } from "./components/BackendProvider"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -30,21 +31,23 @@ export default function App() {
                 <Notifications />
                 <ContextMenuProvider shadow="md" borderRadius="md">
                     <RenderErrorBoundary>
-                        <SettingsProvider>
-                            <BrowserRouter>
-                                <Routes>
-                                    <Route element={<Shell />}>
-                                        <Route index element={<HomePage />} />
-                                        <Route path="/user/:uid" element={<ProfilePageWrapper />} />
-                                        <Route path="*" element={<ErrorPage />}/>
-                                        <Route path="settings" element={<SettingsPage />}/>
-                                        <Route path="leaderboards" element={<LeaderboardsPage />} />
-                                        <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                                        {/* <Route path="test" element={<TestPage />} /> */}
-                                    </Route>
-                                </Routes>
-                            </BrowserRouter>
-                        </SettingsProvider>
+                        <BackendProvider>
+                            <SettingsProvider>
+                                <BrowserRouter>
+                                    <Routes>
+                                        <Route element={<Shell />}>
+                                            <Route index element={<HomePage />} />
+                                            <Route path="/user/:uid" element={<ProfilePageWrapper />} />
+                                            <Route path="*" element={<ErrorPage />}/>
+                                            <Route path="settings" element={<SettingsPage />}/>
+                                            <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                            <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+                                            {/* <Route path="test" element={<TestPage />} /> */}
+                                        </Route>
+                                    </Routes>
+                                </BrowserRouter>
+                            </SettingsProvider>
+                        </BackendProvider>
                     </RenderErrorBoundary>
                 </ContextMenuProvider>
         </MantineProvider>

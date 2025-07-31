@@ -12,12 +12,12 @@ import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
 import { Error as BackendError, LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
+import { useBackend } from "../components/BackendProvider"
 
 export default function ProfilePage(): React.ReactElement {
-    const updateEnabled = true
-
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
+    const backend = useBackend()
     
     const [needsUpdate, setNeedsUpdate] = useState(false)
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
@@ -107,13 +107,13 @@ export default function ProfilePage(): React.ReactElement {
             <LeaderboardProvider>
                 <Stack>
                     <Group justify="flex-end" gap="xs">
-                        {!updateEnabled && 
-                            <Tooltip label="Enka is on maintenance, updates are temporarily disabled" withArrow portalProps={{ reuseTargetNode: true }}>
+                        {backend.state && !backend.state.params.update_enabled && 
+                            <Tooltip label={backend.state?.params.update_disabled_msg} withArrow portalProps={{ reuseTargetNode: true }}>
                                 <Button rightSection={<IconReload />} disabled>Update</Button>
                             </Tooltip>
                         }
-                        {updateEnabled &&
-                            <Button rightSection={<IconReload />} disabled={!updateEnabled || needsUpdate} onClick={() => {
+                        {backend.state && backend.state.params.update_enabled &&
+                            <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
                                 setNeedsUpdate(true)
                                 userState.retry()
                                 leaderboardsState.retry()
