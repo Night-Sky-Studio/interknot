@@ -32,7 +32,7 @@ export default function HomePage(): React.ReactElement {
             <Title order={1}>Welcome to Inter-Knot</Title>
             <Text>A place for proxies to share their agents' builds and compare their drive discs.</Text>
             <Space h="lg" />
-
+          
             {backend.error &&
                 <Alert variant="light" color="red" title="Inter-knot data server is unavailable" icon={<IconInfoCircle />}>
                     <Group mb="md">
@@ -58,7 +58,7 @@ export default function HomePage(): React.ReactElement {
                     </Stack>
                 </Alert>
             }
-
+          
             <PlayerSearch search={(response) => {
                 setUsers(response)
             }} />
