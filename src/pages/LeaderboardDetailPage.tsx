@@ -2,7 +2,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
 import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar, Chip, Collapse, Button } from "@mantine/core"
-import { IconCheck, IconChevronDown, IconChevronUp, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
+import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "../components/WeaponButton"
@@ -281,10 +281,28 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Team h="64px" team={[currentLeaderboard.Character, ...currentLeaderboard.Team]} />
                                 </Group>
                                 <Stack gap="xs" align="flex-start">
-                                    <Button variant="transparent" c="white" onClick={toggleRotation} p="0"
-                                        rightSection={rotationOpened ? <IconChevronUp /> : <IconChevronDown />}>
-                                        <Title order={5}>Rotation</Title>
-                                    </Button>
+                                    <Group gap="0">
+                                        <Button variant="transparent" c="white" onClick={toggleRotation} p="0"
+                                            rightSection={rotationOpened ? <IconChevronUp /> : <IconChevronDown />}>
+                                            <Title order={5}>Rotation</Title>
+                                        </Button>
+                                        <ActionIcon variant="transparent" c="white" onClick={() => {
+                                            navigator.clipboard.writeText(currentLeaderboard.Rotation
+                                                .map(parseRotation)
+                                                .map(r => r.join(" / "))
+                                                .join("\n")
+                                            )
+                                            notifications.show({
+                                                message: `Copied entire rotation to clipboard`,
+                                                color: "blue",
+                                                autoClose: 4000,
+                                                icon: <IconCheck size={16} />,
+                                                position: "bottom-center"
+                                            })
+                                        }}>
+                                            <IconCopy />
+                                        </ActionIcon>
+                                    </Group>
                                     <Collapse in={rotationOpened}>
                                         <Group gap="4px">
                                             {
