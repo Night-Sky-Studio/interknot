@@ -71,6 +71,9 @@ export default function ProfilePage(): React.ReactElement {
         if (leaderboardsState.value && !leaderboardsState.error) {
             setLeaderboardsBackup(leaderboardsState.value)
         }
+        if (leaderboardsState.error) {
+            toggle() // Collapse leaderboards on error
+        }
     }, [leaderboardsState.value, leaderboardsState.error])
 
     useEffect(() => {
@@ -156,8 +159,23 @@ export default function ProfilePage(): React.ReactElement {
                             Leaderboards
                         </Button>
                     </Stack>
-                    <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
-                        characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                    {profileBackup.Characters.length === 0 &&
+                        <Center>
+                            <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
+                                maw="50%">
+                                <Text>
+                                    If you're adding your profile to Inter-Knot for the first time, please check that your 
+                                    <Text component="a" c="blue"
+                                        href="https://zenless-zone-zero.fandom.com/wiki/Profile#:~:text=Agent%20Showcase%3A%20Showcase%20up%20to%206%20unlocked%20Agents%20and%20their%20current%20Level."
+                                        target="_blank"> Agents Showcase</Text> is not empty and refresh your profile on Inter-Knot with <Text span c="blue">Update</Text> button.
+                                </Text>
+                            </Alert>
+                        </Center>
+                    }
+                    {profileBackup.Characters.length !== 0 &&
+                        <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
+                            characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                    }
                 </Stack>
             </LeaderboardProvider>
         </>
