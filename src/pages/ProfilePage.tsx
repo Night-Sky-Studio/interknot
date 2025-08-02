@@ -32,7 +32,7 @@ export default function ProfilePage(): React.ReactElement {
     }, [uid, needsUpdate])
 
     const leaderboardsState = useAsyncRetry(async () => {
-        if (!profileBackup) {
+        if (!userState.value) {
             return undefined
         }
         const result = await getUserLeaderboards(Number(uid), needsUpdate)
@@ -40,7 +40,7 @@ export default function ProfilePage(): React.ReactElement {
             setLeaderboardsBackup(result) // Store successful result as backup
         }
         return result
-    }, [uid, profileBackup, needsUpdate])
+    }, [uid, userState.value, needsUpdate])
 
     const [opened, { toggle }] = useDisclosure(true)
     
