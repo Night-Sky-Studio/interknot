@@ -13,10 +13,10 @@ const BackendContext = React.createContext<BackendContextType>({
 
 interface IBackendProviderProps {
     children: React.ReactNode
-    checkInterval?: number
+    //checkInterval?: number
 }
 
-export function BackendProvider({ children, checkInterval = 5 * 60 * 1000 }: IBackendProviderProps): React.ReactElement {
+export function BackendProvider({ children/*, checkInterval = 5 * 60 * 1000*/ }: IBackendProviderProps): React.ReactElement {
     const [status, setStatus] = useState<BackendState | null>(null)
     const [error, setError] = useState<BackendError | null>(null)
 
@@ -39,9 +39,9 @@ export function BackendProvider({ children, checkInterval = 5 * 60 * 1000 }: IBa
 
     useEffect(() => {
         fetchStatus().then()
-        const interval = setInterval(fetchStatus, checkInterval)
-        return () => clearInterval(interval)
-    }, [checkInterval])
+        // const interval = setInterval(fetchStatus, checkInterval)
+        // return () => clearInterval(interval)
+    }, [])
 
     return (
         <BackendContext.Provider value={{ state: status, error }}>
