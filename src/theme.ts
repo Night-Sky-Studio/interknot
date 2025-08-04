@@ -1,4 +1,4 @@
-import { ActionIcon, Button, colorsTuple, createTheme, Title, Image, Switch } from "@mantine/core"
+import { ActionIcon, Button, colorsTuple, createTheme, Title, Image, Switch, Anchor } from "@mantine/core"
 
 const theme = createTheme({
     colors: { 
@@ -6,6 +6,13 @@ const theme = createTheme({
     }, 
     primaryColor: "zzz",
     components: {
+        Anchor: Anchor.extend({
+            styles: {
+                root: {
+                    color: "#339af0"
+                }
+            }
+        }),
         Title: Title.extend({
             styles: {
                 root: {

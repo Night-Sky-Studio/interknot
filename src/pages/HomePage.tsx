@@ -1,4 +1,4 @@
-import { Title, Text, UnstyledButton, Stack, Space, Alert, Group, Image, MantineColor } from "@mantine/core"
+import { Title, Text, UnstyledButton, Stack, Space, Alert, Group, Image, MantineColor, Anchor } from "@mantine/core"
 import React, { useState } from "react"
 import PlayerSearch from "../components/PlayerSearch"
 import { UserHeaderMemorized } from "../components/UserHeader"
@@ -49,11 +49,11 @@ export default function HomePage(): React.ReactElement {
                     title={backend.state.params.title} 
                     icon={backend.state.params.status === "info" ? <IconInfoCircle /> : <IconInfoTriangle />}>
                     <Stack>
-                        <Text>{backend.state.params.message}</Text>
+                        <Text dangerouslySetInnerHTML={{ __html: backend.state.params.message }}></Text>
                         <Text>
                             Please inform <Text c="blue" component="span"> @lilystilson </Text> on Discord about any encountered bugs. 
-                            You can <Text c="blue" component="a" href="https://discord.gg/hFNheySRQD" target="_blank"> join our Discord server </Text>
-                            to chat and report any encountered issues.
+                            You can <Anchor href="https://discord.gg/hFNheySRQD" target="_blank"> join our Discord server</Anchor> to
+                            chat and report any encountered issues.
                         </Text>
                     </Stack>
                 </Alert>
