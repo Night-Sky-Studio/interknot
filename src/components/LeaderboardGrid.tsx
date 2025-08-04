@@ -72,19 +72,21 @@ export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeader
             shouldShowLeaderboards(profile) ?
             <div className="lb-grid">
                 {
-                    prioritizedAgents.map(a => {
-                        return <LeaderboardButton key={a.Leaderboard.Id} 
-                            id={a.Leaderboard.Id}
-                            agent={a.Leaderboard.Character} 
-                            weapon={a.Leaderboard.Weapon} 
-                            name={a.Leaderboard.Name}
-                            rank={a.Rank}
-                            total={a.Total}
-                            type={buttonType(characters.find(c => c.Id === a.Leaderboard.Character.Id)!, a.Leaderboard.Weapon)}
-                            onClick={() => {
-                                onProfileClick?.(a.Leaderboard.Character.Id)
-                            }} />
-                    })
+                    prioritizedAgents
+                        .sort((a, b) => a.Rank / a.Total - b.Rank / b.Total)
+                        .map(a => {
+                            return <LeaderboardButton key={a.Leaderboard.Id} 
+                                id={a.Leaderboard.Id}
+                                agent={a.Leaderboard.Character} 
+                                weapon={a.Leaderboard.Weapon} 
+                                name={a.Leaderboard.Name}
+                                rank={a.Rank}
+                                total={a.Total}
+                                type={buttonType(characters.find(c => c.Id === a.Leaderboard.Character.Id)!, a.Leaderboard.Weapon)}
+                                onClick={() => {
+                                    onProfileClick?.(a.Leaderboard.Character.Id)
+                                }} />
+                        })
                 }
             </div>
             : <Center>
