@@ -1,7 +1,7 @@
 import { AgentAction, BaseLeaderboardEntry } from "@interknot/types"
 import { Stack, Group, Select, Center } from "@mantine/core"
 import DamageChip from "./DamageChip"
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
 import { IconEqual, IconPlus } from "@tabler/icons-react"
 import DamageBar from "./DamageBar"
 import "./styles/DamageDistribution.css"
@@ -27,6 +27,8 @@ export default function DamageDistribution({ entries, onLeaderboardSelect }: IDa
 
     const { getLocalString } = useSettings()
 
+    const rotation = useMemo(() => entries[lbIdx].RotationValue.filter(rv => rv.Damage !== 0), [entries, lbIdx])
+
     const DmgChipPart = ({ action, idx } : { action: AgentAction, idx: number }) => {
         return (<>
             <DamageChip
@@ -40,7 +42,7 @@ export default function DamageDistribution({ entries, onLeaderboardSelect }: IDa
                 onMouseLeave={() => {
                     setHoverIdx(-1)
                 }}/>
-            {idx !== entries[lbIdx].RotationValue.length - 1 &&
+            {idx !== rotation.length - 1 &&
                 <IconPlus />
             }
         </>)
@@ -54,14 +56,14 @@ export default function DamageDistribution({ entries, onLeaderboardSelect }: IDa
                     value: i.toString()
                 }
             })} value={lbIdx.toString()} allowDeselect={false} onChange={(v) => setLbIdx(Number(v))} />
-            <DamageBar actions={entries[lbIdx].RotationValue} hoverIdx={hoverIdx} onHighlight={(idx) => {
+            <DamageBar actions={rotation} hoverIdx={hoverIdx} onHighlight={(idx) => {
                 setHoverIdx(idx)
             }} />
             <Group gap="0">
-                <DamageChip damage={entries[lbIdx].RotationValue.map(r => r.Damage).reduce((prev, curr) => curr += prev)} />
+                <DamageChip damage={rotation.map(r => r.Damage).reduce((prev, curr) => curr += prev)} />
                 <IconEqual />
                 {
-                    entries[lbIdx].RotationValue.map((action, idx) => 
+                    rotation.map((action, idx) => 
                         <DmgChipPart key={`dmg-chip-${entries[lbIdx].Leaderboard.Name}-${idx}`} 
                             action={action} idx={idx} />
                     )

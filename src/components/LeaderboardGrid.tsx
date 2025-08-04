@@ -88,7 +88,7 @@ export function LeaderboardGrid({ profile, characters, onProfileClick }: ILeader
                 }
             </div>
             : <Center>
-                <Title m="xl" p="md" order={6} className="lb-data-collection">Data is being collected, please be patient...</Title>
+                <Title m="xl" p="md" order={6} className="lb-data-collection">No characters are available for existing leaderboards</Title>
             </Center>
         }
     </>)
