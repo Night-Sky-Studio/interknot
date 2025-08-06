@@ -144,5 +144,67 @@ export async function getStatus(): Promise<BackendState> {
         } satisfies BackendError))
 
     return response.json()
+}
 
+export async function getMhyKey(): Promise<string> {
+    const response = await fetch(url({
+        base: dataUrl,
+        path: "/mhy/key"
+    }))
+    if (response.status !== 200) 
+        throw new Error(`${response.status}: ${await response.text()}`)
+    return await response.text()
+}
+
+export async function initMhy(data: any): Promise<string> {
+    const response = await fetch(url({
+        base: dataUrl,
+        path: "/mhy/init"
+    }), {
+        method: "POST",
+        headers: new Headers({
+            "Content-Type": "application/json"
+        }),
+        body: JSON.stringify(data)
+    })
+    if (response.status !== 200) 
+        throw new Error(`${response.status}: ${await response.text()}`)
+    const json = await response.json() as unknown as any
+    return json.statusUrl
+}
+
+export async function getMhyStatus(path: string, callback: (data: {
+    msg: string,
+    progress?: number,
+    status?: "success" | "error"
+}) => void): Promise<void> {
+    const evtSource = new EventSource(url({
+        base: dataUrl,
+        path: path
+    }))
+
+    evtSource.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.status === "success" || data.status === "error") {
+            evtSource.close()
+        }
+        callback({
+            msg: data.msg,
+            progress: data.progress,
+            status: data.status
+        })
+    }
+
+    evtSource.onerror = (event) => {
+        console.error("EventSource error:", event)
+        callback({
+            msg: "An error occurred while fetching data.",
+            status: "error"
+        })
+        evtSource.close()
+    }
+
+    evtSource.onopen = () => {
+        console.log("EventSource connection opened.")
+    }
 }

@@ -392,7 +392,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                 </div>
                 <div className="cc-cell cc-skills">
                     <Stack gap="12px">
-                        <CoreSkill level={character.CoreSkillEnhancement} />
+                        <CoreSkill level={character.SkillLevels.CoreSkill} />
                         <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
                             isRupture={character.ProfessionType === "Rupture"} />
                     </Stack>
