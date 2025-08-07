@@ -34,7 +34,8 @@ export default function HomePage(): React.ReactElement {
             <Space h="lg" />
           
             {backend.error &&
-                <Alert variant="light" color="red" title="Inter-knot data server is unavailable" icon={<IconInfoCircle />}>
+                <Alert variant="light" color="red" title="Inter-knot data server is unavailable" 
+                icon={<IconInfoCircle />} data-nosnippet>
                     <Group mb="md">
                         <Image src={fairy} h="64px" alt="Fairy" />
                         <Text fs="italic">Either we forgot to pay our electricity bills or there's something wrong with your internet connection...</Text>
@@ -47,7 +48,8 @@ export default function HomePage(): React.ReactElement {
                 <Alert variant="light" 
                     color={statusToColor(backend.state.params.status)} 
                     title={backend.state.params.title} 
-                    icon={backend.state.params.status === "info" ? <IconInfoCircle /> : <IconInfoTriangle />}>
+                    icon={backend.state.params.status === "info" ? <IconInfoCircle /> : <IconInfoTriangle />}
+                    data-nosnippet>
                     <Stack>
                         <Text dangerouslySetInnerHTML={{ __html: backend.state.params.message }}></Text>
                         <Text>
