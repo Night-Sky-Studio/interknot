@@ -114,8 +114,10 @@ export default function Shell(): React.ReactElement {
                             <Text c="dimmed" size="lg" fw={500}>β</Text>
                             <Group ml="md" className="header-buttons">
                                 <Button size="xs"
+                                    component="a" href="/leaderboards"
                                     variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"} 
-                                    onClick={() => {
+                                    onClick={(evt) => {
+                                        evt.preventDefault()
                                         navigate("/leaderboards")
                                     }}>Leaderboards</Button>
                             </Group>
