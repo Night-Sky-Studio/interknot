@@ -1,6 +1,6 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "../api/data"
-import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert } from "@mantine/core"
+import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert, Anchor } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
@@ -30,8 +30,8 @@ export default function LeaderboardsPage(): React.ReactElement {
                     should not be taken very seriously and must be treated as a number we pulled out of our asses.
                 </Text>
                 <Text>
-                    You can check the calculations code we use on 
-                    <Text c="blue" component="a" href="https://github.com/Night-Sky-Studio/interknot-calculator" target="_blank"> GitHub</Text>. Contributions are welcome!
+                    You can check the calculations code we use on <Anchor href="https://github.com/Night-Sky-Studio/interknot-calculator" target="_blank">GitHub</Anchor>. 
+                    Contributions are welcome!
                 </Text>
                 </Stack>
             </Alert>

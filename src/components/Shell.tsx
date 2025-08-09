@@ -104,11 +104,12 @@ export default function Shell(): React.ReactElement {
                 <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
                         <Group gap={0} wrap="nowrap">
-                            <Button variant="transparent" component={Title} onClick={() => {
+                            <Button variant="transparent" component="a" href="/" onClick={(evt) => {
+                                evt.preventDefault()
                                 navigate("/")
                             }}><Group gap="8px" wrap="nowrap">
                                 <InterknotLogo height="38px" /> 
-                                Inter-Knot
+                                <Title>Inter-Knot</Title>
                                 </Group>
                             </Button>
                             <Text c="dimmed" size="lg" fw={500}>β</Text>

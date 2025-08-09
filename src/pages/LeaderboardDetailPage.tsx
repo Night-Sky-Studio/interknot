@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar, Chip, Collapse, Button } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar, Chip, Collapse, Button, Anchor } from "@mantine/core"
 import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "../components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
@@ -95,13 +95,13 @@ export default function LeaderboardDetailPage(): React.ReactElement {
             <Table.Tr onClick={toggle}>
                 <Table.Td w="64px">{user.Rank}</Table.Td>
                 <Table.Td w="30%">
-                    <Group gap="sm" className="name-clickable" wrap="nowrap" w="fit-content" 
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
-                        }}>
+                    <Group gap="sm" wrap="nowrap" w="fit-content">
                         <Avatar src={user.Profile.ProfilePictureUrl} size="md" />
-                        <Text>{user.Profile.Nickname}</Text>
+                        <Anchor c="gray" href={`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`} onClick={(e) => {
+                            e.stopPropagation()
+                            e.preventDefault()
+                            navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
+                        }}>{user.Profile.Nickname}</Anchor>
                     </Group>
                 </Table.Td>
                 <WeaponCell weapon={user.Character.Weapon} compareWith={currentLeaderboard?.Weapon} />
