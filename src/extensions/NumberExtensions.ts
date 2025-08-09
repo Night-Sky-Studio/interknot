@@ -13,3 +13,11 @@ Number.prototype.toFixedCeil = function (decimals: number): string {
 }
 
 export {}
+
+export function toFixedCeil(num: number, decimals: number): string {
+    const factor = 10 ** decimals
+    const result = num >= 0
+        ? Math.ceil(num * factor) / factor
+        : Math.floor(num * factor) / factor
+    return result.toFixed(decimals)
+}

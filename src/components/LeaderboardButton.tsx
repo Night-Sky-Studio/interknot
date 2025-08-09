@@ -5,6 +5,7 @@ import { useSettings } from "./SettingsProvider"
 import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
 import { useMemo } from "react"
+import { toFixedCeil } from "../extensions/NumberExtensions"
 
 interface ILeaderboardButtonProps {
     id: number
@@ -64,7 +65,7 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
                             </Group>
                             <Stack gap="0px" className="lb-info">
                                 <Title order={6} fz="12px">{name}</Title>
-                                <Title order={6} fz="14px" ff="zzz-jp">Top {((rank / total) * 100).toFixedCeil(decimalPlaces)}%</Title>
+                                <Title order={6} fz="14px" ff="zzz-jp">Top {toFixedCeil((rank / total) * 100, decimalPlaces)}%</Title>
                                 <Title order={6} fz="10px" ff="zzz-jp">{rank} / {nFormatter(total, 1)}</Title>
                             </Stack>
                         </Group>

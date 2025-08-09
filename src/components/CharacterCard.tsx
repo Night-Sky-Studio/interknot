@@ -17,6 +17,7 @@ import { getLeaderboardDmgDistribution } from "../api/data"
 import { getShortPropertyName } from "../localization/Localization"
 import { useWindowScroll } from "@mantine/hooks"
 import { Team } from "./Team"
+import { toFixedCeil } from "../extensions/NumberExtensions"
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
     size = size || 16;
@@ -323,7 +324,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                     <Stack gap="8px" mt="-8px" align="center">
                         <Group gap="4px">
                             <div className="cc-graph-lb">
-                                Top {(leaderboard.Rank / leaderboard.Leaderboard.Total * 100).toFixedCeil(decimalPlaces)}%
+                                Top {toFixedCeil(leaderboard.Rank / leaderboard.Leaderboard.Total * 100, decimalPlaces)}%
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
                                 <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
