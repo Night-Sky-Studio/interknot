@@ -20,6 +20,7 @@ export default function ProfilePage(): React.ReactElement {
     const backend = useBackend()
     
     const [needsUpdate, setNeedsUpdate] = useState(false)
+    const [canUpdate, setCanUpdate] = useState(true)
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
     const [profileBackup, setProfileBackup] = useState<Profile | null>(null)
@@ -27,6 +28,7 @@ export default function ProfilePage(): React.ReactElement {
 
     const userState = useAsyncRetry(async () => {
         const result = await getUser(Number(uid), needsUpdate)
+        
         setProfileBackup(result) // Store successful result as backup
         return result
     }, [uid, needsUpdate])
@@ -57,7 +59,7 @@ export default function ProfilePage(): React.ReactElement {
         if (!savedUsers?.find(u => u.Uid.toString() === uid) && profileBackup) { 
             setSavedUsers([...savedUsers ?? [], { ...profileBackup.Information }])
         }
-        setNeedsUpdate((profileBackup?.Ttl ?? 0) !== 0)
+        setCanUpdate((profileBackup?.Ttl ?? 0) == 0)
     }, [profileBackup])
 
     // Initialize backups when profile loads successfully
@@ -78,7 +80,7 @@ export default function ProfilePage(): React.ReactElement {
 
     useEffect(() => {
         if (profileBackup)
-            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${needsUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
+            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${needsUpdate}, canUpdate: ${canUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
     }, [profileBackup, needsUpdate, favoriteUsers])
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
@@ -116,14 +118,16 @@ export default function ProfilePage(): React.ReactElement {
                             </Tooltip>
                         }
                         {backend.state && backend.state.params.update_enabled &&
-                            <Button rightSection={<IconReload />} disabled={needsUpdate} onClick={() => {
+                            <Button rightSection={<IconReload />} disabled={!canUpdate} onClick={() => {
+                                setCanUpdate(false)
                                 setNeedsUpdate(true)
                                 userState.retry()
                                 leaderboardsState.retry()
                             }}>
-                                <Timer key={uid} title="Update" isEnabled={needsUpdate}
+                                <Timer key={uid} title="Update" isEnabled={!canUpdate}
                                     endTime={profileBackup.Ttl === 0 ? 60 : profileBackup.Ttl} 
                                     onTimerEnd={() => {
+                                        setCanUpdate(true)
                                         setNeedsUpdate(false)
                                     }} />
                             </Button>
