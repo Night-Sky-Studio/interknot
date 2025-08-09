@@ -323,7 +323,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                     <Stack gap="8px" mt="-8px" align="center">
                         <Group gap="4px">
                             <div className="cc-graph-lb">
-                                Top {(leaderboard.Rank / leaderboard.Leaderboard.Total * 100).toFixed(decimalPlaces)}%
+                                Top {(leaderboard.Rank / leaderboard.Leaderboard.Total * 100).toFixedCeil(decimalPlaces)}%
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
                                 <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
