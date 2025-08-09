@@ -6,6 +6,20 @@ import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
 import { useMemo } from "react"
 
+declare global {
+    interface Number {
+        toFixedCeil(decimals: number): string
+    }
+}
+
+Number.prototype.toFixedCeil = function (decimals: number): string {
+    const factor = 10 ** decimals
+    const result = Number(this) >= 0
+        ? Math.ceil(Number(this) * factor) / factor
+        : Math.floor(Number(this) * factor) / factor
+    return result.toFixed(decimals)
+}
+
 interface ILeaderboardButtonProps {
     id: number
     agent: BaseAvatar
@@ -64,7 +78,7 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
                             </Group>
                             <Stack gap="0px" className="lb-info">
                                 <Title order={6} fz="12px">{name}</Title>
-                                <Title order={6} fz="14px" ff="zzz-jp">Top {((rank / total) * 100).toFixed(decimalPlaces)}%</Title>
+                                <Title order={6} fz="14px" ff="zzz-jp">Top {((rank / total) * 100).toFixedCeil(decimalPlaces)}%</Title>
                                 <Title order={6} fz="10px" ff="zzz-jp">{rank} / {nFormatter(total, 1)}</Title>
                             </Stack>
                         </Group>
