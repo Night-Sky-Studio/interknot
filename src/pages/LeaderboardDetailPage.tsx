@@ -61,9 +61,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const distributionDomain = useMemo(() => {
         if (leaderboardDistribution) {
             const values = Object.values(leaderboardDistribution.Data)
-            // adjust to closest 1000
-            const min = Math.min(...values) - Math.min(...values) % 100000
-            const max = Math.max(...values) + (100000 - Math.max(...values) % 100000)
+            // adjust to closest 100
+            const threshold = 100
+            const min = Math.min(...values) - Math.min(...values) % threshold
+            const max = Math.max(...values) + (threshold - Math.max(...values) % threshold)
             return [min, max]
         }
         return [0, 100]
