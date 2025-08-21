@@ -58,7 +58,7 @@ function Message({ msg }: { msg: BelleMessage }) {
                     <Group>
                         {
                             msg.Attachments.map((attachment, index) => 
-                                <Image key={index} h="auto" w="100%" mah="256px" maw="100%" 
+                                <Image key={index} h="auto" w="640px" mah="256px" maw="100%" 
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
                                         setClickedImageUrl(attachment.Url)
