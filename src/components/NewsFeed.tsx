@@ -86,7 +86,8 @@ export default function NewsFeed() {
                             <Title order={2} pr="md" c="white" style={{ borderRight: "1px solid #e0e0e0" }}>News</Title>
                             <Text c="dimmed" size="sm">fetched via Discord</Text>
                         </Group>
-                        <Button leftSection={<IconBrandDiscordFilled />}>Discord</Button>
+                        <Button component="a" variant="subtle" leftSection={<IconBrandDiscordFilled />} 
+                            href="https://discord.gg/hFNheySRQD" target="_blank">Discord</Button>
                     </Group>
                 </Card.Section>
                 <Card.Section h="720px" style={{ overflowY: "auto" }}>
