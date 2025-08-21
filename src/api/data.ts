@@ -1,4 +1,4 @@
-import { Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { BelleMessage, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 export interface BackendState {
     params: {
@@ -144,5 +144,14 @@ export async function getStatus(): Promise<BackendState> {
         } satisfies BackendError))
 
     return response.json()
+}
 
+export async function getNews(): Promise<BelleMessage[]> {
+    const response = await fetch(url({
+        base: dataUrl,
+        path: "/news"
+    }))
+    if (response.status !== 200)
+        throw new Error(`${response.status}: ${await response.text()}`)
+    return await response.json()
 }

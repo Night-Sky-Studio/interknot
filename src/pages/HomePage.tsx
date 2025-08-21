@@ -9,6 +9,7 @@ import { IconInfoCircle, IconInfoTriangle } from "@tabler/icons-react"
 import { useBackend } from "../components/BackendProvider"
 import "./styles/HomePage.css"
 import fairy from "../../assets/fairy.png"
+import { NewsFeedMemoized } from "../components/NewsFeed"
 
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
@@ -64,22 +65,21 @@ export default function HomePage(): React.ReactElement {
             <PlayerSearch search={(response) => {
                 setUsers(response)
             }} />
-            <div style={{ height: "100%" }}>
-                <Stack>
-                    {
-                        users?.map(u => {
-                            return (
-                                <UnstyledButton key={u.Uid} className="profile-button"
-                                    onClick={() => {
-                                        navigate(`user/${u.Uid}`)
-                                    }}>
-                                    <UserHeaderMemorized user={u} />
-                                </UnstyledButton>
-                            )
-                        })
-                    }
-                </Stack>
-            </div>
+            {users.length !== 0 && <Stack mb="2rem">
+                {
+                    users.map(u => {
+                        return (
+                            <UnstyledButton key={u.Uid} className="profile-button"
+                                onClick={() => {
+                                    navigate(`user/${u.Uid}`)
+                                }}>
+                                <UserHeaderMemorized user={u} />
+                            </UnstyledButton>
+                        )
+                    })
+                }
+            </Stack>}
+            <NewsFeedMemoized />
         </section>
     </>)
 }
