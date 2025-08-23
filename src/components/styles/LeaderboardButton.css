@@ -6,7 +6,7 @@ img {
     height: 64px;
     width: 100%;
     background-color: var(--mantine-color-dark-8);
-    border-radius: 32px;
+    border-radius: 32px 8px 16px 32px;
 }
 
 .lb-button[data-type="0"] {
