@@ -1,7 +1,7 @@
 import { Character, BaseLeaderboardEntry, Property } from "@interknot/types"
 import { Card, Group, Table, Image, Text, Collapse, Stack, Button, Switch } from "@mantine/core"
 import "./styles/CharactersTable.pcss"
-import { CharacterCardMemorized } from "./CharacterCard"
+import { CharacterCardMemorized, TooltipData } from "./CharacterCard"
 import { memo, useEffect, useMemo, useRef, useState } from "react"
 import { useDisclosure, useResizeObserver } from "@mantine/hooks"
 import { IconChevronDown, IconChevronUp, IconDownload } from "@tabler/icons-react"
@@ -14,6 +14,7 @@ import PropertyCell from "./cells/PropertyCell"
 import WeaponCell from "./cells/WeaponCell"
 import DriveDiscsCell from "./cells/DriveDiscsCell"
 import { useLeaderboards } from "./LeaderboardProvider"
+import { DataProvider } from "./DataProvider"
 
 interface ICharactersTableProps {
     uid: number
@@ -135,59 +136,61 @@ export default function CharactersTable({ uid, username, characters, lbAgents, o
                     }
                 </Table.Tr>
                 <ExpandableRow className="character-card-row" opened={isCardVisible} ref={cardContainerRef}>
-                    <Stack gap="8px">
-                        <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>
-                            <CharacterCardMemorized ref={cardRef}
-                                uid={uid} username={username}
-                                character={c} substatsVisible={isSubstatsVisible} leaderboard={selectedLeaderboard} />
-                        </div>
-                        <Stack>
-                            <Group m="xl">
-                                <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
-                                    if (cardRef.current === null) return
+                    <DataProvider data={{ charId: c.Id, weaponId: c.Weapon?.Id } satisfies TooltipData}>
+                        <Stack gap="8px">
+                            <div style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>
+                                <CharacterCardMemorized ref={cardRef}
+                                    uid={uid} username={username}
+                                    character={c} substatsVisible={isSubstatsVisible} leaderboard={selectedLeaderboard} />
+                            </div>
+                            <Stack>
+                                <Group m="xl">
+                                    <Button leftSection={<IconDownload />} variant="subtle" onClick={async () => {
+                                        if (cardRef.current === null) return
 
-                                    const cardRect = cardRef.current.getBoundingClientRect()
-                                    const cs = cardScale
-                                    setCardScale(1.0)
+                                        const cardRect = cardRef.current.getBoundingClientRect()
+                                        const cs = cardScale
+                                        setCardScale(1.0)
 
-                                    cardRef.current
-                                        .querySelectorAll("g.recharts-layer.recharts-polar-angle-axis.angleAxis > g > g > text")
-                                        .forEach((el) => {
-                                            el.setAttribute("fill", "#FFFFFF")
+                                        cardRef.current
+                                            .querySelectorAll("g.recharts-layer.recharts-polar-angle-axis.angleAxis > g > g > text")
+                                            .forEach((el) => {
+                                                el.setAttribute("fill", "#FFFFFF")
+                                            })
+
+                                        const dataUrl = await toPng(cardRef.current, {
+                                            quality: 1.0,
+                                            canvasHeight: (cardRect.height) * 2,
+                                            canvasWidth: (cardRect.width) * 2,
+                                            backgroundColor: "transparent",
+                                            style: {
+                                                margin: "var(--mantine-spacing-lg)",
+                                            }
                                         })
 
-                                    const dataUrl = await toPng(cardRef.current, {
-                                        quality: 1.0,
-                                        canvasHeight: (cardRect.height) * 2,
-                                        canvasWidth: (cardRect.width) * 2,
-                                        backgroundColor: "transparent",
-                                        style: {
-                                            margin: "var(--mantine-spacing-lg)",
-                                        }
-                                    })
+                                        const link = document.createElement("a")
+                                        link.download = `${getLocalString(c.Name)}-${uid}.png`
+                                        link.href = dataUrl
+                                        link.click();
 
-                                    const link = document.createElement("a")
-                                    link.download = `${getLocalString(c.Name)}-${uid}.png`
-                                    link.href = dataUrl
-                                    link.click();
-
-                                    setCardScale(cs)
-                                }}>Download Image</Button>
-                                { agentLeaderboards.length > 0 &&
-                                    <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
-                                        variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
-                                }
-                                <Switch label="Substats breakdown" checked={isSubstatsVisible} onChange={toggleSubstats} />
-                            </Group>
-                            <Collapse in={isDmgDistributionVisible}>
-                                { agentLeaderboards.length > 0 &&
-                                    <DamageDistributionMemoized entries={agentLeaderboards} onLeaderboardSelect={(lb) => {
-                                        setSelectedLeaderboard(lb)
-                                    }} />
-                                }
-                            </Collapse>
+                                        setCardScale(cs)
+                                    }}>Download Image</Button>
+                                    { agentLeaderboards.length > 0 &&
+                                        <Button leftSection={isDmgDistributionVisible ? <IconChevronUp /> : <IconChevronDown />} 
+                                            variant="subtle" onClick={toggleDmgDistribution}>Show damage distribution</Button>
+                                    }
+                                    <Switch label="Substats breakdown" checked={isSubstatsVisible} onChange={toggleSubstats} />
+                                </Group>
+                                <Collapse in={isDmgDistributionVisible}>
+                                    { agentLeaderboards.length > 0 &&
+                                        <DamageDistributionMemoized entries={agentLeaderboards} onLeaderboardSelect={(lb) => {
+                                            setSelectedLeaderboard(lb)
+                                        }} />
+                                    }
+                                </Collapse>
+                            </Stack>
                         </Stack>
-                    </Stack>
+                    </DataProvider>
                 </ExpandableRow>
             </>
         )
