@@ -7,7 +7,7 @@ import * as Mindscapes from "./icons/mindscapes"
 import * as TalentIcons from "./icons/talents"
 import * as CoreSkillIcons from "./icons/core"
 import { Weapon, Property } from "@interknot/types"
-import React, { memo, useMemo, useRef } from "react"
+import React, { memo, useEffect, useMemo, useRef } from "react"
 import type { DriveDiscSet, BaseLeaderboardEntry } from "@interknot/types"
 import { useSettings } from "./SettingsProvider"
 import { DriveDisc } from "./DriveDisc"
@@ -18,18 +18,40 @@ import { getShortPropertyName } from "../localization/Localization"
 import { useWindowScroll } from "@mantine/hooks"
 import { Team } from "./Team"
 import { toFixedCeil } from "../extensions/NumberExtensions"
+import { useData } from "./DataProvider"
+
+export interface TooltipData {
+    charId: number,
+    weaponId?: number
+}
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
-    size = size || 16;
-    const isActive = (lvl: number): string => (lvl <= level) ? "#fdf003" : "#4A4A4A";
+    size = size || 16
+    const isActive = (lvl: number): string => (lvl <= level) ? "#fdf003" : "#4A4A4A"
+
+    const { language } = useSettings()
+    const { charId } = useData<TooltipData>()
+
     return (
         <Group gap="4px" h="100%" wrap="nowrap">
-            <Mindscapes.Ms1 width={size} height={size} color={isActive(1)} />
-            <Mindscapes.Ms2 width={size} height={size} color={isActive(2)} />
-            <Mindscapes.Ms3 width={size} height={size} color={isActive(3)} />
-            <Mindscapes.Ms4 width={size} height={size} color={isActive(4)} />
-            <Mindscapes.Ms5 width={size} height={size} color={isActive(5)} />
-            <Mindscapes.Ms6 width={size} height={size} color={isActive(6)} />
+            <Mindscapes.Ms1 width={size} height={size} color={isActive(1)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={1} />
+            <Mindscapes.Ms2 width={size} height={size} color={isActive(2)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={2} />
+            <Mindscapes.Ms3 width={size} height={size} color={isActive(3)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={3} />
+            <Mindscapes.Ms4 width={size} height={size} color={isActive(4)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={4} />
+            <Mindscapes.Ms5 width={size} height={size} color={isActive(5)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={5} />
+            <Mindscapes.Ms6 width={size} height={size} color={isActive(6)}
+                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-id={charId} data-zzz-index={6} />
         </Group>
     )
 }
@@ -89,13 +111,16 @@ function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
         )
     }
 
-    const { getLocalString, getLevel } = useSettings()
+    const { language, getLocalString, getLevel } = useSettings()
 
     return (
         <div className="cc-weapon">
             <Group gap="12px" wrap="nowrap">
                 <div className="cc-weapon-icon">
-                    <Image src={weapon.ImageUrl} p="4px" />
+                    <Image src={weapon.ImageUrl} p="4px"
+                        data-zzz-type="weapon" data-zzz-lang={language}
+                        data-zzz-id={weapon.Id} data-zzz-level={weapon.Level} 
+                        data-zzz-promote={weapon.BreakLevel} data-zzz-index={weapon.UpgradeLevel} />
                     <Image src={getRarityIcon(weapon.Rarity ?? 0)} alt={weapon.Rarity.toString()} />
                 </div>
                 <Stack gap="8px" justify="center"> 
@@ -133,8 +158,15 @@ function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): Rea
 
 function CoreSkill({ level }: { level: number }): React.ReactElement {
     const isActive = (lvl: number): string => (lvl <= level) ? "var(--accent)" : "var(--mantine-color-dark-9)"
+
+    const { language } = useSettings()
+    const { charId } = useData<TooltipData>()
+
+    useEffect(() => console.log(charId), [charId])
+
     return (
-        <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap">
+        <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap" style={{ position: "relative" }}
+            data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level + 1} data-zzz-id-b="5">
             <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
             <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
             <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
@@ -156,26 +188,38 @@ function Talents({
 }): React.ReactElement {
     // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
     const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
+    const { charId } = useData<TooltipData>()
+    const { language } = useSettings()
     return (
         <Group className={`cc-talents ${mindscapeLevel > 2 ? "boosted" : ""}`} 
             gap="10px" justify="center" align="center" wrap="nowrap">
-            <div className="cc-talent">
+            <div className="cc-talent"
+                data-zzz-lang={language} data-zzz-id={charId} 
+                data-zzz-type="talent" data-zzz-id-b="0" data-zzz-level={talentLevels.BasicAttack + mindscapeBoost} >
                 <TalentIcons.NormalAtk width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack + mindscapeBoost}</Title>
             </div>
-            <div className="cc-talent">
+            <div className="cc-talent"
+                data-zzz-lang={language} data-zzz-id={charId} 
+                data-zzz-type="talent" data-zzz-id-b="2" data-zzz-level={talentLevels.Dash + mindscapeBoost} >
                 <TalentIcons.Dodge width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Dash + mindscapeBoost}</Title>
             </div>
-            <div className="cc-talent">
+            <div className="cc-talent"
+                data-zzz-lang={language} data-zzz-id={charId} 
+                data-zzz-type="talent" data-zzz-id-b="6" data-zzz-level={talentLevels.Assist + mindscapeBoost} >
                 <TalentIcons.Switch width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
             </div>
-            <div className="cc-talent">
+            <div className="cc-talent"
+                data-zzz-lang={language} data-zzz-id={charId} 
+                data-zzz-type="talent" data-zzz-id-b="1" data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
                 { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
-            <div className="cc-talent">
+            <div className="cc-talent"
+                data-zzz-lang={language} data-zzz-id={charId} 
+                data-zzz-type="talent" data-zzz-id-b="3" data-zzz-level={talentLevels.Ultimate + mindscapeBoost} >
                 <TalentIcons.Ultimate width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Ultimate + mindscapeBoost}</Title>
             </div>
@@ -184,9 +228,9 @@ function Talents({
 }
 
 function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
-    const { getLocalString } = useSettings()
+    const { language, getLocalString } = useSettings()
     return (
-        <div className="cc-disc-set">
+        <div className="cc-disc-set" data-zzz-type="artifact" data-zzz-lang={language} data-zzz-id={set.Set.Id}>
             <Image h="28px" src={set.Set.IconUrl} alt={set.Set.Name} />
             <Title order={6} fz="14px">{getLocalString(set.Set.Name)}</Title>
             <Title order={6} fz="14px">x{set.Count}</Title>
@@ -234,6 +278,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
     const radarRef = useRef<HTMLDivElement | null>(null)
     const theme = useMantineTheme()
     const [scroll, _] = useWindowScroll()
+    const { language } = useSettings()
 
     return (
         <div className="cc-stats-graph" ref={radarRef}>
@@ -327,7 +372,10 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                                 Top {toFixedCeil(leaderboard.Rank / leaderboard.Leaderboard.Total * 100, decimalPlaces)}%
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
-                                <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl} />
+                                <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl}
+                                    data-zzz-type="weapon" data-zzz-lang={language} 
+                                    data-zzz-id={leaderboard.Leaderboard.Weapon.Id}
+                                    data-zzz-level={60} data-zzz-promote={5} />
                                 <Title order={6} m="0" fz="14px">{leaderboard.Leaderboard.Name}</Title>
                             </Group>
                         </Group>
