@@ -1,12 +1,11 @@
 import { useAsync } from "react-use"
 import { getNews } from "../api/data"
-import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Code, List, Modal, Button, BackgroundImage } from "@mantine/core"
+import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Code, List, Modal, BackgroundImage } from "@mantine/core"
 import { memo, useState } from "react"
 import { BelleMessage } from "@interknot/types"
 import Markdown from "react-markdown"
 import "./styles/NewsFeed.css"
 import { useDisclosure } from "@mantine/hooks"
-import { IconBrandDiscordFilled } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
 
 function Message({ msg }: { msg: BelleMessage }) {
@@ -81,13 +80,9 @@ export default function NewsFeed() {
             src="https://enka.network/img/zzz_backdrop.jpg">
             <Card className="news-feed" bg="rgba(0 0 0 / 0.5)" style={{ backdropFilter: "blur(4px)" }} shadow="md">
                 <Card.Section pb="md" m="sm" style={{ borderBottom: "1px solid #e0e0e0" }}>
-                    <Group justify="space-between" align="center">
-                        <Group align="center">
-                            <Title order={2} pr="md" c="white" style={{ borderRight: "1px solid #e0e0e0" }}>News</Title>
-                            <Text c="dimmed" size="sm">fetched via Discord</Text>
-                        </Group>
-                        <Button component="a" variant="subtle" leftSection={<IconBrandDiscordFilled />} 
-                            href="https://discord.gg/hFNheySRQD" target="_blank">Discord</Button>
+                    <Group align="center">
+                        <Title order={2} pr="md" c="white" style={{ borderRight: "1px solid #e0e0e0" }}>News</Title>
+                        <Text c="dimmed" size="sm">fetched via Discord</Text>
                     </Group>
                 </Card.Section>
                 <Card.Section h="720px" style={{ overflowY: "auto" }}>
