@@ -195,31 +195,31 @@ function Talents({
             gap="10px" justify="center" align="center" wrap="nowrap">
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b="0" data-zzz-level={talentLevels.BasicAttack + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={0} data-zzz-level={talentLevels.BasicAttack + mindscapeBoost} >
                 <TalentIcons.NormalAtk width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b="2" data-zzz-level={talentLevels.Dash + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={2} data-zzz-level={talentLevels.Dash + mindscapeBoost} >
                 <TalentIcons.Dodge width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Dash + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b="6" data-zzz-level={talentLevels.Assist + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={6} data-zzz-level={talentLevels.Assist + mindscapeBoost} >
                 <TalentIcons.Switch width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b="1" data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={1 /*isRupture ? 10 : 1*/} data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
                 { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b="3" data-zzz-level={talentLevels.Ultimate + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={3} data-zzz-level={talentLevels.Ultimate + mindscapeBoost} >
                 <TalentIcons.Ultimate width="56px" />
                 <Title order={6} className="cc-talent-level">{talentLevels.Ultimate + mindscapeBoost}</Title>
             </div>
