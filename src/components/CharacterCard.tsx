@@ -158,24 +158,25 @@ function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): Rea
 }
 
 function CoreSkill({ level, dark }: { level: number, dark: boolean }): React.ReactElement {
-    const isActive = (lvl: number): string => (lvl <= level) ? "var(--accent)" : "var(--mantine-color-dark-9)"
+    const isActive = (lvl: number): boolean => lvl <= level
+    const isActiveColor = (lvl: number): string => isActive(lvl) ? "var(--accent)" : "var(--mantine-color-dark-9)"
 
     const { language } = useSettings()
     const { charId } = useData<TooltipData>()
 
     useEffect(() => console.log(charId), [charId])
 
-    const fillColor = dark ? "black" : "white"
+    const fillColor = (lvl: number) => dark && isActive(lvl) ? "black" : "white"
 
     return (
         <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap" style={{ position: "relative" }}
             data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level + 1} data-zzz-id-b="5">
-            <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill={fillColor} height="20px" /></div>
-            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill={fillColor} height="20px" /></div>
-            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill={fillColor} height="20px" /></div>
-            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.D fill={fillColor} height="20px" /></div>
-            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.E fill={fillColor} height="20px" /></div>
-            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.F fill={fillColor} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(1) }}><CoreSkillIcons.A fill={fillColor(1)} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(2) }}><CoreSkillIcons.B fill={fillColor(2)} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(3) }}><CoreSkillIcons.C fill={fillColor(3)} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(4) }}><CoreSkillIcons.D fill={fillColor(4)} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(5) }}><CoreSkillIcons.E fill={fillColor(5)} height="20px" /></div>
+            <div style={{ backgroundColor: isActiveColor(6) }}><CoreSkillIcons.F fill={fillColor(6)} height="20px" /></div>
         </Group>
     )
 }
