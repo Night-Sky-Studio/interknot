@@ -19,7 +19,6 @@ import { useWindowScroll } from "@mantine/hooks"
 import { Team } from "./Team"
 import { toFixedCeil } from "../extensions/NumberExtensions"
 import { useData } from "./DataProvider"
-import { shouldFontColorChange } from "../theme"
 
 export interface TooltipData {
     charId: number,
@@ -157,26 +156,25 @@ function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): Rea
     )
 }
 
-function CoreSkill({ level, dark }: { level: number, dark: boolean }): React.ReactElement {
-    const isActive = (lvl: number): boolean => lvl <= level
-    const isActiveColor = (lvl: number): string => isActive(lvl) ? "var(--accent)" : "var(--mantine-color-dark-9)"
+function CoreSkill({ level }: { level: number }): React.ReactElement {
+    const isActive = (lvl: number): string => lvl <= level ? "var(--accent)" : "var(--mantine-color-dark-9)"
 
     const { language } = useSettings()
     const { charId } = useData<TooltipData>()
 
     useEffect(() => console.log(charId), [charId])
 
-    const fillColor = (lvl: number) => dark && isActive(lvl) ? "black" : "white"
+    // const fillColor = (lvl: number) => dark && isActive(lvl) ? "black" : "white"
 
     return (
         <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap" style={{ position: "relative" }}
             data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level + 1} data-zzz-id-b="5">
-            <div style={{ backgroundColor: isActiveColor(1) }}><CoreSkillIcons.A fill={fillColor(1)} height="20px" /></div>
-            <div style={{ backgroundColor: isActiveColor(2) }}><CoreSkillIcons.B fill={fillColor(2)} height="20px" /></div>
-            <div style={{ backgroundColor: isActiveColor(3) }}><CoreSkillIcons.C fill={fillColor(3)} height="20px" /></div>
-            <div style={{ backgroundColor: isActiveColor(4) }}><CoreSkillIcons.D fill={fillColor(4)} height="20px" /></div>
-            <div style={{ backgroundColor: isActiveColor(5) }}><CoreSkillIcons.E fill={fillColor(5)} height="20px" /></div>
-            <div style={{ backgroundColor: isActiveColor(6) }}><CoreSkillIcons.F fill={fillColor(6)} height="20px" /></div>
+            <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.D fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.E fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.F fill="white" height="20px" /></div>
         </Group>
     )
 }
@@ -421,9 +419,16 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
         return result
     }, [character.DriveDisks])
 
+    const characterAccentColor = useMemo(() => {
+        switch(character.Id) {
+            case 1461: return character.Colors.Accent // Seed
+            default: return character.Colors.Mindscape
+        }
+    }, [character.Id])
+
     return (
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
-            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
+            style={{ "--accent": characterAccentColor, "--mindscape": character.Colors.Accent, accentColor: characterAccentColor }}>
             <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
                     <BackgroundImage mt="xs" className="character-img" src={character.ImageUrl} />
@@ -445,7 +450,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                 </div>
                 <div className="cc-cell cc-skills">
                     <Stack gap="12px">
-                        <CoreSkill level={character.CoreSkillEnhancement} dark={shouldFontColorChange(character.Colors.Mindscape)} />
+                        <CoreSkill level={character.CoreSkillEnhancement} />
                         <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
                             isRupture={character.ProfessionType === "Rupture"} />
                     </Stack>

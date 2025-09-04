@@ -67,6 +67,7 @@ const theme = createTheme({
 
 export default theme
 
+/*
 export function shouldFontColorChange(hex: string, threshold = 0.6): boolean {
     if (hex.length === 4) {
         hex = "#" + [...hex.slice(1)].map(c => c + c).join("")
@@ -88,3 +89,4 @@ export function shouldFontColorChange(hex: string, threshold = 0.6): boolean {
 
     return L > threshold
 }
+*/
