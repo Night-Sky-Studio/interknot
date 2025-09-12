@@ -48,3 +48,8 @@
 text {
     fill: white
 }
+
+.mantine-Select-option:where([data-combobox-selected]),
+.mantine-MultiSelect-option:where([data-combobox-selected]) {
+    color: black;
+}

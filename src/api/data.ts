@@ -1,5 +1,11 @@
 import { BelleMessage, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
+interface IFilter {
+    label: string
+    img?: string
+    value: string
+}
+
 export interface BackendState {
     params: {
         status: string
@@ -8,7 +14,8 @@ export interface BackendState {
         update_enabled: boolean
         update_disabled_msg: string
         search_enabled: boolean
-    }
+    },
+    filters: Record<string, IFilter[]>
     version: string
     uptime: number
     currentDate: string

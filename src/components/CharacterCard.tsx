@@ -166,13 +166,13 @@ function CoreSkill({ level }: { level: number }): React.ReactElement {
 
     return (
         <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap" style={{ position: "relative" }}
-            data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level + 1} data-zzz-id-b="5">
-            <div style={{ backgroundColor: isActive(1) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.D fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.E fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.F fill="white" height="20px" /></div>
+            data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level} data-zzz-id-b="5">
+            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.D fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.E fill="white" height="20px" /></div>
+            <div style={{ backgroundColor: isActive(7) }}><CoreSkillIcons.F fill="white" height="20px" /></div>
         </Group>
     )
 }
@@ -213,7 +213,7 @@ function Talents({
             </div>
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={1 /*isRupture ? 10 : 1*/} data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
+                data-zzz-type="talent" data-zzz-id-b={1} data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
                 { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
@@ -441,7 +441,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                 </div>
                 <div className="cc-cell cc-skills">
                     <Stack gap="12px">
-                        <CoreSkill level={character.CoreSkillEnhancement} />
+                        <CoreSkill level={character.SkillLevels.CoreSkill} />
                         <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
                             isRupture={character.ProfessionType === "Rupture"} />
                     </Stack>

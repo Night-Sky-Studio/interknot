@@ -1,9 +1,9 @@
 import { useParams } from "react-router"
 import { UserHeaderMemorized } from "../components/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip } from "@mantine/core"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, MultiSelect, Image } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { CharactersTableMemorized } from "../components/CharactersTable"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useAsyncRetry, useSearchParam } from "react-use"
 import { getUser, getUserLeaderboards } from "../api/data"
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
@@ -13,11 +13,14 @@ import { LeaderboardGridMemorized } from "../components/LeaderboardGrid"
 import { Error as BackendError, LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 import { useBackend } from "../components/BackendProvider"
+import { ZenlessIcon } from "../components/icons/Icons"
+import { useSettings } from "../components/SettingsProvider"
 
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
     const initialOpenedId = useSearchParam("openedId")
     const backend = useBackend()
+    const { getLocalString } = useSettings()
     
     const [needsUpdate, setNeedsUpdate] = useState(false)
     const [canUpdate, setCanUpdate] = useState(true)
@@ -94,6 +97,27 @@ export default function ProfilePage(): React.ReactElement {
             return `Error: ${error}`
         }
     }
+
+    const filters = useMemo(() => backend.state?.filters, [backend.state?.filters])
+    const filterGroups = useMemo(() => {
+        const result = Object.entries(filters ?? []).map(([g, f]) => ({
+            group: g,
+            items: (f.map(v => ({ 
+                value: `${g}:${v.value}`,
+                label: getLocalString(v.label),
+            })))
+        }))
+        return result 
+    }, [filters])
+    const filterItems = useMemo(() => {
+        const result: Map<string, { label: string, value: string, img?: string }> = new Map()
+
+        Object.entries(filters ?? []).forEach(([g, f]) => {
+            f.forEach(v => result.set(`${g}:${v.value}`, { label: getLocalString(v.label), value: v.value, img: v.img }))
+        })
+
+        return result
+    }, [filters])
 
     return (<> 
         {userState.loading && !profileBackup && <>
@@ -177,8 +201,39 @@ export default function ProfilePage(): React.ReactElement {
                         </Center>
                     }
                     {profileBackup.Characters.length !== 0 &&
-                        <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
-                            characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                        <Stack>
+                            {filterGroups && 
+                                <MultiSelect data={filterGroups} 
+                                    renderOption={({ option }) => {
+                                        const item = filterItems.get(option.value)
+                                        if (!item) return <Text>{ option.value }</Text>
+                                        const hasIcon = /[M|R]\d/.test(option.label)
+                                        return <Group>
+                                            { item?.img !== undefined && <Image src={item.img} w="32px" h="32px" /> }
+                                            { item?.img === undefined && !hasIcon && <ZenlessIcon id={Number(item.value)} size={18} color="white" /> }
+                                            <Text>{ item?.label }</Text>
+                                        </Group>
+                                    }}
+                                    dropdownOpened={true}
+                                    maxDropdownHeight={512}
+                                    styles={{
+                                        dropdown: { 
+                                            boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px" 
+                                        }, 
+                                        group: {
+                                            marginBottom: "0.5rem"
+                                        },
+                                        groupLabel: { 
+                                            fontWeight: 600, 
+                                            color: "white",
+                                            fontSize: "1.25rem"
+                                        } 
+                                    }}
+                                    placeholder="Filter by..." searchable clearable hidePickedOptions />
+                            }
+                            <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
+                                characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                        </Stack>
                     }
                 </Stack>
             </LeaderboardProvider>
