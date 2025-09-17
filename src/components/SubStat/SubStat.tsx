@@ -1,8 +1,8 @@
 import { Property } from "@interknot/types"
 import { SimpleGrid, Stack, Group, Title, Tooltip } from "@mantine/core"
-import { ZenlessIcon } from "./icons/Icons"
-import "./styles/SubStat.css"
-import { useSettings } from "./SettingsProvider"
+import { ZenlessIcon } from "@icons/Icons"
+import "./SubStat.css"
+import { useSettings } from "@components/SettingsProvider"
 
 export function SubStat({ stat }: { stat: Property }): React.ReactElement {
     const SubStatLevel = ({ level, className }: { level: number, className?: string }) => {

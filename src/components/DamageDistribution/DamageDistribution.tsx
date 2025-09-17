@@ -1,12 +1,12 @@
 import { AgentAction, BaseLeaderboardEntry } from "@interknot/types"
 import { Stack, Group, Select, Center } from "@mantine/core"
-import DamageChip from "./DamageChip"
+import DamageChip from "@components/DamageChip/DamageChip"
 import { memo, useEffect, useMemo, useState } from "react"
 import { IconEqual, IconPlus } from "@tabler/icons-react"
-import DamageBar from "./DamageBar"
-import "./styles/DamageDistribution.css"
-import { useSettings } from "./SettingsProvider"
-import { useLeaderboards } from "./LeaderboardProvider"
+import DamageBar from "@components/DamageBar/DamageBar"
+import "./DamageDistribution.css"
+import { useSettings } from "@components/SettingsProvider"
+import { useLeaderboards } from "@components/LeaderboardProvider"
 
 interface IDamageDistributionProps {
     entries: BaseLeaderboardEntry[]

@@ -1,9 +1,9 @@
 import { useMantineTheme, Group, Title, Stack, SimpleGrid, Center, Image } from "@mantine/core"
-import { getDriveDiscGradient, getRarityIcon, ZenlessIcon } from "./icons/Icons"
+import { getDriveDiscGradient, getRarityIcon, ZenlessIcon } from "@icons/Icons"
 import { DriveDisc as DD } from "@interknot/types"
-import { SubStat } from "./SubStat"
-import "./styles/DriveDisc.css"
-import { useSettings } from "./SettingsProvider"
+import { SubStat } from "@components/SubStat/SubStat"
+import "./DriveDisc.css"
+import { useSettings } from "@components/SettingsProvider"
 
 function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     return <div className="cc-disc-slot">

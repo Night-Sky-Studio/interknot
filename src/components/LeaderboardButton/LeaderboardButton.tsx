@@ -1,11 +1,11 @@
 import { BaseAvatar, BaseWeapon } from "@interknot/types"
 import { Group, UnstyledButton, Image, Title, Stack, Popover, Button, Tooltip } from "@mantine/core"
-import "./styles/LeaderboardButton.css"
-import { useSettings } from "./SettingsProvider"
+import "./LeaderboardButton.css"
+import { useSettings } from "@components/SettingsProvider"
 import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
 import { useMemo } from "react"
-import { toFixedCeil } from "../extensions/NumberExtensions"
+import { toFixedCeil } from "@extensions/NumberExtensions"
 
 interface ILeaderboardButtonProps {
     id: number

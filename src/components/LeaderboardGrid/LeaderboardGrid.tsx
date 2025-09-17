@@ -1,9 +1,9 @@
 import { BaseWeapon, Character, LeaderboardProfile } from "@interknot/types"
 import { Center, Title } from "@mantine/core"
-import { LeaderboardButton } from "./LeaderboardButton"
-import "./styles/LeaderboardGrid.css"
+import { LeaderboardButton } from "@components/LeaderboardButton/LeaderboardButton"
+import "./LeaderboardGrid.css"
 import { memo, useMemo } from "react"
-import { useLeaderboards } from "./LeaderboardProvider"
+import { useLeaderboards } from "@components/LeaderboardProvider"
 
 export const shouldShowLeaderboards = (p?: LeaderboardProfile) => 
     p?.Agents?.some(a => a.Total > 20) ?? false

@@ -1,7 +1,7 @@
 import { Center, Alert, Stack, Group, Button, Text, Loader, Title } from "@mantine/core"
 import { IconInfoCircle, IconCopy, IconBrandDiscordFilled } from "@tabler/icons-react"
 import { ErrorBoundary } from "react-error-boundary"
-import "./styles/RenderErrorBoundary.css"
+import "./RenderErrorBoundary.css"
 import { ErrorInfo, useState } from "react"
 
 export default function RenderErrorBoundary({ children }: { children: React.ReactElement }): React.ReactElement {

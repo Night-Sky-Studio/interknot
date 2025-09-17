@@ -23,8 +23,12 @@
         "paths": {
             "@/*": ["./src/*"],
             "@components/*": ["./src/components/*"],
+            "@icons/*": ["./src/components/icons/*"],
+            "@assets/*": ["./assets/*"],
             "@pages/*": ["./src/pages/*"],
             "@api/*": ["./src/api/*"],
+            "@localization": ["./src/localization/Localization.ts"],
+            "@extensions/*": ["./src/extensions/*"],
         }
     },
     "include": [

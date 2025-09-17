@@ -11,8 +11,8 @@ import {
     Group,
     Loader
 } from "@mantine/core"
-import "./styles/UserHeader.css"
-import { useSettings } from "./SettingsProvider"
+import "./UserHeader.css"
+import { useSettings } from "@components/SettingsProvider"
 
 interface IUserHeaderProps {
     user: ProfileInfo,

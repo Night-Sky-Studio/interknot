@@ -1,6 +1,6 @@
 import { AgentAction } from "@interknot/types"
-import { getTagShortName } from "../localization/Localization"
-import "./styles/DamageBar.css"
+import { getTagShortName } from "@localization"
+import "./DamageBar.css"
 import { Center, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
 

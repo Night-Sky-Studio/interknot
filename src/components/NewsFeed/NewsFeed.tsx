@@ -1,10 +1,10 @@
 import { useAsync } from "react-use"
-import { getNews } from "../api/data"
+import { getNews } from "@api/data"
 import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Code, List, Modal, BackgroundImage } from "@mantine/core"
 import { memo, useState } from "react"
 import { BelleMessage } from "@interknot/types"
 import Markdown from "react-markdown"
-import "./styles/NewsFeed.css"
+import "./NewsFeed.css"
 import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
 

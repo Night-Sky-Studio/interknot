@@ -1,7 +1,7 @@
 import { SkillTag } from "@interknot/types"
 import { Stack, Text, Space, } from "@mantine/core"
-import { getTagName } from "../localization/Localization"
-import "./styles/DamageChip.css"
+import { getTagName } from "@localization"
+import "./DamageChip.css"
 
 interface IDamageChipProps {
     actionName?: string

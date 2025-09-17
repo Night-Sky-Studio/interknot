@@ -4,8 +4,8 @@ import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert, Anchor }
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
-import { Team } from "../components/Team"
-import WeaponButton from "../components/WeaponButton"
+import { Team } from "@components/Team/Team"
+import WeaponButton from "@components/WeaponButton"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()

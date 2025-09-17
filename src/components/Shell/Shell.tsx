@@ -3,12 +3,12 @@ import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, 
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
-import "./styles/Shell.pcss"
-import enkaImg from "../../assets/Enka.svg"
-import nssImg from "../../assets/nss.svg"
+import "./Shell.pcss"
+import enkaImg from "@assets/Enka.svg"
+import nssImg from "@assets/nss.svg"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
-import grace from "../../assets/grace.webp"
-import InterknotLogo from "./icons/Interknot"
+import grace from "@assets/grace.webp"
+import InterknotLogo from "@icons/Interknot"
 import { useContextMenu } from 'mantine-contextmenu'
 
 export default function Shell(): React.ReactElement {

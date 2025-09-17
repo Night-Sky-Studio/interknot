@@ -1,7 +1,7 @@
 import { BaseAvatar } from "@interknot/types"
 import { Group, Image, Tooltip } from "@mantine/core"
-import "./styles/Team.css"
-import { useSettings } from "./SettingsProvider"
+import "./Team.css"
+import { useSettings } from "@components/SettingsProvider"
 
 function TeamMember({ ref, avatar }: { ref?: any, avatar: BaseAvatar }) {
     return (
