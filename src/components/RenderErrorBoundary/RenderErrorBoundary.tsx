@@ -1,4 +1,4 @@
-import { Center, Alert, Stack, Group, Button, Text, Loader, Title } from "@mantine/core"
+import { Center, Alert, Stack, Group, Button, Text, Loader, Title, ScrollArea, Flex } from "@mantine/core"
 import { IconInfoCircle, IconCopy, IconBrandDiscordFilled } from "@tabler/icons-react"
 import { ErrorBoundary } from "react-error-boundary"
 import "./RenderErrorBoundary.css"
@@ -14,7 +14,8 @@ export default function RenderErrorBoundary({ children }: { children: React.Reac
         }}
         fallbackRender={() => {
             return <Center w="100vw" h="100vh">
-                <Alert className="err-boundary-alert" title={`A rendering error has occurred!`} color="red" icon={<IconInfoCircle size={16} />}>
+                <Alert className="err-boundary-alert" title={`A rendering error has occurred!`} 
+                    color="red" icon={<IconInfoCircle size={16} />}>
                     {!error || !errorInfo && 
                         <Group>
                             <Loader />
@@ -22,15 +23,17 @@ export default function RenderErrorBoundary({ children }: { children: React.Reac
                         </Group>
                     }
                     {error && errorInfo &&
-                        <Stack gap="xs">
-                            <Text fw={800} fz={24}>{error.message}</Text>
-                            <Stack gap="0">
-                                {errorInfo.componentStack && errorInfo.componentStack.split("\n").map((line, index) => (
-                                    <Text key={index} fz={12} c="gray.5" ff="monospace">{line}</Text>
-                                ))}
-                            </Stack>
+                        <Flex gap="xs" direction="column" mah="100vh" h="min(calc(100vh - 96px), 768px)">
+                            <Text fw={800} fz={24} style={{ flex: "0 0 auto" }}>{error.message}</Text>
+                            <ScrollArea style={{ flex: "1 1 auto" }}>
+                                <Stack gap="0">
+                                    {errorInfo.componentStack && errorInfo.componentStack.split("\n").map((line, index) => (
+                                        <Text key={index} fz={12} c="gray.5" ff="monospace">{line}</Text>
+                                    ))}
+                                </Stack>
+                            </ScrollArea>
                             <Text>Please, report this error to developers.</Text>
-                            <Group grow>
+                            <Group style={{ flex: "0 0 auto" }} grow>
                                 <Button leftSection={<IconCopy />} variant="subtle"
                                     onClick={async () => {
                                         await navigator.clipboard.writeText(JSON.stringify({
@@ -49,7 +52,7 @@ export default function RenderErrorBoundary({ children }: { children: React.Reac
                                         Join our Discord server
                                 </Button>
                             </Group>
-                        </Stack>
+                        </Flex>
                     }
                 </Alert>
             </Center>
