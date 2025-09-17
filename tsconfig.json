@@ -19,7 +19,13 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "paths": {
+            "@/*": ["./src/*"],
+            "@components/*": ["./src/components/*"],
+            "@pages/*": ["./src/pages/*"],
+            "@api/*": ["./src/api/*"],
+        }
     },
     "include": [
         "src"
@@ -28,5 +34,5 @@
         {
             "path": "./tsconfig.node.json"
         }
-    ]
+    ],
 }
