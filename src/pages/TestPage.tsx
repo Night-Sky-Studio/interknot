@@ -1,4 +1,4 @@
-import { Center, Stack, Group, Image, Text, Card, GroupProps, Tooltip, useMantineTheme, Table, Pagination, ActionIcon, LoadingOverlay } from "@mantine/core"
+import { Center, Stack, Group, Image, Text, Card, GroupProps, Tooltip, useMantineTheme, Table, Pagination, ActionIcon, LoadingOverlay, Button, MantineTheme, MultiSelect } from "@mantine/core"
 import { BaseWeapon, type Character, DriveDiscSet, type ICursoredResult, type ProfileInfo, Property, url, Weapon } from "@interknot/types"
 import { useAsync } from "react-use"
 import { useMemo, useState } from "react"
@@ -10,6 +10,7 @@ import "@components/cells/styles/CritCell.css"
 import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
 import { ZenlessIcon } from "@/components/icons/Icons"
+import { useBackend } from "@/components/BackendProvider"
 
 interface IWeaponCellProps {
     weapon: Weapon | null
@@ -78,7 +79,7 @@ interface IDriveDiscsCellProps extends GroupProps {
 function DriveDiscsCell({ sets, ...props }: IDriveDiscsCellProps): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
-        <Group w="160px" gap="8px" wrap="nowrap" {...props}>
+        <Group /*w="160px"*/ gap="8px" wrap="nowrap" {...props}>
             {
                 sets.map(set => {
                     return (
@@ -111,6 +112,7 @@ export default function TestPage() {
 
     const [cursor, setCursor] = useState<string | undefined>(undefined)
     const [limit, setLimit] = useState(20)
+    const [filterQuery, setFilterQuery] = useState<Record<string, string>>({})
 
     const charactersState = useAsync(async () => {
         const response = await fetch(url({
@@ -118,12 +120,13 @@ export default function TestPage() {
             path: "/characters",
             query: {
                 cursor: cursor,
-                limit: limit.toString()
+                limit: limit.toString(),
+                ...filterQuery
             }
         }))
         const result = await response.json()
         return restoreProperties(result) as ICursoredResult<Character & { BuildId: number, ProfileInfo?: ProfileInfo }, string>
-    }, [uid, cursor, limit])
+    }, [uid, cursor, limit, filterQuery])
 
     const characters = useMemo(() => charactersState.value?.data, [charactersState.value?.data])
 
@@ -139,7 +142,7 @@ export default function TestPage() {
     const getTopStats = (c: Character): Property[] => {
         const result: Property[] = []
         let skippedStats = 0
-        for (const prodId of c.DisplayProps) {
+        for (const prodId of (c.DisplayProps ?? [])) {
             const stat = c.Stats.find((p) => p.Id === prodId)
             if (stat?.Value === 0) {
                 skippedStats++
@@ -163,11 +166,75 @@ export default function TestPage() {
         }))
         const result = await response.json()
         return result.data
-    }, [charactersState.value])
+    }, [charactersState.value?.totalCountHash])
 
     const totalCount = useMemo(() => totalCountState.value, [totalCountState.value])
 
+    const backend = useBackend()
+    const filters = useMemo(() => backend.state?.filters, [backend.state?.filters])
+    const filterGroups = useMemo(() => {
+        const result = Object.entries(filters ?? []).map(([g, f]) => ({
+            group: g,
+            items: (f.map(v => ({ 
+                value: `${g}:${v.value}`,
+                label: getLocalString(v.label),
+            })))
+        }))
+        return result 
+    }, [filters])
+    const filterItems = useMemo(() => {
+        const result: Map<string, { label: string, value: string, img?: string }> = new Map()
+
+        Object.entries(filters ?? []).forEach(([g, f]) => {
+            f.forEach(v => result.set(`${g}:${v.value}`, { label: getLocalString(v.label), value: v.value, img: v.img }))
+        })
+
+        return result
+    }, [filters])
+
     return <Stack>
+        {filterGroups && 
+            <MultiSelect data={filterGroups} 
+                renderOption={({ option }) => {
+                    const item = filterItems.get(option.value)
+                    if (!item) return <Text>{ option.value }</Text>
+                    const hasIcon = /[M|P]\d/.test(option.label)
+                    return <Group>
+                        { item?.img !== undefined && <Image src={item.img} w="32px" h="32px" /> }
+                        { item?.img === undefined && !hasIcon && <ZenlessIcon id={Number(item.value)} size={18} color="white" /> }
+                        <Text>{ item?.label }</Text>
+                    </Group>
+                }}
+                maxDropdownHeight={512}
+                styles={{
+                    dropdown: { 
+                        boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px" 
+                    }, 
+                    group: {
+                        marginBottom: "0.5rem"
+                    },
+                    groupLabel: { 
+                        fontWeight: 600, 
+                        color: "white",
+                        fontSize: "1.25rem"
+                    } 
+                }}
+                placeholder="Filter by..." searchable clearable hidePickedOptions onChange={(val) => {
+                    console.log(val)
+                    const q: Record<string, string> = {}
+                    val.forEach(v => {
+                        const [g, v2] = v.split(":")
+                        if (q[g]) {
+                            q[g] += `,${v2}`
+                        } else {
+                            q[g] = v2
+                        }
+                    })
+                    setFilterQuery(q)
+                    setPage(1)
+                    setCursor(undefined)
+                }} />
+        }
         {
             characters && 
                 <Card p="0" pos="relative" withBorder>
@@ -185,7 +252,9 @@ export default function TestPage() {
                                     columns: [
                                         {
                                             accessor: "BuildId",
-                                            title: "Id"
+                                            title: "Id",
+                                            width: "7ch",
+                                            cellsStyle: () => ({ maxWidth: "7ch" })
                                         },
                                         { 
                                             accessor: "ProfileInfo.Nickname",
@@ -219,7 +288,7 @@ export default function TestPage() {
                                         { 
                                             accessor: "DriveDisksSet",
                                             title: "Drive Discs",
-                                            cellsStyle: () => ({ width: "160px" }),
+                                            // cellsStyle: () => ({ width: "160px" }),
                                             render: (c) => <DriveDiscsCell sets={c.DriveDisksSet}  />
                                         },
                                         { 
@@ -242,11 +311,11 @@ export default function TestPage() {
                                 { 
                                     id: "stats",
                                     title: "",
-
                                     columns: [
                                         ...[0, 1, 2, 3].map((idx) => ({
                                             accessor: `stat-${idx}`,
                                             title: idx === 0 ? "Stats" : "",
+                                            visibleMediaQuery: () => `(min-width: 1290px)`,
                                             cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
                                             render: (c: Character) => {
                                                 const stats = getTopStats(c)
@@ -269,6 +338,10 @@ export default function TestPage() {
                                     setPage(1)
                                     setCursor(undefined)
                                 }}
+                                onLastPage={() => {
+                                    setPage(totalCount ? Math.ceil(totalCount / limit) : 1)
+                                    setCursor("gte:crit_value=0;id=0")
+                                }}
                                 onNextPage={() => {
                                     setPage((p) => p + 1)
                                     if (cursor?.includes("gte:")) {
@@ -286,14 +359,14 @@ export default function TestPage() {
                                     }
                                 }}>
                                 <Group gap="xs">
-                                    <Pagination.First />
-                                    <Pagination.Previous />
-                                    <ActionIcon variant="filled" autoContrast>{page}</ActionIcon>
-                                    <Pagination.Next />
-                                    <Pagination.Last disabled />
+                                    <Pagination.First disabled={page === 1} />
+                                    <Pagination.Previous disabled={page === 1} />
+                                    <Button variant="filled" autoContrast>{page}</Button>
+                                    <Pagination.Next disabled={charactersState.value?.hasNextPage === false} />
+                                    <Pagination.Last disabled={charactersState.value?.hasNextPage === false} />
                                 </Group>
                             </Pagination.Root>
-                            <Text style={{ position: "absolute", right: "1rem" }}>Showing {limit * (page - 1) + 1} - {Math.min(totalCount, limit * page)} of {totalCount}</Text>
+                            <Text style={{ position: "absolute", right: "1rem" }}>Showing {limit * (page - 1) + 1} - {totalCount ? Math.min(totalCount, limit * page) : "?"} of {totalCount ?? "undefined"}</Text>
                         </Center>
                     </Stack>
                 </Card>
