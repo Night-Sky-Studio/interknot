@@ -8,21 +8,23 @@ interface IDriveDiscsCellProps extends TableTdProps {
 
 export default function DriveDiscsCell({ sets, ...props }: IDriveDiscsCellProps): React.ReactElement {
     const { getLocalString } = useSettings()
-    return <Table.Td w="160px" {...props}>
-        <Group gap="8px" wrap="nowrap">
-            {
-                sets.map(set => {
-                    return (
-                        <Tooltip key={set.Set.Id} label={getLocalString(set.Set.Name)} openDelay={500} 
-                            portalProps={{ reuseTargetNode: true }}>
-                            <Group gap="-14px" align="flex-end" wrap="nowrap">
-                                <Image src={set.Set.IconUrl} h="32px" /> 
-                                <Text size="10pt">{set.Count}</Text>
-                            </Group>
-                        </Tooltip>
-                    )
-                })
-            }
-        </Group>
-    </Table.Td>
+    return ( 
+        <Table.Td w="160px" {...props}>
+            <Group gap="8px" wrap="nowrap">
+                {
+                    sets.map(set => {
+                        return (
+                            <Tooltip key={set.Set.Id} label={getLocalString(set.Set.Name)} openDelay={500} 
+                                portalProps={{ reuseTargetNode: true }}>
+                                <Group gap="-14px" align="flex-end" wrap="nowrap">
+                                    <Image src={set.Set.IconUrl} h="32px" /> 
+                                    <Text size="10pt">{set.Count}</Text>
+                                </Group>
+                            </Tooltip>
+                        )
+                    })
+                }
+            </Group>
+        </Table.Td>
+    )
 }
