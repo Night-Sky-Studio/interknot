@@ -1,4 +1,4 @@
-import { Center, Stack, Group, Image, Text, Card, GroupProps, Tooltip, useMantineTheme, Table, Pagination, ActionIcon, LoadingOverlay, Button, MantineTheme, MultiSelect } from "@mantine/core"
+import { Center, Stack, Group, Image, Text, Card, GroupProps, Tooltip, useMantineTheme, Pagination, LoadingOverlay, Button } from "@mantine/core"
 import { BaseWeapon, type Character, DriveDiscSet, type ICursoredResult, type ProfileInfo, Property, url, Weapon } from "@interknot/types"
 import { useAsync } from "react-use"
 import { useMemo, useState } from "react"
@@ -10,7 +10,7 @@ import "@components/cells/styles/CritCell.css"
 import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
 import { ZenlessIcon } from "@/components/icons/Icons"
-import { useBackend } from "@/components/BackendProvider"
+import FilterSelector from "@/components/FilterSelector/FilterSelector"
 
 interface IWeaponCellProps {
     weapon: Weapon | null
@@ -170,75 +170,39 @@ export default function TestPage() {
 
     const totalCount = useMemo(() => totalCountState.value, [totalCountState.value])
 
-    const backend = useBackend()
-    const filters = useMemo(() => backend.state?.filters, [backend.state?.filters])
-    const filterGroups = useMemo(() => {
-        const result = Object.entries(filters ?? []).map(([g, f]) => ({
-            group: g,
-            items: (f.map(v => ({ 
-                value: `${g}:${v.value}`,
-                label: getLocalString(v.label),
-            })))
-        }))
-        return result 
-    }, [filters])
-    const filterItems = useMemo(() => {
-        const result: Map<string, { label: string, value: string, img?: string }> = new Map()
-
-        Object.entries(filters ?? []).forEach(([g, f]) => {
-            f.forEach(v => result.set(`${g}:${v.value}`, { label: getLocalString(v.label), value: v.value, img: v.img }))
-        })
-
-        return result
-    }, [filters])
-
     return <Stack>
-        {filterGroups && 
-            <MultiSelect data={filterGroups} 
-                renderOption={({ option }) => {
-                    const item = filterItems.get(option.value)
-                    if (!item) return <Text>{ option.value }</Text>
-                    const hasIcon = /[M|P]\d/.test(option.label)
-                    return <Group>
-                        { item?.img !== undefined && <Image src={item.img} w="32px" h="32px" /> }
-                        { item?.img === undefined && !hasIcon && <ZenlessIcon id={Number(item.value)} size={18} color="white" /> }
-                        <Text>{ item?.label }</Text>
-                    </Group>
-                }}
-                maxDropdownHeight={512}
-                styles={{
-                    dropdown: { 
-                        boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px" 
-                    }, 
-                    group: {
-                        marginBottom: "0.5rem"
-                    },
-                    groupLabel: { 
-                        fontWeight: 600, 
-                        color: "white",
-                        fontSize: "1.25rem"
-                    } 
-                }}
-                placeholder="Filter by..." searchable clearable hidePickedOptions onChange={(val) => {
-                    console.log(val)
-                    const q: Record<string, string> = {}
-                    val.forEach(v => {
-                        const [g, v2] = v.split(":")
-                        if (q[g]) {
-                            q[g] += `,${v2}`
-                        } else {
-                            q[g] = v2
-                        }
-                    })
-                    setFilterQuery(q)
-                    setPage(1)
-                    setCursor(undefined)
-                }} />
-        }
+        <FilterSelector onFilterApply={(val) => {
+            const q: Record<string, string> = {}
+            val.forEach(v => {
+                const add = (g: string, s: string) => {
+                    if (q[g]) {
+                        q[g] += `,${s}`
+                    } else {
+                        q[g] = s
+                    }
+                }
+                const [g, val] = v.split(":")
+                switch (g) {
+                    case "disc_set":
+                        add("partial_sets", val)
+                        add("full_set", val)
+                        break
+                    case "prop_id":
+                        break
+                    default: 
+                        add(g, val)
+                        break
+                }
+            })
+            console.log(q)
+            setFilterQuery(q)
+            setPage(1)
+            setCursor(undefined)
+        }} />
         {
             characters && 
                 <Card p="0" pos="relative" withBorder>
-                    <LoadingOverlay visible={charactersState.loading} zIndex={1000} 
+                    <LoadingOverlay visible={charactersState.loading} zIndex={9}
                         overlayProps={{ radius: "sm", blur: 2 }} />
                     <Stack>
                         <DataTable
