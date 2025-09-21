@@ -4,10 +4,11 @@ import { Group, Loader, MultiSelect, Text, Title, Image, Center } from "@mantine
 import { useMemo } from "react"
 import { ZenlessIcon } from "../icons/Icons"
 export interface IFilterSelectorProps {
+    value?: string[]
     onFilterApply: (filters: string[]) => void
 }
 
-export default function FilterSelector({ onFilterApply }: IFilterSelectorProps) {
+export default function FilterSelector({ value, onFilterApply }: IFilterSelectorProps) {
     const { getLocalString } = useSettings()
     const { state: backend } = useBackend()
 
@@ -18,10 +19,10 @@ export default function FilterSelector({ onFilterApply }: IFilterSelectorProps) 
             group,
             items: (filter.map(v => {
                 let label = getLocalString(v.label)
-                if (group.includes("2")) {
+                if (group.includes("2-Piece")) {
                     label = `2p ${label}`
                 }
-                if (group.includes("4")) {
+                if (group.includes("4-Piece")) {
                     label = `4p ${label}`
                 }
                 return {
@@ -38,10 +39,10 @@ export default function FilterSelector({ onFilterApply }: IFilterSelectorProps) 
         Object.entries(filters ?? []).forEach(([group, f]) => {
             f.forEach(v => {
                 let label = getLocalString(v.label)
-                if (group.includes("2")) {
+                if (group.includes("2-Piece")) {
                     label = `2p ${label}`
                 }
-                if (group.includes("4")) {
+                if (group.includes("4-Piece")) {
                     label = `4p ${label}`
                 }
                 result.set(`${v.column}:${v.value}`, { group, label: label, value: v.value, img: v.img })
@@ -57,7 +58,8 @@ export default function FilterSelector({ onFilterApply }: IFilterSelectorProps) 
         }
         {
             filterGroups &&
-                <MultiSelect data={filterGroups} 
+                <MultiSelect 
+                    data={filterGroups} 
                     renderOption={({ option }) => {
                         const item = filterItems.get(option.value)
                         if (!item) return <Text>{ option.value }</Text>
@@ -90,6 +92,7 @@ export default function FilterSelector({ onFilterApply }: IFilterSelectorProps) 
                     searchable 
                     clearable 
                     hidePickedOptions 
+                    value={value}
                     onChange={onFilterApply} />
         }
     </>)
