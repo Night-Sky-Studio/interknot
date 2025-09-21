@@ -20,6 +20,7 @@ import { Notifications } from "@mantine/notifications"
 import { BackendProvider } from "./components/BackendProvider"
 import { useEffect } from "react"
 import TestPage from "./pages/TestPage"
+import BuildsPage from "./pages/BuildsPage"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -64,6 +65,7 @@ export default function App() {
                                             <Route path="/profile/:uid" element={<ProfilePageWrapper />} />
                                             <Route path="/user/:uid" element={<Redirect to="/profile/:uid" />} />
                                             <Route path="settings" element={<SettingsPage />}/>
+                                            <Route path="builds" element={<BuildsPage />} />
                                             <Route path="leaderboards" element={<LeaderboardsPage />} />
                                             <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
                                             <Route path="test" element={<TestPage />} />

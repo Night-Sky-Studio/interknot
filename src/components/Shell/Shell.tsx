@@ -103,7 +103,7 @@ export default function Shell(): React.ReactElement {
             <AppShell.Header>
                 <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
-                        <Group gap={0} wrap="nowrap">
+                        <Group gap="0px" wrap="nowrap">
                             <Button variant="transparent" component="a" href="/" onClick={(evt) => {
                                 evt.preventDefault()
                                 navigate("/")
@@ -113,7 +113,7 @@ export default function Shell(): React.ReactElement {
                                 </Group>
                             </Button>
                             <Text c="dimmed" size="lg" fw={500}>β</Text>
-                            <Group ml="md" className="header-buttons">
+                            <Group ml="md" className="header-buttons" gap="xs">
                                 <Button size="xs"
                                     component="a" href="/leaderboards"
                                     variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"} 
@@ -121,15 +121,22 @@ export default function Shell(): React.ReactElement {
                                         evt.preventDefault()
                                         navigate("/leaderboards")
                                     }}>Leaderboards</Button>
+                                <Button size="xs"
+                                    component="a" href="/builds"
+                                    variant={location.pathname.includes("builds") ? "filled" : "subtle"} 
+                                    onClick={(evt) => {
+                                        evt.preventDefault()
+                                        navigate("/builds")
+                                    }}>Builds</Button>
                             </Group>
                         </Group>
                         <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
                         <Group className="header-buttons"  gap="xs">
                             <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
-                            <ActionIcon><IconBrandPatreonFilled /></ActionIcon>
+                            <ActionIcon disabled><IconBrandPatreonFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
                             <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
-                            <Button leftSection={<IconLogin />}>Log in</Button>
+                            <Button disabled leftSection={<IconLogin />}>Log in</Button>
                         </Group>
                     </Flex>
                 </Container>
@@ -142,6 +149,14 @@ export default function Shell(): React.ReactElement {
                     active={location.pathname.includes("leaderboards")}
                     onClick={() => {
                         navigate("/leaderboards")
+                        toggle()
+                    }} />
+                <NavLink label="Builds" leftSection={<IconTrophyFilled />}
+                    variant="filled" 
+                    autoContrast
+                    active={location.pathname.includes("builds")}
+                    onClick={() => {
+                        navigate("/builds")
                         toggle()
                     }} />
                 <NavLink label="Log in" leftSection={<IconLogin />} />
