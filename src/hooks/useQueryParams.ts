@@ -31,11 +31,7 @@ export function useQueryParams(): [
         const nextParams =
             typeof action === "function" ? action(params) : action
 
-        const next = new URLSearchParams(searchParams)
-
-        if (replace) {
-            next.forEach((_, key) => next.delete(key))
-        }
+        const next = new URLSearchParams(replace ? undefined : searchParams)
 
         Object.entries(nextParams).forEach(([key, value]) => {
             if (value === undefined) {
