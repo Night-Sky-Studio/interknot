@@ -109,10 +109,16 @@ export default function BuildsPage(): React.ReactElement {
                 <Stack gap="0">
                     <Text>Some examples:</Text>
                     <Stack component="ul" gap="0.25rem">
-                        <li><Anchor c="white">
+                        <li><Anchor c="white" href="/builds?character_id=1091" onClick={(e) => {
+                            e.preventDefault()
+                            setQueryParams({ character_id: "1091" }, true)
+                        }}>
                             <Group gap="0">What weapons are used on <GameObject img="https://enka.network/ui/zzz/IconRoleCircle13.png" name="Avatar_Female_Size02_Unagi" />?</Group>
                         </Anchor></li>
-                        <li><Anchor c="white">
+                        <li><Anchor c="white" href="/builds?partial_sets=31000&full_set=32700" onClick={(e) => {
+                            e.preventDefault()
+                            setQueryParams({ partial_sets: "31000", full_set: "32700" }, true)
+                        }}>
                             <Group gap="0">
                                 Which characters have 
                                     <GameObject img="https://enka.network/ui/zzz/SuitBranch&BladeSong.png"
@@ -121,10 +127,13 @@ export default function BuildsPage(): React.ReactElement {
                                         name="EquipmentSuit_31000_name" /> drive discs equipped?
                             </Group>
                         </Anchor></li>
-                        <li><Anchor c="white">
+                        <li><Anchor c="white" href="/builds?character_id=1261&disc_main_stats=23103" onClick={(e) => {
+                            e.preventDefault()
+                            setQueryParams({ character_id: "1261", disc_main_stats: "23103" }, true)
+                        }}>
                             <Group gap="0">
-                                What are the highest crit builds with
-                                <GameObject img="https://enka.network/ui/zzz/IconRoleCircle16.png" name="Avatar_Male_Size03_Ben" />?
+                                Are <GameObject propId={23103} name="PenRatio" /> discs popular on
+                                <GameObject img="https://enka.network/ui/zzz/IconRoleCircle24.png" name="Avatar_Female_Size03_JaneDoe" />?
                             </Group>
                         </Anchor></li>
                     </Stack>
