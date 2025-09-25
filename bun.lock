@@ -199,7 +199,7 @@
 
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.33.5", "", { "os": "win32", "cpu": "x64" }, "sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg=="],
 
-    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#9f81d3e", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-9f81d3e"],
+    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#0e9c47f", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-0e9c47f"],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.8", "", { "dependencies": { "@jridgewell/set-array": "^1.2.1", "@jridgewell/sourcemap-codec": "^1.4.10", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA=="],
 

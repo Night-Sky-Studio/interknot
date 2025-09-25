@@ -1,14 +1,14 @@
-import { restoreProperties } from "@/api/data"
-import CritCell from "@/components/cells/CritCell"
-import DriveDiscsCell from "@/components/cells/DriveDiscsCell"
-import PropertyCell from "@/components/cells/PropertyCell"
-import WeaponCell from "@/components/cells/WeaponCell"
-import FilterSelector from "@/components/FilterSelector/FilterSelector"
-import GameObject from "@/components/GameObject/GameObject"
-import { useSettings } from "@/components/SettingsProvider"
-import { ServerChip } from "@/components/UserHeader/UserHeader"
+import { getCharacters, getCharactersCount } from "@api/data"
+import CritCell from "@components/cells/CritCell"
+import DriveDiscsCell from "@components/cells/DriveDiscsCell"
+import PropertyCell from "@components/cells/PropertyCell"
+import WeaponCell from "@components/cells/WeaponCell"
+import FilterSelector from "@components/FilterSelector/FilterSelector"
+import GameObject from "@components/GameObject/GameObject"
+import { useSettings } from "@components/SettingsProvider"
+import { ServerChip } from "@components/UserHeader/UserHeader"
 import { useQueryParams } from "@/hooks/useQueryParams"
-import { url, ICursoredResult, Character, ProfileInfo, Property } from "@interknot/types"
+import { Character, Property, Build } from "@interknot/types"
 import { Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
@@ -32,21 +32,15 @@ export default function BuildsPage(): React.ReactElement {
     const [{ cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
 
-    const charactersState = useAsync(async () => {
-        const response = await fetch(url({
-            base: "http://localhost:5100",
-            path: "/characters",
-            query: {
-                cursor: cursor?.toString(),
-                limit: limit?.toString(),
-                ...filterQuery
-            }
-        }))
-        const result = await response.json()
-        return restoreProperties(result) as ICursoredResult<Character & { BuildId: number, ProfileInfo?: ProfileInfo }, string>
+    const buildsState = useAsync(async () => {
+        return await getCharacters({
+            cursor: cursor?.toString(), 
+            limit: limitNum, 
+            filter: filterQuery as Record<string, string>
+        })
     }, [cursor, limit, filterQuery])
 
-    const characters = useMemo(() => charactersState.value?.data, [charactersState.value?.data])
+    const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data])
 
     const mindscapeChip = (level: number) => {
         return (
@@ -74,18 +68,9 @@ export default function BuildsPage(): React.ReactElement {
 
     const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
 
-    
     const totalCountState = useAsync(async () => {
-        const response = await fetch(url({
-            base: "http://localhost:5100",
-            path: "/characters/count",
-            query: {
-                hash: charactersState.value?.totalCountHash
-            }
-        }))
-        const result = await response.json()
-        return result.data
-    }, [charactersState.value?.totalCountHash])
+        return (await getCharactersCount({ hash: buildsState.value?.totalCountHash }))
+    }, [buildsState.value?.totalCountHash])
 
     const totalCount = useMemo(() => totalCountState.value, [totalCountState.value])
 
@@ -113,7 +98,7 @@ export default function BuildsPage(): React.ReactElement {
                             e.preventDefault()
                             setQueryParams({ character_id: "1091" }, true)
                         }}>
-                            <Group gap="0">What weapons are used on <GameObject img="https://enka.network/ui/zzz/IconRoleCircle13.png" name="Avatar_Female_Size02_Unagi" />?</Group>
+                            <Group gap="0">What weapons are used on <GameObject img="https://enka.network/ui/zzz/IconRoleCircle13.png" name="Avatar_Female_Size02_Unagi" /></Group>
                         </Anchor></li>
                         <li><Anchor c="white" href="/builds?partial_sets=31000&full_set=32700" onClick={(e) => {
                             e.preventDefault()
@@ -124,7 +109,7 @@ export default function BuildsPage(): React.ReactElement {
                                     <GameObject img="https://enka.network/ui/zzz/SuitBranch&BladeSong.png"
                                         name="EquipmentSuit_32700_name" /> and
                                     <GameObject img="https://enka.network/ui/zzz/SuitWoodpeckerElectro.png"
-                                        name="EquipmentSuit_31000_name" /> drive discs equipped?
+                                        name="EquipmentSuit_31000_name" /> drive discs equipped
                             </Group>
                         </Anchor></li>
                         <li><Anchor c="white" href="/builds?character_id=1261&disc_main_stats=23103" onClick={(e) => {
@@ -133,7 +118,7 @@ export default function BuildsPage(): React.ReactElement {
                         }}>
                             <Group gap="0">
                                 Are <GameObject propId={23103} name="PenRatio" /> discs popular on
-                                <GameObject img="https://enka.network/ui/zzz/IconRoleCircle24.png" name="Avatar_Female_Size03_JaneDoe" />?
+                                <GameObject img="https://enka.network/ui/zzz/IconRoleCircle24.png" name="Avatar_Female_Size03_JaneDoe" />
                             </Group>
                         </Anchor></li>
                     </Stack>
@@ -173,9 +158,9 @@ export default function BuildsPage(): React.ReactElement {
                 setPage(1)
             }} />
         {
-            characters && 
+            builds && 
                 <Card p="0" pos="relative" withBorder>
-                    <LoadingOverlay visible={charactersState.loading} zIndex={9}
+                    <LoadingOverlay visible={buildsState.loading} zIndex={9}
                         overlayProps={{ radius: "sm", blur: 2 }} />
                     <Stack>
                         <DataTable
@@ -188,58 +173,58 @@ export default function BuildsPage(): React.ReactElement {
                                     title: "",
                                     columns: [
                                         {
-                                            accessor: "BuildId",
+                                            accessor: "Id",
                                             title: "Id",
                                             width: "7ch",
                                             cellsStyle: () => ({ maxWidth: "7ch" })
                                         },
                                         { 
-                                            accessor: "ProfileInfo.Nickname",
+                                            accessor: "Owner.Nickname",
                                             title: "Owner",
-                                            render: (c) => (
+                                            render: (b) => (
                                                 <Group gap="sm" wrap="nowrap">
-                                                    <ServerChip uid={c.ProfileInfo?.Uid.toString() ?? ""} />
-                                                    <Text style={{ whiteSpace: "nowrap" }}>{c.ProfileInfo?.Nickname}</Text>
+                                                    <ServerChip uid={b.Owner?.Uid.toString() ?? ""} />
+                                                    <Text style={{ whiteSpace: "nowrap" }}>{b.Owner?.Nickname}</Text>
                                                 </Group>
                                             )
                                         },
                                         {
                                             accessor: "Name",
                                             title: "Name",
-                                            render: (c) => (
+                                            render: (b) => (
                                                 <Group gap="sm" wrap="nowrap">
-                                                    <Image src={c.CircleIconUrl} h="32px" />
-                                                    <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
+                                                    <Image src={b.Character.CircleIconUrl} h="32px" />
+                                                    <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(b.Character.Name)}</Text>
                                                 </Group>
                                             )
                                         },
                                         { 
-                                            accessor: "MindscapeLevel",
+                                            accessor: "Character.MindscapeLevel",
                                             title: "Mindscape",
-                                            render: (c) => mindscapeChip(c.MindscapeLevel)
+                                            render: (b) => mindscapeChip(b.Character.MindscapeLevel)
                                         },
                                         { 
-                                            accessor: "Weapon",
-                                            render: (c) => <WeaponCell weapon={c.Weapon} />
+                                            accessor: "Character.Weapon",
+                                            render: (b) => <WeaponCell weapon={b.Character.Weapon} />
                                         },
                                         { 
-                                            accessor: "DriveDisksSet",
+                                            accessor: "Character.DriveDisksSet",
                                             title: "Drive Discs",
                                             // cellsStyle: () => ({ width: "160px" }),
-                                            render: (c) => <DriveDiscsCell sets={c.DriveDisksSet}  />
+                                            render: (b) => <DriveDiscsCell sets={b.Character.DriveDisksSet}  />
                                         },
                                         { 
-                                            accessor: "CritValue",
+                                            accessor: "Character.CritValue",
                                             title: "Crit Value",
                                             cellsStyle: () => ({ 
                                                 width: "calc(10rem * var(--mantine-scale))",
                                                 background: "rgba(0 0 0 / 15%)" 
                                             }) ,
-                                            render: (c) => (
+                                            render: (b) => (
                                                 <CritCell
-                                                    cr={c.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
-                                                    cd={c.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
-                                                    cv={c.CritValue}
+                                                    cr={b.Character.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
+                                                    cd={b.Character.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
+                                                    cv={b.Character.CritValue}
                                                 />
                                             )
                                         }
@@ -254,8 +239,8 @@ export default function BuildsPage(): React.ReactElement {
                                             title: idx === 0 ? "Stats" : "",
                                             visibleMediaQuery: () => `(min-width: 1290px)`,
                                             cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
-                                            render: (c: Character) => {
-                                                const stats = getTopStats(c)
+                                            render: (c: Build) => {
+                                                const stats = getTopStats(c.Character)
                                                 const prop = stats[idx]
                                                 return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
                                             }
@@ -263,7 +248,7 @@ export default function BuildsPage(): React.ReactElement {
                                     ]
                                 }
                             ]}
-                            records={characters}
+                            records={builds}
                             idAccessor="BuildId"
                             // onRecordsPerPageChange={(l) => {
                             //     setLimit(l)
@@ -290,7 +275,7 @@ export default function BuildsPage(): React.ReactElement {
                                             setQueryParams((prev) => ({ ...prev, cursor: prev.cursor?.toString()?.replace("gte", "lte") }))
                                         } else {
                                             // setCursor(charactersState.value?.cursor)
-                                            setQueryParams({ cursor: charactersState.value?.cursor })
+                                            setQueryParams({ cursor: buildsState.value?.cursor })
                                         }
                                     }}
                                     onPreviousPage={() => {
@@ -298,15 +283,15 @@ export default function BuildsPage(): React.ReactElement {
                                         if (page === 1) {
                                             setQueryParams({ cursor: undefined })
                                         } else {
-                                            setQueryParams({ cursor: `gte:crit_value=${characters[0].CritValue};id=${characters[0].BuildId}` })
+                                            setQueryParams({ cursor: `gte:crit_value=${builds[0].Character.CritValue};id=${builds[0].Id}` })
                                         }
                                     }}>
                                     <Group gap="xs">
                                         <Pagination.First disabled={page === 1} />
                                         <Pagination.Previous disabled={page === 1} />
                                         <Button variant="filled" autoContrast>{page ?? "??"}</Button>
-                                        <Pagination.Next disabled={charactersState.value?.hasNextPage === false} />
-                                        <Pagination.Last disabled={charactersState.value?.hasNextPage === false} />
+                                        <Pagination.Next disabled={buildsState.value?.hasNextPage === false} />
+                                        <Pagination.Last disabled={buildsState.value?.hasNextPage === false} />
                                     </Group>
                                 </Pagination.Root>
                                 <Select w="128px"

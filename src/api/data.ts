@@ -1,4 +1,4 @@
-import { BelleMessage, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, PagedData, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { BaseLeaderboard, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -25,11 +25,15 @@ export interface BackendError {
     code?: number
 }
 
-const dataUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:5100/" : "https://data.interknot.space"
+const dataUrl = process.env.NODE_ENV === "development" 
+    ? "http://127.0.0.1:5100/" 
+    : process.env.NODE_ENV === "preview" 
+        ? "https://data-preview.interknot.space"
+        : "https://data.interknot.space"
 
 // This should restore Property classes that's lost 
 // when converting from json
-function restoreProperties(obj: any): any {
+export function restoreProperties(obj: any): any {
     if (Array.isArray(obj)) {
         return obj.map(restoreProperties) // Recursively process arrays
     } else if (obj && typeof obj === "object") {
@@ -44,15 +48,96 @@ function restoreProperties(obj: any): any {
     return obj
 }
 
-export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
-    let response = await fetch(url({
-        base: dataUrl,
-        path: "profiles",
-        query: [{ query }]
-    }))
-    if (response.status !== 200) return []
+async function get<T>(u: string, restoreProps: boolean = false): Promise<T> {
+    console.log(u)
+    let response = await fetch(u)
+    if (response.status !== 200) {
+        throw new Error(JSON.stringify(await response.json()))
+    } 
+    let result = await response.json() as IResult<T>
+    if (restoreProps && result.data) {
+        result.data = restoreProperties(result.data)
+    }
+    if (result.data === undefined) {
+        throw new Error("No data in response")
+    }
+    return result.data
+}
 
-    return await response.json()
+async function getCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
+    console.log(u)
+    let response = await fetch(u)
+    if (response.status !== 200) {
+        throw new Error(JSON.stringify(await response.json()))
+    }
+    let result = await response.json() as ICursoredResult<T>
+    if (restoreProps && result.data) {
+        result.data = result.data.map(restoreProperties)
+    }
+    if (result.data === undefined) {
+        throw new Error("No data in response")
+    }
+    return result
+}
+
+export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
+    return await get(url({
+        base: dataUrl,
+        path: "profile/search",
+        query: { query }
+    }))
+}
+
+export async function getProfile(uid: number, update: boolean = false): Promise<ProfileInfo> {
+    return await get(url({
+        base: dataUrl,
+        path: `profile/${uid}`,
+        query: { update: `${update}` }
+    }))
+}
+
+interface IQueryParams {
+    uid?: number
+    cursor?: string
+    limit?: number
+    filter?: Record<string, string>
+    sort?: string
+}
+
+export async function getCharacters({ uid, cursor, limit, filter }: IQueryParams): Promise<ICursoredResult<Build>> {
+    return await getCursored(url({
+        base: dataUrl,
+        path: "characters",
+        query: {
+            uid: uid?.toString(),
+            cursor,
+            limit: limit?.toString(),
+            ...filter
+        }
+    }), true)
+}
+export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: string }): Promise<number> {
+    return await get(url({
+        base: dataUrl,
+        path: "characters/count",
+        query: {
+            uid: uid?.toString(),
+            hash
+        }
+    }))
+}
+
+export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams): Promise<ICursoredResult<DriveDisc>> {
+    return await getCursored(url({
+        base: dataUrl,
+        path: "discs",
+        query: {
+            uid: uid?.toString(),
+            cursor,
+            limit: limit?.toString(),
+            ...filter
+        }
+    }), true)
 }
 
 export async function getUser(uid: number, update: boolean = false) : Promise<Profile> {
@@ -71,21 +156,15 @@ export async function getUser(uid: number, update: boolean = false) : Promise<Pr
     return restoreProperties(json)
 }
 
-export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<LeaderboardProfile> {
-    const response = await fetch(url({
+export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<IResult<Omit<BaseLeaderboardEntry, "RotationValue">[]>> {
+    return await get(url({
         base: dataUrl,
-        path: `/leaderboards/${uid}`,
-        query: [
-            { "update": `${update}` }
-        ]
+        path: `leaderboards/${uid}`,
+        query: { update: `${update}` }
     }))
-    if (response.status !== 200) 
-        throw new Error(`${response.status}: ${await response.text()}`)
-
-    return restoreProperties(await response.json())
 }
 
-export async function getLeaderboards(): Promise<Leaderboard[]> {
+export async function getLeaderboards(): Promise<IResult<BaseLeaderboard[]>> {
     const response = await fetch(url({
         base: dataUrl,
         path: "/leaderboards"
