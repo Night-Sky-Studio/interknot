@@ -1,6 +1,6 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "../api/data"
-import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert, Anchor } from "@mantine/core"
+import { Card, Center, Group, Image, Loader, Stack, Table, Text, Title, Alert, Anchor } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
@@ -18,7 +18,7 @@ export default function LeaderboardsPage(): React.ReactElement {
         <title>Leaderboards | Inter-Knot</title>
         <Stack>
             <Alert variant="light" color="blue" 
-                title="Leaderboards are meant for comparing Drive Discs strength only!" icon={<IconInfoCircle />}>
+                title={<Title order={3}>Leaderboards are meant for comparing Drive Discs strength only!</Title>} icon={<IconInfoCircle />}>
                 <Stack>
                 <Text>
                     Your mindscape, character, weapon levels and any other upgradable stats

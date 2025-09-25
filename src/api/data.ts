@@ -1,4 +1,4 @@
-import { BaseLeaderboard, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { BaseLeaderboard, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardList, LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -164,7 +164,7 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
     }))
 }
 
-export async function getLeaderboards(): Promise<IResult<BaseLeaderboard[]>> {
+export async function getLeaderboards(): Promise<LeaderboardList[]> {
     const response = await fetch(url({
         base: dataUrl,
         path: "/leaderboards"
