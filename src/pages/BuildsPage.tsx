@@ -38,7 +38,7 @@ export default function BuildsPage(): React.ReactElement {
             limit: limitNum, 
             filter: filterQuery as Record<string, string>
         })
-    }, [cursor, limit, filterQuery])
+    }, [cursor, limitNum, filterQuery])
 
     const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data])
 
@@ -54,8 +54,8 @@ export default function BuildsPage(): React.ReactElement {
     const getTopStats = (c: Character): Property[] => {
         const result: Property[] = []
         let skippedStats = 0
-        for (const prodId of (c.DisplayProps ?? [])) {
-            const stat = c.Stats.find((p) => p.Id === prodId)
+        for (const propId of (c.DisplayProps ?? [])) {
+            const stat = c.Stats.find((p) => p.Id === propId)
             if (stat?.Value === 0) {
                 skippedStats++
                 if (c.DisplayProps.length - skippedStats >= 4) continue
@@ -126,6 +126,7 @@ export default function BuildsPage(): React.ReactElement {
             </Stack>
         </Alert>
         <FilterSelector 
+            exclude={["set_id"]}
             value={Object.entries(filterQuery).flatMap(([k, v]) => {
                 if (v === undefined) return []
                 return v.toString().split(",").map(s => `${k}:${s}`)
@@ -184,7 +185,12 @@ export default function BuildsPage(): React.ReactElement {
                                             render: (b) => (
                                                 <Group gap="sm" wrap="nowrap">
                                                     <ServerChip uid={b.Owner?.Uid.toString() ?? ""} />
-                                                    <Text style={{ whiteSpace: "nowrap" }}>{b.Owner?.Nickname}</Text>
+                                                    <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
+                                                        href={`/user/${b.Owner!.Uid}?openedId=${b.Character.Id}`} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        e.preventDefault()
+                                                        navigate(`/user/${b.Owner!.Uid}?openedId=${b.Character.Id}`)
+                                                    }}>{b.Owner?.Nickname}</Anchor>
                                                 </Group>
                                             )
                                         },
@@ -205,6 +211,7 @@ export default function BuildsPage(): React.ReactElement {
                                         },
                                         { 
                                             accessor: "Character.Weapon",
+                                            title: "Weapon",
                                             render: (b) => <WeaponCell weapon={b.Character.Weapon} />
                                         },
                                         { 
