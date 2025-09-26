@@ -5,39 +5,49 @@ import { useMemo } from "react"
 import { ZenlessIcon } from "../icons/Icons"
 export interface IFilterSelectorProps {
     value?: string[]
+    exclude?: string[]
     onFilterApply: (filters: string[]) => void
 }
 
-export default function FilterSelector({ value, onFilterApply }: IFilterSelectorProps) {
+export default function FilterSelector({ value, exclude, onFilterApply }: IFilterSelectorProps) {
     const { getLocalString } = useSettings()
     const { state: backend } = useBackend()
 
     const filters = useMemo(() => backend?.filters, [backend])
+
+    const excludedColumns = useMemo(() => new Set(exclude ?? []), [exclude])
+
     const filterGroups = useMemo(() => {
         if (!filters) return undefined
-        return Object.entries(filters).map(([group, filter]) => ({
-            group,
-            items: (filter.map(v => {
-                let label = getLocalString(v.label)
-                if (group.includes("2-Piece")) {
-                    label = `2p ${label}`
-                }
-                if (group.includes("4-Piece")) {
-                    label = `4p ${label}`
-                }
-                return {
-                    value: `${v.column}:${v.value}`,
-                    label: label
-                }
-            }))
-        }))
-    }, [filters])
+        return Object.entries(filters)
+            .map(([group, filter]) => {
+                const items = filter
+                    .filter(v => !excludedColumns.has(v.column))
+                    .map(v => {
+                        let label = getLocalString(v.label)
+                        if (group.includes("2-Piece")) {
+                            label = `2p ${label}`
+                        }
+                        if (group.includes("4-Piece")) {
+                            label = `4p ${label}`
+                        }
+                        return {
+                            value: `${v.column}:${v.value}`,
+                            label
+                        }
+                    })
+                if (!items.length) return null
+                return { group, items }
+            })
+            .filter((g): g is { group: string; items: { value: string; label: string }[] } => g !== null)
+    }, [filters, excludedColumns, getLocalString])
 
     const filterItems = useMemo(() => {
         const result: Map<string, { group: string, label: string, value: string, img?: string }> = new Map()
 
-        Object.entries(filters ?? []).forEach(([group, f]) => {
+        Object.entries(filters ?? {}).forEach(([group, f]) => {
             f.forEach(v => {
+                if (excludedColumns.has(v.column)) return
                 let label = getLocalString(v.label)
                 if (group.includes("2-Piece")) {
                     label = `2p ${label}`
@@ -45,12 +55,12 @@ export default function FilterSelector({ value, onFilterApply }: IFilterSelector
                 if (group.includes("4-Piece")) {
                     label = `4p ${label}`
                 }
-                result.set(`${v.column}:${v.value}`, { group, label: label, value: v.value, img: v.img })
+                result.set(`${v.column}:${v.value}`, { group, label, value: v.value, img: v.img })
             })
         })
 
         return result
-    }, [filters])
+    }, [filters, excludedColumns, getLocalString])
 
     return (<>
         {
