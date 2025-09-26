@@ -22,6 +22,32 @@ import CritCell, { discCvColor, discCvWeight } from "@/components/cells/CritCell
 import PropertyCell from "@/components/cells/PropertyCell"
 import FilterSelector from "@/components/FilterSelector/FilterSelector"
 
+function timeAgoIntl(date: Date | string) {
+    if (typeof date === "string") {
+        date = new Date(date)
+    }
+
+    const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" })
+
+    const seconds = Math.floor((date.getTime() - Date.now()) / 1000)
+
+    const ranges = {
+        year: 3600 * 24 * 365,
+        month: 3600 * 24 * 30,
+        week: 3600 * 24 * 7,
+        day: 3600 * 24,
+        hour: 3600,
+        minute: 60,
+        second: 1,
+    }
+
+    for (const [unit, value] of Object.entries(ranges)) {
+        if (Math.abs(seconds) >= value || unit === "second") {
+            return rtf.format(Math.round(seconds / value), unit as Intl.RelativeTimeFormatUnit)
+        }
+    }
+}
+
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
     // const initialOpenedId = useSearchParam("openedId")
@@ -58,7 +84,8 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }, [uid, updateRequested])
     const charactersState = useAsyncRetry(async () => {
-        const result = await getCharacters({ 
+        if (!profileState.value?.data) return undefined 
+        const result = await getCharacters({
             uid: Number(uid),
             cursor: cursor?.toString(),
             limit: limitNum,
@@ -68,43 +95,45 @@ export default function ProfilePage(): React.ReactElement {
             setCharacters(result.data.map(c => c.Character))
         }
         return result
-    }, [uid, cursor, limitNum, filterQuery])
+    }, [uid, profileState.value?.data, cursor, limitNum, filterQuery])
     const discsState = useAsyncRetry(async () => {
+        if (!profileState.value?.data) return undefined 
         const result = await getDriveDiscs(discsQuery)
         if (result && result.data) {
             setDiscs(result.data)
         }
         return result
-    }, [discsQuery])
+    }, [ profileState.value?.data, discsQuery])
     const leaderboardsState = useAsyncRetry(async () => {
+        if (!profileState.value?.data) return undefined 
         const result = await getUserLeaderboards(Number(uid), updateRequested)
         if (result && result.data) {
             setLeaderboards(result.data)
         }
-        return result 
-    }, [uid, updateRequested])
+        return result
+    }, [uid, profileState.value?.data, updateRequested])
 
     const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
     const totalCountState = useAsync(async () => {
-        return await getCharactersCount({ 
-            uid: uid ? Number(uid) : undefined, 
-            hash: charactersState.value?.totalCountHash 
+        return await getCharactersCount({
+            uid: uid ? Number(uid) : undefined,
+            hash: charactersState.value?.totalCountHash
         })
     }, [charactersState.value?.totalCountHash])
     const totalCount = useMemo(() => totalCountState.value?.data, [totalCountState.value?.data])
-    
+
     const [discsPage, setDiscsPage] = useState(1)
     const [discsLimit, setDiscsLimit] = useState(20)
     const discsTotalCountState = useAsync(async () => {
-        return await getDriveDiscsCount({ 
-            uid: uid ? Number(uid) : undefined, 
+        return await getDriveDiscsCount({
+            uid: uid ? Number(uid) : undefined,
             hash: discsState.value?.totalCountHash
         })
     }, [discsState.value?.totalCountHash])
     const discsTotalCount = useMemo(() => discsTotalCountState.value?.data, [discsTotalCountState.value?.data])
 
     const [opened, { toggle }] = useDisclosure(true)
-    
+
     const toggleIsFavorite = () => {
         const userId = Number(uid)
         if (favoriteUsers.includes(userId)) {
@@ -115,7 +144,7 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profile) { 
+        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profile) {
             setSavedUsers([...savedUsers ?? [], { ...profile }])
         }
         setCanUpdate((ttl ?? 0) == 0)
@@ -174,13 +203,13 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }
 
-    return (<> 
+    return (<>
         {profileState.loading && !profile && <>
-            <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
+            <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title>
             <Center><Loader /></Center>
         </>}
         {profileState.error && <>
-            <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
+            <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title>
             <Alert variant="light" color="red" title="Failed to load profile" icon={<IconInfoCircle />} mb="md">
                 <Text ff="monospace">{profileState.error.message}</Text>
             </Alert>
@@ -191,7 +220,8 @@ export default function ProfilePage(): React.ReactElement {
             <LeaderboardProvider>
                 <Stack>
                     <Group justify="flex-end" gap="xs">
-                        {backend.state && !backend.state.params.update_enabled && 
+                        <Text c="dimmed">Last updated {timeAgoIntl(profile.UpdatedAt)}</Text>
+                        {backend.state && !backend.state.params.update_enabled &&
                             <Tooltip label={backend.state?.params.update_disabled_msg} withArrow portalProps={{ reuseTargetNode: true }}>
                                 <Button rightSection={<IconReload />} disabled>Update</Button>
                             </Tooltip>
@@ -212,9 +242,9 @@ export default function ProfilePage(): React.ReactElement {
                             </Button>
                         }
                         <ActionIcon onClick={toggleIsFavorite}>
-                            { favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar /> }
+                            {favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar />}
                         </ActionIcon>
-                        <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem"}} 
+                        <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem" }}
                             component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
                             {""}
                         </ActionIcon>
@@ -227,11 +257,11 @@ export default function ProfilePage(): React.ReactElement {
                             }
                             {
                                 leaderboards &&
-                                    <LeaderboardGridMemorized 
-                                        entries={leaderboards} 
-                                        onProfileClick={(agentId) => {
-                                            setOpenedId(agentId === openedId ? null : agentId)
-                                        }} />
+                                <LeaderboardGridMemorized
+                                    entries={leaderboards}
+                                    onProfileClick={(agentId) => {
+                                        setOpenedId(agentId === openedId ? null : agentId)
+                                    }} />
                             }
                             {
                                 leaderboardsState.error && <Center m="md">Failed to load leaderboards. Cause: {leaderboardsState.error.message}</Center>
@@ -246,7 +276,7 @@ export default function ProfilePage(): React.ReactElement {
                             <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
                                 maw="50%">
                                 <Text>
-                                    If you're adding your profile to Inter-Knot for the first time, please check that your 
+                                    If you're adding your profile to Inter-Knot for the first time, please check that your
                                     <Text component="a" c="blue"
                                         href="https://zenless-zone-zero.fandom.com/wiki/Profile#:~:text=Agent%20Showcase%3A%20Showcase%20up%20to%206%20unlocked%20Agents%20and%20their%20current%20Level."
                                         target="_blank"> Agents Showcase</Text> is not empty and refresh your profile on Inter-Knot with <Text span c="blue">Update</Text> button.
@@ -280,7 +310,7 @@ export default function ProfilePage(): React.ReactElement {
                                                 break
                                             case "prop_id":
                                                 break
-                                            default: 
+                                            default:
                                                 add(g, val)
                                                 break
                                         }
@@ -293,7 +323,7 @@ export default function ProfilePage(): React.ReactElement {
                                 <Stack>
                                     <LoadingOverlay visible={charactersState.loading} zIndex={9}
                                         overlayProps={{ radius: "sm", blur: 2 }} />
-                                    <DataTable 
+                                    <DataTable
                                         highlightOnHover
                                         className="data-table"
                                         groups={[
@@ -336,15 +366,15 @@ export default function ProfilePage(): React.ReactElement {
                                                     {
                                                         accessor: "DriveDisksSet",
                                                         title: "Drive Discs",
-                                                        render: (c) => <DriveDiscsCell sets={c.DriveDisksSet}  />
+                                                        render: (c) => <DriveDiscsCell sets={c.DriveDisksSet} />
                                                     },
-                                                    { 
+                                                    {
                                                         accessor: "CritValue",
                                                         title: "Crit Value",
-                                                        cellsStyle: () => ({ 
+                                                        cellsStyle: () => ({
                                                             width: "calc(10rem * var(--mantine-scale))",
-                                                            background: "rgba(0 0 0 / 15%)" 
-                                                        }) ,
+                                                            background: "rgba(0 0 0 / 15%)"
+                                                        }),
                                                         render: (c) => (
                                                             <CritCell
                                                                 cr={c.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
@@ -355,7 +385,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     }
                                                 ]
                                             },
-                                            { 
+                                            {
                                                 id: "stats",
                                                 title: "",
                                                 columns: [
@@ -385,7 +415,7 @@ export default function ProfilePage(): React.ReactElement {
                                     <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
                                         <div style={{ width: "25%" }} />
                                         <Group>
-                                            <Pagination.Root total={totalCount ? Math.ceil(totalCount / limitNum) : 1} 
+                                            <Pagination.Root total={totalCount ? Math.ceil(totalCount / limitNum) : 1}
                                                 onFirstPage={() => {
                                                     setPage(1)
                                                     // setCursor(undefined)
@@ -432,10 +462,10 @@ export default function ProfilePage(): React.ReactElement {
                                                     }
                                                 }} />
                                         </Group>
-                                        { !page && 
+                                        {!page &&
                                             <Text mr="1rem">Showing unknown page of {totalCount ?? "unknown count"}</Text>
                                         }
-                                        { page &&
+                                        {page &&
                                             <Text mr="1rem">Showing {limitNum * (page - 1) + 1} - {totalCount ? Math.min(totalCount, limitNum * page) : "?"} of {totalCount ?? "unknown count"}</Text>
                                         }
                                     </Flex>
@@ -447,7 +477,7 @@ export default function ProfilePage(): React.ReactElement {
                         //         characters={characters} lbAgents={leaderboards} openedId={openedId} />
                         // </Stack>
                     }
-                    
+
                     {discs?.length !== 0 &&
                         <Stack>
                             <FilterSelector
@@ -470,7 +500,7 @@ export default function ProfilePage(): React.ReactElement {
                                         switch (g) {
                                             case "prop_id":
                                                 break
-                                            default: 
+                                            default:
                                                 add(g, val)
                                                 break
                                         }
@@ -483,7 +513,7 @@ export default function ProfilePage(): React.ReactElement {
                                 <Stack>
                                     <LoadingOverlay visible={discsState.loading} zIndex={9}
                                         overlayProps={{ radius: "sm", blur: 2 }} />
-                                    <DataTable 
+                                    <DataTable
                                         highlightOnHover
                                         className="data-table"
                                         groups={[
@@ -521,7 +551,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     }
                                                 ]
                                             },
-                                            { 
+                                            {
                                                 id: "stats",
                                                 title: "",
                                                 columns: [
@@ -542,13 +572,13 @@ export default function ProfilePage(): React.ReactElement {
                                                 id: "critValue",
                                                 title: "",
                                                 columns: [
-                                                    { 
+                                                    {
                                                         accessor: "CritValue.Value",
                                                         title: "Crit Value",
-                                                        cellsStyle: () => ({ 
+                                                        cellsStyle: () => ({
                                                             width: "calc(10rem * var(--mantine-scale))",
-                                                            background: "rgba(0 0 0 / 15%)" 
-                                                        }) ,
+                                                            background: "rgba(0 0 0 / 15%)"
+                                                        }),
                                                         render: (d: DriveDisc) => (
                                                             <div className="crit-cell">
                                                                 <Text c={discCvColor(d.CritValue.Value)} fw={discCvWeight(d.CritValue.Value)} >{d.CritValue.Value / 100}</Text>
@@ -564,7 +594,7 @@ export default function ProfilePage(): React.ReactElement {
                                     <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
                                         <div style={{ width: "25%" }} />
                                         <Group>
-                                            <Pagination.Root total={discsTotalCount ? Math.ceil(discsTotalCount / discsLimit) : 1} 
+                                            <Pagination.Root total={discsTotalCount ? Math.ceil(discsTotalCount / discsLimit) : 1}
                                                 onFirstPage={() => {
                                                     setDiscsPage(1)
                                                     setDiscsQuery((prev) => ({ ...prev, cursor: undefined }))
@@ -608,10 +638,10 @@ export default function ProfilePage(): React.ReactElement {
                                                     }
                                                 }} />
                                         </Group>
-                                        { !page && 
+                                        {!page &&
                                             <Text mr="1rem">Showing unknown page of {discsTotalCount ?? "unknown count"}</Text>
                                         }
-                                        { page &&
+                                        {page &&
                                             <Text mr="1rem">Showing {discsLimit * (discsPage - 1) + 1} - {discsTotalCount ? Math.min(discsTotalCount, discsLimit * discsPage) : "?"} of {discsTotalCount ?? "unknown count"}</Text>
                                         }
                                     </Flex>
@@ -622,6 +652,6 @@ export default function ProfilePage(): React.ReactElement {
                 </Stack>
             </LeaderboardProvider>
         </>
-    }
+        }
     </>)
 }
