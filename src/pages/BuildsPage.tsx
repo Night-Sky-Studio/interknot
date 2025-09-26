@@ -72,7 +72,7 @@ export default function BuildsPage(): React.ReactElement {
         return (await getCharactersCount({ hash: buildsState.value?.totalCountHash }))
     }, [buildsState.value?.totalCountHash])
 
-    const totalCount = useMemo(() => totalCountState.value, [totalCountState.value])
+    const totalCount = useMemo(() => totalCountState.value?.data, [totalCountState.value?.data])
 
     return <Stack>
         <Alert variant="light" color="blue" 

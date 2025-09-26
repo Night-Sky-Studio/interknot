@@ -6,6 +6,7 @@ import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
 import { Team } from "@components/Team/Team"
 import WeaponButton from "@components/WeaponButton"
+import { useMemo } from "react"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -13,6 +14,8 @@ export default function LeaderboardsPage(): React.ReactElement {
     const leaderboardsState = useAsyncRetry(async () => {
         return await getLeaderboards()
     })
+
+    const leaderboards = useMemo(() => leaderboardsState.value?.data, [leaderboardsState.value])
 
     return (<>
         <title>Leaderboards | Inter-Knot</title>
@@ -58,7 +61,7 @@ export default function LeaderboardsPage(): React.ReactElement {
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {leaderboardsState.value.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
+                            {leaderboards?.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
                                 return (
                                     <Table.Tr key={leaderboard.Id} onClick={() => {
                                         navigate(`/leaderboards/${leaderboard.Id}`)

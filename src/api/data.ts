@@ -1,4 +1,4 @@
-import { BaseLeaderboard, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardList, LeaderboardProfile, Profile, ProfileInfo, Property, url } from "@interknot/types"
+import { BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -48,7 +48,7 @@ export function restoreProperties(obj: any): any {
     return obj
 }
 
-async function get<T>(u: string, restoreProps: boolean = false): Promise<T> {
+async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult<T>> {
     console.log(u)
     let response = await fetch(u)
     if (response.status !== 200) {
@@ -61,7 +61,7 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<T> {
     if (result.data === undefined) {
         throw new Error("No data in response")
     }
-    return result.data
+    return result
 }
 
 async function getCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
@@ -80,7 +80,7 @@ async function getCursored<T>(u: string, restoreProps: boolean = false): Promise
     return result
 }
 
-export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
+export async function searchUsers(query: string) : Promise<IResult<ProfileInfo[]>> {
     return await get(url({
         base: dataUrl,
         path: "profile/search",
@@ -88,7 +88,7 @@ export async function searchUsers(query: string) : Promise<ProfileInfo[]> {
     }))
 }
 
-export async function getProfile(uid: number, update: boolean = false): Promise<ProfileInfo> {
+export async function getProfile(uid: number, update: boolean = false): Promise<IResult<ProfileInfo>> {
     return await get(url({
         base: dataUrl,
         path: `profile/${uid}`,
@@ -116,7 +116,7 @@ export async function getCharacters({ uid, cursor, limit, filter }: IQueryParams
         }
     }), true)
 }
-export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: string }): Promise<number> {
+export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
     return await get(url({
         base: dataUrl,
         path: "characters/count",
@@ -140,22 +140,6 @@ export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams
     }), true)
 }
 
-export async function getUser(uid: number, update: boolean = false) : Promise<Profile> {
-    let response = await fetch(url({
-        base: dataUrl,
-        path: `profile/${uid}`,
-        query: [{
-            update: `${update}`
-        }]
-    }))
-    if (response.status !== 200) 
-        throw new Error(JSON.stringify(await response.json()))
-
-    const json = await response.json()
-
-    return restoreProperties(json)
-}
-
 export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<IResult<Omit<BaseLeaderboardEntry, "RotationValue">[]>> {
     return await get(url({
         base: dataUrl,
@@ -164,38 +148,34 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
     }))
 }
 
-export async function getLeaderboards(): Promise<LeaderboardList[]> {
-    const response = await fetch(url({
+export async function getLeaderboards(): Promise<IResult<LeaderboardList[]>> {
+    return await get(url({
         base: dataUrl,
-        path: "/leaderboards"
+        path: "leaderboards"
     }))
-    if (response.status !== 200) 
-        throw new Error(`${response.status}: ${await response.text()}`)
-    return await response.json()
 }
 
-export async function getLeaderboard(id: number): Promise<Leaderboard[]> {
-    const response = await fetch(url({
+export async function getLeaderboard(id: number): Promise<IResult<Leaderboard[]>> {
+    return await get(url({
         base: dataUrl,
         path: `/leaderboard/${id}`
     }))
-    if (response.status !== 200)
-        throw new Error(`${response.status}: ${await response.text()}`)
-    return await response.json()
 }
 
-export async function getLeaderboardUsers(id: number, page: number = 1, limit: number = 10): Promise<PagedData<LeaderboardEntry>> {
-    const response = await fetch(url({
+export async function getLeaderboardUsers(leaderboardId: number, {
+    cursor,
+    limit = 20,
+    filter
+}: IQueryParams): Promise<ICursoredResult<BaseLeaderboardEntry>> {
+    return await getCursored(url({
         base: dataUrl,
-        path: `/leaderboard/${id}/users`,
-        query: [
-            { page: `${page}` },
-            { limit: `${limit}` }
-        ]
-    }))
-    if (response.status !== 200)
-        throw new Error(`${response.status}: ${await response.text()}`)
-    return restoreProperties(await response.json())
+        path: `/leaderboard/${leaderboardId}/users`,
+        query: {
+            cursor,
+            limit: limit?.toString(),
+            ...filter
+        }
+    }), true)
 }
 
 export async function getLeaderboardDmgDistribution(id: number): Promise<LeaderboardDistribution> {
