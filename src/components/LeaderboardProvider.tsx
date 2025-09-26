@@ -2,14 +2,14 @@ import { BaseLeaderboardEntry } from "@interknot/types";
 import { createContext, useContext, useMemo, useState } from "react";
 
 type LeaderboardContextType = {
-    agents: BaseLeaderboardEntry[]
-    setProfiles: (profiles: BaseLeaderboardEntry[]) => void
+    agents: Omit<BaseLeaderboardEntry, "RotationValue">[]
+    setProfiles: (profiles: Omit<BaseLeaderboardEntry, "RotationValue">[]) => void
 }
 
 export const LeaderboardContext = createContext({} as LeaderboardContextType);
 
 export default function LeaderboardProvider({ children }: { children: React.ReactNode }) {
-    const [profiles, setProfiles] = useState<BaseLeaderboardEntry[]>([])
+    const [profiles, setProfiles] = useState<Omit<BaseLeaderboardEntry, "RotationValue">[]>([])
 
     const value = useMemo(() => ({
         agents: profiles,
