@@ -3,6 +3,7 @@ import { BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, 
 interface IFilter {
     label: string
     img?: string
+    column: string
     value: string
 }
 
@@ -51,10 +52,10 @@ export function restoreProperties(obj: any): any {
 async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult<T>> {
     console.log(u)
     let response = await fetch(u)
-    if (response.status !== 200) {
-        throw new Error(JSON.stringify(await response.json()))
-    } 
     let result = await response.json() as IResult<T>
+    if (response.status !== 200) {
+        throw new Error(result.message)
+    } 
     if (restoreProps && result.data) {
         result.data = restoreProperties(result.data)
     }
@@ -67,10 +68,10 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult
 async function getCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
     console.log(u)
     let response = await fetch(u)
-    if (response.status !== 200) {
-        throw new Error(JSON.stringify(await response.json()))
-    }
     let result = await response.json() as ICursoredResult<T>
+    if (response.status !== 200) {
+        throw new Error(result.message)
+    }
     if (restoreProps && result.data) {
         result.data = result.data.map(restoreProperties)
     }
@@ -96,7 +97,7 @@ export async function getProfile(uid: number, update: boolean = false): Promise<
     }))
 }
 
-interface IQueryParams {
+export interface IQueryParams {
     uid?: number
     cursor?: string
     limit?: number
@@ -138,6 +139,17 @@ export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams
             ...filter
         }
     }), true)
+}
+
+export async function getDriveDiscsCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
+    return await get(url({
+        base: dataUrl,
+        path: "discs/count",
+        query: {
+            uid: uid?.toString(),
+            hash
+        }
+    }))
 }
 
 export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<IResult<Omit<BaseLeaderboardEntry, "RotationValue">[]>> {
