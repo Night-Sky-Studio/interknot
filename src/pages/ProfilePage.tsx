@@ -1,51 +1,107 @@
 import { useParams } from "react-router"
 import { UserHeaderMemorized } from "@components/UserHeader/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, MultiSelect, Image } from "@mantine/core"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Title, Flex, Pagination, Select } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
-import { CharactersTableMemorized } from "@components/CharactersTable/CharactersTable"
 import { useEffect, useMemo, useState } from "react"
-import { useAsyncRetry, useSearchParam } from "react-use"
-import { getUser, getUserLeaderboards } from "../api/data"
+import { useAsync, useAsyncRetry } from "react-use"
+import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getUserLeaderboards, IQueryParams } from "../api/data"
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
 import Timer from "../components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "../components/LeaderboardGrid/LeaderboardGrid"
-import { Error as BackendError, LeaderboardProfile, Profile, ProfileInfo } from "@interknot/types"
+import { BaseLeaderboardEntry, Character, DriveDisc, ProfileInfo, Property } from "@interknot/types"
 import LeaderboardProvider from "../components/LeaderboardProvider"
 import { useBackend } from "../components/BackendProvider"
-import { ZenlessIcon } from "../components/icons/Icons"
+import { getRarityIcon } from "../components/icons/Icons"
 import { useSettings } from "../components/SettingsProvider"
+import { useQueryParams } from "@/hooks/useQueryParams"
+import { DataTable } from "mantine-datatable"
+import WeaponCell from "@/components/cells/WeaponCell"
+import DriveDiscsCell from "@/components/cells/DriveDiscsCell"
+import CritCell, { discCvColor, discCvWeight } from "@/components/cells/CritCell"
+import PropertyCell from "@/components/cells/PropertyCell"
+import FilterSelector from "@/components/FilterSelector/FilterSelector"
 
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
-    const initialOpenedId = useSearchParam("openedId")
+    // const initialOpenedId = useSearchParam("openedId")
     const backend = useBackend()
-    const { getLocalString } = useSettings()
-    
-    const [needsUpdate, setNeedsUpdate] = useState(false)
+    const { getLocalString, getLevel } = useSettings()
+
+    const [{ openedId: initialOpenedId, cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
+    const limitNum = useMemo(() => Number(limit) || 20, [limit])
+    const [discsQuery, setDiscsQuery] = useState<IQueryParams>({ uid: uid ? Number(uid) : undefined })
+    useEffect(() => {
+        console.log(discsQuery)
+    }, [discsQuery])
+
+    const [updateRequested, setUpdateRequested] = useState(false)
     const [canUpdate, setCanUpdate] = useState(true)
+
     const [savedUsers, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [favoriteUsers, setFavoriteUsers] = useLocalStorage<number[]>({ key: "favoriteUsers", defaultValue: [] })
-    const [profileBackup, setProfileBackup] = useState<Profile | null>(null)
-    const [leaderboardsBackup, setLeaderboardsBackup] = useState<LeaderboardProfile | null>(null)
 
-    const userState = useAsyncRetry(async () => {
-        const result = await getUser(Number(uid), needsUpdate)
-        
-        setProfileBackup(result) // Store successful result as backup
+    const [ttl, setTtl] = useState(0)
+    const [profile, setProfile] = useState<ProfileInfo | undefined>(undefined)
+    const [characters, setCharacters] = useState<Character[] | undefined>(undefined)
+    const [discs, setDiscs] = useState<DriveDisc[]>([])
+    const [leaderboards, setLeaderboards] = useState<Omit<BaseLeaderboardEntry, "RotationValue">[] | undefined>(undefined)
+
+    const profileState = useAsyncRetry(async () => {
+        const result = await getProfile(Number(uid), updateRequested)
+        if (result.ttl) {
+            setTtl(result.ttl)
+        }
+        if (result.data) {
+            setProfile(result.data)
+        }
         return result
-    }, [uid, needsUpdate])
-
+    }, [uid, updateRequested])
+    const charactersState = useAsyncRetry(async () => {
+        const result = await getCharacters({ 
+            uid: Number(uid),
+            cursor: cursor?.toString(),
+            limit: limitNum,
+            filter: filterQuery as Record<string, string>
+        })
+        if (result && result.data) {
+            setCharacters(result.data.map(c => c.Character))
+        }
+        return result
+    }, [uid, cursor, limitNum, filterQuery])
+    const discsState = useAsyncRetry(async () => {
+        const result = await getDriveDiscs(discsQuery)
+        if (result && result.data) {
+            setDiscs(result.data)
+        }
+        return result
+    }, [discsQuery])
     const leaderboardsState = useAsyncRetry(async () => {
-        if (!userState.value) {
-            return undefined
+        const result = await getUserLeaderboards(Number(uid), updateRequested)
+        if (result && result.data) {
+            setLeaderboards(result.data)
         }
-        const result = await getUserLeaderboards(Number(uid), needsUpdate)
-        if (result) {
-            setLeaderboardsBackup(result) // Store successful result as backup
-        }
-        return result
-    }, [uid, userState.value, needsUpdate])
+        return result 
+    }, [uid, updateRequested])
+
+    const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
+    const totalCountState = useAsync(async () => {
+        return await getCharactersCount({ 
+            uid: uid ? Number(uid) : undefined, 
+            hash: charactersState.value?.totalCountHash 
+        })
+    }, [charactersState.value?.totalCountHash])
+    const totalCount = useMemo(() => totalCountState.value?.data, [totalCountState.value?.data])
+    
+    const [discsPage, setDiscsPage] = useState(1)
+    const [discsLimit, setDiscsLimit] = useState(20)
+    const discsTotalCountState = useAsync(async () => {
+        return await getDriveDiscsCount({ 
+            uid: uid ? Number(uid) : undefined, 
+            hash: discsState.value?.totalCountHash
+        })
+    }, [discsState.value?.totalCountHash])
+    const discsTotalCount = useMemo(() => discsTotalCountState.value?.data, [discsTotalCountState.value?.data])
 
     const [opened, { toggle }] = useDisclosure(true)
     
@@ -59,18 +115,19 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profileBackup) { 
-            setSavedUsers([...savedUsers ?? [], { ...profileBackup.Information }])
+        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profile) { 
+            setSavedUsers([...savedUsers ?? [], { ...profile }])
         }
-        setCanUpdate((profileBackup?.Ttl ?? 0) == 0)
-    }, [profileBackup])
+        setCanUpdate((ttl ?? 0) == 0)
+    }, [profile, ttl])
 
+    /*
     // Initialize backups when profile loads successfully
     useEffect(() => {
-        if (profileBackup && !userState.error) {
+        if (profileBackup && !profileState.error) {
             setProfileBackup(profileBackup)
         }
-    }, [profileBackup, userState.error])
+    }, [profileBackup, profileState.error])
 
     useEffect(() => {
         if (leaderboardsState.value && !leaderboardsState.error) {
@@ -83,11 +140,14 @@ export default function ProfilePage(): React.ReactElement {
 
     useEffect(() => {
         if (profileBackup)
-            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${needsUpdate}, canUpdate: ${canUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
-    }, [profileBackup, needsUpdate, favoriteUsers])
+            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${updateRequested}, canUpdate: ${canUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
+    }, [profileBackup, updateRequested, favoriteUsers])
+
+    */
 
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
 
+    /*
     const errorHandler = (error: string) => {
         // try parse
         try {
@@ -97,42 +157,37 @@ export default function ProfilePage(): React.ReactElement {
             return `Error: ${error}`
         }
     }
+    */
 
-    const filters = useMemo(() => backend.state?.filters, [backend.state?.filters])
-    const filterGroups = useMemo(() => {
-        const result = Object.entries(filters ?? []).map(([g, f]) => ({
-            group: g,
-            items: (f.map(v => ({ 
-                value: `${g}:${v.value}`,
-                label: getLocalString(v.label),
-            })))
-        }))
-        return result 
-    }, [filters])
-    const filterItems = useMemo(() => {
-        const result: Map<string, { label: string, value: string, img?: string }> = new Map()
-
-        Object.entries(filters ?? []).forEach(([g, f]) => {
-            f.forEach(v => result.set(`${g}:${v.value}`, { label: getLocalString(v.label), value: v.value, img: v.img }))
-        })
-
+    const getTopStats = (c: Character): Property[] => {
+        const result: Property[] = []
+        let skippedStats = 0
+        for (const propId of (c.DisplayProps ?? [])) {
+            const stat = c.Stats.find((p) => p.Id === propId)
+            if (stat?.Value === 0) {
+                skippedStats++
+                if (c.DisplayProps.length - skippedStats >= 4) continue
+            }
+            if (result.length >= 4) break
+            if (stat) result.push(stat)
+        }
         return result
-    }, [filters])
+    }
 
     return (<> 
-        {userState.loading && !profileBackup && <>
+        {profileState.loading && !profile && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
             <Center><Loader /></Center>
         </>}
-        {userState.error && <>
+        {profileState.error && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title> 
             <Alert variant="light" color="red" title="Failed to load profile" icon={<IconInfoCircle />} mb="md">
-                <Text ff="monospace">{errorHandler(userState.error.message)}</Text>
+                <Text ff="monospace">{profileState.error.message}</Text>
             </Alert>
         </>}
-        {profileBackup && <>
-            <title>{`${profileBackup?.Information.Nickname}'s Profile | Inter-Knot`}</title>
-            <meta name="description" content={`${profileBackup?.Information.Nickname}'s Profile | Inter-Knot`} />
+        {profile && <>
+            <title>{`${profile?.Nickname}'s Profile | Inter-Knot`}</title>
+            <meta name="description" content={`${profile?.Nickname}'s Profile | Inter-Knot`} />
             <LeaderboardProvider>
                 <Stack>
                     <Group justify="flex-end" gap="xs">
@@ -144,15 +199,15 @@ export default function ProfilePage(): React.ReactElement {
                         {backend.state && backend.state.params.update_enabled &&
                             <Button rightSection={<IconReload />} disabled={!canUpdate} onClick={() => {
                                 setCanUpdate(false)
-                                setNeedsUpdate(true)
-                                userState.retry()
+                                setUpdateRequested(true)
+                                profileState.retry()
                                 leaderboardsState.retry()
                             }}>
                                 <Timer key={uid} title="Update" isEnabled={!canUpdate}
-                                    endTime={profileBackup.Ttl === 0 ? 60 : profileBackup.Ttl} 
+                                    endTime={ttl === 0 ? 60 : ttl}
                                     onTimerEnd={() => {
                                         setCanUpdate(true)
-                                        setNeedsUpdate(false)
+                                        setUpdateRequested(false)
                                     }} />
                             </Button>
                         }
@@ -165,16 +220,15 @@ export default function ProfilePage(): React.ReactElement {
                         </ActionIcon>
                     </Group>
                     <Stack gap="0px" align="center">
-                        <UserHeaderMemorized user={profileBackup.Information} showDescription={profileBackup.Information.Description !== ""} />
+                        <UserHeaderMemorized user={profile} showDescription={profile.Description !== ""} />
                         <Collapse in={opened} className="leaderboards" data-open={opened}>
                             {
                                 leaderboardsState.loading && <Center m="md"><Loader /></Center>
                             }
                             {
-                                leaderboardsBackup &&
+                                leaderboards &&
                                     <LeaderboardGridMemorized 
-                                        profile={leaderboardsBackup} 
-                                        characters={profileBackup.Characters}
+                                        entries={leaderboards} 
                                         onProfileClick={(agentId) => {
                                             setOpenedId(agentId === openedId ? null : agentId)
                                         }} />
@@ -187,7 +241,7 @@ export default function ProfilePage(): React.ReactElement {
                             Leaderboards
                         </Button>
                     </Stack>
-                    {profileBackup.Characters.length === 0 &&
+                    {characters?.length === 0 &&
                         <Center>
                             <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
                                 maw="50%">
@@ -200,39 +254,369 @@ export default function ProfilePage(): React.ReactElement {
                             </Alert>
                         </Center>
                     }
-                    {profileBackup.Characters.length !== 0 &&
+                    {characters?.length !== 0 &&
                         <Stack>
-                            {filterGroups && 
-                                <MultiSelect data={filterGroups} 
-                                    renderOption={({ option }) => {
-                                        const item = filterItems.get(option.value)
-                                        if (!item) return <Text>{ option.value }</Text>
-                                        const hasIcon = /[M|R]\d/.test(option.label)
-                                        return <Group>
-                                            { item?.img !== undefined && <Image src={item.img} w="32px" h="32px" /> }
-                                            { item?.img === undefined && !hasIcon && <ZenlessIcon id={Number(item.value)} size={18} color="white" /> }
-                                            <Text>{ item?.label }</Text>
+                            <FilterSelector
+                                exclude={["region", "set_id"]}
+                                value={Object.entries(filterQuery).flatMap(([k, v]) => {
+                                    if (v === undefined) return []
+                                    return v.toString().split(",").map(s => `${k}:${s}`)
+                                })}
+                                onFilterApply={(val) => {
+                                    const q: Record<string, string> = {}
+                                    val.forEach(v => {
+                                        const add = (g: string, s: string) => {
+                                            if (q[g]) {
+                                                q[g] += `,${s}`
+                                            } else {
+                                                q[g] = s
+                                            }
+                                        }
+                                        const [g, val] = v.split(":")
+                                        switch (g) {
+                                            case "disc_set":
+                                                add("partial_sets", val)
+                                                add("full_set", val)
+                                                break
+                                            case "prop_id":
+                                                break
+                                            default: 
+                                                add(g, val)
+                                                break
+                                        }
+                                    })
+                                    // console.log(q)
+                                    setQueryParams((prev) => ({ cursor: undefined, limit: prev.limit, ...q }), true)
+                                    setPage(1)
+                                }} />
+                            <Card p="0" pos="relative" withBorder>
+                                <Stack>
+                                    <LoadingOverlay visible={charactersState.loading} zIndex={9}
+                                        overlayProps={{ radius: "sm", blur: 2 }} />
+                                    <DataTable 
+                                        highlightOnHover
+                                        className="data-table"
+                                        groups={[
+                                            {
+                                                id: "main",
+                                                title: "",
+                                                columns: [
+                                                    {
+                                                        accessor: "Id",
+                                                        title: "#",
+                                                        cellsStyle: () => ({ maxWidth: "3ch" }),
+                                                        render: (_, r) => <Text>{((page ?? 0) - 1) * limitNum + r + 1}</Text>,
+                                                    },
+                                                    {
+                                                        accessor: "Name",
+                                                        title: "Name",
+                                                        cellsStyle: () => ({ maxWidth: "30%" }),
+                                                        render: (c) => (
+                                                            <Group gap="sm" wrap="nowrap">
+                                                                <Image src={c.CircleIconUrl} h="32px" />
+                                                                <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
+                                                                <div className="chip">{getLevel(c.Level)}</div>
+                                                            </Group>
+                                                        )
+                                                    },
+                                                    {
+                                                        accessor: "MindscapeLevel",
+                                                        title: "Mindscape",
+                                                        render: (c) => (
+                                                            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(c.MindscapeLevel / 5 + 1) * 1}rem` }} data-level={c.MindscapeLevel}>
+                                                                <Text fw={700}>{c.MindscapeLevel}</Text>
+                                                            </div>
+                                                        )
+                                                    },
+                                                    {
+                                                        accessor: "Weapon",
+                                                        title: "Weapon",
+                                                        render: (c) => <WeaponCell weapon={c.Weapon} />
+                                                    },
+                                                    {
+                                                        accessor: "DriveDisksSet",
+                                                        title: "Drive Discs",
+                                                        render: (c) => <DriveDiscsCell sets={c.DriveDisksSet}  />
+                                                    },
+                                                    { 
+                                                        accessor: "CritValue",
+                                                        title: "Crit Value",
+                                                        cellsStyle: () => ({ 
+                                                            width: "calc(10rem * var(--mantine-scale))",
+                                                            background: "rgba(0 0 0 / 15%)" 
+                                                        }) ,
+                                                        render: (c) => (
+                                                            <CritCell
+                                                                cr={c.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
+                                                                cd={c.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
+                                                                cv={c.CritValue}
+                                                            />
+                                                        )
+                                                    }
+                                                ]
+                                            },
+                                            { 
+                                                id: "stats",
+                                                title: "",
+                                                columns: [
+                                                    ...[0, 1, 2, 3].map((idx) => ({
+                                                        accessor: `stat-${idx}`,
+                                                        title: idx === 0 ? "Stats" : "",
+                                                        visibleMediaQuery: () => `(min-width: 1290px)`,
+                                                        cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
+                                                        render: (c: Character) => {
+                                                            const stats = getTopStats(c)
+                                                            const prop = stats[idx]
+                                                            return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
+                                                        }
+                                                    }))
+                                                ]
+                                            }
+                                        ]}
+                                        rowExpansion={{
+                                            allowMultiple: true,
+                                            content: ({ record: character }) => (
+                                                <Title>{character.Name}</Title>
+                                            )
+                                        }}
+                                        records={characters}
+                                        idAccessor="Id"
+                                    />
+                                    <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
+                                        <div style={{ width: "25%" }} />
+                                        <Group>
+                                            <Pagination.Root total={totalCount ? Math.ceil(totalCount / limitNum) : 1} 
+                                                onFirstPage={() => {
+                                                    setPage(1)
+                                                    // setCursor(undefined)
+                                                    setQueryParams({ cursor: undefined })
+                                                }}
+                                                onLastPage={() => {
+                                                    setPage(totalCount ? Math.ceil(totalCount / limitNum) : 1)
+                                                    // setCursor("gte:crit_value=0;id=0")
+                                                    setQueryParams({ cursor: "gte:crit_value=0;id=0" })
+                                                }}
+                                                onNextPage={() => {
+                                                    setPage((p) => p ? p + 1 : p)
+                                                    if (cursor?.includes("gte:")) {
+                                                        // setCursor((cur) => cur?.replace("gte", "lte"))
+                                                        setQueryParams((prev) => ({ ...prev, cursor: prev.cursor?.toString()?.replace("gte", "lte") }))
+                                                    } else {
+                                                        // setCursor(charactersState.value?.cursor)
+                                                        setQueryParams({ cursor: charactersState.value?.cursor })
+                                                    }
+                                                }}
+                                                onPreviousPage={() => {
+                                                    setPage((p) => p ? p - 1 : p)
+                                                    if (page === 1) {
+                                                        setQueryParams({ cursor: undefined })
+                                                    } else {
+                                                        setQueryParams({ cursor: `gte:crit_value=${characters?.[0].CritValue};id=${characters?.[0].Id}` })
+                                                    }
+                                                }}>
+                                                <Group gap="xs">
+                                                    <Pagination.First disabled={page === 1} />
+                                                    <Pagination.Previous disabled={page === 1} />
+                                                    <Button variant="filled" autoContrast>{page ?? "??"}</Button>
+                                                    <Pagination.Next disabled={charactersState.value?.hasNextPage === false} />
+                                                    <Pagination.Last disabled={charactersState.value?.hasNextPage === false} />
+                                                </Group>
+                                            </Pagination.Root>
+                                            <Select w="128px"
+                                                data={[20, 50].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
+                                                value={limitNum.toString()}
+                                                onChange={(value) => {
+                                                    if (value) {
+                                                        setPage(1)
+                                                        setQueryParams({ cursor: undefined, limit: value })
+                                                    }
+                                                }} />
                                         </Group>
-                                    }}
-                                    dropdownOpened={true}
-                                    maxDropdownHeight={512}
-                                    styles={{
-                                        dropdown: { 
-                                            boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px" 
-                                        }, 
-                                        group: {
-                                            marginBottom: "0.5rem"
-                                        },
-                                        groupLabel: { 
-                                            fontWeight: 600, 
-                                            color: "white",
-                                            fontSize: "1.25rem"
-                                        } 
-                                    }}
-                                    placeholder="Filter by..." searchable clearable hidePickedOptions />
-                            }
-                            <CharactersTableMemorized uid={profileBackup.Information.Uid} username={profileBackup.Information.Nickname} 
-                                characters={profileBackup.Characters} lbAgents={leaderboardsState.value?.Agents} openedId={openedId} />
+                                        { !page && 
+                                            <Text mr="1rem">Showing unknown page of {totalCount ?? "unknown count"}</Text>
+                                        }
+                                        { page &&
+                                            <Text mr="1rem">Showing {limitNum * (page - 1) + 1} - {totalCount ? Math.min(totalCount, limitNum * page) : "?"} of {totalCount ?? "unknown count"}</Text>
+                                        }
+                                    </Flex>
+                                </Stack>
+                            </Card>
+                        </Stack>
+                        // <Stack>
+                        //     <CharactersTableMemorized uid={profile.Uid} username={profile.Nickname} 
+                        //         characters={characters} lbAgents={leaderboards} openedId={openedId} />
+                        // </Stack>
+                    }
+                    
+                    {discs?.length !== 0 &&
+                        <Stack>
+                            <FilterSelector
+                                exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level"]}
+                                value={Object.entries(discsQuery.filter ?? {}).flatMap(([k, v]) => {
+                                    if (v === undefined) return []
+                                    return v.toString().split(",").map(s => `${k}:${s}`)
+                                })}
+                                onFilterApply={(val) => {
+                                    const q: Record<string, string> = {}
+                                    val.forEach(v => {
+                                        const add = (g: string, s: string) => {
+                                            if (q[g]) {
+                                                q[g] += `,${s}`
+                                            } else {
+                                                q[g] = s
+                                            }
+                                        }
+                                        const [g, val] = v.split(":")
+                                        switch (g) {
+                                            case "prop_id":
+                                                break
+                                            default: 
+                                                add(g, val)
+                                                break
+                                        }
+                                    })
+                                    // console.log(q)
+                                    setDiscsQuery((prev) => ({ ...prev, cursor: undefined, limit: prev.limit, filter: q }))
+                                    setDiscsPage(1)
+                                }} />
+                            <Card p="0" withBorder>
+                                <Stack>
+                                    <LoadingOverlay visible={discsState.loading} zIndex={9}
+                                        overlayProps={{ radius: "sm", blur: 2 }} />
+                                    <DataTable 
+                                        highlightOnHover
+                                        className="data-table"
+                                        groups={[
+                                            {
+                                                id: "main",
+                                                title: "",
+                                                columns: [
+                                                    {
+                                                        accessor: "Uid",
+                                                        title: "#",
+                                                        cellsStyle: () => ({ maxWidth: "3ch" }),
+                                                        render: (_, r) => <Text>{(discsPage - 1) * discsLimit + r + 1}</Text>,
+                                                    },
+                                                    {
+                                                        accessor: "Name",
+                                                        title: "Name",
+                                                        cellsStyle: () => ({ maxWidth: "30%" }),
+                                                        render: (d) => (
+                                                            <Group gap="xs" wrap="nowrap">
+                                                                <Image src={d.IconUrl} h="32px" />
+                                                                <Image src={getRarityIcon(d.Rarity ?? 0)} h="24px" alt={d.Rarity.toString()} />
+                                                                <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(d.Name)}</Text>
+                                                            </Group>
+                                                        )
+                                                    },
+                                                    {
+                                                        accessor: "MainStat",
+                                                        title: "Main Stat",
+                                                        render: (d) => (
+                                                            <Group gap="xs" wrap="nowrap">
+                                                                <PropertyCell prop={d.MainStat} />
+                                                                <Text>{getLocalString(d.MainStat.simpleName)}</Text>
+                                                            </Group>
+                                                        )
+                                                    }
+                                                ]
+                                            },
+                                            { 
+                                                id: "stats",
+                                                title: "",
+                                                columns: [
+                                                    ...[0, 1, 2, 3].map((idx) => ({
+                                                        accessor: `disc-stat-${idx}`,
+                                                        title: idx === 0 ? "Stats" : "",
+                                                        visibleMediaQuery: () => `(min-width: 1290px)`,
+                                                        cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
+                                                        render: (d: DriveDisc) => {
+                                                            const stats = d.SubStats
+                                                            const prop = stats[idx]
+                                                            return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
+                                                        }
+                                                    }))
+                                                ]
+                                            },
+                                            {
+                                                id: "critValue",
+                                                title: "",
+                                                columns: [
+                                                    { 
+                                                        accessor: "CritValue.Value",
+                                                        title: "Crit Value",
+                                                        cellsStyle: () => ({ 
+                                                            width: "calc(10rem * var(--mantine-scale))",
+                                                            background: "rgba(0 0 0 / 15%)" 
+                                                        }) ,
+                                                        render: (d: DriveDisc) => (
+                                                            <div className="crit-cell">
+                                                                <Text c={discCvColor(d.CritValue.Value)} fw={discCvWeight(d.CritValue.Value)} >{d.CritValue.Value / 100}</Text>
+                                                            </div>
+                                                        )
+                                                    }
+                                                ]
+                                            }
+                                        ]}
+                                        records={discs}
+                                        idAccessor="Uid"
+                                    />
+                                    <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
+                                        <div style={{ width: "25%" }} />
+                                        <Group>
+                                            <Pagination.Root total={discsTotalCount ? Math.ceil(discsTotalCount / discsLimit) : 1} 
+                                                onFirstPage={() => {
+                                                    setDiscsPage(1)
+                                                    setDiscsQuery((prev) => ({ ...prev, cursor: undefined }))
+                                                }}
+                                                onLastPage={() => {
+                                                    setDiscsPage(discsTotalCount ? Math.ceil(discsTotalCount / discsLimit) : 1)
+                                                    setDiscsQuery((prev) => ({ ...prev, cursor: "gte:crit_value=0;id=0" }))
+                                                }}
+                                                onNextPage={() => {
+                                                    setDiscsPage((p) => p ? p + 1 : p)
+                                                    if (discsQuery.cursor?.includes("gte:")) {
+                                                        setDiscsQuery((prev) => ({ ...prev, cursor: prev.cursor?.toString()?.replace("gte", "lte") }))
+                                                    } else {
+                                                        setDiscsQuery((prev) => ({ ...prev, cursor: discsState.value?.cursor }))
+                                                    }
+                                                }}
+                                                onPreviousPage={() => {
+                                                    setDiscsPage((p) => p ? p - 1 : p)
+                                                    if (page === 1) {
+                                                        setDiscsQuery((prev) => ({ ...prev, cursor: undefined }))
+                                                    } else {
+                                                        setDiscsQuery((prev) => ({ ...prev, cursor: `gte:crit_value=${discs?.[0].CritValue.Value};id=${discs?.[0].Id}` }))
+                                                    }
+                                                }}>
+                                                <Group gap="xs">
+                                                    <Pagination.First disabled={discsPage === 1} />
+                                                    <Pagination.Previous disabled={discsPage === 1} />
+                                                    <Button variant="filled" autoContrast>{discsPage ?? "??"}</Button>
+                                                    <Pagination.Next disabled={discsState.value?.hasNextPage === false} />
+                                                    <Pagination.Last disabled={discsState.value?.hasNextPage === false} />
+                                                </Group>
+                                            </Pagination.Root>
+                                            <Select w="128px"
+                                                data={[20, 50].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
+                                                value={discsLimit.toString()}
+                                                onChange={(value) => {
+                                                    if (value) {
+                                                        setDiscsPage(1)
+                                                        setDiscsLimit(Number(value))
+                                                        setDiscsQuery((prev) => ({ ...prev, cursor: undefined, limit: Number(value) }))
+                                                    }
+                                                }} />
+                                        </Group>
+                                        { !page && 
+                                            <Text mr="1rem">Showing unknown page of {discsTotalCount ?? "unknown count"}</Text>
+                                        }
+                                        { page &&
+                                            <Text mr="1rem">Showing {discsLimit * (discsPage - 1) + 1} - {discsTotalCount ? Math.min(discsTotalCount, discsLimit * discsPage) : "?"} of {discsTotalCount ?? "unknown count"}</Text>
+                                        }
+                                    </Flex>
+                                </Stack>
+                            </Card>
                         </Stack>
                     }
                 </Stack>
