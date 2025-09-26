@@ -14,24 +14,29 @@ import {
 import "./UserHeader.css"
 import { useSettings } from "@components/SettingsProvider"
 
-export function ServerChip({ uid }: { uid: string }) {
-
-    const server = (uid: string) => {
-        switch (true) {
-            case uid.startsWith("17"): return "TW/HK/MO"
-            case uid.startsWith("13"): return "ASIA"
-            case uid.startsWith("15"): return "EU"
-            case uid.startsWith("10"): return "NA"
-            case uid.startsWith("3"): return "CN"
-            case uid.startsWith("2"): return "CN"
-            case uid.startsWith("1"): return "CN"
-            case uid.startsWith("0"): return "Internal"
-            default: return "Unknown"
+export function userServer(uid: string) {
+        if (uid.length === 10) {
+            switch (true) {
+                case uid.startsWith("17"): return "TW/HK/MO"
+                case uid.startsWith("13"): return "ASIA"
+                case uid.startsWith("15"): return "EU"
+                case uid.startsWith("10"): return "NA"
+                default: return "Unknown"
+            }
+        } else {
+            switch (true) {
+                case uid.startsWith("3"): return "CN"
+                case uid.startsWith("2"): return "CN"
+                case uid.startsWith("1"): return "CN"
+                case uid.startsWith("0"): return "Internal"
+                default: return "Unknown"
+            }
         }
     }
 
+export function ServerChip({ uid }: { uid: string }) {
     return (
-        <Title className="user-info" order={6}>{server(uid)}</Title>
+        <Title className="user-info" order={6}>{userServer(uid)}</Title>
     )
 }
 
@@ -53,20 +58,6 @@ export function UserHeader({ user, showDescription }: IUserHeaderProps): React.R
     }
     
     const UserData = () => {
-        const userServer = (uid: string) => {
-            switch (true) {
-                case uid.startsWith("17"): return "TW/HK/MO"
-                case uid.startsWith("13"): return "ASIA"
-                case uid.startsWith("15"): return "EU"
-                case uid.startsWith("10"): return "NA"
-                case uid.startsWith("3"): return "CN"
-                case uid.startsWith("2"): return "CN"
-                case uid.startsWith("1"): return "CN"
-                case uid.startsWith("0"): return "Internal"
-                default: return "Unknown"
-            }
-        }
-
         return (
             <Group className="user-data">         
                 <Avatar className="namecard-avatar" src={user.ProfilePictureUrl} size="xl" mr="sm" />
