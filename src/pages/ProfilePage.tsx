@@ -144,8 +144,17 @@ export default function ProfilePage(): React.ReactElement {
     }
 
     useEffect(() => {
-        if (!savedUsers?.find(u => u.Uid.toString() === uid) && profile) {
-            setSavedUsers([...savedUsers ?? [], { ...profile }])
+        if (profile) {
+            setSavedUsers((prev) => {
+                const data = [...prev]
+                const previousProfileIdx = data.findIndex(u => u.Uid === profile.Uid)
+                if (previousProfileIdx != -1) {
+                    data[previousProfileIdx] = profile
+                } else {
+                    data.push(profile)
+                }
+                return data
+            })
         }
         setCanUpdate((ttl ?? 0) == 0)
     }, [profile, ttl])
