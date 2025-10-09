@@ -1,4 +1,4 @@
-import { BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
+import { AgentAction, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, FinalStats, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -160,10 +160,21 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
     }))
 }
 
-export async function getLeaderboards(): Promise<IResult<LeaderboardList[]>> {
+export async function getUserCharacterLeaderboards(uid: number, characterId: number): Promise<IResult<BaseLeaderboardEntry[]>> {
     return await get(url({
         base: dataUrl,
-        path: "leaderboards"
+        path: `leaderboards/${uid}/character/${characterId}`
+    }))
+}
+
+export async function getLeaderboards({ filter }: IQueryParams, expand: boolean = false): Promise<IResult<LeaderboardList[]>> {
+    return await get(url({
+        base: dataUrl,
+        path: "leaderboards",
+        query: {
+            ...filter,
+            expand: expand ? "true" : "false"
+        }
     }))
 }
 
@@ -190,14 +201,28 @@ export async function getLeaderboardUsers(leaderboardId: number, {
     }), true)
 }
 
-export async function getLeaderboardDmgDistribution(id: number): Promise<LeaderboardDistribution> {
-    const response = await fetch(url({
+export async function getLeaderboardDmgDistribution(id: number): Promise<IResult<LeaderboardDistribution>> {
+    return await get(url({
         base: dataUrl,
         path: `/leaderboard/${id}/distribution`
-    }))
-    if (response.status !== 200)
-        throw new Error(`${response.status}: ${await response.text()}`)
-    return restoreProperties(await response.json())
+    }), true)
+}
+
+export interface CalcResponse {
+    FinalStats: FinalStats
+    PerAction: AgentAction[]
+    Total: number
+}
+
+export async function getCalc(uid: number, characterId: number): Promise<IResult<CalcResponse>> {
+    return await get(url({
+        base: dataUrl,
+        path: `/calc`,
+        query: {
+            uid: uid.toString(),
+            characterId: characterId.toString()
+        }
+    }), true)
 }
 
 export async function getStatus(): Promise<BackendState> {
