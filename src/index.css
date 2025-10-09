@@ -87,3 +87,27 @@ text {
     background-color: var(--mantine-primary-color-filled);
     color: black;
 }
+
+.data-table,
+.data-table .mantine-datatable-table,
+.data-table .mantine-Table-tr:not(.data-table .mantine-Table-thead .mantine-Table-tr):not(:hover) {
+    background: transparent;
+}
+.data-table .mantine-Table-thead .mantine-Table-tr {
+    background: var(--mantine-datatable-background-color) !important;
+}
+
+.data-table .mantine-Table-thead .mantine-Table-tr:first-child {
+    display: none;
+}
+
+tr:not(:last-of-type) .mantine-datatable-row-expansion-cell-content {
+    border-bottom: unset !important;
+}
+table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-cell) {
+    cursor: unset !important;
+}
+table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-cell):hover {
+    background-color: unset !important;
+}
+
