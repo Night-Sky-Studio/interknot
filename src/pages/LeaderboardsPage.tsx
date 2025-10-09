@@ -12,7 +12,7 @@ export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
 
     const leaderboardsState = useAsyncRetry(async () => {
-        return await getLeaderboards()
+        return await getLeaderboards({})
     })
 
     const leaderboards = useMemo(() => leaderboardsState.value?.data, [leaderboardsState.value])
