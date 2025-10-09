@@ -8,6 +8,7 @@
     width: 100%;
 } 
 
+/*
 .indicator {
     background-color: var(--mantine-color-white);
     border-radius: var(--mantine-radius-md);
@@ -19,6 +20,7 @@
         border-color: var(--mantine-color-dark-4);
     }
 }
+*/
 
 .tab {
     z-index: 1;

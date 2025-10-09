@@ -21,7 +21,7 @@ export default function DamageChip({ actionName, damage, tag, hover, onMouseEnte
                 ? <Text fz="0.8rem" fw={700}>{getTagName(tag)}</Text>
                 : <Space h="2rem" />
             }
-            <Text className="dc-damage">{Math.trunc(damage).toLocaleString()}</Text>
+            
             {actionName 
                 ? <Text fz="0.8rem">{actionName?.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")}</Text>
                 : <Space h="2rem" />

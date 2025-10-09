@@ -1,0 +1,14 @@
+.highlight,
+.highlight:hover {
+    color: black;
+    background-color: var(--mantine-primary-color-filled) !important;
+}
+
+.lb-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+.lb-list * {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

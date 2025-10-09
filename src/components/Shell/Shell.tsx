@@ -3,7 +3,7 @@ import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, 
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ProfileInfo } from "@interknot/types"
-import "./Shell.pcss"
+import "./Shell.css"
 import enkaImg from "@assets/Enka.svg"
 import nssImg from "@assets/nss.svg"
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'

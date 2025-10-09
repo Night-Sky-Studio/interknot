@@ -1,8 +1,7 @@
 import { BaseLeaderboardEntry} from "@interknot/types"
 import { LeaderboardButton } from "@components/LeaderboardButton/LeaderboardButton"
 import "./LeaderboardGrid.css"
-import { memo, useEffect } from "react"
-import { useLeaderboards } from "@components/LeaderboardProvider"
+import { memo } from "react"
 
 interface ILeaderboardGridProps {
     entries?: Omit<BaseLeaderboardEntry, "RotationValue">[]
@@ -10,12 +9,6 @@ interface ILeaderboardGridProps {
 }
 
 export function LeaderboardGrid({ entries, onProfileClick }: ILeaderboardGridProps) {
-    const leaderboards = useLeaderboards()
-
-    useEffect(() => {
-        leaderboards.setProfiles(entries ?? [])
-    }, [entries])
-
     return (<>
         {
             <div className="lb-grid">

@@ -1,8 +1,8 @@
 import { useParams } from "react-router"
 import { UserHeaderMemorized } from "@components/UserHeader/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Title, Flex, Pagination, Select } from "@mantine/core"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Flex, Pagination, Select } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
 import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getUserLeaderboards, IQueryParams } from "../api/data"
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
@@ -21,6 +21,10 @@ import DriveDiscsCell from "@/components/cells/DriveDiscsCell"
 import CritCell, { discCvColor, discCvWeight } from "@/components/cells/CritCell"
 import PropertyCell from "@/components/cells/PropertyCell"
 import FilterSelector from "@/components/FilterSelector/FilterSelector"
+import CharacterCardContainer from "@/components/CharacterCard/CharacterCardContainer"
+import { DataProvider } from "@/components/DataProvider"
+import { TooltipData } from "@/components/CharacterCard/CharacterCard"
+import CardFooter from "@/components/CardFooter/CardFooter"
 
 function timeAgoIntl(date: Date | string) {
     if (typeof date === "string") {
@@ -30,6 +34,10 @@ function timeAgoIntl(date: Date | string) {
     const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" })
 
     const seconds = Math.floor((date.getTime() - Date.now()) / 1000)
+
+    if (Math.abs(seconds) <= 60) {
+        return "just now"
+    }
 
     const ranges = {
         year: 3600 * 24 * 365,
@@ -103,7 +111,7 @@ export default function ProfilePage(): React.ReactElement {
             setDiscs(result.data)
         }
         return result
-    }, [ profileState.value?.data, discsQuery])
+    }, [profileState.value?.data, discsQuery])
     const leaderboardsState = useAsyncRetry(async () => {
         if (!profileState.value?.data) return undefined 
         const result = await getUserLeaderboards(Number(uid), updateRequested)
@@ -143,6 +151,7 @@ export default function ProfilePage(): React.ReactElement {
         }
     }
 
+    // Update opened profiles
     useEffect(() => {
         if (profile) {
             setSavedUsers((prev) => {
@@ -212,6 +221,8 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }
 
+    const tableRef = useRef<HTMLDivElement>(null)
+
     return (<>
         {profileState.loading && !profile && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title>
@@ -226,7 +237,7 @@ export default function ProfilePage(): React.ReactElement {
         {profile && <>
             <title>{`${profile?.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${profile?.Nickname}'s Profile | Inter-Knot`} />
-            <LeaderboardProvider>
+            
                 <Stack>
                     <Group justify="flex-end" gap="xs">
                         <Text c="dimmed">Last updated {timeAgoIntl(profile.UpdatedAt)}</Text>
@@ -333,6 +344,7 @@ export default function ProfilePage(): React.ReactElement {
                                     <LoadingOverlay visible={charactersState.loading} zIndex={9}
                                         overlayProps={{ radius: "sm", blur: 2 }} />
                                     <DataTable
+                                        scrollViewportRef={tableRef}
                                         highlightOnHover
                                         className="data-table"
                                         groups={[
@@ -414,9 +426,18 @@ export default function ProfilePage(): React.ReactElement {
                                         ]}
                                         rowExpansion={{
                                             allowMultiple: true,
-                                            content: ({ record: character }) => (
-                                                <Title>{character.Name}</Title>
-                                            )
+                                            content: ({ record: character }) => (<LeaderboardProvider uid={Number(uid)} characterId={character.Id}>
+                                                <DataProvider data={{ charId: character.Id, weaponId: character.Weapon?.Id } satisfies TooltipData}>
+                                                    <CharacterCardContainer parentRef={tableRef} cardProps={{
+                                                        uid: Number(uid),
+                                                        username: profile.Nickname,
+                                                        character: character,
+                                                    }} />
+                                                </DataProvider>
+                                                <Stack m="md">
+                                                    <CardFooter uid={Number(uid)} characterId={character.Id} />
+                                                </Stack>
+                                            </LeaderboardProvider>)
                                         }}
                                         records={characters}
                                         idAccessor="Id"
@@ -488,7 +509,7 @@ export default function ProfilePage(): React.ReactElement {
                     }
 
                     {discs?.length !== 0 &&
-                        <Stack>
+                        <Stack mt="4rem">
                             <FilterSelector
                                 exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level"]}
                                 value={Object.entries(discsQuery.filter ?? {}).flatMap(([k, v]) => {
@@ -659,7 +680,6 @@ export default function ProfilePage(): React.ReactElement {
                         </Stack>
                     }
                 </Stack>
-            </LeaderboardProvider>
         </>
         }
     </>)

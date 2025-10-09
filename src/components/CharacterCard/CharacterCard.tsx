@@ -8,7 +8,7 @@ import * as TalentIcons from "@icons/talents"
 import * as CoreSkillIcons from "@icons/core"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo, useEffect, useMemo, useRef } from "react"
-import type { DriveDiscSet, BaseLeaderboardEntry } from "@interknot/types"
+import type { DriveDiscSet, BaseLeaderboardEntry, LeaderboardList } from "@interknot/types"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { SubStat } from "@components/SubStat/SubStat"
@@ -19,6 +19,7 @@ import { useWindowScroll } from "@mantine/hooks"
 import { Team } from "@components/Team/Team"
 import { toFixedCeil } from "@extensions/NumberExtensions"
 import { useData } from "@components/DataProvider"
+import { useLeaderboards } from "../LeaderboardProvider"
 
 export interface TooltipData {
     charId: number,
@@ -92,12 +93,13 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
     )
 }
 
-interface ICharacterCardProps {
+export interface ICharacterCardProps {
     ref?: React.Ref<HTMLDivElement>
     uid: number
     username: string
     character: Character
-    leaderboard?: BaseLeaderboardEntry
+    leaderboardId?: number
+    // leaderboard?: Omit<BaseLeaderboardEntry, "RotationValue">
     substatsVisible?: boolean
 }
 
@@ -230,7 +232,7 @@ function Talents({
 function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     const { language, getLocalString } = useSettings()
     return (
-        <div className="cc-disc-set" data-zzz-type="artifact" data-zzz-lang={language} data-zzz-id={set.Set.Id}>
+        <div className="cc-disc-set" data-zzz-type="artifact" data-zzz-lang={language} data-zzz-level={set.Count} data-zzz-id={set.Set.Id}>
             <Image h="28px" src={set.Set.IconUrl} alt={set.Set.Name} />
             <Title order={6} fz="14px">{getLocalString(set.Set.Name)}</Title>
             <Title order={6} fz="14px">x{set.Count}</Title>
@@ -238,14 +240,27 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     )
 }
 
-function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboardEntry, stats: Property[], color: string }): React.ReactElement {
+interface IStatsGraphProps {
+    leaderboard: LeaderboardList
+    entry: Omit<BaseLeaderboardEntry, "RotationValue" | "Leaderboard">
+    stats: Property[]
+    color: string
+}
+
+function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): React.ReactElement {
     const { getLocalString, decimalPlaces } = useSettings()
 
     const graphState = useAsync(async () => {
-        return await getLeaderboardDmgDistribution(leaderboard.Leaderboard.Id)
-    })
+        return await getLeaderboardDmgDistribution(leaderboard.Id)
+    }, [leaderboard.Id])
 
-    const top1stats = useMemo(() => graphState.value?.Top1AvgStats.filter(v => v.Value > 0.1), [graphState.value?.Top1AvgStats])
+    const graph = useMemo(() => graphState.value?.data, [graphState.value])
+
+    useEffect(() => {
+        console.log(graphState.loading, graphState.error, graphState.value)
+    }, [graphState.loading, graphState.error, graphState.value])
+
+    const top1stats = useMemo(() => graph?.Top1AvgStats.filter(v => v.Value > 0.1), [graph?.Top1AvgStats])
 
     const filteredStats = useMemo(() => {
         return stats.filter(s => s.Value > 0.1)
@@ -264,7 +279,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
         for (const stat of filteredStats) {
             const top1Stat = filteredTop1Stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
-                const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.2))
+                const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.3))
                 result.push(relativeStat)
             }
         }
@@ -281,10 +296,12 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
     const { language } = useSettings()
 
     return (
-        <div className="cc-stats-graph" ref={radarRef}>
+        <div className="cc-stats-graph" ref={radarRef} style={{
+            marginTop: leaderboard.Character.Id === 1381 ? "80px" : undefined,
+        }}>
             {top1stats &&
                 <Stack gap="0px">
-                    <RadarChart h={286} w={300}
+                    <RadarChart h={leaderboard.Character.Id === 1381 ? 260 : 280} w={300}
                         data={filteredTop1Stats.map(prop => {
                             let name = getLocalString(prop.simpleName)
                             if (name.length > 6) {
@@ -311,6 +328,13 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                             r: 4
                         }}
                         withTooltip
+                        withPolarRadiusAxis
+                        polarRadiusAxisProps={{
+                            domain: [0, "dataMax"],
+                            tick: { display: "none" },
+                            axisLine: { display: "none" },
+                            scale: "auto",
+                        }}
                         tooltipProps={{
                             content: ({ label, payload, coordinate, active }) => {
                                 if (!payload) return null
@@ -369,19 +393,19 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
                     <Stack gap="8px" mt="-8px" align="center">
                         <Group gap="4px">
                             <div className="cc-graph-lb">
-                                Top {toFixedCeil(leaderboard.Rank / leaderboard.Leaderboard.Total * 100, decimalPlaces)}%
+                                Top {toFixedCeil(entry.Rank / leaderboard.Total * 100, decimalPlaces)}%
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
-                                <Image h="22px" src={leaderboard.Leaderboard.Weapon.ImageUrl}
+                                <Image h="22px" src={leaderboard.Weapon.ImageUrl}
                                     data-zzz-type="weapon" data-zzz-lang={language} 
-                                    data-zzz-id={leaderboard.Leaderboard.Weapon.Id}
+                                    data-zzz-id={leaderboard.Weapon.Id}
                                     data-zzz-level={60} data-zzz-promote={5} />
-                                <Title order={6} m="0" fz="14px">{leaderboard.Leaderboard.Name}</Title>
+                                <Title order={6} m="0" fz="14px">{leaderboard.Name}</Title>
                             </Group>
                         </Group>
-                        <Team h="64px" team={[leaderboard.Leaderboard.Character, ...leaderboard.Leaderboard.Team]} />
+                        <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
                         <div className="cc-graph-lb">
-                            {leaderboard.Rank} / {leaderboard.Leaderboard.Total}
+                            {entry.Rank} / {leaderboard.Total}
                         </div>
                     </Stack>
                 </Stack>
@@ -390,7 +414,7 @@ function StatsGraph({ leaderboard, stats, color }: { leaderboard: BaseLeaderboar
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character, leaderboard, substatsVisible }: ICharacterCardProps): React.ReactElement {
+export default function CharacterCard({ ref, uid, username, character, leaderboardId, substatsVisible }: ICharacterCardProps): React.ReactElement {
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
@@ -417,8 +441,13 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
         return result
     }, [character.DriveDisks])
 
+    const { entries, leaderboards, highlightId } = useLeaderboards()
+
+    const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (leaderboardId ?? highlightId)), [leaderboards, leaderboardId, highlightId])
+    const entry = useMemo(() => entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
+
     return (
-        <Card className="character-card" ref={ref} withBorder shadow="xs" m="lg" p="0px"
+        <Card className="character-card" ref={ref} withBorder shadow="xs" m="xs" p="0px"
             style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
             <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
@@ -472,8 +501,8 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                     </Title>
                 </div>
                 <div className="cc-leaderboard">
-                    {leaderboard &&
-                        <StatsGraph leaderboard={leaderboard} stats={character.Stats} color={character.Colors.Mindscape} />
+                    {leaderboard && entry &&
+                        <StatsGraph leaderboard={leaderboard} entry={entry} stats={character.Stats} color={character.Colors.Mindscape} />
                     }
                 </div>
             </Card.Section>
@@ -492,4 +521,4 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
     )
 }
 
-export const CharacterCardMemorized = memo(CharacterCard)
+export const CharacterCardMemoized = memo(CharacterCard)

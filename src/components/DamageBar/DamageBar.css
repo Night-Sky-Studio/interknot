@@ -13,9 +13,18 @@
     background-color: var(--mantine-color-dark-7);
     padding: 0.25rem 0.5rem;
     color: white;
-    width: max(var(--width), 48px);
+    /* width: max(var(--width), 48px); */
+    width: var(--width);
+    min-width: 4ch;
     user-select: none;
     position: relative;
+}
+.dmg-bar > div[data-tag="Dash"],
+.dmg-bar > div[data-tag="Chain"] {
+    min-width: 6ch;
+}
+.dmg-bar > div[data-tag="Ultimate"] {
+    min-width: 8ch;
 }
 
 .dmg-bar > div[data-tag="BasicAtk"],

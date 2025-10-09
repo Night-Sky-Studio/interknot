@@ -13,3 +13,8 @@
     --anomaly-hover: var(--mantine-color-blue-6);
     --aftershock-hover: var(--mantine-color-cyan-7);
 }
+
+/* .lb-select-option * {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+} */
