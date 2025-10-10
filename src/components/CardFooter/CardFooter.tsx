@@ -1,20 +1,21 @@
-import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Modal, Dialog, Title, Switch, Drawer, Popover, Flex, ActionIcon } from "@mantine/core"
-import { IconCross, IconTools, IconX } from "@tabler/icons-react"
+import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon } from "@mantine/core"
+import { IconTools, IconX } from "@tabler/icons-react"
 import { useState } from "react"
-import BuildInfo from "../BuildInfo/BuildInfo"
+import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
 import { useDisclosure } from "@mantine/hooks"
+import { useLeaderboards } from "@components/LeaderboardProvider"
 
 const data = ["Damage distribution", "Sub-stat priority", "Leaderboards"]
 
-export default function CardFooter({ uid, characterId }: { uid: number, characterId: number }): React.ReactElement {
+export default function CardFooter(): React.ReactElement {
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
     const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({})
     const [active, setActive] = useState(-1)
     const setControlRef = (index: number) => (node: HTMLButtonElement) => {
         controlsRefs[index] = node
         setControlsRefs(controlsRefs)
-    };
+    }
 
     const controls = data.map((item, index) => (
         <UnstyledButton
@@ -32,6 +33,8 @@ export default function CardFooter({ uid, characterId }: { uid: number, characte
     ))
 
     const [opened, { open, close }] = useDisclosure(false)
+
+    const { isAvailable } = useLeaderboards()
 
     return (<>
         {/* <Drawer opened={opened} onClose={close} position="bottom" 
@@ -61,18 +64,20 @@ export default function CardFooter({ uid, characterId }: { uid: number, characte
                             </Stack>
                         </Popover.Dropdown>
                     </Popover>
-                    <div className="root" ref={setRootRef}>
-                        {controls}
+                    { isAvailable &&
+                        <div className="root" ref={setRootRef}>
+                            {controls}
 
-                        <FloatingIndicator
-                            target={controlsRefs[active]}
-                            parent={rootRef}
-                            className="indicator"
-                        />
-                    </div>
+                            <FloatingIndicator
+                                target={controlsRefs[active]}
+                                parent={rootRef}
+                                className="indicator"
+                            />
+                        </div>
+                    }
                 </Group>
                 {active !== -1 &&
-                    <BuildInfo uid={uid} characterId={characterId} mode={active} />
+                    <BuildInfo mode={active} />
                 }
             </Stack>
         </Center>

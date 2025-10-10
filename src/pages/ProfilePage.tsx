@@ -6,14 +6,14 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
 import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getUserLeaderboards, IQueryParams } from "../api/data"
 import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
-import Timer from "../components/Timer"
+import Timer from "@components/Timer"
 import "./styles/ProfilePage.css"
-import { LeaderboardGridMemorized } from "../components/LeaderboardGrid/LeaderboardGrid"
+import { LeaderboardGridMemorized } from "@components/LeaderboardGrid/LeaderboardGrid"
 import { BaseLeaderboardEntry, Character, DriveDisc, ProfileInfo, Property } from "@interknot/types"
-import LeaderboardProvider from "../components/LeaderboardProvider"
-import { useBackend } from "../components/BackendProvider"
-import { getRarityIcon } from "../components/icons/Icons"
-import { useSettings } from "../components/SettingsProvider"
+import LeaderboardProvider from "@components/LeaderboardProvider"
+import { useBackend } from "@components/BackendProvider"
+import { getRarityIcon } from "@components/icons/Icons"
+import { useSettings } from "@components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { DataTable } from "mantine-datatable"
 import WeaponCell from "@/components/cells/WeaponCell"
@@ -435,7 +435,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     }} />
                                                 </DataProvider>
                                                 <Stack m="md">
-                                                    <CardFooter uid={Number(uid)} characterId={character.Id} />
+                                                    <CardFooter />
                                                 </Stack>
                                             </LeaderboardProvider>)
                                         }}
