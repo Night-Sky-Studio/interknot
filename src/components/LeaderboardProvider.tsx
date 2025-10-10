@@ -5,12 +5,14 @@ import { createContext, useContext, useMemo } from "react"
 import { useAsync } from "react-use"
 
 type LeaderboardContextType = {
+    isAvailable: boolean
     entries: BaseLeaderboardEntry[]
     leaderboards: LeaderboardList[]
     highlightId?: number
 }
 
 const defaultValue: LeaderboardContextType = {
+    isAvailable: false,
     entries: [],
     leaderboards: [],
     highlightId: undefined
@@ -30,13 +32,24 @@ export default function LeaderboardProvider({ uid, characterId, children }: ILea
 
     const entries = useMemo(() => entriesState.value?.data ?? [], [entriesState.value])
     const leaderboards = useMemo(() => leaderboardsState.value?.data ?? [], [leaderboardsState.value])
-    
+
+    const isAvailable = useMemo(() => leaderboards.length > 0, [leaderboards])
+
     const isLoading = useMemo(() => entriesState.loading || leaderboardsState.loading, [entriesState.loading, leaderboardsState.loading])
-    // This is stupid and I hate it, but god bless lazy evaluation
-    const highlightId = useMemo(() => entries.toSorted((a, b) => b.TotalValue - a.TotalValue)
-        .find(e => e.Type === 0 || e.Type === 1 || e.Type === 2)?.Leaderboard.Id, [entries])
+    const highlightId = useMemo(() => {
+        if (entries.length === 0) return undefined
+        
+        const sorted = entries.toSorted((a, b) => b.TotalValue - a.TotalValue)
+        const best = 
+            sorted.find(e => e.Type === 0) ?? 
+            sorted.find(e => e.Type === 1) ?? 
+            sorted.find(e => e.Type === 2)
+        
+        return best?.Leaderboard.Id
+    }, [entries])
 
     const value = useMemo(() => ({
+        isAvailable,
         entries,
         leaderboards,
         highlightId
