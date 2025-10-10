@@ -157,14 +157,14 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
         base: dataUrl,
         path: `leaderboards/${uid}`,
         query: { update: `${update}` }
-    }))
+    }), true)
 }
 
 export async function getUserCharacterLeaderboards(uid: number, characterId: number): Promise<IResult<BaseLeaderboardEntry[]>> {
     return await get(url({
         base: dataUrl,
         path: `leaderboards/${uid}/character/${characterId}`
-    }))
+    }), true)
 }
 
 export async function getLeaderboards({ filter }: IQueryParams, expand: boolean = false): Promise<IResult<LeaderboardList[]>> {
@@ -175,14 +175,14 @@ export async function getLeaderboards({ filter }: IQueryParams, expand: boolean 
             ...filter,
             expand: expand ? "true" : "false"
         }
-    }))
+    }), true)
 }
 
 export async function getLeaderboard(id: number): Promise<IResult<Leaderboard[]>> {
     return await get(url({
         base: dataUrl,
         path: `/leaderboard/${id}`
-    }))
+    }), true)
 }
 
 export async function getLeaderboardUsers(leaderboardId: number, {
