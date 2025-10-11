@@ -9,13 +9,16 @@ export interface IGameObjectProps {
     name: string
     size?: number
     bg?: MantineColor
+    withMargin?: boolean
 }
 
-export default function GameObject({ img, propId, name, size, bg }: IGameObjectProps) {
+export default function GameObject({ img, propId, name, size, bg, withMargin }: IGameObjectProps) {
     const { getLocalString } = useSettings()
     const s = size ?? 32
     return (
-        <Group className="game-object" wrap="nowrap" gap="xs" m="0 0.5rem" p="0 0.5rem 0 0" bg={bg ?? "dark.8"}>
+        <Group className="game-object" wrap="nowrap" gap="xs" 
+            m={withMargin === true ? "0 0.5rem" : undefined} 
+            p="0 0.5rem 0 0" bg={bg ?? "dark.8"}>
             { img && <Image src={img} alt={getLocalString(name)} w={`${s}px`} h={`${s}px`} /> }
             { propId && <ZenlessIcon size={s / 1.5} style={{ margin: "0.25rem", marginLeft: "0.5rem" }} id={propId} />}
             <Text>{getLocalString(name)}</Text>
