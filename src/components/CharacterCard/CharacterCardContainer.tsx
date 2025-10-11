@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { CharacterCardMemoized, ICharacterCardProps } from "./CharacterCard"
 import { useElementSize } from "@mantine/hooks"
+import { useCardSettings } from "../CardSettingsProvider"
 
 interface ICharacterCardContainerProps {
     parentRef?: React.RefObject<HTMLDivElement | null>
@@ -18,6 +19,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
     const [cardScale, setCardScale] = useState(1)
     const [cardContainerHeight, setCardContainerHeight] = useState(750 * CARD_ASPECT_RATIO)
     const { ref: cardContainerRef, width } = useElementSize()
+    const { showSubstatsBreakdown } = useCardSettings()
 
     useEffect(() => {
         if (parentRef?.current) {
@@ -31,12 +33,12 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
         let scaleFactor = (width - 40) / 1500
         scaleFactor = Math.min(Math.max(scaleFactor, SCALE_FACTOR_MIN), 1.05)
 
-        let containerHeight = Math.round(width * CARD_ASPECT_RATIO) // TODO: (isSubstatsVisible ? 48 : 0)
+        let containerHeight = Math.round(width * CARD_ASPECT_RATIO) + (showSubstatsBreakdown ? 48 : 0)
         containerHeight = Math.max(containerHeight, (1500 * CARD_ASPECT_RATIO * SCALE_FACTOR_MIN))
 
         setCardScale(scaleFactor)
         setCardContainerHeight(containerHeight)
-    }, [width])
+    }, [width, showSubstatsBreakdown])
 
     return (
         <div ref={ref} style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>

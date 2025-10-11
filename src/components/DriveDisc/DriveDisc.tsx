@@ -1,9 +1,10 @@
-import { useMantineTheme, Group, Title, Stack, SimpleGrid, Center, Image } from "@mantine/core"
+import { useMantineTheme, Group, Title, Stack, SimpleGrid, Center, Image, Space } from "@mantine/core"
 import { getDriveDiscGradient, getRarityIcon, ZenlessIcon } from "@icons/Icons"
 import { DriveDisc as DD } from "@interknot/types"
 import { SubStat } from "@components/SubStat/SubStat"
 import "./DriveDisc.css"
 import { useSettings } from "@components/SettingsProvider"
+import { useCardSettings } from "../CardSettingsProvider"
 
 function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     return <div className="cc-disc-slot">
@@ -17,6 +18,7 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
     const theme = useMantineTheme()
 
     const { getLevel } = useSettings()
+    const { showCritValue } = useCardSettings()
 
     const cvColor = (cv: number) => {
         switch(true) {
@@ -44,7 +46,10 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                             <ZenlessIcon id={disc.MainStat.Id} size="32px"/>
                             <Title order={6} fz="24px">{disc.MainStat.formatted}</Title>
                         </Group>
-                        <Title order={6} fz="14px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
+                        {showCritValue 
+                            ? <Title order={6} fz="14px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
+                            : <Space h="21px" />
+                        }
                     </Stack>
                 </Group>
                 <SimpleGrid cols={2} spacing="8px" verticalSpacing="8px" className="cc-disc-stats">

@@ -5,6 +5,9 @@ import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
 import { useDisclosure } from "@mantine/hooks"
 import { useLeaderboards } from "@components/LeaderboardProvider"
+import { useCardSettings } from "@components/CardSettingsProvider"
+import LeaderboardEntrySelect from "../LeaderboardEntrySelect"
+import { useSettings } from "../SettingsProvider"
 
 const data = ["Damage distribution", "Sub-stat priority", "Leaderboards"]
 
@@ -34,33 +37,57 @@ export default function CardFooter(): React.ReactElement {
 
     const [opened, { open, close }] = useDisclosure(false)
 
-    const { isAvailable } = useLeaderboards()
+    const { cvEnabled } = useSettings()
+    const { isAvailable, entries, highlightId } = useLeaderboards()
+    const cardSettings = useCardSettings()
 
-    return (<>
-        {/* <Drawer opened={opened} onClose={close} position="bottom" 
-            offset={8} size="xs" withCloseButton shadow="xl">
-            <Stack>
-                <Title order={3}>Card Customization</Title>
-                <Switch label="Substats breakdown" />
-            </Stack>
-        </Drawer> */}
-        
+    return (<>        
         <Center w="100%">
             <Stack w="100%" maw="100%">
                 <Group>
-                    <Popover opened={opened} withArrow position="top" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
+                    <Popover opened={opened} withArrow position="top-start" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
                         transitionProps={{ transition: "pop" }}
                         closeOnClickOutside={false} closeOnEscape={false}>
                         <Popover.Target>
-                            <Button leftSection={<IconTools />} onClick={open}>Card Customization</Button>
+                            <Button variant={opened ? "filled" : "subtle"} leftSection={<IconTools />} onClick={() => {
+                                if (opened) {
+                                    close()
+                                } else {
+                                    open()
+                                }
+                            }}>Card Customization</Button>
                         </Popover.Target>
                         <Popover.Dropdown>
                             <Stack>
-                                <Flex justify="space-between" align="center" w="384px">
-                                    <Title order={3}>Card Customization</Title>
+                                <Flex justify="space-between" align="center" w="100%">
+                                    <Title order={3} miw="384px">Card Customization</Title>
                                     <ActionIcon variant="subtle" onClick={close}><IconX /></ActionIcon>
                                 </Flex>
-                                <Switch label="Substats breakdown" />
+                                <Switch label="Show graph"
+                                    checked={cardSettings.showGraph}
+                                    onChange={(evt) => cardSettings.setShowGraph(evt.target.checked)} />
+                                { cardSettings.showGraph && <>
+                                    <LeaderboardEntrySelect entries={entries} 
+                                        initialLeaderboardId={cardSettings.selectedLeaderboardId ?? highlightId} showRanking
+                                        onEntrySelect={(entry) => cardSettings.setSelectedLeaderboardId(entry.Leaderboard.Id)} />
+                                    <Switch label="Show ranking"
+                                        checked={cardSettings.showRanking}
+                                        onChange={(evt) => cardSettings.setShowRanking(evt.target.checked)} />
+                                </>}
+                                <Switch label="Show substats breakdown" 
+                                    checked={cardSettings.showSubstatsBreakdown}
+                                    onChange={(evt) => cardSettings.setShowSubstatsBreakdown(evt.target.checked)} />
+                                {/* <Switch label="Show build name"
+                                    checked={cardSettings.showBuildName}
+                                    onChange={(evt) => cardSettings.setShowBuildName(evt.target.checked)} /> */}
+                                <Switch label="Show user information"
+                                    checked={cardSettings.showUserInfo}
+                                    onChange={(evt) => cardSettings.setShowUserInfo(evt.target.checked)} />
+                                { cvEnabled &&
+                                    <Switch label="Show crit value"
+                                        checked={cardSettings.showCritValue}
+                                        onChange={(evt) => cardSettings.setShowCritValue(evt.target.checked)} />
+                                }
                             </Stack>
                         </Popover.Dropdown>
                     </Popover>

@@ -25,6 +25,7 @@ import CharacterCardContainer from "@/components/CharacterCard/CharacterCardCont
 import { DataProvider } from "@/components/DataProvider"
 import { TooltipData } from "@/components/CharacterCard/CharacterCard"
 import CardFooter from "@/components/CardFooter/CardFooter"
+import CardSettingsProvider from "@/components/CardSettingsProvider"
 
 function timeAgoIntl(date: Date | string) {
     if (typeof date === "string") {
@@ -426,18 +427,22 @@ export default function ProfilePage(): React.ReactElement {
                                         ]}
                                         rowExpansion={{
                                             allowMultiple: true,
-                                            content: ({ record: character }) => (<LeaderboardProvider uid={Number(uid)} characterId={character.Id}>
-                                                <DataProvider data={{ charId: character.Id, weaponId: character.Weapon?.Id } satisfies TooltipData}>
-                                                    <CharacterCardContainer parentRef={tableRef} cardProps={{
-                                                        uid: Number(uid),
-                                                        username: profile.Nickname,
-                                                        character: character,
-                                                    }} />
-                                                </DataProvider>
-                                                <Stack m="md">
-                                                    <CardFooter />
-                                                </Stack>
-                                            </LeaderboardProvider>)
+                                            content: ({ record: character }) => (
+                                                <LeaderboardProvider uid={Number(uid)} characterId={character.Id}>
+                                                    <CardSettingsProvider>
+                                                        <DataProvider data={{ charId: character.Id, weaponId: character.Weapon?.Id } satisfies TooltipData}>
+                                                            <CharacterCardContainer parentRef={tableRef} cardProps={{
+                                                                uid: Number(uid),
+                                                                username: profile.Nickname,
+                                                                character: character,
+                                                            }} />
+                                                        </DataProvider>
+                                                        <Stack m="md">
+                                                            <CardFooter />
+                                                        </Stack>
+                                                    </CardSettingsProvider>
+                                                </LeaderboardProvider>
+                                            )
                                         }}
                                         records={characters}
                                         idAccessor="Id"

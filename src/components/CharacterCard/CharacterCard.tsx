@@ -1,4 +1,4 @@
-import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme } from "@mantine/core"
+import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme, Space } from "@mantine/core"
 import { RadarChart } from "@mantine/charts"
 import { Character, Talents as CharacterTalents } from "@interknot/types"
 import "./CharacterCard.css"
@@ -20,6 +20,7 @@ import { Team } from "@components/Team/Team"
 import { toFixedCeil } from "@extensions/NumberExtensions"
 import { useData } from "@components/DataProvider"
 import { useLeaderboards } from "../LeaderboardProvider"
+import { useCardSettings } from "../CardSettingsProvider"
 
 export interface TooltipData {
     charId: number,
@@ -98,9 +99,6 @@ export interface ICharacterCardProps {
     uid: number
     username: string
     character: Character
-    leaderboardId?: number
-    // leaderboard?: Omit<BaseLeaderboardEntry, "RotationValue">
-    substatsVisible?: boolean
 }
 
 function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
@@ -249,6 +247,7 @@ interface IStatsGraphProps {
 
 function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): React.ReactElement {
     const { getLocalString, decimalPlaces } = useSettings()
+    const { showRanking } = useCardSettings()
 
     const graphState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(leaderboard.Id)
@@ -404,9 +403,12 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
                             </Group>
                         </Group>
                         <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
-                        <div className="cc-graph-lb">
-                            {entry.Rank} / {leaderboard.Total}
-                        </div>
+                        {showRanking 
+                            ? <div className="cc-graph-lb">
+                                {entry.Rank} / {leaderboard.Total}
+                            </div>
+                            : <Space h="18px" />
+                        }
                     </Stack>
                 </Stack>
             }   
@@ -414,7 +416,17 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character, leaderboardId, substatsVisible }: ICharacterCardProps): React.ReactElement {
+export default function CharacterCard({ ref, uid, username, character }: ICharacterCardProps): React.ReactElement {
+    const { 
+        showSubstatsBreakdown,
+        // showBuildName,
+        showUserInfo,
+        showGraph,
+        showCritValue,
+        selectedLeaderboardId
+        // cardCustomization,
+    } = useCardSettings()
+    
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
@@ -443,7 +455,7 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
 
     const { entries, leaderboards, highlightId } = useLeaderboards()
 
-    const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (leaderboardId ?? highlightId)), [leaderboards, leaderboardId, highlightId])
+    const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, selectedLeaderboardId, highlightId])
     const entry = useMemo(() => entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
 
     return (
@@ -492,21 +504,27 @@ export default function CharacterCard({ ref, uid, username, character, leaderboa
                     </div>
                 </div>
                 <div className="cc-user">
-                    <Stack gap="0px" className="cc-info-user">
-                        <Text fz="14px">{uid}</Text>
-                        <Text fz="20px" fw={600} mt="-2px">{username}</Text>
-                    </Stack>
-                    <Title className="cc-cv" fz="18px" mt="-4px" component="span">
-                        CV {character.CritValue}
-                    </Title>
-                </div>
-                <div className="cc-leaderboard">
-                    {leaderboard && entry &&
-                        <StatsGraph leaderboard={leaderboard} entry={entry} stats={character.Stats} color={character.Colors.Mindscape} />
+                    {showUserInfo &&
+                        <Stack gap="0px" className="cc-info-user">
+                            <Text fz="14px">{uid}</Text>
+                            <Text fz="20px" fw={600} mt="-2px">{username}</Text>
+                        </Stack>
+                    }
+                    {showCritValue && 
+                        <Title className="cc-cv" fz="18px" mt="-4px" component="span">
+                            CV {character.CritValue}
+                        </Title>
                     }
                 </div>
+                {showGraph &&
+                    <div className="cc-leaderboard">
+                        {leaderboard && entry &&
+                            <StatsGraph leaderboard={leaderboard} entry={entry} stats={character.Stats} color={character.Colors.Mindscape} />
+                        }
+                    </div>
+                }
             </Card.Section>
-            {substatsVisible && substatsVisible === true &&
+            {showSubstatsBreakdown === true &&
                 <Card.Section m="0px" className="cc-sub-stats">
                     {
                         collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
