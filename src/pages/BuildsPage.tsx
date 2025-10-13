@@ -18,16 +18,7 @@ import { useAsync } from "react-use"
 
 export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
-    // const [searchParams, _] = useSearchParams()
-
-    const { getLocalString } = useSettings()
-
-    // const cursor = String(searchParams.get("cursor") ?? undefined)
-    // const limit = Number(searchParams.get("limit") ?? 20)
-
-    // const [cursor, setCursor] = useState<string | undefined>(undefined)
-    // const [limit, setLimit] = useState(20)
-    // const [filterQuery, setFilterQuery] = useState<Record<string, string>>({})
+    const { cvEnabled, getLocalString } = useSettings()
 
     const [{ cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
@@ -222,7 +213,7 @@ export default function BuildsPage(): React.ReactElement {
                                         },
                                         { 
                                             accessor: "Character.CritValue",
-                                            title: "Crit Value",
+                                            title: cvEnabled ? "Crit Value" : "Crit Rate / Crit DMG",
                                             cellsStyle: () => ({ 
                                                 width: "calc(10rem * var(--mantine-scale))",
                                                 background: "rgba(0 0 0 / 15%)" 

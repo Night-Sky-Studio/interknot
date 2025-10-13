@@ -1,6 +1,6 @@
 import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon } from "@mantine/core"
 import { IconTools, IconX } from "@tabler/icons-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
 import { useDisclosure } from "@mantine/hooks"
@@ -41,6 +41,10 @@ export default function CardFooter(): React.ReactElement {
     const { isAvailable, entries, highlightId } = useLeaderboards()
     const cardSettings = useCardSettings()
 
+    useEffect(() => {
+        cardSettings.setShowGraph(isAvailable && cardSettings.showGraph)
+    }, [isAvailable])
+
     return (<>        
         <Center w="100%">
             <Stack w="100%" maw="100%">
@@ -65,6 +69,7 @@ export default function CardFooter(): React.ReactElement {
                                 </Flex>
                                 <Switch label="Show graph"
                                     checked={cardSettings.showGraph}
+                                    disabled={!isAvailable}
                                     onChange={(evt) => cardSettings.setShowGraph(evt.target.checked)} />
                                 { cardSettings.showGraph && <>
                                     <LeaderboardEntrySelect entries={entries} 

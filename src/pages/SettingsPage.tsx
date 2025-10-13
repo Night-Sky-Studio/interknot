@@ -44,9 +44,10 @@ export default function SettingsPage() {
                 <Group gap="4px">
                     Crit Value formula: <GameObject propId={20103} name="Crit" /><IconX size="16px" />2<IconPlus size="16px" /><GameObject propId={21103} name="CritDmg" />
                 </Group>
+                <Text>In almost every situation: more CV = less damage. A lot of characters don't even need crits to maximize their damage.</Text>
                 <Text>
-                    By enabling it, you acknowledge that you understand what it is, what it is could be used for 
-                    and give your explicit consent <Text component="span" fw={900}>NOT</Text> to use it for ranking 
+                    By enabling it, you acknowledge that you understand what it is, what it is could be used for,
+                    give your explicit consent <Text component="span" fw={900}>NOT</Text> to use it for ranking 
                     purposes and <Text component="span" fw={900}>NOT</Text> base your decisions around it.
                 </Text>
                 <Flex justify="space-evenly" gap="md">
@@ -83,7 +84,7 @@ export default function SettingsPage() {
                         settings.setDecimalPlaces(Number(val))
                     }}></SegmentedControl>
                 </Group>
-                <Switch label="Crit Value Enabled"
+                <Switch label="Enable Crit Value"
                         checked={settings.cvEnabled}
                         onChange={() => {
                             settings.setCvEnabled(false)

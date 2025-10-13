@@ -61,7 +61,7 @@ export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
     // const initialOpenedId = useSearchParam("openedId")
     const backend = useBackend()
-    const { getLocalString, getLevel } = useSettings()
+    const { cvEnabled, getLocalString, getLevel } = useSettings()
 
     const [{ openedId: initialOpenedId, cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
@@ -392,7 +392,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     },
                                                     {
                                                         accessor: "CritValue",
-                                                        title: "Crit Value",
+                                                        title: cvEnabled ? "Crit Value" : "Crit Rate / Crit DMG",
                                                         cellsStyle: () => ({
                                                             width: "calc(10rem * var(--mantine-scale))",
                                                             background: "rgba(0 0 0 / 15%)"

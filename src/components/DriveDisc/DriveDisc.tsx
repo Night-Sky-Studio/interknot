@@ -5,6 +5,7 @@ import { SubStat } from "@components/SubStat/SubStat"
 import "./DriveDisc.css"
 import { useSettings } from "@components/SettingsProvider"
 import { useCardSettings } from "../CardSettingsProvider"
+import { getShortPropertyName } from "@/localization/Localization"
 
 function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     return <div className="cc-disc-slot">
@@ -48,7 +49,8 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                         </Group>
                         {showCritValue 
                             ? <Title order={6} fz="14px">CV {(disc.CritValue.Value / 100).toFixed(1)}</Title>
-                            : <Space h="21px" />
+                            : <Title order={6} fz="14px">{getShortPropertyName(disc.MainStat.Id)}</Title>
+                            // <Space h="21px" />
                         }
                     </Stack>
                 </Group>
