@@ -61,16 +61,16 @@ export default function CritCell({ cr, cd, cv }: { cr: string, cd: string, cv: n
                     {cv} cv
                 </div>
             </div>
-        : <Group gap="8px">
-            <Group gap="4px" wrap="nowrap" w="7ch">
-                <ZenlessIcon color="white" id={20103} size={16} />
-                <Text>{ cr }</Text>
+            : <Group gap="8px">
+                <Group gap="4px" wrap="nowrap" w="7ch">
+                    <ZenlessIcon color="white" id={20103} size={16} />
+                    <Text>{ cr }</Text>
+                </Group>
+                <Group gap="4px" wrap="nowrap">
+                    <ZenlessIcon color="white" id={21103} size={16} />
+                    <Text>{ cd }</Text>
+                </Group>
             </Group>
-            <Group gap="4px" wrap="nowrap">
-                <ZenlessIcon color="white" id={21103} size={16} />
-                <Text>{ cd }</Text>
-            </Group>
-        </Group>
         }
     </>)
 }
