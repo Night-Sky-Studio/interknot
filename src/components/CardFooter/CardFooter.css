@@ -5,6 +5,8 @@
     border-radius: var(--mantine-radius-md);
     padding: 5px;
     border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 .control {
@@ -15,6 +17,7 @@
     font-size: var(--mantine-font-size-sm);
     transition: color 100ms ease;
     font-weight: 500;
+    text-overflow: clip;
 
     @mixin hover {
         &:not([data-active]):not([data-disabled]):hover {
@@ -37,6 +40,7 @@
 .controlLabel {
     position: relative;
     z-index: 1;
+    white-space: nowrap;
 }
 
 .indicator {

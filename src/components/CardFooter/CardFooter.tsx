@@ -54,7 +54,7 @@ export default function CardFooter(): React.ReactElement {
     return (<>        
         <Center w="100%">
             <Stack w="100%" maw="100%">
-                <Group>
+                <Group wrap="nowrap">
                     <Button variant="subtle" leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
                         onClick={async () => {
                             const cardRef = cardSettings.cardRef?.current

@@ -27,15 +27,19 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
         }
     }, [parentRef?.current, cardContainerRef])
 
-    const SCALE_FACTOR_MIN = 0.5
+    const SCALE_FACTOR_MIN = 0.56
+    const MIN_HEIGHT = Math.trunc(1500 * CARD_ASPECT_RATIO * SCALE_FACTOR_MIN)
+    // const MIN_WIDTH = Math.trunc(1500 * SCALE_FACTOR_MIN)
 
     useEffect(() => {
         let scaleFactor = (width - 40) / 1500
         scaleFactor = Math.min(Math.max(scaleFactor, SCALE_FACTOR_MIN), 1.05)
 
         let containerHeight = Math.round(width * CARD_ASPECT_RATIO) + (showSubstatsBreakdown ? 48 : 0)
-        containerHeight = Math.max(containerHeight, (1500 * CARD_ASPECT_RATIO * SCALE_FACTOR_MIN))
+        containerHeight = Math.max(containerHeight, MIN_HEIGHT + 67)
 
+        console.log(scaleFactor.toFixed(3), containerHeight, width)
+        
         setCardScale(scaleFactor)
         setCardContainerHeight(containerHeight)
     }, [width, showSubstatsBreakdown])
