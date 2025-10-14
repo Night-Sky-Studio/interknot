@@ -429,18 +429,23 @@ export default function ProfilePage(): React.ReactElement {
                                             allowMultiple: true,
                                             content: ({ record: character }) => (
                                                 <LeaderboardProvider uid={Number(uid)} characterId={character.Id}>
-                                                    <CardSettingsProvider>
-                                                        <DataProvider data={{ charId: character.Id, weaponId: character.Weapon?.Id } satisfies TooltipData}>
+                                                    <DataProvider data={{ 
+                                                        charId: character.Id, 
+                                                        weaponId: character.Weapon?.Id,
+                                                        charName: character.Name,
+                                                        uid: Number(uid)
+                                                    } satisfies TooltipData}>
+                                                        <CardSettingsProvider>
                                                             <CharacterCardContainer parentRef={tableRef} cardProps={{
                                                                 uid: Number(uid),
                                                                 username: profile.Nickname,
                                                                 character: character,
                                                             }} />
-                                                        </DataProvider>
-                                                        <Stack m="md">
-                                                            <CardFooter />
-                                                        </Stack>
-                                                    </CardSettingsProvider>
+                                                            <Stack m="md">
+                                                                <CardFooter />
+                                                            </Stack>
+                                                        </CardSettingsProvider>
+                                                    </DataProvider>
                                                 </LeaderboardProvider>
                                             )
                                         }}

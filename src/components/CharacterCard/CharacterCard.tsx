@@ -24,6 +24,8 @@ import { useCardSettings } from "../CardSettingsProvider"
 
 export interface TooltipData {
     charId: number,
+    charName: string,
+    uid: number,
     weaponId?: number
 }
 

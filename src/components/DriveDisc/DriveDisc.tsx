@@ -1,4 +1,4 @@
-import { useMantineTheme, Group, Title, Stack, SimpleGrid, Center, Image, Space } from "@mantine/core"
+import { useMantineTheme, Group, Title, Stack, SimpleGrid, Center, Image } from "@mantine/core"
 import { getDriveDiscGradient, getRarityIcon, ZenlessIcon } from "@icons/Icons"
 import { DriveDisc as DD } from "@interknot/types"
 import { SubStat } from "@components/SubStat/SubStat"

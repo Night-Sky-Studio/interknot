@@ -19,7 +19,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
     const [cardScale, setCardScale] = useState(1)
     const [cardContainerHeight, setCardContainerHeight] = useState(750 * CARD_ASPECT_RATIO)
     const { ref: cardContainerRef, width } = useElementSize()
-    const { showSubstatsBreakdown } = useCardSettings()
+    const { showSubstatsBreakdown, setCardRef } = useCardSettings()
 
     useEffect(() => {
         if (parentRef?.current) {
@@ -40,6 +40,10 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
         setCardContainerHeight(containerHeight)
     }, [width, showSubstatsBreakdown])
 
+    useEffect(() => {
+        setCardRef(cardRef)
+    }, [cardRef])
+    
     return (
         <div ref={ref} style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>
             <CharacterCardMemoized ref={cardRef} {...cardProps} />

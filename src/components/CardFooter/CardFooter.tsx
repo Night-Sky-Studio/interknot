@@ -1,5 +1,5 @@
-import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon } from "@mantine/core"
-import { IconTools, IconX } from "@tabler/icons-react"
+import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon, Loader } from "@mantine/core"
+import { IconDownload, IconTools, IconX } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
@@ -8,6 +8,9 @@ import { useLeaderboards } from "@components/LeaderboardProvider"
 import { useCardSettings } from "@components/CardSettingsProvider"
 import LeaderboardEntrySelect from "../LeaderboardEntrySelect"
 import { useSettings } from "../SettingsProvider"
+import { toPng } from "html-to-image"
+import { useData } from "../DataProvider"
+import { TooltipData } from "../CharacterCard/CharacterCard"
 
 const data = ["Damage distribution", "Sub-stat priority", "Leaderboards"]
 
@@ -37,18 +40,59 @@ export default function CardFooter(): React.ReactElement {
 
     const [opened, { open, close }] = useDisclosure(false)
 
-    const { cvEnabled } = useSettings()
+    const { cvEnabled, getLocalString } = useSettings()
     const { isAvailable, entries, highlightId } = useLeaderboards()
     const cardSettings = useCardSettings()
+    const cardData = useData<TooltipData>()
 
     useEffect(() => {
         cardSettings.setShowGraph(isAvailable && cardSettings.showGraph)
     }, [isAvailable])
 
+    const [downloading, setDownloading] = useState(false)
+
     return (<>        
         <Center w="100%">
             <Stack w="100%" maw="100%">
                 <Group>
+                    <Button variant="subtle" leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
+                        onClick={async () => {
+                            const cardRef = cardSettings.cardRef?.current
+
+                            if (!cardRef) {
+                                console.error("Card ref is null")
+                                return
+                            }
+
+                            setDownloading(true)
+
+                            const cardRect = cardRef.getBoundingClientRect()
+                            console.log(cardRect)
+
+                            cardRef.querySelectorAll("g.recharts-layer.recharts-polar-angle-axis.angleAxis > g > g > text")
+                                .forEach((el) => {
+                                    el.setAttribute("fill", "#FFFFFF")
+                                })
+                            
+                            cardRef.style.transform = "scale(1) !important"
+
+                            const dataUrl = await toPng(cardRef, {
+                                quality: 1.0,
+                                canvasHeight: (Math.ceil(cardRect.height) + 72) * 2,
+                                canvasWidth: (Math.ceil(cardRect.width) + 72) * 2,
+                                backgroundColor: "transparent",
+                                style: {
+                                    margin: "0px",
+                                }
+                            })
+
+                            const link = document.createElement("a")
+                            link.download = `${getLocalString(cardData.charName)}-${cardData.uid}.png`
+                            link.href = dataUrl
+                            link.click()
+
+                            setDownloading(false)
+                        }}>Download image</Button>
                     <Popover opened={opened} withArrow position="top-start" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
                         transitionProps={{ transition: "pop" }}
                         closeOnClickOutside={false} closeOnEscape={false}>

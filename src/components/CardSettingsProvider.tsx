@@ -18,6 +18,9 @@ type CardSettingsContextType = {
     setShowCritValue: (value: boolean) => void
     setSelectedLeaderboardId: (value?: number) => void
     setCardCustomization: (value?: CardCustomization) => void
+
+    cardRef?: React.RefObject<HTMLDivElement | null>
+    setCardRef: (ref: React.RefObject<HTMLDivElement | null>) => void
 }
 
 const defaultValue: CardSettingsContextType = {
@@ -36,7 +39,10 @@ const defaultValue: CardSettingsContextType = {
     setShowRanking: () => {},
     setShowCritValue: () => {},
     setSelectedLeaderboardId: () => {},
-    setCardCustomization: () => {}
+    setCardCustomization: () => {},
+
+    cardRef: undefined,
+    setCardRef: () => {}
 }
 
 export const CardSettingsContext = createContext(defaultValue)
@@ -73,6 +79,10 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
         setSettings((prev) => ({ ...prev, cardCustomization }))
     }
 
+    const setCardRef = (ref: React.RefObject<HTMLDivElement | null>) => {
+        setSettings((prev) => ({ ...prev, cardRef: ref }))
+    }
+
     return (
         <CardSettingsContext.Provider value={{
             ...settings,
@@ -83,7 +93,9 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
             setShowRanking,
             setShowCritValue,
             setSelectedLeaderboardId,
-            setCardCustomization
+            setCardCustomization,
+
+            setCardRef
         }}>
             {children}
         </CardSettingsContext.Provider>
