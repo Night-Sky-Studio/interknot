@@ -66,9 +66,6 @@ export default function ProfilePage(): React.ReactElement {
     const [{ openedId: initialOpenedId, cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
     const [discsQuery, setDiscsQuery] = useState<IQueryParams>({ uid: uid ? Number(uid) : undefined })
-    useEffect(() => {
-        console.log(discsQuery)
-    }, [discsQuery])
 
     const [updateRequested, setUpdateRequested] = useState(false)
     const [canUpdate, setCanUpdate] = useState(true)

@@ -1,4 +1,4 @@
-import { AgentAction, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, FinalStats, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
+import { AgentAction, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, FinalStats, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -189,7 +189,7 @@ export async function getLeaderboardUsers(leaderboardId: number, {
     cursor,
     limit = 20,
     filter
-}: IQueryParams): Promise<ICursoredResult<BaseLeaderboardEntry>> {
+}: IQueryParams): Promise<ICursoredResult<Omit<LeaderboardEntry, "Leaderboard">>> {
     return await getCursored(url({
         base: dataUrl,
         path: `/leaderboard/${leaderboardId}/users`,
@@ -205,7 +205,7 @@ export async function getLeaderboardDmgDistribution(id: number): Promise<IResult
     return await get(url({
         base: dataUrl,
         path: `/leaderboard/${id}/distribution`
-    }), true)
+    }))
 }
 
 export interface CalcResponse {

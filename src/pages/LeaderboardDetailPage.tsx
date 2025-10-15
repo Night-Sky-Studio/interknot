@@ -7,7 +7,7 @@ import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "@components/WeaponButton"
 import { useMemo } from "react"
-import { LeaderboardEntry, Property } from "@interknot/types"
+import { Character, LeaderboardEntry, Property } from "@interknot/types"
 import PropertyCell from "@components/cells/PropertyCell"
 import WeaponCell from "@components/cells/WeaponCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
@@ -18,46 +18,40 @@ import { useSettings } from "@components/SettingsProvider"
 import { Team } from "@components/Team/Team"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { notifications } from '@mantine/notifications'
+import { useQueryParams } from "@/hooks/useQueryParams"
+import { DataTable } from "mantine-datatable"
+import { ServerChip } from "@/components/UserHeader/UserHeader"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
     const { id } = useParams()
-
-    const [searchParams, _] = useSearchParams()
-
-    const page = Number(searchParams.get("page") || "1")
-    const limit = Number(searchParams.get("limit") || "20")
-
-    const setPage = (page: number) => {
-        const newParams = new URLSearchParams(searchParams)
-        newParams.set("page", page.toString())
-        navigate(`?${newParams.toString()}`, { replace: false })
-    }
-
-    const setLimit = (limit: number) => {
-        const newParams = new URLSearchParams(searchParams)
-        newParams.set("limit", limit.toString())
-        navigate(`?${newParams.toString()}`, { replace: false })
-    }
-
     const { getLocalString } = useSettings()
+
+    const [{ cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
+    const limitNum = useMemo(() => Number(limit) || 20, [limit])
 
     const leaderboardState = useAsync(async () => {
         return await getLeaderboard(Number(id))
     }, [id])
+    const leaderboard = useMemo(() => leaderboardState.value?.data?.find(lb => lb.Id === Number(id)), 
+        [leaderboardState.value?.data, id])
 
     const leaderboardUsersState = useAsync(async () => {
-        return await getLeaderboardUsers(Number(id), Number(page), Number(limit))
-    }, [id, page, limit])
-
-    const currentLeaderboard = useMemo(() => leaderboardState.value?.find(lb => lb.Id === Number(id)), 
-        [leaderboardState.value, id])
+        return await getLeaderboardUsers(Number(id), {
+            cursor: cursor?.toString(),
+            limit: limitNum,
+            filter: filterQuery as Record<string, string>
+        })
+    }, [id, cursor, limit, filterQuery])
+    const leaderboardUsers = useMemo(() => leaderboardUsersState.value?.data ?? [],
+        [leaderboardUsersState.value?.data])
 
     const leaderboardDistributionState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(Number(id))
     }, [id])
 
-    const leaderboardDistribution = useMemo(() => { return leaderboardDistributionState.value }, [leaderboardDistributionState.value])
+    const leaderboardDistribution = useMemo(() => leaderboardDistributionState.value?.data, 
+        [leaderboardDistributionState.value?.data])
     const distributionDomain = useMemo(() => {
         if (leaderboardDistribution) {
             const values = Object.values(leaderboardDistribution.Data)
@@ -71,104 +65,100 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     }
     , [leaderboardDistribution])
 
-    const stats = (displayProps: number[], baseStats: Property[]) => {
+    const getTopStats = (c: Character): Property[] => {
         const result: Property[] = []
         let skippedStats = 0
-        for (const prodId of displayProps) {
-            const stat = baseStats.find(p => p.Id === prodId)
+        for (const propId of (c.DisplayProps ?? [])) {
+            const stat = c.Stats.find((p) => p.Id === propId)
             if (stat?.Value === 0) {
                 skippedStats++
-                if (displayProps.length - skippedStats >= 4)
-                    continue
+                if (c.DisplayProps.length - skippedStats >= 4) continue
             }
-            if (result.length >= 4)
-                break
-            if (stat) {
-                result.push(stat)
-            }
+            if (result.length >= 4) break
+            if (stat) result.push(stat)
         }
         return result
     }
 
-    const LeaderboardEntryRow = ({ user }: { user: LeaderboardEntry }) => {
-        const [isExpanded, { toggle }] = useDisclosure(false)
-        return (<>
-            <Table.Tr onClick={toggle}>
-                <Table.Td w="64px">{user.Rank}</Table.Td>
-                <Table.Td w="30%">
-                    <Group gap="sm" wrap="nowrap" w="fit-content">
-                        <Avatar src={user.Profile.ProfilePictureUrl} size="md" />
-                        <Anchor c="gray" href={`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`} onClick={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                            navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
-                        }}>{user.Profile.Nickname}</Anchor>
-                    </Group>
-                </Table.Td>
-                <WeaponCell weapon={user.Character.Weapon} compareWith={currentLeaderboard?.Weapon} />
-                <DriveDiscsCell sets={user.Character.DriveDisksSet} />
-                <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
-                    <CritCell cr={user.FinalStats.BaseStats.find(p => p.Id === 20101)?.formatted?.replace("%", "") ?? ""}
-                        cd={user.Character.Stats.find(p => p.Id === 21101)?.formatted?.replace("%", "") ?? ""} 
-                        cv={user.Character.CritValue} />
-                </Table.Td>
-                {
-                    stats(user.Character.DisplayProps, user.FinalStats.BaseStats)
-                        .map(prop => <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />)
-                }
-                <Table.Td w="128px" bg="rgba(0 0 0 / 25%)">
-                    <Text fz="12pt" fw={600}>{Math.round(user.TotalValue).toLocaleString()}</Text>
-                </Table.Td>
-            </Table.Tr>
-            <ExpandableRow opened={isExpanded}>
-                <Stack gap="xs" m="md">
-                    <Group gap="xs" align="center">
-                        <Title order={4}>Final calculated stats</Title>
-                        <Popover position="right" width="512px" withArrow withOverlay>
-                            <Popover.Dropdown>
-                                <Text>
-                                    These are the final stats before any damage calculations take place. 
-                                    They include all possible passives and bonuses as well as resistance shreds (such as weapon, drive disc set 4pc, and character passives) - either partially or with full uptime. 
-                                    For more details, check out the calculator 
-                                    <Text component="a" href="https://github.com/Night-Sky-Studio/interknot-calculator/wiki" target="_blank" c="blue"> wiki page.</Text>
-                                </Text>
-                            </Popover.Dropdown>
-                            <Popover.Target>
-                                <ActionIcon h="0.5rem" w="0.5rem" variant="light">
-                                    <IconQuestionMark size="1rem" />
-                                </ActionIcon>
-                            </Popover.Target>
-                        </Popover>
-                    </Group>
+    // const LeaderboardEntryRow = ({ user }: { user: LeaderboardEntry }) => {
+    //     const [isExpanded, { toggle }] = useDisclosure(false)
+    //     return (<>
+    //         <Table.Tr onClick={toggle}>
+    //             <Table.Td w="64px">{user.Rank}</Table.Td>
+    //             <Table.Td w="30%">
+    //                 <Group gap="sm" wrap="nowrap" w="fit-content">
+    //                     <Avatar src={user.Profile.ProfilePictureUrl} size="md" />
+    //                     <Anchor c="gray" href={`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`} onClick={(e) => {
+    //                         e.stopPropagation()
+    //                         e.preventDefault()
+    //                         navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
+    //                     }}>{user.Profile.Nickname}</Anchor>
+    //                 </Group>
+    //             </Table.Td>
+    //             <WeaponCell weapon={user.Character.Weapon} compareWith={leaderboard?.Weapon} />
+    //             <DriveDiscsCell sets={user.Character.DriveDisksSet} />
+    //             <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
+    //                 <CritCell cr={user.FinalStats.BaseStats.find(p => p.Id === 20101)?.formatted?.replace("%", "") ?? ""}
+    //                     cd={user.Character.Stats.find(p => p.Id === 21101)?.formatted?.replace("%", "") ?? ""} 
+    //                     cv={user.Character.CritValue} />
+    //             </Table.Td>
+    //             {
+    //                 stats(user.Character.DisplayProps, user.FinalStats.BaseStats)
+    //                     .map(prop => <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />)
+    //             }
+    //             <Table.Td w="128px" bg="rgba(0 0 0 / 25%)">
+    //                 <Text fz="12pt" fw={600}>{Math.round(user.TotalValue).toLocaleString()}</Text>
+    //             </Table.Td>
+    //         </Table.Tr>
+    //         <ExpandableRow opened={isExpanded}>
+    //             <Stack gap="xs" m="md">
+    //                 <Group gap="xs" align="center">
+    //                     <Title order={4}>Final calculated stats</Title>
+    //                     <Popover position="right" width="512px" withArrow withOverlay>
+    //                         <Popover.Dropdown>
+    //                             <Text>
+    //                                 These are the final stats before any damage calculations take place. 
+    //                                 They include all possible passives and bonuses as well as resistance shreds (such as weapon, drive disc set 4pc, and character passives) - either partially or with full uptime. 
+    //                                 For more details, check out the calculator 
+    //                                 <Text component="a" href="https://github.com/Night-Sky-Studio/interknot-calculator/wiki" target="_blank" c="blue"> wiki page.</Text>
+    //                             </Text>
+    //                         </Popover.Dropdown>
+    //                         <Popover.Target>
+    //                             <ActionIcon h="0.5rem" w="0.5rem" variant="light">
+    //                                 <IconQuestionMark size="1rem" />
+    //                             </ActionIcon>
+    //                         </Popover.Target>
+    //                     </Popover>
+    //                 </Group>
                     
-                    <Group gap="xs">
-                        {user.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
-                            return (
-                                <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
-                                    <PropertyCell className="final-stat" useDiv prop={stat} />
-                                </Tooltip>
-                            )
-                        })}
-                    </Group>
+    //                 <Group gap="xs">
+    //                     {user.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
+    //                         return (
+    //                             <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
+    //                                 <PropertyCell className="final-stat" useDiv prop={stat} />
+    //                             </Tooltip>
+    //                         )
+    //                     })}
+    //                 </Group>
 
-                    <Space h="md" />
+    //                 <Space h="md" />
 
-                    <Title order={4}>Drive Discs</Title>
-                    <Group w="100%" justify="space-evenly" gap="xs">
-                        {
-                            Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
-                                const disc = user.Character.DriveDisks.find(dd => dd.Slot === idx)
-                                return <DriveDisc key={disc ? disc.Uid : user.Character.Id ^ idx} 
-                                    slot={disc ? disc.Slot : idx} disc={disc ?? null} />
-                            })
-                        }
-                    </Group>
-                </Stack>
-            </ExpandableRow>
-        </>)
-    }
+    //                 <Title order={4}>Drive Discs</Title>
+    //                 <Group w="100%" justify="space-evenly" gap="xs">
+    //                     {
+    //                         Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
+    //                             const disc = user.Character.DriveDisks.find(dd => dd.Slot === idx)
+    //                             return <DriveDisc key={disc ? disc.Uid : user.Character.Id ^ idx} 
+    //                                 slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+    //                         })
+    //                     }
+    //                 </Group>
+    //             </Stack>
+    //         </ExpandableRow>
+    //     </>)
+    // }
 
-    const DistributionTooltip = ({ label, payload }: { label: string, payload: Record<string, any>[] | undefined }) => {
+    const DistributionTooltip = ({ label, payload }: { label?: string, payload?: Record<string, any>[] }) => {
         if (!payload) return null;
 
         return (
@@ -212,19 +202,19 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const [rotationOpened, { toggle: toggleRotation }] = useDisclosure(false)
 
     return (<>
-        <title>{`${currentLeaderboard?.FullName} | Inter-Knot`}</title>
+        <title>{`${leaderboard?.FullName ?? "Loading..."} | Inter-Knot`}</title>
         <Stack>
             {leaderboardUsersState.error &&
                 <Alert variant="light" color="red" title="Failed to load users" icon={<IconInfoCircle />}>
                     <Text ff="monospace">Error: {leaderboardUsersState.error.message}</Text>
                 </Alert>
             }
-            {leaderboardState.value && currentLeaderboard &&
+            {leaderboard &&
                 <Card withBorder style={{ position: "relative" }}>
-                    <Image src={currentLeaderboard.BackgroundUrl} 
-                        alt={getLocalString(currentLeaderboard.Character.Name)} 
+                    <Image src={leaderboard.BackgroundUrl} 
+                        alt={getLocalString(leaderboard.Character.Name)} 
                         className="background-img"
-                        data-cid={currentLeaderboard.Character.Id} />
+                        data-cid={leaderboard.Character.Id} />
                     <Grid gutter="xl" style={{ zIndex: 10 }}>
                         <Grid.Col span={{ base: 12, md: 7, lg: "auto" }}>
                             <Center h="100%">
@@ -248,7 +238,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             dataKey="top" 
                                             tooltipAnimationDuration={250}
                                             tooltipProps={{ 
-                                                content: ({ label, payload }) => <DistributionTooltip label={label} payload={payload} />,
+                                                content: ({ label, payload }) => <DistributionTooltip label={label?.toString()} payload={payload} />,
                                             }}
                                             tickLine="xy"
                                             strokeDasharray="0"
@@ -263,9 +253,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 5, lg: "auto" }}>
                             <Stack c="white">
-                                <Title order={2}>{currentLeaderboard?.FullName}</Title>
-                                {currentLeaderboard?.Description &&
-                                    <Text fz="12pt">{currentLeaderboard?.Description}</Text>
+                                <Title order={2}>{leaderboard?.FullName}</Title>
+                                {leaderboard?.Description &&
+                                    <Text fz="12pt">{leaderboard?.Description}</Text>
                                 }
                                 <Group gap="xs">
                                     <Title order={5}>Weapons: </Title>
@@ -279,7 +269,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 </Group>
                                 <Group gap="xs">
                                     <Title order={5}>Team</Title>
-                                    <Team h="64px" team={[currentLeaderboard.Character, ...currentLeaderboard.Team]} />
+                                    <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
                                 </Group>
                                 <Stack gap="xs" align="flex-start">
                                     <Group gap="0">
@@ -288,7 +278,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             <Title order={5}>Rotation</Title>
                                         </Button>
                                         <ActionIcon variant="transparent" c="white" onClick={() => {
-                                            navigator.clipboard.writeText(currentLeaderboard.Rotation
+                                            navigator.clipboard.writeText(leaderboard.Rotation
                                                 .map(parseRotation)
                                                 .map(r => r.join(" / "))
                                                 .join("\n")
@@ -307,7 +297,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Collapse in={rotationOpened}>
                                         <Group gap="4px">
                                             {
-                                                currentLeaderboard?.Rotation
+                                                leaderboard?.Rotation
                                                     .map(parseRotation)
                                                     .map((r, idx) => 
                                                         <Chip key={`${r.join(" ")}_${idx}`} checked={false}
@@ -341,13 +331,45 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     </Grid>
                 </Card>
             }
-            {leaderboardUsersState.loading && !leaderboardUsersState.value &&
+            {leaderboardUsersState.loading &&
                 <Center>
                     <Loader />
                 </Center>
             }
             {leaderboardUsersState.value && <>
                 <Card withBorder p="0">
+                    <DataTable 
+                        highlightOnHover
+                        className="data-table"
+                        groups={[
+                            {
+                                id: "main",
+                                title: "",
+                                columns: [
+                                    {
+                                        accessor: "Rank",
+                                        title: "#"
+                                    },
+                                    { 
+                                        accessor: "Owner.Nickname",
+                                        title: "Owner",
+                                        render: (entry) => (
+                                            <Group gap="sm" wrap="nowrap">
+                                                <ServerChip uid={entry.Build.Owner?.Uid.toString() ?? ""} />
+                                                <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
+                                                    href={`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`} onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    e.preventDefault()
+                                                    navigate(`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`)
+                                                }}>{entry.Build.Owner?.Nickname}</Anchor>
+                                            </Group>
+                                        )
+                                    },
+                                ]
+                            }
+                        ]}
+                        records={leaderboardUsers}
+                        idAccessor="Rank" />
                     <Table stickyHeader>
                         <Table.Thead>
                             <Table.Tr>
