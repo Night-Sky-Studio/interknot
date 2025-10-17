@@ -1,5 +1,5 @@
 import React, { memo } from "react"
-import { Medal, ProfileInfo } from "@interknot/types"
+import { match, Medal, ProfileInfo } from "@interknot/types"
 import { 
     BackgroundImage, 
     Card, 
@@ -16,27 +16,27 @@ import { useSettings } from "@components/SettingsProvider"
 
 export function userServer(uid: string) {
         if (uid.length === 10) {
-            switch (true) {
-                case uid.startsWith("17"): return "TW/HK/MO"
-                case uid.startsWith("13"): return "ASIA"
-                case uid.startsWith("15"): return "EU"
-                case uid.startsWith("10"): return "NA"
-                default: return "Unknown"
-            }
+            return match(uid, [
+                [id => id.startsWith("17"), () => "TW/HK"],
+                [id => id.startsWith("13"), () => "ASIA"],
+                [id => id.startsWith("15"), () => "EU"],
+                [id => id.startsWith("10"), () => "NA"],
+                () => "Unknown"
+            ])
         } else {
-            switch (true) {
-                case uid.startsWith("3"): return "CN"
-                case uid.startsWith("2"): return "CN"
-                case uid.startsWith("1"): return "CN"
-                case uid.startsWith("0"): return "Internal"
-                default: return "Unknown"
-            }
+            return match(uid, [
+                [id => id.startsWith("3"), () => "CN"],
+                [id => id.startsWith("2"), () => "CN"],
+                [id => id.startsWith("1"), () => "CN"],
+                [id => id.startsWith("0"), () => "Internal"],
+                () => "Unknown"
+            ])
         }
     }
 
 export function ServerChip({ uid }: { uid: string }) {
     return (
-        <Title className="user-info" order={6}>{userServer(uid)}</Title>
+        <Title order={6} className="user-info" w="7ch" ta="center">{userServer(uid)}</Title>
     )
 }
 

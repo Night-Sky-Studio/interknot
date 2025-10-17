@@ -1,4 +1,20 @@
-import { AgentAction, BaseLeaderboardEntry, BelleMessage, Build, DriveDisc, FinalStats, ICursoredResult, IResult, Leaderboard, LeaderboardDistribution, LeaderboardEntry, LeaderboardList, ProfileInfo, Property, url } from "@interknot/types"
+import { 
+    AgentAction, 
+    BaseLeaderboardEntry, 
+    BelleMessage, 
+    Build, 
+    DriveDisc, 
+    FinalStats, 
+    ICursoredResult, 
+    IResult, 
+    Leaderboard, 
+    LeaderboardDistribution, 
+    LeaderboardEntry, 
+    LeaderboardList, 
+    ProfileInfo, 
+    Property, 
+    url 
+ } from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -26,9 +42,9 @@ export interface BackendError {
     code?: number
 }
 
-const dataUrl = process.env.NODE_ENV === "development" 
-    ? "http://127.0.0.1:5100/" 
-    : process.env.NODE_ENV === "preview" 
+const dataUrl = process.env.NODE_ENV === "development"
+    ? "http://127.0.0.1:5100/"
+    : process.env.NODE_ENV === "preview"
         ? "https://data-preview.interknot.space"
         : "https://data.interknot.space"
 
@@ -53,14 +69,14 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult
     console.log(u)
     let response = await fetch(u)
     let result = await response.json() as IResult<T>
-    if (response.status !== 200) {
-        throw new Error(result.message)
-    } 
+    if (response.status !== 200 || result.code !== 0) {
+        throw new Error(`${result.code || response.status} :: ${result.message}`)
+    }
     if (restoreProps && result.data) {
         result.data = restoreProperties(result.data)
     }
     if (result.data === undefined) {
-        throw new Error("No data in response")
+        throw new Error(`${result.code || response.status} :: No data in response`)
     }
     return result
 }
@@ -81,7 +97,7 @@ async function getCursored<T>(u: string, restoreProps: boolean = false): Promise
     return result
 }
 
-export async function searchUsers(query: string) : Promise<IResult<ProfileInfo[]>> {
+export async function searchUsers(query: string): Promise<IResult<ProfileInfo[]>> {
     return await get(url({
         base: dataUrl,
         path: "profile/search",
@@ -199,6 +215,14 @@ export async function getLeaderboardUsers(leaderboardId: number, {
             ...filter
         }
     }), true)
+}
+
+export async function getLeaderboardUsersCount(leaderboardId: number, hash?: string): Promise<IResult<number>> {
+    return await get(url({
+        base: dataUrl,
+        path: `/leaderboard/${leaderboardId}/users/count`,
+        query: { hash }
+    }))
 }
 
 export async function getLeaderboardDmgDistribution(id: number): Promise<IResult<LeaderboardDistribution>> {
