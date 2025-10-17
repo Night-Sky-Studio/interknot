@@ -5,6 +5,7 @@ import { Card, Group, Text, Image, Table, ScrollArea } from "@mantine/core"
 import { useSettings } from "@components/SettingsProvider"
 import { Team } from "@components/Team/Team"
 import "./LeaderboardsList.css"
+import { useNavigate } from "react-router"
 
 interface ILeaderboardsListProps {
     leaderboards: LeaderboardList[]
@@ -15,12 +16,46 @@ interface ILeaderboardsListProps {
 export default function LeaderboardsList({ leaderboards, entries, highlightId }: ILeaderboardsListProps): React.ReactElement {
     const { decimalPlaces, getLocalString } = useSettings()
 
-    // 
+    const navigate = useNavigate()
 
     const LeaderboardRow = ({ entry }: { entry: BaseLeaderboardEntry }) => {
         const leaderboard = leaderboards.find(lb => lb.Id === entry.Leaderboard.Id)
         return (
-            <Table.Tr className={highlightId === entry.Leaderboard.Id ? "highlight": ""}>
+            <Table.Tr className={highlightId === entry.Leaderboard.Id ? "highlight": ""} 
+                onMouseUp={(evt) => {
+                    evt.preventDefault()
+                    evt.stopPropagation()
+                    // left click -> navigate
+                    if (evt.button === 0) {
+                        navigate(`/leaderboards/${entry.Leaderboard.Id}`)
+                        return
+                    }
+                    // middle click -> open in new tab
+                    if (evt.button === 1) {
+                        const url = `/leaderboards/${entry.Leaderboard.Id}`
+                        window.open(url, "_blank", "noreferrer noopener")
+                    }
+                }} 
+                onContextMenu={(evt) => {
+                    evt.preventDefault()
+                    const url = `/leaderboards/${entry.Leaderboard.Id}`
+                    let anchor = document.getElementById("ctx-anchor") as HTMLAnchorElement | null
+                    if (!anchor) {
+                        anchor = document.createElement("a")
+                        anchor.id = "ctx-anchor"
+                        anchor.target = "_blank"
+                        anchor.rel = "noreferrer noopener"
+                        document.body.appendChild(anchor)
+                    }
+                    anchor.href = url
+                    const event = new MouseEvent("contextmenu", {
+                        ...evt,
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    })
+                    anchor.dispatchEvent(event)
+                }}>
                 <Table.Td>
                     <Text>{entry.Rank}<Text component="span" c="dimmed"> / {nFormatter(entry.Leaderboard.Total)}</Text></Text>
                 </Table.Td>
