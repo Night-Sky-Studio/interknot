@@ -1,0 +1,42 @@
+
+.cc-talents {
+    position: relative;
+    height: 64px;
+    background: linear-gradient(0deg, var(--mantine-color-dark-9), var(--mantine-color-dark-5));
+    border-radius: 32px;
+}
+.cc-talents::before {
+    content: "";
+    position: absolute;
+    height: calc(100% - 4px);
+    width: calc(100% - 4px);
+    border-radius: 32px;
+    background: linear-gradient(0deg, var(--mantine-color-dark-5), var(--mantine-color-dark-9));
+}
+.cc-talent {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.cc-talent * {
+    font-size: 10px;
+}
+.cc-talents.boosted .cc-talent-level {
+    color: var(--mantine-color-yellow-5);
+}
+.cc-talent-level {
+    font-family: "zzz-jp", monospace !important;
+    /* letter-spacing: -1px; */
+    color: white;
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    text-align: center;
+    /* voodoo abs positioned element centering hack  */
+    transform: translateX(-50%); 
+    padding: 0 12px;
+
+    background-color: var(--mantine-color-dark-9);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 50%);
+}

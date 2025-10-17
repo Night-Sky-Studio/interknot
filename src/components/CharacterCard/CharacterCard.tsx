@@ -1,13 +1,11 @@
 import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme, Space } from "@mantine/core"
 import { RadarChart } from "@mantine/charts"
-import { Character, Talents as CharacterTalents } from "@interknot/types"
+import { Character } from "@interknot/types"
 import "./CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
-import * as TalentIcons from "@icons/talents"
-import * as CoreSkillIcons from "@icons/core"
 import { Weapon, Property } from "@interknot/types"
-import React, { memo, useEffect, useMemo, useRef } from "react"
+import React, { memo, useMemo, useRef } from "react"
 import type { DriveDiscSet, BaseLeaderboardEntry, LeaderboardList } from "@interknot/types"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
@@ -21,6 +19,8 @@ import { toFixedCeil } from "@extensions/NumberExtensions"
 import { useData } from "@components/DataProvider"
 import { useLeaderboards } from "../LeaderboardProvider"
 import { useCardSettings } from "../CardSettingsProvider"
+import CoreSkill from "@components/CoreSkill/CoreSkill"
+import Talents from "@components/Talents/Talents"
 
 export interface TooltipData {
     charId: number,
@@ -158,77 +158,6 @@ function Stat({ stat, highlight }: { stat: Property, highlight?: boolean }): Rea
     )
 }
 
-function CoreSkill({ level }: { level: number }): React.ReactElement {
-    const isActive = (lvl: number): string => (lvl <= level) ? "var(--accent)" : "var(--mantine-color-dark-9)"
-
-    const { language } = useSettings()
-    const { charId } = useData<TooltipData>()
-
-    useEffect(() => console.log(charId), [charId])
-
-    return (
-        <Group className="cc-core" gap="0px" justify="space-between" wrap="nowrap" style={{ position: "relative" }}
-            data-zzz-lang={language} data-zzz-type="talent" data-zzz-id={charId} data-zzz-level={level} data-zzz-id-b="5">
-            <div style={{ backgroundColor: isActive(2) }}><CoreSkillIcons.A fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(3) }}><CoreSkillIcons.B fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(4) }}><CoreSkillIcons.C fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(5) }}><CoreSkillIcons.D fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(6) }}><CoreSkillIcons.E fill="white" height="20px" /></div>
-            <div style={{ backgroundColor: isActive(7) }}><CoreSkillIcons.F fill="white" height="20px" /></div>
-        </Group>
-    )
-}
-
-function Talents({ 
-    talentLevels, 
-    mindscapeLevel, 
-    isRupture 
-}: { 
-    talentLevels: CharacterTalents, 
-    mindscapeLevel: number, 
-    isRupture: boolean 
-}): React.ReactElement {
-    // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
-    const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
-    const { charId } = useData<TooltipData>()
-    const { language } = useSettings()
-    return (
-        <Group className={`cc-talents ${mindscapeLevel > 2 ? "boosted" : ""}`} 
-            gap="10px" justify="center" align="center" wrap="nowrap">
-            <div className="cc-talent"
-                data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={0} data-zzz-level={talentLevels.BasicAttack + mindscapeBoost} >
-                <TalentIcons.NormalAtk width="56px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.BasicAttack + mindscapeBoost}</Title>
-            </div>
-            <div className="cc-talent"
-                data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={2} data-zzz-level={talentLevels.Dash + mindscapeBoost} >
-                <TalentIcons.Dodge width="56px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Dash + mindscapeBoost}</Title>
-            </div>
-            <div className="cc-talent"
-                data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={6} data-zzz-level={talentLevels.Assist + mindscapeBoost} >
-                <TalentIcons.Switch width="56px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Assist + mindscapeBoost}</Title>
-            </div>
-            <div className="cc-talent"
-                data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={1} data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
-                { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
-                <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
-            </div>
-            <div className="cc-talent"
-                data-zzz-lang={language} data-zzz-id={charId} 
-                data-zzz-type="talent" data-zzz-id-b={3} data-zzz-level={talentLevels.Ultimate + mindscapeBoost} >
-                <TalentIcons.Ultimate width="56px" />
-                <Title order={6} className="cc-talent-level">{talentLevels.Ultimate + mindscapeBoost}</Title>
-            </div>
-        </Group>
-    )
-}
-
 function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
     const { language, getLocalString } = useSettings()
     return (
@@ -249,7 +178,8 @@ interface IStatsGraphProps {
 
 function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): React.ReactElement {
     const { getLocalString, decimalPlaces } = useSettings()
-    const { showRanking } = useCardSettings()
+    const { context } = useCardSettings()
+    const { showRanking } = context ?? {}
 
     const graphState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(leaderboard.Id)
@@ -290,11 +220,6 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 
     // stats to show:
     // hp, atk, def, cr, cd, impact, elementalDmg,
-    useEffect(() => {
-        console.log("Filtered Stats:", filteredStats)
-        console.log("Top 1% Stats:", filteredTop1Stats)
-        console.log("Relative Stats:", relativeStats)
-    }, [filteredStats, filteredTop1Stats, relativeStats])        
 
     const radarRef = useRef<HTMLDivElement | null>(null)
     const theme = useMantineTheme()
@@ -424,15 +349,14 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 }
 
 export default function CharacterCard({ ref, uid, username, character }: ICharacterCardProps): React.ReactElement {
+    const { context } = useCardSettings()
     const { 
         showSubstatsBreakdown,
-        // showBuildName,
         showUserInfo,
         showGraph,
         showCritValue,
         selectedLeaderboardId
-        // cardCustomization,
-    } = useCardSettings()
+    } = context ?? {}
     
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
