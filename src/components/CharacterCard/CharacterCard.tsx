@@ -257,9 +257,9 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 
     const graph = useMemo(() => graphState.value?.data, [graphState.value])
 
-    useEffect(() => {
-        console.log(graphState.loading, graphState.error, graphState.value)
-    }, [graphState.loading, graphState.error, graphState.value])
+    // useEffect(() => {
+    //     console.log(graphState.loading, graphState.error, graphState.value)
+    // }, [graphState.loading, graphState.error, graphState.value])
 
     const top1stats = useMemo(() => graph?.Top1AvgStats.filter(v => v.Value > 0.1), [graph?.Top1AvgStats])
 
@@ -290,6 +290,11 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 
     // stats to show:
     // hp, atk, def, cr, cd, impact, elementalDmg,
+    useEffect(() => {
+        console.log("Filtered Stats:", filteredStats)
+        console.log("Top 1% Stats:", filteredTop1Stats)
+        console.log("Relative Stats:", relativeStats)
+    }, [filteredStats, filteredTop1Stats, relativeStats])        
 
     const radarRef = useRef<HTMLDivElement | null>(null)
     const theme = useMantineTheme()
@@ -499,7 +504,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                         {
                             Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
                                 const disc = character.DriveDisks.find(dd => dd.Slot === idx)
-                                return <DriveDisc key={disc ? disc.Uid : character.Id ^ idx} 
+                                return <DriveDisc key={disc ? `disc-${disc.Uid}` : `disc-${character.Id * idx}`} 
                                     slot={disc ? disc.Slot : idx} disc={disc ?? null} />
                             })
                         }

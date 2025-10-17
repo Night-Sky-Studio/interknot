@@ -38,7 +38,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
         let containerHeight = Math.round(width * CARD_ASPECT_RATIO) + (showSubstatsBreakdown ? 48 : 0)
         containerHeight = Math.max(containerHeight, MIN_HEIGHT + 67)
 
-        console.log(scaleFactor.toFixed(3), containerHeight, width)
+        // console.log(scaleFactor.toFixed(3), containerHeight, width)
         
         setCardScale(scaleFactor)
         setCardContainerHeight(containerHeight)
