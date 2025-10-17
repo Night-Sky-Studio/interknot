@@ -5,18 +5,18 @@ import { ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "@components/ic
 import { useSettings } from "@components/SettingsProvider"
 
 export default function DriveDiscCard({ disc }: { disc: DD }): React.ReactElement {
-    const { cvEnabled, language, getLocalString, getLevel } = useSettings()
+    const { cvEnabled, getLocalString, getLevel } = useSettings()
 
     const DriveDiscStat = ({ prop }: { prop: Property }) => {
         return (
             <Group justify="space-between" className="disc-stat" wrap="nowrap">
                 <Group gap="xs" wrap="nowrap">
                     <ZenlessIcon id={prop.Id} size="20px" />
-                    <Title order={language == "ru" ? 5 : 4}>
+                    <Title order={5}>
                         { getLocalString(prop.simpleName) }
                     </Title>
                     {prop.Level > 1 &&
-                        <Title order={language == "ru" ? 5 : 4} lts="0.1rem" c="#ffaf29">+{ prop.Level - 1 }</Title>
+                        <Title order={5} lts="0.1rem" c="#ffaf29">+{ prop.Level - 1 }</Title>
                     }
                 </Group>
                 <Title order={4}>{ prop.formatted }</Title>
@@ -50,11 +50,11 @@ export default function DriveDiscCard({ disc }: { disc: DD }): React.ReactElemen
             <Card.Section p="md" className="disc-substats">
                 <Stack gap="sm">
                     <Stack gap="4px">
-                        <Title order={3}>Base Stat</Title>
+                        <Title order={4}>Main Stat</Title>
                         <DriveDiscStat prop={disc.MainStat} />
                     </Stack>
                     <Stack gap="4px">
-                        <Title order={3}>Random Stats</Title>
+                        <Title order={4}>Sub-Stats</Title>
                         {disc.SubStats.map(ss => <DriveDiscStat key={disc.Uid ^ ss.Id} prop={ss} />)}
                     </Stack>
                 </Stack>
