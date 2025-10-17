@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers, getLeaderboardUsersCount } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex } from "@mantine/core"
-import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle } from "@tabler/icons-react"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex, Popover, Space, Tooltip } from "@mantine/core"
+import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "@components/WeaponButton"
@@ -11,13 +11,20 @@ import { Character, LeaderboardEntry, Property } from "@interknot/types"
 import PropertyCell from "@components/cells/PropertyCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
 import { useDisclosure } from "@mantine/hooks"
-import "./styles/LeaderboardDetailsPage.pcss"
+import "./styles/LeaderboardDetailsPage.css"
 import { useSettings } from "@components/SettingsProvider"
 import { Team } from "@components/Team/Team"
 import { notifications } from '@mantine/notifications'
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { DataTable } from "mantine-datatable"
 import { ServerChip } from "@/components/UserHeader/UserHeader"
+import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
+import CoreSkill from "@/components/CoreSkill/CoreSkill"
+import { DataProvider } from "@/components/DataProvider"
+import { TooltipData } from "@/components/CharacterCard/CharacterCard"
+import Talents from "@/components/Talents/Talents"
+import LeaderboardProvider from "@/components/LeaderboardProvider"
+import CardFooter from "@/components/CardFooter/CardFooter"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -443,7 +450,83 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     ]
                                 }
                             ]}
-                            records={leaderboardUsers} />
+                            rowExpansion={{
+                                allowMultiple: true,
+                                content: ({ record: entry }) => (
+                                    <LeaderboardProvider 
+                                        uid={entry.Build.Owner?.Uid ?? -1} 
+                                        characterId={entry.Build.Character.Id}>
+                                        <DataProvider data={{
+                                            charId: entry.Build.Character.Id,
+                                            charName: entry.Build.Character.Name,
+                                            uid: entry.Build.Owner?.Uid ?? -1,
+                                            weaponId: entry.Build.Character.Weapon?.Id ?? undefined
+                                        } satisfies TooltipData}>
+                                            <Stack gap="xs" m="md" w="100%" style={{ 
+                                                "--accent": entry.Build.Character.Colors.Accent,
+                                                "--mindscape": entry.Build.Character.Colors.Mindscape
+                                            }}>
+                                                <Title order={4}>Talents</Title>
+                                                <Group>
+                                                    <CoreSkill level={entry.Build.Character.SkillLevels.CoreSkill} />
+                                                    <Talents 
+                                                        isRupture={entry.Build.Character.ProfessionType === "Rupture"}
+                                                        talentLevels={entry.Build.Character.SkillLevels}
+                                                        mindscapeLevel={entry.Build.Character.MindscapeLevel} />
+                                                </Group>
+
+                                                <Title order={4}>Drive Discs</Title>
+                                                <Group w="100%" justify="space-evenly" gap="xs">
+                                                    {
+                                                        Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
+                                                            const disc = entry.Build.Character.DriveDisks.find(dd => dd.Slot === idx)
+                                                            return <DriveDisc key={disc ? `disc-${disc.Uid}` : `disc-${entry.Build.Character.Id * idx}`} 
+                                                                slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                                                        })
+                                                    }
+                                                </Group>
+
+                                                <Space h="md" />
+
+                                                <Group gap="xs" align="center">
+                                                    <Title order={4}>Final calculated stats</Title>
+                                                    <Popover position="right" width="512px" withArrow withOverlay>
+                                                        <Popover.Dropdown>
+                                                            <Text>
+                                                                These are the final stats before any damage calculations take place. 
+                                                                They include all possible passives and bonuses as well as resistance shreds (such as weapon, drive disc set 4pc, and character passives) - either partially or with full uptime. 
+                                                                For more details, check out the calculator 
+                                                                <Text component="a" href="https://github.com/Night-Sky-Studio/interknot-calculator/wiki" target="_blank" c="blue"> wiki page.</Text>
+                                                            </Text>
+                                                        </Popover.Dropdown>
+                                                        <Popover.Target>
+                                                            <ActionIcon h="0.5rem" w="0.5rem" variant="light">
+                                                                <IconQuestionMark size="1rem" />
+                                                            </ActionIcon>
+                                                        </Popover.Target>
+                                                    </Popover>
+                                                </Group>
+                                                
+                                                <Group gap="xs">
+                                                    {entry.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
+                                                        return (
+                                                            <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
+                                                                <PropertyCell className="final-stat" prop={stat} />
+                                                            </Tooltip>
+                                                        )
+                                                    })}
+                                                </Group>
+
+                                                <Space h="md" />
+
+                                                <CardFooter />
+                                            </Stack>
+                                        </DataProvider> 
+                                    </LeaderboardProvider>
+                                )}
+                            }
+                            records={leaderboardUsers}
+                            idAccessor="Build.Id" />
                         <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
                             <div style={{ width: "25%" }} />
                             <Group>
