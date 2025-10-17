@@ -20,8 +20,10 @@ export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
     const { cvEnabled, getLocalString } = useSettings()
 
-    const [{ cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
+    const [{ cursor, limit, ...query }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
+
+    const filterQuery = useMemo(() => query, [JSON.stringify(query)])
 
     const buildsState = useAsync(async () => {
         return await getCharacters({
@@ -191,7 +193,10 @@ export default function BuildsPage(): React.ReactElement {
                                             render: (b) => (
                                                 <Group gap="sm" wrap="nowrap">
                                                     <Image src={b.Character.CircleIconUrl} h="32px" />
-                                                    <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(b.Character.Name)}</Text>
+                                                    <Text c={b.Name !== undefined ? "white" : "dimmed"}
+                                                        style={{ whiteSpace: "nowrap" }}>
+                                                        { b.Name ?? getLocalString(b.Character.Name) }
+                                                    </Text>
                                                 </Group>
                                             )
                                         },
@@ -213,7 +218,7 @@ export default function BuildsPage(): React.ReactElement {
                                         },
                                         { 
                                             accessor: "Character.CritValue",
-                                            title: cvEnabled ? "Crit Value" : "Crit Rate / Crit DMG",
+                                            title: cvEnabled ? "Crit Value" : "Crit Ratio",
                                             cellsStyle: () => ({ 
                                                 width: "calc(10rem * var(--mantine-scale))",
                                                 background: "rgba(0 0 0 / 15%)" 

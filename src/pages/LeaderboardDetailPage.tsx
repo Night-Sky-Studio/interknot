@@ -1,22 +1,19 @@
-import { useNavigate, useParams, useSearchParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { useAsync } from "react-use"
-import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Table, Text, Title, Image, Tooltip, ActionIcon, Popover, Grid, Paper, ColorSwatch, Space, Avatar, Chip, Collapse, Button, Anchor } from "@mantine/core"
-import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
+import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers, getLeaderboardUsersCount } from "../api/data"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex } from "@mantine/core"
+import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle } from "@tabler/icons-react"
 import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "@components/WeaponButton"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Character, LeaderboardEntry, Property } from "@interknot/types"
 import PropertyCell from "@components/cells/PropertyCell"
-import WeaponCell from "@components/cells/WeaponCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
 import { useDisclosure } from "@mantine/hooks"
-import { ExpandableRow } from "@components/ExpandableRow"
 import "./styles/LeaderboardDetailsPage.pcss"
 import { useSettings } from "@components/SettingsProvider"
 import { Team } from "@components/Team/Team"
-import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { notifications } from '@mantine/notifications'
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { DataTable } from "mantine-datatable"
@@ -25,14 +22,18 @@ import { ServerChip } from "@/components/UserHeader/UserHeader"
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
     const { id } = useParams()
-    const { getLocalString } = useSettings()
+    const { cvEnabled, getLocalString } = useSettings()
 
-    const [{ cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
+    const [{ cursor, limit, ...query }, setQueryParams] = useQueryParams()
     const limitNum = useMemo(() => Number(limit) || 20, [limit])
+
+    const filterQuery = useMemo(() => query, [JSON.stringify(query)])
 
     const leaderboardState = useAsync(async () => {
         return await getLeaderboard(Number(id))
     }, [id])
+    const relatedLeaderboards = useMemo(() => leaderboardState.value?.data ?? [],
+        [leaderboardState.value?.data])
     const leaderboard = useMemo(() => leaderboardState.value?.data?.find(lb => lb.Id === Number(id)), 
         [leaderboardState.value?.data, id])
 
@@ -46,24 +47,29 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const leaderboardUsers = useMemo(() => leaderboardUsersState.value?.data ?? [],
         [leaderboardUsersState.value?.data])
 
+    const totalCountState = useAsync(async () => await getLeaderboardUsersCount(Number(id), leaderboardUsersState.value?.totalCountHash), 
+        [id, leaderboardUsersState.value?.totalCountHash])
+    const totalCount = useMemo(() => totalCountState.value?.data, [totalCountState.value?.data])
+
+    const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
+
     const leaderboardDistributionState = useAsync(async () => {
         return await getLeaderboardDmgDistribution(Number(id))
     }, [id])
-
     const leaderboardDistribution = useMemo(() => leaderboardDistributionState.value?.data, 
         [leaderboardDistributionState.value?.data])
+    
     const distributionDomain = useMemo(() => {
-        if (leaderboardDistribution) {
-            const values = Object.values(leaderboardDistribution.Data)
+        // if (leaderboardDistribution) {
+            const values = Object.values(leaderboardDistribution?.Data ?? {})
             // adjust to closest 100
             const threshold = 100
             const min = Math.min(...values) - Math.min(...values) % threshold
             const max = Math.max(...values) + (threshold - Math.max(...values) % threshold)
             return [min, max]
-        }
-        return [0, 100]
-    }
-    , [leaderboardDistribution])
+        // }
+        // return [0, 100]
+    }, [leaderboardDistribution])
 
     const getTopStats = (c: Character): Property[] => {
         const result: Property[] = []
@@ -178,26 +184,28 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         );
     }
 
-    const parseRotation = (rotation: string) => {
-        const parts = rotation.trim().split(/\s+/)
-        const [main, maybeNumber] = parts
-        const result: string[] = []
+    const rotation = useMemo(() => {
+        return leaderboard?.Rotation.map(r => {
+            const parts = r.trim().split(/\s+/)
+            const [main, maybeNumber] = parts
+            const result: string[] = []
 
-        const dotSplit = main.split(".")
-        const namePart = dotSplit.pop()!
-        const prefix = dotSplit.length ? dotSplit.join(".") : null
+            const dotSplit = main.split(".")
+            const namePart = dotSplit.pop()!
+            const prefix = dotSplit.length ? dotSplit.join(".") : null
 
-        if (prefix) result.push(getLocalString(prefix));
-        result.push(
-            namePart
-            .split("_")
-            .map(word => word[0].toUpperCase() + word.slice(1))
-            .join(" ")
-        )
-        if (maybeNumber && /^\d+$/.test(maybeNumber)) result.push(maybeNumber)
+            if (prefix) result.push(getLocalString(prefix))
+            result.push(
+                namePart
+                .split("_")
+                .map(word => word[0].toUpperCase() + word.slice(1))
+                .join(" ")
+            )
+            if (maybeNumber && /^\d+$/.test(maybeNumber)) result.push(maybeNumber)
 
-        return result
-    }
+            return result
+        }) ?? []
+    }, [leaderboard?.Rotation])
 
     const [rotationOpened, { toggle: toggleRotation }] = useDisclosure(false)
 
@@ -222,11 +230,11 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Alert variant="light" 
                                         color={leaderboardDistributionState.error.message.includes("425") ? "orange" : "red"} 
                                         title="Failed to load distribution" icon={<IconInfoCircle />}>
-                                        <Text ff="monospace">Error {leaderboardDistributionState.error.message}</Text>
+                                        <Text ff="monospace">{leaderboardDistributionState.error.message}</Text>
                                     </Alert>
                                 }
-                                {leaderboardDistributionState.value && leaderboardDistribution &&
-                                    <Stack gap="0">
+                                {leaderboardDistribution &&
+                                    <Stack gap="0" w="100%">
                                         <LineChart h="300px" w="100%" m="sm"
                                             data={Object.entries(leaderboardDistribution.Data).map(([key, value]) => ({
                                                 top: key,
@@ -260,7 +268,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 <Group gap="xs">
                                     <Title order={5}>Weapons: </Title>
                                     {
-                                        leaderboardState.value.map(lb => {
+                                        relatedLeaderboards.map(lb => {
                                             return (
                                                 <WeaponButton id={lb.Id} weapon={lb.Weapon} selected={lb.Id === Number(id)} />
                                             )
@@ -278,10 +286,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             <Title order={5}>Rotation</Title>
                                         </Button>
                                         <ActionIcon variant="transparent" c="white" onClick={() => {
-                                            navigator.clipboard.writeText(leaderboard.Rotation
-                                                .map(parseRotation)
-                                                .map(r => r.join(" / "))
-                                                .join("\n")
+                                            navigator.clipboard.writeText(
+                                                rotation
+                                                    .map(r => r.join(" / "))
+                                                    .join("\n")
                                             )
                                             notifications.show({
                                                 message: `Copied entire rotation to clipboard`,
@@ -297,31 +305,29 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Collapse in={rotationOpened}>
                                         <Group gap="4px">
                                             {
-                                                leaderboard?.Rotation
-                                                    .map(parseRotation)
-                                                    .map((r, idx) => 
-                                                        <Chip key={`${r.join(" ")}_${idx}`} checked={false}
-                                                            radius="sm"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-                                                                navigator.clipboard.writeText(r.join(" / "))
-                                                                notifications.show({
-                                                                    message: `Copied action "${r.join(" / ")}" to clipboard`,
-                                                                    color: "blue",
-                                                                    autoClose: 4000,
-                                                                    icon: <IconCheck size={16} />,
-                                                                    position: "bottom-center",
-                                                                }) 
-                                                            }}>
-                                                            {
-                                                                r.map((part, i) => 
-                                                                    r.length === 3 && i === 0
-                                                                        ? <span key={`${part}_${i}`}><b>{part}</b> / </span>
-                                                                        : <span key={`${part}_${i}`}>{part}{i === r.length - 1 ? "" : " / "}</span>
-                                                                )
-                                                            }
-                                                        </Chip>
-                                                    )
+                                                rotation.map((r, idx) => 
+                                                    <Chip key={`${r.join(" ")}_${idx}`} checked={false}
+                                                        radius="sm"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            navigator.clipboard.writeText(r.join(" / "))
+                                                            notifications.show({
+                                                                message: `Copied action "${r.join(" / ")}" to clipboard`,
+                                                                color: "blue",
+                                                                autoClose: 4000,
+                                                                icon: <IconCheck size={16} />,
+                                                                position: "bottom-center",
+                                                            }) 
+                                                        }}>
+                                                        {
+                                                            r.map((part, i) => 
+                                                                r.length === 3 && i === 0
+                                                                    ? <span key={`${part}_${i}`}><b>{part}</b> / </span>
+                                                                    : <span key={`${part}_${i}`}>{part}{i === r.length - 1 ? "" : " / "}</span>
+                                                            )
+                                                        }
+                                                    </Chip>
+                                                )
                                             }
                                         </Group>
                                     </Collapse>
@@ -338,63 +344,166 @@ export default function LeaderboardDetailPage(): React.ReactElement {
             }
             {leaderboardUsersState.value && <>
                 <Card withBorder p="0">
-                    <DataTable 
-                        highlightOnHover
-                        className="data-table"
-                        groups={[
-                            {
-                                id: "main",
-                                title: "",
-                                columns: [
-                                    {
-                                        accessor: "Rank",
-                                        title: "#"
-                                    },
-                                    { 
-                                        accessor: "Owner.Nickname",
-                                        title: "Owner",
-                                        render: (entry) => (
-                                            <Group gap="sm" wrap="nowrap">
-                                                <ServerChip uid={entry.Build.Owner?.Uid.toString() ?? ""} />
-                                                <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
-                                                    href={`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`} onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    e.preventDefault()
-                                                    navigate(`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`)
-                                                }}>{entry.Build.Owner?.Nickname}</Anchor>
-                                            </Group>
-                                        )
-                                    },
-                                ]
+                    <Stack>
+                        <DataTable 
+                            highlightOnHover
+                            className="data-table"
+                            groups={[
+                                {
+                                    id: "main",
+                                    title: "",
+                                    columns: [
+                                        {
+                                            accessor: "Rank",
+                                            title: "#"
+                                        },
+                                        { 
+                                            accessor: "Build.Owner",
+                                            title: "Owner",
+                                            render: (entry) => (
+                                                <Group gap="sm" wrap="nowrap">
+                                                    <ServerChip uid={entry.Build.Owner?.Uid.toString() ?? ""} />
+                                                    <Avatar src={entry.Build.Owner?.ProfilePictureUrl} size="md" />
+                                                    <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
+                                                        href={`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        e.preventDefault()
+                                                        navigate(`/user/${entry.Build.Owner!.Uid}?openedId=${entry.Build.Character.Id}`)
+                                                    }}>{entry.Build.Owner?.Nickname}</Anchor>
+                                                </Group>
+                                            )
+                                        },
+                                        {
+                                            accessor: "Build.Name",
+                                            title: "Build name",
+                                            render: (entry) => (
+                                                <Group gap="sm" wrap="nowrap">
+                                                    <Image src={entry.Build.Character.CircleIconUrl} h="32px" />
+                                                    <Text c={entry.Build.Name !== undefined ? "white" : "dimmed"}
+                                                        style={{ whiteSpace: "nowrap" }}>
+                                                            { entry.Build.Name ?? getLocalString(entry.Build.Character.Name) }
+                                                    </Text>
+                                                </Group>
+                                            )
+                                        },
+                                        { 
+                                            accessor: "Build.Character.DriveDisksSet",
+                                            title: "Drive Discs",
+                                            render: (entry) => <DriveDiscsCell sets={entry.Build.Character.DriveDisksSet}  />
+                                        },
+                                        { 
+                                            accessor: "Build.Character.CritValue",
+                                            title: cvEnabled ? "Crit Value" : "Crit Ratio",
+                                            cellsStyle: () => ({ 
+                                                width: "calc(10rem * var(--mantine-scale))",
+                                                background: "rgba(0 0 0 / 15%)" 
+                                            }) ,
+                                            render: (entry) => (
+                                                <CritCell
+                                                    cr={entry.Build.Character.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
+                                                    cd={entry.Build.Character.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
+                                                    cv={entry.Build.Character.CritValue}
+                                                />
+                                            )
+                                        }
+                                    ]
+                                },
+                                { 
+                                    id: "stats",
+                                    title: "",
+                                    columns: [
+                                        ...[0, 1, 2, 3].map((idx) => ({
+                                            accessor: `stat-${idx}`,
+                                            title: idx === 0 ? "Stats" : "",
+                                            visibleMediaQuery: () => `(min-width: 1290px)`,
+                                            cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
+                                            render: (entry: Omit<LeaderboardEntry, "Leaderboard">) => {
+                                                const stats = getTopStats(entry.Build.Character)
+                                                const prop = stats[idx]
+                                                return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
+                                            }
+                                        }))
+                                    ]
+                                },
+                                {
+                                    id: "total",
+                                    title: "",
+                                    columns: [
+                                        {
+                                            accessor: "TotalValue",
+                                            title: "Total Value",
+                                            cellsStyle: () => ({
+                                                width: "128px",
+                                                background: "rgba(0 0 0 / 25%)"
+                                            }),
+                                            render: (entry) => (
+                                                <Text fz="12pt" fw={600}>{Math.round(entry.TotalValue).toLocaleString()}</Text>
+                                            )
+                                        }
+                                    ]
+                                }
+                            ]}
+                            records={leaderboardUsers} />
+                        <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
+                            <div style={{ width: "25%" }} />
+                            <Group>
+                                <Pagination.Root total={totalCount ? Math.ceil(totalCount / limitNum) : 1} 
+                                    onFirstPage={() => {
+                                        setPage(1)
+                                        // setCursor(undefined)
+                                        setQueryParams({ cursor: undefined })
+                                    }}
+                                    onLastPage={() => {
+                                        setPage(totalCount ? Math.ceil(totalCount / limitNum) : 1)
+                                        // setCursor("gte:crit_value=0;id=0")
+                                        setQueryParams({ cursor: "gte:total_value=0;uid=0" })
+                                    }}
+                                    onNextPage={() => {
+                                        setPage((p) => p ? p + 1 : p)
+                                        if (cursor?.includes("gte:")) {
+                                            // setCursor((cur) => cur?.replace("gte", "lte"))
+                                            setQueryParams((prev) => ({ ...prev, cursor: prev.cursor?.toString()?.replace("gte", "lte") }))
+                                        } else {
+                                            // setCursor(charactersState.value?.cursor)
+                                            setQueryParams({ cursor: leaderboardUsersState.value?.cursor })
+                                        }
+                                    }}
+                                    onPreviousPage={() => {
+                                        setPage((p) => p ? p - 1 : p)
+                                        if (page === 1) {
+                                            setQueryParams({ cursor: undefined })
+                                        } else {
+                                            setQueryParams({ cursor: `gte:total_value=${leaderboardUsers[0].TotalValue};uid=${leaderboardUsers[0].Build.Owner?.Uid}` })
+                                        }
+                                    }}>
+                                    <Group gap="xs">
+                                        <Pagination.First disabled={page === 1} />
+                                        <Pagination.Previous disabled={page === 1} />
+                                        <Button variant="filled" autoContrast>{page ?? "??"}</Button>
+                                        <Pagination.Next disabled={leaderboardUsersState.value?.hasNextPage === false} />
+                                        <Pagination.Last disabled={leaderboardUsersState.value?.hasNextPage === false} />
+                                    </Group>
+                                </Pagination.Root>
+                                <Select w="128px"
+                                    data={[20, 50].map((i) => ({ value: `${i}`, label: `${i} / page` }))}
+                                    value={limitNum.toString()}
+                                    onChange={(value) => {
+                                        if (value) {
+                                            setPage(1)
+                                            setQueryParams({ cursor: undefined, limit: value })
+                                        }
+                                    }} />
+                            </Group>
+                            { !page && 
+                                <Text mr="1rem">Showing unknown page of {totalCount ?? "unknown count"}</Text>
                             }
-                        ]}
-                        records={leaderboardUsers}
-                        idAccessor="Rank" />
-                    <Table stickyHeader>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th>#</Table.Th>
-                                <Table.Th>Owner</Table.Th>
-                                <Table.Th>Weapon</Table.Th>
-                                <Table.Th>Drive Discs</Table.Th>
-                                <Table.Th>Crit Ratio</Table.Th>
-                                <Table.Th className="is-narrow">Stats</Table.Th>
-                                <Table.Th className="is-narrow"></Table.Th>
-                                <Table.Th className="is-narrow"></Table.Th>
-                                <Table.Th className="is-narrow"></Table.Th>
-                                <Table.Th bg="rgba(0 0 0 / 25%)">Total Value</Table.Th>
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {leaderboardUsersState.value.items.map(user => {
-                                return (
-                                    <LeaderboardEntryRow key={user.Profile.Uid} user={user} />
-                                )
-                            })}
-                        </Table.Tbody>
-                    </Table>
+                            { page &&
+                                <Text mr="1rem">Showing {limitNum * (page - 1) + 1} - {totalCount ? Math.min(totalCount, limitNum * page) : "?"} of {totalCount ?? "unknown count"}</Text>
+                            }
+                        </Flex>
+                    </Stack>
                 </Card>
-                <Group justify="center" gap="xs">
+                {/* <Group justify="center" gap="xs">
                     <Pagination withControls autoContrast 
                         total={leaderboardUsersState.value.totalPages} 
                         value={page} onChange={setPage} />
@@ -404,7 +513,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         onChange={(value) => {
                             value && setLimit(Number(value))
                         }} />
-                </Group>
+                </Group> */}
             </>}
         </Stack>
     </>)
