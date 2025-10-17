@@ -26,6 +26,7 @@ import { DataProvider } from "@/components/DataProvider"
 import { TooltipData } from "@/components/CharacterCard/CharacterCard"
 import CardFooter from "@/components/CardFooter/CardFooter"
 import CardSettingsProvider from "@/components/CardSettingsProvider"
+import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
 
 function timeAgoIntl(date: Date | string) {
     if (typeof date === "string") {
@@ -582,7 +583,7 @@ export default function ProfilePage(): React.ReactElement {
                                                         render: (d) => (
                                                             <Group gap="xs" wrap="nowrap">
                                                                 <PropertyCell prop={d.MainStat} />
-                                                                <Text>{getLocalString(d.MainStat.simpleName)}</Text>
+                                                                <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(d.MainStat.simpleName)}</Text>
                                                             </Group>
                                                         )
                                                     }
@@ -625,6 +626,12 @@ export default function ProfilePage(): React.ReactElement {
                                                 ]
                                             }
                                         ]}
+                                        rowExpansion={{
+                                            allowMultiple: true,
+                                            content: ({ record: disc }) => <Center m="lg">
+                                                <DriveDiscCard disc={disc} />
+                                            </Center>
+                                        }}
                                         records={discs}
                                         idAccessor="Uid"
                                     />
