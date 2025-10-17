@@ -100,7 +100,9 @@ text {
 .data-table .mantine-Table-thead .mantine-Table-tr:first-child {
     display: none;
 }
-
+.mantine-Table-td.mantine-datatable-row-expansion-cell {
+    overflow: hidden;
+}
 tr:not(:last-of-type) .mantine-datatable-row-expansion-cell-content {
     border-bottom: unset !important;
 }
