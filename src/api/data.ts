@@ -229,7 +229,7 @@ export async function getLeaderboardDmgDistribution(id: number): Promise<IResult
     return await get(url({
         base: dataUrl,
         path: `/leaderboard/${id}/distribution`
-    }))
+    }), true)
 }
 
 export interface CalcResponse {
