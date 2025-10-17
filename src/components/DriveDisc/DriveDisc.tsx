@@ -19,7 +19,8 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
     const theme = useMantineTheme()
 
     const { getLevel } = useSettings()
-    const { showCritValue } = useCardSettings()
+    const { context } = useCardSettings()
+    const { showCritValue } = context ?? {}
 
     const cvColor = (cv: number) => {
         switch(true) {

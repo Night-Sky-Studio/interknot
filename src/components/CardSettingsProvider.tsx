@@ -45,7 +45,7 @@ const defaultValue: CardSettingsContextType = {
     setCardRef: () => {}
 }
 
-export const CardSettingsContext = createContext(defaultValue)
+export const CardSettingsContext = createContext<CardSettingsContextType | undefined>(undefined)
 
 export interface ICardSettingsProviderProps {
     children: React.ReactNode
@@ -102,4 +102,8 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     )
 }
 
-export const useCardSettings = () => useContext(CardSettingsContext)
+export function useCardSettings() {
+    const context = useContext(CardSettingsContext)
+    const contextAvailable = context !== undefined
+    return { context, contextAvailable }
+}

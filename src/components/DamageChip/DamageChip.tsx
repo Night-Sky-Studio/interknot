@@ -5,14 +5,13 @@ import "./DamageChip.css"
 
 interface IDamageChipProps {
     actionName?: string
-    damage: number
     tag?: SkillTag
     hover?: boolean
     onMouseEnter?: () => void
     onMouseLeave?: () => void
 }
 
-export default function DamageChip({ actionName, damage, tag, hover, onMouseEnter, onMouseLeave }: IDamageChipProps): React.ReactElement {
+export default function DamageChip({ actionName, tag, hover, onMouseEnter, onMouseLeave }: IDamageChipProps): React.ReactElement {
     const doHover = hover ?? false
     return (
         <Stack gap="0" className="damage-chip" data-tag={tag} data-hover={doHover} 
