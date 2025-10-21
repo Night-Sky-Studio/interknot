@@ -1,6 +1,6 @@
 import { Stack, Title, Text, Image, Center } from "@mantine/core"
 import "./styles/ErrorPage.css"
-import ellen from "../../assets/ellen_404.webp"
+import ellen from "@assets/ellen_404.webp"
 
 export default function ErrorPage(): React.ReactElement {
     return (<>
