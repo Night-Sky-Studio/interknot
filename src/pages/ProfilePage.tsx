@@ -290,54 +290,43 @@ export default function ProfilePage(): React.ReactElement {
                             Leaderboards
                         </Button>
                     </Stack>
-                    {characters?.length === 0 &&
-                        <Center>
-                            <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
-                                maw="50%">
-                                <Text>
-                                    If you're adding your profile to Inter-Knot for the first time, please check that your
-                                    <Text component="a" c="blue"
-                                        href="https://zenless-zone-zero.fandom.com/wiki/Profile#:~:text=Agent%20Showcase%3A%20Showcase%20up%20to%206%20unlocked%20Agents%20and%20their%20current%20Level."
-                                        target="_blank"> Agents Showcase</Text> is not empty and refresh your profile on Inter-Knot with <Text span c="blue">Update</Text> button.
-                                </Text>
-                            </Alert>
-                        </Center>
-                    }
-                    {characters?.length !== 0 &&
-                        <Stack>
-                            <FilterSelector
-                                exclude={["region", "set_id"]}
-                                value={Object.entries(filterQuery).flatMap(([k, v]) => {
-                                    if (v === undefined) return []
-                                    return v.toString().split(",").map(s => `${k}:${s}`)
-                                })}
-                                onFilterApply={(val) => {
-                                    const q: Record<string, string> = {}
-                                    val.forEach(v => {
-                                        const add = (g: string, s: string) => {
-                                            if (q[g]) {
-                                                q[g] += `,${s}`
-                                            } else {
-                                                q[g] = s
-                                            }
+
+                    
+                    <Stack>
+                        <FilterSelector
+                            exclude={["region", "set_id"]}
+                            value={Object.entries(filterQuery).flatMap(([k, v]) => {
+                                if (v === undefined) return []
+                                return v.toString().split(",").map(s => `${k}:${s}`)
+                            })}
+                            onFilterApply={(val) => {
+                                const q: Record<string, string> = {}
+                                val.forEach(v => {
+                                    const add = (g: string, s: string) => {
+                                        if (q[g]) {
+                                            q[g] += `,${s}`
+                                        } else {
+                                            q[g] = s
                                         }
-                                        const [g, val] = v.split(":")
-                                        switch (g) {
-                                            case "disc_set":
-                                                add("partial_sets", val)
-                                                add("full_set", val)
-                                                break
-                                            case "prop_id":
-                                                break
-                                            default:
-                                                add(g, val)
-                                                break
-                                        }
-                                    })
-                                    // console.log(q)
-                                    setQueryParams((prev) => ({ cursor: undefined, limit: prev.limit, ...q }), true)
-                                    setPage(1)
-                                }} />
+                                    }
+                                    const [g, val] = v.split(":")
+                                    switch (g) {
+                                        case "disc_set":
+                                            add("partial_sets", val)
+                                            add("full_set", val)
+                                            break
+                                        case "prop_id":
+                                            break
+                                        default:
+                                            add(g, val)
+                                            break
+                                    }
+                                })
+                                // console.log(q)
+                                setQueryParams((prev) => ({ cursor: undefined, limit: prev.limit, ...q }), true)
+                                setPage(1)
+                            }} />
+                        {characters?.length !== 0 &&
                             <Card p="0" pos="relative" withBorder>
                                 <Stack>
                                     <LoadingOverlay visible={charactersState.loading} zIndex={9}
@@ -509,44 +498,54 @@ export default function ProfilePage(): React.ReactElement {
                                     </Flex>
                                 </Stack>
                             </Card>
-                        </Stack>
-                        // <Stack>
-                        //     <CharactersTableMemorized uid={profile.Uid} username={profile.Nickname} 
-                        //         characters={characters} lbAgents={leaderboards} openedId={openedId} />
-                        // </Stack>
-                    }
+                        }
+                        {characters?.length === 0 &&
+                            <Center>
+                                <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
+                                    maw="50%">
+                                    <Text>
+                                        If you're adding your profile to Inter-Knot for the first time, please check that your
+                                        <Text component="a" c="blue"
+                                            href="https://zenless-zone-zero.fandom.com/wiki/Profile#:~:text=Agent%20Showcase%3A%20Showcase%20up%20to%206%20unlocked%20Agents%20and%20their%20current%20Level."
+                                            target="_blank"> Agents Showcase</Text> is not empty and refresh your profile on Inter-Knot with <Text span c="blue">Update</Text> button.
+                                        Or check your filters query.
+                                    </Text>
+                                </Alert>
+                            </Center>
+                        }
+                    </Stack>
 
-                    {discs?.length !== 0 &&
-                        <Stack mt="4rem">
-                            <FilterSelector
-                                exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level"]}
-                                value={Object.entries(discsQuery.filter ?? {}).flatMap(([k, v]) => {
-                                    if (v === undefined) return []
-                                    return v.toString().split(",").map(s => `${k}:${s}`)
-                                })}
-                                onFilterApply={(val) => {
-                                    const q: Record<string, string> = {}
-                                    val.forEach(v => {
-                                        const add = (g: string, s: string) => {
-                                            if (q[g]) {
-                                                q[g] += `,${s}`
-                                            } else {
-                                                q[g] = s
-                                            }
+                    <Stack mt="4rem">
+                        <FilterSelector
+                            exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level"]}
+                            value={Object.entries(discsQuery.filter ?? {}).flatMap(([k, v]) => {
+                                if (v === undefined) return []
+                                return v.toString().split(",").map(s => `${k}:${s}`)
+                            })}
+                            onFilterApply={(val) => {
+                                const q: Record<string, string> = {}
+                                val.forEach(v => {
+                                    const add = (g: string, s: string) => {
+                                        if (q[g]) {
+                                            q[g] += `,${s}`
+                                        } else {
+                                            q[g] = s
                                         }
-                                        const [g, val] = v.split(":")
-                                        switch (g) {
-                                            case "prop_id":
-                                                break
+                                    }
+                                    const [g, val] = v.split(":")
+                                    switch (g) {
+                                        case "prop_id":
+                                            break
                                             default:
                                                 add(g, val)
                                                 break
-                                        }
-                                    })
-                                    // console.log(q)
-                                    setDiscsQuery((prev) => ({ ...prev, cursor: undefined, limit: prev.limit, filter: q }))
-                                    setDiscsPage(1)
-                                }} />
+                                            }
+                                        })
+                                        // console.log(q)
+                                        setDiscsQuery((prev) => ({ ...prev, cursor: undefined, limit: prev.limit, filter: q }))
+                                        setDiscsPage(1)
+                                    }} />
+                        {discs?.length !== 0 &&
                             <Card p="0" withBorder>
                                 <Stack>
                                     <LoadingOverlay visible={discsState.loading} zIndex={9}
@@ -613,9 +612,10 @@ export default function ProfilePage(): React.ReactElement {
                                                     {
                                                         accessor: "CritValue.Value",
                                                         title: "Crit Value",
+                                                        hidden: !cvEnabled,
                                                         cellsStyle: () => ({
                                                             width: "calc(10rem * var(--mantine-scale))",
-                                                            background: "rgba(0 0 0 / 15%)"
+                                                            background: "rgba(0 0 0 / 15%)",
                                                         }),
                                                         render: (d: DriveDisc) => (
                                                             <div className="crit-cell">
@@ -691,8 +691,8 @@ export default function ProfilePage(): React.ReactElement {
                                     </Flex>
                                 </Stack>
                             </Card>
-                        </Stack>
-                    }
+                        }
+                    </Stack>
                 </Stack>
         </>
         }
