@@ -14,8 +14,8 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
     const updateEnabled = useMemo(() => backend.state?.params.update_enabled ?? false, [backend.state])
 
     const onSearchChange = async (val: string) => {
-        if (val.length >= 100) {
-            setError("Input too long")
+        if (val.length >= 32) {
+            setError("Input is too long")
             return
         }
         setError("")
