@@ -273,12 +273,9 @@ export async function getStatus(): Promise<BackendState> {
     return response.json()
 }
 
-export async function getNews(): Promise<BelleMessage[]> {
-    const response = await fetch(url({
+export async function getNews(): Promise<IResult<BelleMessage[]>> {
+    return await get(url({
         base: dataUrl,
         path: "/news"
     }))
-    if (response.status !== 200)
-        throw new Error(`${response.status}: ${await response.text()}`)
-    return await response.json()
 }

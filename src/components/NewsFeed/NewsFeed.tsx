@@ -1,7 +1,7 @@
 import { useAsync } from "react-use"
 import { getNews } from "@api/data"
 import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Code, List, Modal, BackgroundImage } from "@mantine/core"
-import { memo, useState } from "react"
+import { memo, useMemo, useState } from "react"
 import { BelleMessage } from "@interknot/types"
 import Markdown from "react-markdown"
 import "./NewsFeed.css"
@@ -73,7 +73,8 @@ function Message({ msg }: { msg: BelleMessage }) {
 }
 
 export default function NewsFeed() {
-    const { value: news, loading, error } = useAsync(getNews, [])
+    const { value, loading, error } = useAsync(getNews, [])
+    const news = useMemo(() => value?.data ?? [], [value])
 
     return (
         <BackgroundImage radius="sm"
@@ -97,7 +98,7 @@ export default function NewsFeed() {
                         </Stack>
                     }
                     {
-                        error && <div>Error loading news: {error.message}</div>
+                        error && <Center><Text>{error.message}</Text></Center>
                     }
                 </Card.Section>
             </Card>
