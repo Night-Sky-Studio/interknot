@@ -14,6 +14,10 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
     const updateEnabled = useMemo(() => backend.state?.params.update_enabled ?? false, [backend.state])
 
     const onSearchChange = async (val: string) => {
+        if (val.length >= 100) {
+            setError("Input too long")
+            return
+        }
         setError("")
         setValue(val)
         if (!searchEnabled) return
@@ -33,6 +37,11 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
             return
         }
         try {
+            const num = Number(value)
+            if (num < 0 || num > 2000000000) {
+                setError("Invalid UID")
+                return
+            }
             const user = await getProfile(Number(value))
             search(user.data ? [user.data] : [])
         } catch (e: any) {
