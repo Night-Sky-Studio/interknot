@@ -25,6 +25,7 @@ import { TooltipData } from "@/components/CharacterCard/CharacterCard"
 import Talents from "@/components/Talents/Talents"
 import LeaderboardProvider from "@/components/LeaderboardProvider"
 import CardFooter from "@/components/CardFooter/CardFooter"
+import FilterSelector from "@/components/FilterSelector/FilterSelector"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -349,6 +350,39 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     <Loader />
                 </Center>
             }
+            <FilterSelector 
+                exclude={["character_id", "set_id", "rarity"]}
+                value={Object.entries(filterQuery).flatMap(([k, v]) => {
+                    if (v === undefined) return []
+                    return v.toString().split(",").map(s => `${k}:${s}`)
+                })}
+                onFilterApply={(val) => {
+                    const q: Record<string, string> = {}
+                    val.forEach(v => {
+                        const add = (g: string, s: string) => {
+                            if (q[g]) {
+                                q[g] += `,${s}`
+                            } else {
+                                q[g] = s
+                            }
+                        }
+                        const [g, val] = v.split(":")
+                        switch (g) {
+                            case "disc_set":
+                                add("partial_sets", val)
+                                add("full_set", val)
+                                break
+                            case "prop_id":
+                                break
+                            default: 
+                                add(g, val)
+                                break
+                        }
+                    })
+                    // console.log(q)
+                    setQueryParams((prev) => ({ cursor: undefined, limit: prev.limit, ...q }), true)
+                    setPage(1)
+                }} />
             {leaderboardUsersState.value && <>
                 <Card withBorder p="0">
                     <Stack>
