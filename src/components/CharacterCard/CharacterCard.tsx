@@ -6,7 +6,7 @@ import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
 import { Weapon, Property } from "@interknot/types"
 import React, { memo, useMemo, useRef } from "react"
-import type { DriveDiscSet, BaseLeaderboardEntry, LeaderboardList } from "@interknot/types"
+import type { DriveDiscSet, LeaderboardList, LeaderboardEntry } from "@interknot/types"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { SubStat } from "@components/SubStat/SubStat"
@@ -171,12 +171,11 @@ function DriveDiscSet({ set }: { set: DriveDiscSet }): React.ReactElement {
 
 interface IStatsGraphProps {
     leaderboard: LeaderboardList
-    entry: Omit<BaseLeaderboardEntry, "RotationValue" | "Leaderboard">
-    stats: Property[]
+    entry: Omit<LeaderboardEntry, "Build" | "RotationValue" | "Leaderboard">
     color: string
 }
 
-function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): React.ReactElement {
+function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.ReactElement {
     const { getLocalString, decimalPlaces } = useSettings()
     const { context } = useCardSettings()
     const { showRanking } = context ?? {}
@@ -193,6 +192,8 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 
     const top1stats = useMemo(() => graph?.Top1AvgStats.filter(v => v.Value > 0.1), [graph?.Top1AvgStats])
 
+    const stats = useMemo(() => entry.FinalStats.BaseStats, [entry.FinalStats.BaseStats])
+
     const filteredStats = useMemo(() => {
         return stats.filter(s => s.Value > 0.1)
     }, [stats])
@@ -208,6 +209,7 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
 
         const result: Property[] = []
         for (const stat of filteredStats) {
+            (stat.simpleName.includes("Sp") && console.log(stat))
             const top1Stat = filteredTop1Stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
                 const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.3))
@@ -296,8 +298,8 @@ function StatsGraph({ leaderboard, entry, stats, color }: IStatsGraphProps): Rea
                                                 {payload.map((item: any, idx: number) => {
                                                     let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
                                                     let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
-                                                    return <Group key={item.name} justify="space-between">
-                                                        <Group>
+                                                    return <Group key={item.name} justify="space-between" wrap="nowrap">
+                                                        <Group wrap="nowrap">
                                                             <ColorSwatch color={item.color} size={16} />
                                                             <Text fz="sm">
                                                                 {topOrCurrent}
@@ -450,7 +452,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                 {showGraph &&
                     <div className="cc-leaderboard">
                         {leaderboard && entry &&
-                            <StatsGraph leaderboard={leaderboard} entry={entry} stats={character.Stats} color={character.Colors.Mindscape} />
+                            <StatsGraph leaderboard={leaderboard} entry={entry} color={character.Colors.Mindscape} />
                         }
                     </div>
                 }

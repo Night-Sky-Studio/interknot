@@ -176,7 +176,9 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
     }), true)
 }
 
-export async function getUserCharacterLeaderboards(uid: number, characterId: number): Promise<IResult<BaseLeaderboardEntry[]>> {
+export async function getUserCharacterLeaderboards(
+    uid: number, characterId: number
+): Promise<IResult<Omit<LeaderboardEntry, "Build">[]>> {
     return await get(url({
         base: dataUrl,
         path: `leaderboards/${uid}/character/${characterId}`
