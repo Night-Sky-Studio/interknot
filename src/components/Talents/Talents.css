@@ -2,6 +2,7 @@
 .cc-talents {
     position: relative;
     height: 64px;
+    padding: 0 10px;
     background: linear-gradient(0deg, var(--mantine-color-dark-9), var(--mantine-color-dark-5));
     border-radius: 32px;
 }
