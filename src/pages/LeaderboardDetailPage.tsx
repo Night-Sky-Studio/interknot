@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers, getLeaderboardUsersCount } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex, Popover, Space, Tooltip } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex, Popover, Space, Tooltip, LoadingOverlay } from "@mantine/core"
 import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "@components/WeaponButton"
 import { useMemo, useState } from "react"
-import { Character, LeaderboardEntry, Property } from "@interknot/types"
+import { LeaderboardEntry, Property } from "@interknot/types"
 import PropertyCell from "@components/cells/PropertyCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
 import { useDisclosure } from "@mantine/hooks"
@@ -79,20 +79,27 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         // return [0, 100]
     }, [leaderboardDistribution])
 
-    const getTopStats = (c: Character): Property[] => {
+
+    const getDisplayStats = (displayProps: number[], baseStats: Property[]): Property[] => {
         const result: Property[] = []
         let skippedStats = 0
-        for (const propId of (c.DisplayProps ?? [])) {
-            const stat = c.Stats.find((p) => p.Id === propId)
+        for (const prodId of displayProps) {
+            const stat = baseStats.find(p => p.Id === prodId)
             if (stat?.Value === 0) {
                 skippedStats++
-                if (c.DisplayProps.length - skippedStats >= 4) continue
+                if (displayProps.length - skippedStats >= 4)
+                    continue
             }
-            if (result.length >= 4) break
-            if (stat) result.push(stat)
+            if (result.length >= 4)
+                break
+            if (stat) {
+                result.push(stat)
+            }
         }
         return result
     }
+
+    // const stats = useMemo(() => getDisplayStats(entry.Build.Character.DisplayProps, entry.FinalStats.BaseStats), [entry])
 
     // const LeaderboardEntryRow = ({ user }: { user: LeaderboardEntry }) => {
     //     const [isExpanded, { toggle }] = useDisclosure(false)
@@ -384,8 +391,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                     setPage(1)
                 }} />
             {leaderboardUsersState.value && <>
-                <Card withBorder p="0">
+                <Card withBorder pos="relative" p="0">
                     <Stack>
+                        <LoadingOverlay visible={leaderboardUsersState.loading} zIndex={9}
+                            overlayProps={{ radius: "sm", blur: 2 }} />
                         <DataTable 
                             highlightOnHover
                             className="data-table"
@@ -459,7 +468,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             visibleMediaQuery: () => `(min-width: 1290px)`,
                                             cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
                                             render: (entry: Omit<LeaderboardEntry, "Leaderboard">) => {
-                                                const stats = getTopStats(entry.Build.Character)
+                                                const stats = getDisplayStats(entry.Build.Character.DisplayProps, entry.FinalStats.BaseStats)
                                                 const prop = stats[idx]
                                                 return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
                                             }

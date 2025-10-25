@@ -35,5 +35,11 @@ export default defineConfig({
             "@tabler/icons-react": "@tabler/icons-react/dist/esm/icons/index.mjs",
             ...aliases
         }
+    },
+    build: {
+        sourcemap: true
+    },
+    preview: {
+        allowedHosts: ["preview.interknot.space"]
     }
 })

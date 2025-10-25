@@ -10,7 +10,6 @@
         "@mantine/hooks": "^8.3.3",
         "@mantine/notifications": "^8.3.2",
         "@tabler/icons-react": "^3.30.0",
-        "babel-plugin-react-compiler": "^19.0.0-beta-ebf51a3-20250411",
         "clsx": "^2.1.1",
         "html-to-image": "^1.11.13",
         "mantine-contextmenu": "^8.2.0",
@@ -28,6 +27,7 @@
         "@types/react": "^19.1.17",
         "@types/react-dom": "^19.1.11",
         "@vitejs/plugin-react": "^4.3.4",
+        "babel-plugin-react-compiler": "^1.0.0",
         "postcss": "^8.5.6",
         "postcss-preset-mantine": "1.18.0",
         "postcss-simple-vars": "^7.0.1",
@@ -346,7 +346,7 @@
 
     "as-table": ["as-table@1.0.55", "", { "dependencies": { "printable-characters": "^1.0.42" } }, "sha512-xvsWESUJn0JN421Xb9MQw6AsMHRCUknCe0Wjlxvjud80mU4E6hQf1A6NzQKcYNmYw62MfzEtXc+badstZP3JpQ=="],
 
-    "babel-plugin-react-compiler": ["babel-plugin-react-compiler@19.0.0-beta-ebf51a3-20250411", "", { "dependencies": { "@babel/types": "^7.26.0" } }, "sha512-q84bNR9JG1crykAlJUt5Ud0/5BUyMFuQww/mrwIQDFBaxsikqBDj3f/FNDsVd2iR26A1HvXKWPEIfgJDv8/V2g=="],
+    "babel-plugin-react-compiler": ["babel-plugin-react-compiler@1.0.0", "", { "dependencies": { "@babel/types": "^7.26.0" } }, "sha512-Ixm8tFfoKKIPYdCCKYTsqv+Fd4IJ0DQqMyEimo+pxUOMUR9cVPlwTrFt9Avu+3cb6Zp3mAzl+t1MrG2fxxKsxw=="],
 
     "bail": ["bail@2.0.2", "", {}, "sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw=="],
 

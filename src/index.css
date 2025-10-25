@@ -37,6 +37,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 .mantine-Table-tr:not(.expandable-row):not(.mantine-Table-thead > .mantine-Table-tr) {
     cursor: pointer;
 }

@@ -1,12 +1,12 @@
 import { getLeaderboards, getUserCharacterLeaderboards } from "@/api/data"
-import { BaseLeaderboardEntry, LeaderboardList } from "@interknot/types"
+import { LeaderboardEntry, LeaderboardList } from "@interknot/types"
 import { Center, Loader } from "@mantine/core"
 import { createContext, useContext, useMemo } from "react"
 import { useAsync } from "react-use"
 
 type LeaderboardContextType = {
     isAvailable: boolean
-    entries: BaseLeaderboardEntry[]
+    entries: Omit<LeaderboardEntry, "Build">[]
     leaderboards: LeaderboardList[]
     highlightId?: number
 }
