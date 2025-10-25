@@ -56,7 +56,7 @@ export default function CardFooter(): React.ReactElement {
             <Stack w="100%" maw="100%">
                 <Group wrap="nowrap">
                     { contextAvailable && cardSettings && <>
-                        <Button variant="subtle" leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
+                        <Button variant="subtle" disabled leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
                             onClick={async () => {
                                 const cardRef = cardSettings?.cardRef?.current
 
