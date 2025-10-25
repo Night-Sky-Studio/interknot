@@ -83,7 +83,7 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
                             <Text>{ item?.label }</Text>
                         </Group>
                     }}
-                    maxDropdownHeight={512}
+                    maxDropdownHeight={480}
                     styles={{
                         dropdown: { 
                             boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px",
