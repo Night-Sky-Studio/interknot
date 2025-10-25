@@ -393,7 +393,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
 
     const characterAccentColor = useMemo(() => {
         switch(character.Id) {
-            case 1461: return character.Colors.Accent // Seed
+            // case 1461: return character.Colors.Accent // Seed
             default: return character.Colors.Mindscape
         }
     }, [character.Id])
