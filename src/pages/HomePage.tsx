@@ -1,15 +1,15 @@
 import { Title, Text, UnstyledButton, Stack, Space, Alert, Group, Image, MantineColor, Anchor } from "@mantine/core"
 import React, { useState } from "react"
-import PlayerSearch from "../components/PlayerSearch"
-import { UserHeaderMemorized } from "../components/UserHeader"
+import PlayerSearch from "@components/PlayerSearch"
+import { UserHeaderMemorized } from "@components/UserHeader/UserHeader"
 import { useNavigate } from "react-router"
 import { ProfileInfo } from "@interknot/types"
 import { useLocalStorage } from "@mantine/hooks"
 import { IconInfoCircle, IconInfoTriangle } from "@tabler/icons-react"
-import { useBackend } from "../components/BackendProvider"
+import { useBackend } from "@components/BackendProvider"
 import "./styles/HomePage.css"
-import fairy from "../../assets/fairy.png"
-import { NewsFeedMemoized } from "../components/NewsFeed"
+import fairy from "@assets/fairy.png"
+import { NewsFeedMemoized } from "@components/NewsFeed/NewsFeed"
 
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()

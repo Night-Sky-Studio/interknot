@@ -37,6 +37,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 .mantine-Table-tr:not(.expandable-row):not(.mantine-Table-thead > .mantine-Table-tr) {
     cursor: pointer;
 }
@@ -48,3 +52,68 @@
 text {
     fill: white
 }
+
+.mantine-Select-option:where([data-combobox-selected]),
+.mantine-MultiSelect-option:where([data-combobox-selected]) {
+    color: black;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-7));
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+    white-space: nowrap;
+}
+
+.mindscape-chip[data-level="0"] {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-7));
+}
+.mindscape-chip[data-level="1"] {
+    background-color: #1f4054;
+}
+.mindscape-chip[data-level="2"] {
+    background-color: #005a6c;
+}
+.mindscape-chip[data-level="3"] {
+    background-color: #007b79;
+}
+.mindscape-chip[data-level="4"] {
+    background-color: #00966b;
+}
+.mindscape-chip[data-level="5"] {
+    background-color: #64e45f;
+    color: black;
+}
+.mindscape-chip[data-level="6"] {
+    background-color: var(--mantine-primary-color-filled);
+    color: black;
+}
+
+.data-table,
+.data-table .mantine-datatable-table,
+.data-table .mantine-Table-tr:not(.data-table .mantine-Table-thead .mantine-Table-tr):not(:hover) {
+    background: transparent;
+}
+.data-table .mantine-Table-thead .mantine-Table-tr {
+    background: var(--mantine-datatable-background-color) !important;
+}
+
+.data-table .mantine-Table-thead .mantine-Table-tr:first-child {
+    display: none;
+}
+.mantine-Table-td.mantine-datatable-row-expansion-cell {
+    overflow: hidden;
+}
+tr:not(:last-of-type) .mantine-datatable-row-expansion-cell-content {
+    border-bottom: unset !important;
+}
+table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-cell) {
+    cursor: unset !important;
+}
+table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-cell):hover {
+    background-color: unset !important;
+}
+

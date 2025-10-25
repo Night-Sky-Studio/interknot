@@ -152,5 +152,6 @@
 }
 
 .img-wiggle {
+    flex: 0;
     animation: wiggle 120s ease-in-out;
 }

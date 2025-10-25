@@ -2,7 +2,7 @@ import { Card, CloseButton, TextInput, Title, Group, ActionIcon } from "@mantine
 import { IconSearch, IconSend2 } from "@tabler/icons-react"
 import { useMemo, useState } from "react"
 import { ProfileInfo } from "@interknot/types"
-import { getUser, searchUsers } from "../api/data"
+import { getProfile, searchUsers } from "../api/data"
 import { useBackend } from "./BackendProvider"
 
 export default function PlayerSearch({ search }: { search: (result: ProfileInfo[]) => void }): React.ReactElement {
@@ -14,10 +14,14 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
     const updateEnabled = useMemo(() => backend.state?.params.update_enabled ?? false, [backend.state])
 
     const onSearchChange = async (val: string) => {
+        if (val.length >= 32) {
+            setError("Input is too long")
+            return
+        }
         setError("")
         setValue(val)
         if (!searchEnabled) return
-        search(await searchUsers(val))
+        search((await searchUsers(val)).data ?? [])
     }
 
     const onUidSubmit = async () => {
@@ -33,8 +37,13 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
             return
         }
         try {
-            const user = await getUser(Number(value))
-            search(user ? [user.Information] : [])
+            const num = Number(value)
+            if (num < 0 || num > 2000000000) {
+                setError("Invalid UID")
+                return
+            }
+            const user = await getProfile(Number(value))
+            search(user.data ? [user.data] : [])
         } catch (e: any) {
             setError(e.message)
         }

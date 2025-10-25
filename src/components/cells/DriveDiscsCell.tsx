@@ -1,15 +1,15 @@
 import { DriveDiscSet } from "@interknot/types";
-import { Group, Image, Table, TableTdProps, Text, Tooltip } from "@mantine/core";
+import { Group, GroupProps, Image, Text, Tooltip } from "@mantine/core";
 import { useSettings } from "../SettingsProvider";
 
-interface IDriveDiscsCellProps extends TableTdProps {
+interface IDriveDiscsCellProps extends GroupProps {
     sets: DriveDiscSet[]
 }
 
 export default function DriveDiscsCell({ sets, ...props }: IDriveDiscsCellProps): React.ReactElement {
     const { getLocalString } = useSettings()
-    return <Table.Td w="160px" {...props}>
-        <Group gap="8px" wrap="nowrap">
+    return (
+        <Group /*w="160px"*/ gap="8px" wrap="nowrap" {...props}>
             {
                 sets.map(set => {
                     return (
@@ -24,5 +24,5 @@ export default function DriveDiscsCell({ sets, ...props }: IDriveDiscsCellProps)
                 })
             }
         </Group>
-    </Table.Td>
+    )
 }

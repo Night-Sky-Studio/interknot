@@ -1,24 +1,65 @@
-import { BaseLeaderboardEntry } from "@interknot/types";
-import { createContext, useContext, useMemo, useState } from "react";
+import { getLeaderboards, getUserCharacterLeaderboards } from "@/api/data"
+import { LeaderboardEntry, LeaderboardList } from "@interknot/types"
+import { Center, Loader } from "@mantine/core"
+import { createContext, useContext, useMemo } from "react"
+import { useAsync } from "react-use"
 
 type LeaderboardContextType = {
-    agents: BaseLeaderboardEntry[]
-    setProfiles: (profiles: BaseLeaderboardEntry[]) => void
+    isAvailable: boolean
+    entries: Omit<LeaderboardEntry, "Build">[]
+    leaderboards: LeaderboardList[]
+    highlightId?: number
 }
 
-export const LeaderboardContext = createContext({} as LeaderboardContextType);
+const defaultValue: LeaderboardContextType = {
+    isAvailable: false,
+    entries: [],
+    leaderboards: [],
+    highlightId: undefined
+}
 
-export default function LeaderboardProvider({ children }: { children: React.ReactNode }) {
-    const [profiles, setProfiles] = useState<BaseLeaderboardEntry[]>([])
+export const LeaderboardContext = createContext(defaultValue)
+
+export interface ILeaderboardProviderProps {
+    uid: number
+    characterId: number
+    children: React.ReactNode
+}
+
+export default function LeaderboardProvider({ uid, characterId, children }: ILeaderboardProviderProps) {
+    const entriesState = useAsync(async () => await getUserCharacterLeaderboards(uid, characterId))
+    const leaderboardsState = useAsync(async () => await getLeaderboards({ filter: { characterId: characterId.toString() } }, true), [characterId])
+
+    const entries = useMemo(() => entriesState.value?.data ?? [], [entriesState.value])
+    const leaderboards = useMemo(() => leaderboardsState.value?.data ?? [], [leaderboardsState.value])
+
+    const isAvailable = useMemo(() => leaderboards.length > 0, [leaderboards])
+
+    const isLoading = useMemo(() => entriesState.loading || leaderboardsState.loading, [entriesState.loading, leaderboardsState.loading])
+    const highlightId = useMemo(() => {
+        if (entries.length === 0) return undefined
+        
+        const sorted = entries.toSorted((a, b) => b.TotalValue - a.TotalValue)
+        const best = 
+            sorted.find(e => e.Type === 0) ?? 
+            sorted.find(e => e.Type === 1) ?? 
+            sorted.find(e => e.Type === 2)
+        
+        return best?.Leaderboard.Id
+    }, [entries])
 
     const value = useMemo(() => ({
-        agents: profiles,
-        setProfiles
-    }), [profiles])
+        isAvailable,
+        entries,
+        leaderboards,
+        highlightId
+    } satisfies LeaderboardContextType), [entries, leaderboards, highlightId])
 
     return (
         <LeaderboardContext.Provider value={value}>
-            {children}
+            {isLoading 
+                ? <Center><Loader /></Center>
+                : children}
         </LeaderboardContext.Provider>
     )
 }

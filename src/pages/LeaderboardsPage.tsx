@@ -1,24 +1,27 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "../api/data"
-import { Card, Center, Group, Image, Loader, Stack, Table, Text, Alert, Anchor } from "@mantine/core"
+import { Card, Center, Group, Image, Loader, Stack, Table, Text, Title, Alert, Anchor } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
-import { Team } from "../components/Team"
-import WeaponButton from "../components/WeaponButton"
+import { Team } from "@components/Team/Team"
+import WeaponButton from "@components/WeaponButton"
+import { useMemo } from "react"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
 
     const leaderboardsState = useAsyncRetry(async () => {
-        return await getLeaderboards()
+        return await getLeaderboards({})
     })
+
+    const leaderboards = useMemo(() => leaderboardsState.value?.data, [leaderboardsState.value])
 
     return (<>
         <title>Leaderboards | Inter-Knot</title>
         <Stack>
             <Alert variant="light" color="blue" 
-                title="Leaderboards are meant for comparing Drive Discs strength only!" icon={<IconInfoCircle />}>
+                title={<Title order={3}>Leaderboards are meant for comparing Drive Discs strength only!</Title>} icon={<IconInfoCircle />}>
                 <Stack>
                 <Text>
                     Your mindscape, character, weapon levels and any other upgradable stats
@@ -58,7 +61,7 @@ export default function LeaderboardsPage(): React.ReactElement {
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {leaderboardsState.value.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
+                            {leaderboards?.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
                                 return (
                                     <Table.Tr key={leaderboard.Id} onClick={() => {
                                         navigate(`/leaderboards/${leaderboard.Id}`)

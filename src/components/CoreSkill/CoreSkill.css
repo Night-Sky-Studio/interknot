@@ -1,0 +1,18 @@
+.cc-core > * {
+    padding: 0 18px;
+    margin-left: -2px;
+    height: 32px;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cc-core > *:first-child {
+    margin-left: unset;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+    border-radius: 20px 0 0 20px;
+}
+.cc-core > *:last-child {
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+    border-radius: 0 20px 20px 0;
+}

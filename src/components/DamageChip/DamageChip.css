@@ -1,0 +1,52 @@
+.damage-chip {
+    padding: 2px 8px;
+    border-radius: 8px;
+    outline: 1px solid var(--chip-highlight);
+}
+
+.damage-chip[data-tag="BasicAtk"][data-hover="true"],
+.damage-chip[data-tag="Dash"][data-hover="true"],
+.damage-chip[data-tag="Counter"][data-hover="true"] {
+    background-color: var(--basic);
+    color: black;
+}
+
+.damage-chip[data-tag="Chain"][data-hover="true"],
+.damage-chip[data-tag="Ultimate"][data-hover="true"] {
+    background-color: var(--chain);
+    color: black;
+}
+
+.damage-chip[data-tag="QuickAssist"][data-hover="true"],
+.damage-chip[data-tag="DefensiveAssist"][data-hover="true"],
+.damage-chip[data-tag="EvasiveAssist"][data-hover="true"],
+.damage-chip[data-tag="FollowUpAssist"][data-hover="true"] {
+    background-color: var(--assist);
+    color: white;
+}
+
+.damage-chip[data-tag="Special"][data-hover="true"],
+.damage-chip[data-tag="ExSpecial"][data-hover="true"] {
+    background-color: var(--special);
+    color: white;
+}
+
+.damage-chip[data-tag="AttributeAnomaly"][data-hover="true"] {
+    background-color: var(--anomaly);
+    color: white;
+}
+
+.damage-chip[data-tag="Aftershock"][data-hover="true"] {
+    background-color: var(--aftershock);
+    color: white;
+}
+
+.dc-damage {
+    background-color: var(--mantine-color-dark-8);
+    font-size: 1rem;
+    padding: 0rem 0.25rem;
+    /* margin-left: 0.25rem; */
+    border-radius: 0.25rem;
+    text-align: center;
+    color: white;
+}

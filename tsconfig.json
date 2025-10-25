@@ -19,7 +19,17 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "paths": {
+            "@/*": ["./src/*"],
+            "@components/*": ["./src/components/*"],
+            "@icons/*": ["./src/components/icons/*"],
+            "@assets/*": ["./assets/*"],
+            "@pages/*": ["./src/pages/*"],
+            "@api/*": ["./src/api/*"],
+            "@localization": ["./src/localization/Localization.ts"],
+            "@extensions/*": ["./src/extensions/*"],
+        }
     },
     "include": [
         "src"
@@ -28,5 +38,5 @@
         {
             "path": "./tsconfig.node.json"
         }
-    ]
+    ],
 }
