@@ -98,26 +98,28 @@ export function getRarityIcon(rarity: number): string | undefined {
 }
 
 const DriveDiscGradientMap: Record<number, string[]> = {
-    31000: ["#158754", "#085750"],    // Woodpecker Electro
-    31100: ["#787070", "#2e2b2b"],    // Puffer Electro
-    31200: ["#765dff", "#2c1e73"],    // Shockstar Disco
-    31300: ["#47a386", "#146d52"],    // Freedom Blues
-    31400: ["#c6ea35", "#538000"],    // Hormone Punk
-    31500: ["#eda217", "#835500"],    // Soul Rock
-    31600: ["#34b34a", "#1a5925"],    // Swing Jazz
-    31800: ["#ecc217", "#81730d"],    // Chaos Jazz
+    31000: ["#158754", "#085750"],      // Woodpecker Electro
+    31100: ["#787070", "#2e2b2b"],      // Puffer Electro
+    31200: ["#765dff", "#2c1e73"],      // Shockstar Disco
+    31300: ["#47a386", "#146d52"],      // Freedom Blues
+    31400: ["#c6ea35", "#538000"],      // Hormone Punk
+    31500: ["#eda217", "#835500"],      // Soul Rock
+    31600: ["#34b34a", "#1a5925"],      // Swing Jazz
+    31800: ["#ecc217", "#81730d"],      // Chaos Jazz
     31900: ["#f9aa21", "#f77e21", "#f64e21"],    // Proto Punk
-    32200: ["#de1b79", "#800f66"],    // Inferno Metal
-    32300: ["#57BC4D", "#285623"],    // Chaos Metal
-    32400: ["#6a2df4", "#381880"],    // Thunder Metal
-    32500: ["#3fd08f", "#132c20"],    // Polar Metal
-    32600: ["#e12625", "#460605"],    // Fanged Metal
+    32200: ["#de1b79", "#800f66"],      // Inferno Metal
+    32300: ["#57BC4D", "#285623"],      // Chaos Metal
+    32400: ["#6a2df4", "#381880"],      // Thunder Metal
+    32500: ["#3fd08f", "#132c20"],      // Polar Metal
+    32600: ["#e12625", "#460605"],      // Fanged Metal
     32700: ["#59b8ed", "#25b7b6", "#1f77aa"],    // Branch & Blade Song
     32800: ["#9f1011", "#9f1011", "#835500"],    // Astral Voice
-    32900: ["#ffca3f", "#ff8200"],    // Shadow Harmony
+    32900: ["#ffca3f", "#ff8200"],      // Shadow Harmony
     33000: ["#9d7cff", "#ad57ff", "#6c48df"], // Phaethon's Melody,
-    33100: ["#ddb16e", "#976331"],    // Yunkui Tales 
-    33200: ["#a26a06", "#ef9c09"]     // King of the Summit
+    33100: ["#ddb16e", "#976331"],      // Yunkui Tales 
+    33200: ["#a26a06", "#ef9c09"],      // King of the Summit
+    33300: ["#ffbf2c", "#ec8b02"],      // Dawn's Bloom
+    33400: ["#1aaea3", "#4d53b9"]       // Moonlight Lullaby
 }
 
 export function getDriveDiscGradient(id: number) {

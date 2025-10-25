@@ -391,9 +391,16 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
     const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, selectedLeaderboardId, highlightId])
     const entry = useMemo(() => entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
 
+    const characterAccentColor = useMemo(() => {
+        switch(character.Id) {
+            case 1461: return character.Colors.Accent // Seed
+            default: return character.Colors.Mindscape
+        }
+    }, [character.Id])
+
     return (
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="xs" p="0px"
-            style={{ "--accent": character.Colors.Mindscape, "--mindscape": character.Colors.Accent, accentColor: character.Colors.Mindscape }}>
+            style={{ "--accent": characterAccentColor, "--mindscape": character.Colors.Accent, accentColor: characterAccentColor }}>
             <Card.Section m="0" className="cc-grid">
                 <div className="cc-image">
                     <BackgroundImage mt="xs" className="character-img" src={character.ImageUrl} />
