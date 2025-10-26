@@ -41,6 +41,12 @@ body {
     overflow-x: hidden;
 }
 
+#root {
+    background-color: inherit;
+    position: relative;
+    z-index: 0;
+}
+
 .mantine-Table-tr:not(.expandable-row):not(.mantine-Table-thead > .mantine-Table-tr) {
     cursor: pointer;
 }

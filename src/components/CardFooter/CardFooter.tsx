@@ -8,7 +8,7 @@ import { useLeaderboards } from "@components/LeaderboardProvider"
 import { useCardSettings } from "@components/CardSettingsProvider"
 import LeaderboardEntrySelect from "../LeaderboardEntrySelect"
 import { useSettings } from "../SettingsProvider"
-import { toPng } from "html-to-image"
+import { domToPng } from 'modern-screenshot'
 import { useData } from "../DataProvider"
 import { TooltipData } from "../CharacterCard/CharacterCard"
 
@@ -56,7 +56,7 @@ export default function CardFooter(): React.ReactElement {
             <Stack w="100%" maw="100%">
                 <Group wrap="nowrap">
                     { contextAvailable && cardSettings && <>
-                        <Button variant="subtle" disabled leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
+                        <Button variant="subtle" disabled={downloading} leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
                             onClick={async () => {
                                 const cardRef = cardSettings?.cardRef?.current
 
@@ -67,25 +67,23 @@ export default function CardFooter(): React.ReactElement {
 
                                 setDownloading(true)
 
-                                const cardRect = cardRef.getBoundingClientRect()
-                                console.log(cardRect)
+                                // clone card DOM
+                                const clone = cardRef.cloneNode(true) as HTMLElement
+                                clone.style.position = "absolute"
+                                clone.style.top = "0px"
+                                clone.style.left = "0px"
+                                clone.style.zIndex = "-9999"
+                                clone.style.transform = "scale(1) !important"
+                                document.body.appendChild(clone)
 
-                                cardRef.querySelectorAll("g.recharts-layer.recharts-polar-angle-axis.angleAxis > g > g > text")
-                                    .forEach((el) => {
-                                        el.setAttribute("fill", "#FFFFFF")
-                                    })
-                                
-                                cardRef.style.transform = "scale(1) !important"
-
-                                const dataUrl = await toPng(cardRef, {
+                                const dataUrl = await domToPng(clone, {
                                     quality: 1.0,
-                                    canvasHeight: (Math.ceil(cardRect.height) + 72) * 2,
-                                    canvasWidth: (Math.ceil(cardRect.width) + 72) * 2,
                                     backgroundColor: "transparent",
-                                    style: {
-                                        margin: "0px",
-                                    }
+                                    scale: 2
                                 })
+
+                                // remove clone
+                                document.body.removeChild(clone)
 
                                 const link = document.createElement("a")
                                 link.download = `${getLocalString(cardData.charName)}-${cardData.uid}.png`
