@@ -39,7 +39,7 @@ export default function LeaderboardProvider({ uid, characterId, children }: ILea
     const highlightId = useMemo(() => {
         if (entries.length === 0) return undefined
         
-        const sorted = entries.toSorted((a, b) => b.TotalValue - a.TotalValue)
+        const sorted = entries.toSorted((a, b) => a.Rank - b.Rank)
         const best = 
             sorted.find(e => e.Type === 0) ?? 
             sorted.find(e => e.Type === 1) ?? 
