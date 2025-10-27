@@ -1,6 +1,6 @@
 import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme, Space } from "@mantine/core"
 import { RadarChart } from "@mantine/charts"
-import { Character } from "@interknot/types"
+import { Character, match } from "@interknot/types"
 import "./CharacterCard.css"
 import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
@@ -194,9 +194,22 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
 
     const stats = useMemo(() => entry.FinalStats.BaseStats, [entry.FinalStats.BaseStats])
 
+    const relativeValue = (stat?: Property): number => {
+        if (!stat) {
+            return -1
+        }
+        const result = match(stat.FormatType, [
+            [0, () => stat.Value], // flat
+            [1, () => stat.Value / 100], // percent
+            [2, () => stat.Value / 10], // float
+            () => stat.Value // default
+        ])
+        return result
+    }
+
     const filteredStats = useMemo(() => {
-        return stats.filter(s => s.Value > 0.1)
-    }, [stats])
+        return stats.filter(s => relativeValue(top1stats?.find(ts => ts.Id === s.Id)) >= 10)
+    }, [stats, top1stats])
 
     // if stat in top1stats is not present in filteredStats, remove it
     const filteredTop1Stats = useMemo(() => {
@@ -209,7 +222,6 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
 
         const result: Property[] = []
         for (const stat of filteredStats) {
-            (stat.simpleName.includes("Sp") && console.log(stat))
             const top1Stat = filteredTop1Stats?.find(s => s.Id === stat.Id)
             if (top1Stat) {
                 const relativeStat = new Property(stat.Id, stat.Name, Math.min((stat.Value / top1Stat.Value), 1.3))
