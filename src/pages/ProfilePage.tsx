@@ -344,7 +344,7 @@ export default function ProfilePage(): React.ReactElement {
                                                         accessor: "Id",
                                                         title: "#",
                                                         cellsStyle: () => ({ maxWidth: "3ch" }),
-                                                        render: (_, r) => <Text>{((page ?? 0) - 1) * limitNum + r + 1}</Text>,
+                                                        render: (_, r) => <Text>{((page ?? 1) - 1) * limitNum + r + 1}</Text>,
                                                     },
                                                     {
                                                         accessor: "Name",
