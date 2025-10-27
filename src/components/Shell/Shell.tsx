@@ -174,7 +174,7 @@ export default function Shell(): React.ReactElement {
                             leftSection={favoriteUsers.includes(u.Uid) ? <IconStarFilled size="16px" /> : undefined}
                             active={`${u.Uid}` === selectedUser}
                             onClick={() => { 
-                                navigate(`/user/${u.Uid}`)
+                                navigate(`/profile/${u.Uid}`)
                                 toggle()
                             }} />)
                     }       
@@ -191,7 +191,7 @@ export default function Shell(): React.ReactElement {
                 <Container size="1600px">
                     {users.length !== 0 &&
                         <Tabs value={selectedUser} onChange={(value) => {
-                            navigate(`/user/${value}`)
+                            navigate(`/profile/${value}`)
                         }} variant="pills" mb="md" onContextMenu={showContextMenu([
                             {
                                 key: "closeAll",
