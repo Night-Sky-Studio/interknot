@@ -14,13 +14,18 @@ function Message({ msg }: { msg: BelleMessage }) {
     const navigate = useNavigate()
 
     return (<>
-        <Modal.Root opened={opened} onClose={close} centered size="100%"
+        <Modal.Root opened={opened} onClose={close} centered size="100%" 
+            removeScrollProps={{ allowPinchZoom: true }}
             transitionProps={{ transition: "pop" }}>
             <Modal.Overlay />
-            <Modal.Content>
-                <Modal.Body p="0">
-                    <Image h="auto" w="100%" src={clickedImageUrl ?? ""} alt="Clicked" radius="md" />
-                </Modal.Body>
+            <Modal.Content bg="transparent">
+                <Center>
+                    <Modal.Body p="0" bg="transparent" w="fit-content">
+                        {/* <Center> */}
+                            <Image h="auto" w="100%" src={clickedImageUrl ?? ""} alt="Clicked" radius="md" />
+                        {/* </Center> */}
+                    </Modal.Body>
+                </Center>
             </Modal.Content>
         </Modal.Root>
 
@@ -57,7 +62,8 @@ function Message({ msg }: { msg: BelleMessage }) {
                     <Group>
                         {
                             msg.Attachments.map((attachment, index) => 
-                                <Image key={index} h="auto" w="640px" mah="256px" maw="100%" 
+                                <Image key={index} h="auto" mah="256px" maw="100%" 
+                                    fit="contain"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
                                         setClickedImageUrl(attachment.Url)
