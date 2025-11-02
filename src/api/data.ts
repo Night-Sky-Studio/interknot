@@ -66,7 +66,7 @@ export function restoreProperties(obj: any): any {
 }
 
 async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult<T>> {
-    console.log(u)
+    // console.log(u)
     let response = await fetch(u)
     let result = await response.json() as IResult<T>
     if (response.status !== 200 || result.code !== 0) {
@@ -82,7 +82,7 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult
 }
 
 async function getCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
-    console.log(u)
+    // console.log(u)
     let response = await fetch(u)
     let result = await response.json() as ICursoredResult<T>
     if (response.status !== 200) {
