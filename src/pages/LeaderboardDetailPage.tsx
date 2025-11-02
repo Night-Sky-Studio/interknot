@@ -428,7 +428,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             title: "Build name",
                                             render: (entry) => (
                                                 <Group gap="sm" wrap="nowrap">
-                                                    <Image src={entry.Build.Character.CircleIconUrl} h="32px" />
+                                                    <Image src={entry.Build.Character.Skin 
+                                                        ? entry.Build.Character.Skin.CircleIconUrl 
+                                                        : entry.Build.Character.CircleIconUrl} h="32px" />
                                                     <Text c={entry.Build.Name !== undefined ? "white" : "dimmed"}
                                                         style={{ whiteSpace: "nowrap" }}>
                                                             { entry.Build.Name ?? getLocalString(entry.Build.Character.Name) }

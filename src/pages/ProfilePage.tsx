@@ -352,7 +352,7 @@ export default function ProfilePage(): React.ReactElement {
                                                         cellsStyle: () => ({ maxWidth: "30%" }),
                                                         render: (c) => (
                                                             <Group gap="sm" wrap="nowrap">
-                                                                <Image src={c.CircleIconUrl} h="32px" />
+                                                                <Image src={c.Skin ? c.Skin.CircleIconUrl : c.CircleIconUrl} h="32px" />
                                                                 <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
                                                                 <div className="chip">{getLevel(c.Level)}</div>
                                                             </Group>

@@ -192,7 +192,9 @@ export default function BuildsPage(): React.ReactElement {
                                             title: "Name",
                                             render: (b) => (
                                                 <Group gap="sm" wrap="nowrap">
-                                                    <Image src={b.Character.CircleIconUrl} h="32px" />
+                                                    <Image src={b.Character.Skin 
+                                                        ? b.Character.Skin.CircleIconUrl 
+                                                        : b.Character.CircleIconUrl} h="32px" />
                                                     <Text c={b.Name !== undefined ? "white" : "dimmed"}
                                                         style={{ whiteSpace: "nowrap" }}>
                                                         { b.Name ?? getLocalString(b.Character.Name) }
