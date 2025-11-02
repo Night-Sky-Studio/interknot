@@ -379,7 +379,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     },
                                                     {
                                                         accessor: "CritValue",
-                                                        title: cvEnabled ? "Crit Value" : "Crit Rate / Crit DMG",
+                                                        title: cvEnabled ? "Crit Value" : "Crit Ratio",
                                                         cellsStyle: () => ({
                                                             width: "calc(10rem * var(--mantine-scale))",
                                                             background: "rgba(0 0 0 / 15%)"
