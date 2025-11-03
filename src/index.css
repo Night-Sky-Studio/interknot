@@ -125,6 +125,6 @@ table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-
 
 @media (max-width: 600px) {
     .mantine-Container-root {
-        padding-inline: 0;
+        padding-inline: var(--mantine-spacing-sm);
     }
 }
