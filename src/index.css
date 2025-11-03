@@ -123,3 +123,8 @@ table.mantine-datatable-table tbody tr:has(> td.mantine-datatable-row-expansion-
     background-color: unset !important;
 }
 
+@media (max-width: 600px) {
+    .mantine-Container-root {
+        padding-inline: 0;
+    }
+}

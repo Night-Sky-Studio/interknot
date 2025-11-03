@@ -61,3 +61,10 @@
         display: none;
     }
 }
+
+@media (max-width: 600px) {
+    .mantine-AppShell-main {
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+    }
+}
