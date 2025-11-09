@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import sitemap from "vite-plugin-sitemap"
 
 const ReactCompilerConfig = { }
 
@@ -28,6 +29,14 @@ export default defineConfig({
                     ["babel-plugin-react-compiler", ReactCompilerConfig],
                 ],
             }
+        }),
+        sitemap({
+            hostname: "https://interknot.space",
+            dynamicRoutes: [
+                "/builds",
+                "/leaderboards"
+            ],
+            changefreq: "weekly"
         })
     ],
     resolve: {

@@ -39,6 +39,7 @@
         "postcss-simple-vars": "^7.0.1",
         "typescript": "^5.9.3",
         "vite": "^7.1.9",
+        "vite-plugin-sitemap": "^0.8.2",
         "wrangler": "^4.20.1"
     },
     "packageManager": "bun@1.2.3",
