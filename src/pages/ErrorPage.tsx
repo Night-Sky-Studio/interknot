@@ -4,7 +4,7 @@ import ellen from "@assets/ellen_404.webp"
 
 export default function ErrorPage(): React.ReactElement {
     return (<>
-        <title>Inter-Knot | 404</title>
+        <title>404 | Inter-Knot</title>
         <Center h="100%" w="100%">
             <Stack justify="center" align="center">
                 <Image className="img-wiggle" src={ellen} alt="404" w={384} />
