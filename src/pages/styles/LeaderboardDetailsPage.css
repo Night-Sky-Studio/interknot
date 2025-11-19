@@ -26,7 +26,8 @@
     mask-position: 45% 50%;
 }
 
-.background-img[data-cid="1321"] {
+.background-img[data-cid="1321"],
+.background-img[data-cid="1371"] {
     right: -1650px;
     mask-position: 55% 50%;
 }
@@ -43,6 +44,11 @@
 
     .background-img[data-cid="1321"] {
         right: -1500px;
+        mask-position: 55% 50%;
+    }
+
+    .background-img[data-cid="1371"] {
+        right: -1250px;
         mask-position: 55% 50%;
     }
 
