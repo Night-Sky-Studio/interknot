@@ -277,9 +277,11 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         <Grid.Col span={{ base: 12, md: 5, lg: "auto" }}>
                             <Stack c="white">
                                 <Title order={2}>{leaderboard?.FullName}</Title>
-                                {leaderboard?.Description &&
-                                    <Text fz="12pt">{leaderboard?.Description}</Text>
-                                }
+                                <Stack gap="0">
+                                    {
+                                        leaderboard?.Description.split(";").map(line => <Text fz="12pt">{line}</Text>)
+                                    }
+                                </Stack>
                                 <Group gap="xs">
                                     <Title order={5}>Weapons: </Title>
                                     {
