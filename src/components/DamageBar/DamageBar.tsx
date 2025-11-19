@@ -1,4 +1,4 @@
-import { AgentAction } from "@interknot/types"
+import { AgentAction, SkillTag } from "@interknot/types"
 import { getTagName, getTagShortName } from "@localization"
 import "./DamageBar.css"
 import { Center, Popover, Stack, Text } from "@mantine/core"
@@ -25,6 +25,16 @@ export default function DamageBar({ actions, hoverIdx, onHighlight }: IDamageBar
         onHighlight(idx)
     }, [idx])
 
+    const getTag = (tag: any): SkillTag => {
+        if (typeof tag === "number") {
+            return SkillTag[tag] as unknown as SkillTag
+        }
+        if (typeof tag === "string") {
+            return SkillTag[tag as keyof typeof SkillTag]
+        }
+        return tag
+    }
+
     return <Center w="100%" style={{ flexDirection: "column" }}>
         <Text mb="xs">Rotation damage distribution</Text>
         <div className="dmg-bar">
@@ -35,7 +45,7 @@ export default function DamageBar({ actions, hoverIdx, onHighlight }: IDamageBar
                         <Popover.Target>
                             <div 
                                 style={{ "--width": `${(action.Damage / total) * 100}%` } as React.CSSProperties}
-                                data-tag={action.Tag}
+                                data-tag={getTag(action.Tag)}
                                 data-hover={idx === i}
                                 onMouseEnter={() => {
                                     setIdx(actions.indexOf(action))
@@ -43,13 +53,13 @@ export default function DamageBar({ actions, hoverIdx, onHighlight }: IDamageBar
                                 onMouseLeave={() => {
                                     setIdx(-1)
                                 }}>
-                                {getTagShortName(action.Tag)}
+                                {getTagShortName(getTag(action.Tag))}
                             </div>
                         </Popover.Target>
                         <Popover.Dropdown>
                             <Stack gap="0px">
                                 <Text fw={500}>{action.Name.split("_").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ")}</Text>
-                                <Text fz="0.75rem" fw={700} className="">{getTagName(action.Tag)}</Text>
+                                <Text fz="0.75rem" fw={700} className="">{getTagName(getTag(action.Tag))}</Text>
                                 <Text fz="1.5rem" fw={600}>{Math.trunc(action.Damage).toLocaleString()}</Text>
                                 <Text c="dimmed">{((action.Damage / total) * 100).toFixed(1)}% of total</Text>
                             </Stack>
