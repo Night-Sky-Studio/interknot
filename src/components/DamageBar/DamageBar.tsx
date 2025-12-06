@@ -30,7 +30,7 @@ export default function DamageBar({ actions, hoverIdx, onHighlight }: IDamageBar
             return SkillTag[tag] as unknown as SkillTag
         }
         if (typeof tag === "string") {
-            return SkillTag[tag as keyof typeof SkillTag]
+            return tag as unknown as SkillTag
         }
         return tag
     }
