@@ -1,4 +1,4 @@
-import { SkillTag } from "@interknot/types"
+import { match, SkillTag } from "@interknot/types"
 import locs from "./locs.json"
 import additionalProps from "./additionalProps.json"
 
@@ -91,4 +91,16 @@ const ShortPropertyNameMap: Record<number, string> = {
 
 export function getShortPropertyName(id: number): string {
     return ShortPropertyNameMap[id] ?? id.toString()
+}
+
+export function getErrorString(error?: string): string {
+    return match(error, [
+        ["E_NOT_FOUND", "Not found"],
+        ["E_INVALID", "Invalid request"],
+        ["E_ENKA", "Enka error"],
+        ["E_CALC", "Calculator error"],
+        ["E_NOT_ALLOWED", "Method not allowed"],
+        ["E_INTERNAL", "Internal server error"],
+        () => "Internal error"
+    ])
 }

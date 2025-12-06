@@ -10,8 +10,8 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
         [error, setError] = useState("")
 
     const backend = useBackend()
-    const searchEnabled = useMemo(() => backend.state?.params.search_enabled ?? false, [backend.state])
-    const updateEnabled = useMemo(() => backend.state?.params.update_enabled ?? false, [backend.state])
+    const searchEnabled = useMemo(() => backend.state?.data?.params.search_enabled ?? false, [backend.state])
+    const updateEnabled = useMemo(() => backend.state?.data?.params.update_enabled ?? false, [backend.state])
 
     const onSearchChange = async (val: string) => {
         if (val.length >= 32) {

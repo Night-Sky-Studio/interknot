@@ -61,7 +61,7 @@ function timeAgoIntl(date: Date | string) {
 export default function ProfilePage(): React.ReactElement {
     const { uid } = useParams()
     // const initialOpenedId = useSearchParam("openedId")
-    const backend = useBackend()
+    const { state: backend } = useBackend()
     const { cvEnabled, getLocalString, getLevel } = useSettings()
 
     const [{ openedId: initialOpenedId, cursor, limit, ...filterQuery }, setQueryParams] = useQueryParams()
@@ -240,12 +240,12 @@ export default function ProfilePage(): React.ReactElement {
                 <Stack>
                     <Group justify="flex-end" gap="xs">
                         <Text c="dimmed">Last updated {timeAgoIntl(profile.UpdatedAt)}</Text>
-                        {backend.state && !backend.state.params.update_enabled &&
-                            <Tooltip label={backend.state?.params.update_disabled_msg} withArrow portalProps={{ reuseTargetNode: true }}>
+                        {backend?.data && !backend.data.params.update_enabled &&
+                            <Tooltip label={backend.data.params.update_disabled_msg} withArrow portalProps={{ reuseTargetNode: true }}>
                                 <Button rightSection={<IconReload />} disabled>Update</Button>
                             </Tooltip>
                         }
-                        {backend.state && backend.state.params.update_enabled &&
+                        {backend?.data && backend.data.params.update_enabled &&
                             <Button rightSection={<IconReload />} disabled={!canUpdate} onClick={() => {
                                 setCanUpdate(false)
                                 setUpdateRequested(true)
@@ -283,7 +283,7 @@ export default function ProfilePage(): React.ReactElement {
                                     }} />
                             }
                             {
-                                leaderboardsState.error && <Center m="md">Failed to load leaderboards. Cause: {leaderboardsState.error.message}</Center>
+                                leaderboardsState.error && <Center m="md">Failed to load leaderboards. {leaderboardsState.error.message}</Center>
                             }
                         </Collapse>
                         <Button variant="transparent" className="lb-expand-button" leftSection={opened ? <IconChevronUp /> : <IconChevronDown />} onClick={toggle}>

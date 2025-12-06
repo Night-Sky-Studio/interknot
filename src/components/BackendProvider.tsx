@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react"
-import { BackendError, BackendState, getStatus } from "../api/data"
+import { BackendState, getStatus } from "../api/data"
+import { IResult, match } from "@interknot/types"
+import { getRarityIcon } from "./icons/Icons"
 
 export interface BackendContextType {
-    state: BackendState | null
-    error: BackendError | null
+    state: IResult<BackendState> | null
 }
 
 const BackendContext = React.createContext<BackendContextType>({
-    state: null,
-    error: null
+    state: null
 })
 
 interface IBackendProviderProps {
@@ -17,34 +17,36 @@ interface IBackendProviderProps {
 }
 
 export function BackendProvider({ children/*, checkInterval = 5 * 60 * 1000*/ }: IBackendProviderProps): React.ReactElement {
-    const [status, setStatus] = useState<BackendState | null>(null)
-    const [error, setError] = useState<BackendError | null>(null)
+    const [status, setStatus] = useState<IResult<BackendState> | null>(null)
 
     const fetchStatus = async () => {
-        try {
-            const result = await getStatus()
-            setStatus(result)
-            setError(null)
-            console.log("Data server status check", result)
-        } catch (e: any) {
-            const err = JSON.parse(e.message) as BackendError
-            setError({
-                code: 520,
-                message: err.message
-            })
-            setStatus(null)
-            console.error("Data server is offline", err)
-        }
+        const result = await getStatus()
+
+        // inject rarity icons
+        result.data?.filters["Rarity"].forEach(v => {
+            if (v.img === "") {
+                v.img = match(v.value, [
+                    ["2", getRarityIcon(2)],
+                    ["3", getRarityIcon(3)],
+                    ["4", getRarityIcon(4)],
+                    () => ""
+                ])
+            }
+        })
+
+        return result
     }
 
     useEffect(() => {
-        fetchStatus().then()
+        fetchStatus().then((result) => {
+            setStatus(result)
+        })
         // const interval = setInterval(fetchStatus, checkInterval)
         // return () => clearInterval(interval)
     }, [])
 
     return (
-        <BackendContext.Provider value={{ state: status, error }}>
+        <BackendContext.Provider value={{ state: status }}>
             {children}
         </BackendContext.Provider>
     )

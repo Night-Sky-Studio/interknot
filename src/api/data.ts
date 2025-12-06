@@ -1,3 +1,4 @@
+import { getErrorString } from "@/localization/Localization"
 import { 
     AgentAction, 
     BaseLeaderboardEntry, 
@@ -13,8 +14,9 @@ import {
     LeaderboardList, 
     ProfileInfo, 
     Property, 
+    Result, 
     url 
- } from "@interknot/types"
+} from "@interknot/types"
 
 interface IFilter {
     label: string
@@ -36,10 +38,6 @@ export interface BackendState {
     version: string
     uptime: number
     currentDate: string
-}
-export interface BackendError {
-    message: string
-    code?: number
 }
 
 const dataUrl = process.env.NODE_ENV === "development"
@@ -69,14 +67,14 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult
     // console.log(u)
     let response = await fetch(u)
     let result = await response.json() as IResult<T>
-    if (response.status !== 200 || result.code !== 0) {
-        throw new Error(`${result.code || response.status} :: ${result.message}`)
+    if (response.status !== 200 || !result.success) {
+        throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
     }
     if (restoreProps && result.data) {
         result.data = restoreProperties(result.data)
     }
     if (result.data === undefined) {
-        throw new Error(`${result.code || response.status} :: No data in response`)
+        throw new Error(`${getErrorString(result.error?.status)} :: No data in response`)
     }
     return result
 }
@@ -85,14 +83,14 @@ async function getCursored<T>(u: string, restoreProps: boolean = false): Promise
     // console.log(u)
     let response = await fetch(u)
     let result = await response.json() as ICursoredResult<T>
-    if (response.status !== 200) {
-        throw new Error(result.message)
+    if (response.status !== 200 || !result.success) {
+        throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
     }
     if (restoreProps && result.data) {
         result.data = result.data.map(restoreProperties)
     }
     if (result.data === undefined) {
-        throw new Error("No data in response")
+        throw new Error(`${getErrorString(result.error?.status)} :: No data in response`)
     }
     return result
 }
@@ -251,28 +249,20 @@ export async function getCalc(uid: number, characterId: number): Promise<IResult
     }), true)
 }
 
-export async function getStatus(): Promise<BackendState> {
-    let response: Response
-
+export async function getStatus(): Promise<IResult<BackendState>> {
     try {
-        response = await fetch(url({
+        let response = await fetch(url({
             base: dataUrl,
             path: "/status"
         }))
+
+        if (response.status !== 200)
+            return Result.err("E_INTERNAL", `Backend returned unexpected status: ${response.status}`)
+
+        return Result.ok(await response.json())
     } catch (e: any) {
-        throw new Error(JSON.stringify({
-            code: 520,
-            message: e.message
-        } satisfies BackendError))
+        return Result.err("E_INTERNAL", `Backend is unreachable: ${e.message}`)
     }
-
-    if (response.status !== 200)
-        throw new Error(JSON.stringify({
-            code: response.status,
-            message: await response.text()
-        } satisfies BackendError))
-
-    return response.json()
 }
 
 export async function getNews(): Promise<IResult<BelleMessage[]>> {

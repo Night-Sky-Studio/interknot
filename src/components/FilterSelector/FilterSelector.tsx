@@ -13,7 +13,7 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
     const { getLocalString } = useSettings()
     const { state: backend } = useBackend()
 
-    const filters = useMemo(() => backend?.filters, [backend])
+    const filters = useMemo(() => backend?.data?.filters, [backend?.data])
 
     const excludedColumns = useMemo(() => new Set(exclude ?? []), [exclude])
 

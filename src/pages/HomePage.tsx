@@ -10,10 +10,11 @@ import { useBackend } from "@components/BackendProvider"
 import "./styles/HomePage.css"
 import fairy from "@assets/fairy.png"
 import { NewsFeedMemoized } from "@components/NewsFeed/NewsFeed"
+import { getErrorString } from "@/localization/Localization"
 
 export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
-    const backend = useBackend()
+    const { state: backend } = useBackend()
 
     const [savedUsers, _] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [users, setUsers] = useState<ProfileInfo[]>(savedUsers ?? [])
@@ -34,25 +35,25 @@ export default function HomePage(): React.ReactElement {
             <Text>A place for proxies to share their agents' builds and compare their drive discs.</Text>
             <Space h="lg" />
           
-            {backend.error &&
+            {backend?.error &&
                 <Alert variant="light" color="red" title="Inter-knot data server is unavailable" 
                 icon={<IconInfoCircle />} data-nosnippet>
                     <Group mb="md">
                         <Image src={fairy} h="64px" alt="Fairy" />
                         <Text fs="italic">Either we forgot to pay our electricity bills or there's something wrong with your internet connection...</Text>
                     </Group>
-                    <Text ff="monospace">Error {backend.error.code}: {backend.error.message}</Text>
+                    <Text ff="monospace">{getErrorString(backend.error.status)}: {backend.error.message}</Text>
                 </Alert>
             }
 
-            {backend.state &&
+            {backend?.data &&
                 <Alert variant="light" 
-                    color={statusToColor(backend.state.params.status)} 
-                    title={backend.state.params.title} 
-                    icon={backend.state.params.status === "info" ? <IconInfoCircle /> : <IconInfoTriangle />}
+                    color={statusToColor(backend.data.params.status)} 
+                    title={backend.data.params.title} 
+                    icon={backend.data.params.status === "info" ? <IconInfoCircle /> : <IconInfoTriangle />}
                     data-nosnippet>
                     <Stack>
-                        <Text dangerouslySetInnerHTML={{ __html: backend.state.params.message }}></Text>
+                        <Text dangerouslySetInnerHTML={{ __html: backend.data.params.message }}></Text>
                         <Text>
                             Please inform <Text c="blue" component="span"> @lilystilson </Text> on Discord about any encountered bugs. 
                             You can <Anchor href="https://discord.gg/hFNheySRQD" target="_blank"> join our Discord server</Anchor> to
