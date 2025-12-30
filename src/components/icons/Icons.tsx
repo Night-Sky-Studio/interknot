@@ -121,7 +121,7 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     33200: ["#a26a06", "#ef9c09"],      // King of the Summit
     33300: ["#ffbf2c", "#ec8b02"],      // Dawn's Bloom
     33400: ["#1aaea3", "#4d53b9"],      // Moonlight Lullaby
-    33500: ["#201a11", "#c45244", "#f9fbf8"],   // White Water Ballad 
+    33500: ["#201a11", "#c45244", "#e89488"],   // White Water Ballad 
     33600: ["#ffe8ea", "#ffb4ba"]       // Shining Aria
 }
 
