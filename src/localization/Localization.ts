@@ -96,6 +96,8 @@ export function getShortPropertyName(id: number): string {
 export function getErrorString(error?: string): string {
     return match(error, [
         ["E_NOT_FOUND", "Not found"],
+        ["E_AUTH", "Authentication error"],
+        ["E_SESSION", "Session is missing"],
         ["E_INVALID", "Invalid request"],
         ["E_ENKA", "Enka error"],
         ["E_CALC", "Calculator error"],

@@ -21,6 +21,8 @@ import { BackendProvider } from "./components/BackendProvider"
 import { useEffect } from "react"
 import TestPage from "./pages/TestPage"
 import BuildsPage from "./pages/BuildsPage"
+import AuthCallback from "./pages/auth/AuthCallback"
+import { AuthProvider } from "./components/AuthProvider"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -57,21 +59,25 @@ export default function App() {
                     <RenderErrorBoundary>
                         <BackendProvider>
                             <SettingsProvider>
-                                <BrowserRouter>
-                                    <Routes>
-                                        <Route element={<Shell />}>
-                                            <Route index element={<HomePage />} />
-                                            <Route path="*" element={<ErrorPage />}/>
-                                            <Route path="/profile/:uid" element={<ProfilePageWrapper />} />
-                                            <Route path="/user/:uid" element={<Redirect to="/profile/:uid" />} />
-                                            <Route path="settings" element={<SettingsPage />}/>
-                                            <Route path="builds" element={<BuildsPage />} />
-                                            <Route path="leaderboards" element={<LeaderboardsPage />} />
-                                            <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                                            <Route path="test" element={<TestPage />} />
-                                        </Route>
-                                    </Routes>
-                                </BrowserRouter>
+                                <AuthProvider>
+                                    <BrowserRouter>
+                                        <Routes>
+                                            <Route element={<Shell />}>
+                                                <Route index element={<HomePage />} />
+                                                <Route path="*" element={<ErrorPage />}/>
+                                                <Route path="/profile/:uid" element={<ProfilePageWrapper />} />
+                                                <Route path="/user/:uid" element={<Redirect to="/profile/:uid" />} />
+                                                <Route path="settings" element={<SettingsPage />}/>
+                                                <Route path="builds" element={<BuildsPage />} />
+                                                <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                                <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
+                                                <Route path="test" element={<TestPage />} />
+
+                                                <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
+                                            </Route>
+                                        </Routes>
+                                    </BrowserRouter>
+                                </AuthProvider>
                             </SettingsProvider>
                         </BackendProvider>
                     </RenderErrorBoundary>
