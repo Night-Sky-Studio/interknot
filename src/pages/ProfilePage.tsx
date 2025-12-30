@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { UserHeaderMemorized } from "@components/UserHeader/UserHeader"
+import { UserHeaderMemoized } from "@components/UserHeader/UserHeader"
 import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Flex, Pagination, Select } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -269,7 +269,7 @@ export default function ProfilePage(): React.ReactElement {
                         </ActionIcon>
                     </Group>
                     <Stack gap="0px" align="center">
-                        <UserHeaderMemorized user={profile} showDescription={profile.Description !== ""} />
+                        <UserHeaderMemoized user={profile} showDescription={profile.Description !== ""} />
                         <Collapse in={opened} className="leaderboards" data-open={opened}>
                             {
                                 leaderboardsState.loading && <Center m="md"><Loader /></Center>

@@ -115,4 +115,4 @@ export function UserHeader({ user, showDescription }: IUserHeaderProps): React.R
     )
 }
 
-export const UserHeaderMemorized = memo(UserHeader)
+export const UserHeaderMemoized = memo(UserHeader)

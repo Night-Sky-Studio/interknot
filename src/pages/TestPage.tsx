@@ -1,23 +1,28 @@
-import { Flex } from "@mantine/core"
+import { Stack, Loader } from "@mantine/core"
 import { useAsync } from "react-use"
 import { useMemo } from "react"
-import { getDriveDiscs } from "@/api/data"
+import { getProfile } from "@/api/data"
 import "@components/cells/styles/CritCell.css"
 import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
-import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
+import { UserHeader } from "@/components/UserHeader/UserHeader"
 
 export default function TestPage() {
-    // const { getLocalString, getLevel } = useSettings()
-    const uid = Number(1500278107)
+    // 1500278107
+    const uid = Number(1500438496)
 
-    const driveDiscsState = useAsync(async () => {
-        return await getDriveDiscs({ limit: 40 })
+    const profileState = useAsync(async () => {
+        return await getProfile(uid)
     }, [uid])
 
-    const driveDiscs = useMemo(() => driveDiscsState.value?.data ?? [], [driveDiscsState.value?.data])
+    const profile = useMemo(() => profileState.value?.data, [profileState.value?.data])
 
-    return <Flex wrap="wrap" gap="10px">
-        {driveDiscs.map(dd =><DriveDiscCard key={dd.Uid} disc={dd} />)}
-    </Flex>
+    return <Stack>
+        {
+            profileState.loading && <Loader />
+        }
+        {
+            profile && <UserHeader user={profile} />
+        }
+    </Stack>
 }

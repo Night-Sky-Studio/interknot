@@ -1,7 +1,7 @@
 import { Title, Text, UnstyledButton, Stack, Space, Alert, Group, Image, MantineColor, Anchor } from "@mantine/core"
 import React, { useState } from "react"
 import PlayerSearch from "@components/PlayerSearch"
-import { UserHeaderMemorized } from "@components/UserHeader/UserHeader"
+import { UserHeaderMemoized } from "@components/UserHeader/UserHeader"
 import { useNavigate } from "react-router"
 import { ProfileInfo } from "@interknot/types"
 import { useLocalStorage } from "@mantine/hooks"
@@ -74,7 +74,7 @@ export default function HomePage(): React.ReactElement {
                                 onClick={() => {
                                     navigate(`user/${u.Uid}`)
                                 }}>
-                                <UserHeaderMemorized user={u} />
+                                <UserHeaderMemoized user={u} />
                             </UnstyledButton>
                         )
                     })
