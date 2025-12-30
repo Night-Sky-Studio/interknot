@@ -3,16 +3,16 @@ import * as Elements from "./elements/index"
 import * as Stats from "./stats/index"
 import { Image } from "@mantine/core"
 
-import anomaly from "../../../assets/icons/spec/anomaly.webp"
-import attack from "../../../assets/icons/spec/attack.webp"
-import defense from "../../../assets/icons/spec/defense.webp"
-import stun from "../../../assets/icons/spec/stun.webp"
-import support from "../../../assets/icons/spec/support.webp"
-import rupture from "../../../assets/icons/spec/rupture.webp"
+import anomaly from "@assets/icons/spec/anomaly.webp"
+import attack from "@assets/icons/spec/attack.webp"
+import defense from "@assets/icons/spec/defense.webp"
+import stun from "@assets/icons/spec/stun.webp"
+import support from "@assets/icons/spec/support.webp"
+import rupture from "@assets/icons/spec/rupture.webp"
 
-import b_rarity from "../../../assets/icons/rarity/ItemRarityB.png"
-import a_rarity from "../../../assets/icons/rarity/ItemRarityA.png"
-import s_rarity from "../../../assets/icons/rarity/ItemRarityS.png"
+import b_rarity from "@assets/icons/rarity/ItemRarityB.png"
+import a_rarity from "@assets/icons/rarity/ItemRarityA.png"
+import s_rarity from "@assets/icons/rarity/ItemRarityS.png"
 
 const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
     "Physics": Elements.Physics,
@@ -22,6 +22,7 @@ const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVG
     "Ether": Elements.Ether,
     "FireFrost": Elements.Firefrost,
     "AuricEther": Elements.AuricEther,
+    "ZhenZhenAssault": Elements.HonedEdge,
 }
 
 const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
@@ -119,7 +120,9 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     33100: ["#ddb16e", "#976331"],      // Yunkui Tales 
     33200: ["#a26a06", "#ef9c09"],      // King of the Summit
     33300: ["#ffbf2c", "#ec8b02"],      // Dawn's Bloom
-    33400: ["#1aaea3", "#4d53b9"]       // Moonlight Lullaby
+    33400: ["#1aaea3", "#4d53b9"],      // Moonlight Lullaby
+    33500: ["#201a11", "#c45244", "#f9fbf8"],   // White Water Ballad 
+    33600: ["#ffe8ea", "#ffb4ba"]       // Shining Aria
 }
 
 export function getDriveDiscGradient(id: number) {
