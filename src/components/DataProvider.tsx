@@ -7,7 +7,7 @@ const DataContext = React.createContext<unknown>(null)
  * This is useful for avoiding prop drilling when multiple nested components need access to the same data.
  */
 export function DataProvider<T>({ children, data }: { children: React.ReactNode, data: T }): React.ReactElement {
-    const ctx = useData()
+    const ctx = React.useContext(DataContext) as T | undefined
 
     type extended = T & typeof ctx
 
@@ -22,10 +22,6 @@ export function DataProvider<T>({ children, data }: { children: React.ReactNode,
     )
 }
 
-export function useData<T>(): T | undefined {
-    const context = React.useContext(DataContext)
-    if (!context) {
-        return undefined
-    }
-    return context as T
+export function useData<T>(): T {
+    return React.useContext(DataContext) as T
 }
