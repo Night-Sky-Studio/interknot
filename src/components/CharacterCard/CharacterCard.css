@@ -91,7 +91,7 @@ html[lang="vi"] .cc-character-name {
     font-size: 2rem !important;
 }
 
-.cc-level, .cc-mindscape {
+.cc-level, .cc-mindscape, .cc-upgrade {
     height: 100%;
     background-color: var(--mantine-color-dark-9);
 }
@@ -105,6 +105,16 @@ html[lang="vi"] .cc-character-name {
     padding: 0 4px 0 8px;
     margin-left: -6px;
     clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%);
+}
+.cc-upgrade {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    border-radius: 14px;
+    padding: 0 8px 0 8px;
+    align-items: center;
+    font-family: "zzz-jp", monospace;
+    color: var(--accent);
 }
 
 .cc-weapon {

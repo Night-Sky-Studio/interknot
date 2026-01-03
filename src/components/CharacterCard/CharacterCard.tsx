@@ -21,6 +21,7 @@ import { useLeaderboards } from "../LeaderboardProvider"
 import { useCardSettings } from "../CardSettingsProvider"
 import CoreSkill from "@components/CoreSkill/CoreSkill"
 import Talents from "@components/Talents/Talents"
+import { Str } from "@icons/core"
 
 export interface TooltipData {
     charId: number,
@@ -60,7 +61,11 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
     )
 }
 
-function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }): React.ReactElement {
+function CharacterLevel({ 
+    level, 
+    msLevel, 
+    upgradeLevel 
+}: { level: number, msLevel: number, upgradeLevel?: number }): React.ReactElement {
     const { getLevel } = useSettings()
     return (
         <Group gap="0" h="28px" align="center" wrap="nowrap">
@@ -70,6 +75,13 @@ function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }):
             <div className="cc-mindscape">
                 <MindscapeIcons size={20} level={msLevel} />
             </div>
+            {upgradeLevel !== undefined && <>
+                <Space w="8px" />
+                <div className="cc-upgrade">
+                    <Str height={16} />
+                    <Text fz="16px" ml="2px">{upgradeLevel + 1}</Text>
+                </div>
+            </>}
         </Group>
     )
 }
@@ -80,9 +92,10 @@ interface ICharacterNameProps {
     profession: string
     level: number
     msLevel: number
+    upgradeLevel?: number
 }
 
-function CharacterName({ name, element, profession, level, msLevel }: ICharacterNameProps): React.ReactElement {
+function CharacterName({ name, element, profession, level, msLevel, upgradeLevel }: ICharacterNameProps): React.ReactElement {
     const { getLocalString } = useSettings()
     return (
         <Stack gap="0">
@@ -91,7 +104,8 @@ function CharacterName({ name, element, profession, level, msLevel }: ICharacter
                 <ZenlessIcon elementName={element} size={28} />
                 <ProfessionIcon name={profession} size={28} />
             </Group>
-            <CharacterLevel level={level} msLevel={msLevel}/>
+            <CharacterLevel level={level} msLevel={msLevel} upgradeLevel={upgradeLevel}/>
+
         </Stack>
     )
 }
@@ -422,7 +436,8 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                     <Group gap="8px" wrap="nowrap">
                         <CharacterName name={character.Name} 
                             element={character.ElementTypes[0]} profession={character.ProfessionType}
-                            level={character.Level} msLevel={character.MindscapeLevel} />
+                            level={character.Level} msLevel={character.MindscapeLevel}
+                            upgradeLevel={character.UpgradeLevel ?? undefined} />
                         {character.Weapon && <WeaponEngine weapon={character.Weapon} /> }
                     </Group>
                 </div>
