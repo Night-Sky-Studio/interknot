@@ -1,10 +1,12 @@
-import { Text, Avatar, Button, Group, Modal, PolymorphicComponentProps, Stack, Title, Loader, type ButtonProps } from "@mantine/core"
+import { Text, Avatar, Button, Group, Modal, PolymorphicComponentProps, Stack, Title, Loader, type ButtonProps, UnstyledButton } from "@mantine/core"
 // import { useData } from "@components/DataProvider"
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconLogout, IconUser } from "@tabler/icons-react"
 import { useAuth } from "@components/AuthProvider"
 import { useDisclosure } from "@mantine/hooks"
 import { logout } from "@/api/auth"
 import SupporterFlair from "../SupporterFlair/SupporterFlair"
+import { UserHeaderMemoized } from "../UserHeader/UserHeader"
+import { useNavigate } from "react-router"
 
 interface ILoginButtonProps extends PolymorphicComponentProps<"button", ButtonProps> {
     loginClick?: () => void
@@ -15,12 +17,14 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
 
     const [opened, { open, close }] = useDisclosure(false)
 
+    const navigate = useNavigate()
+
     return (<>
         <Modal.Root opened={opened} onClose={close}>
             <Modal.Overlay />
             <Modal.Content>
                 <Modal.Header>
-                    <Modal.Title>Account Settings</Modal.Title>
+                    <Modal.Title>Account settings</Modal.Title>
                     <Group>
                         <Button leftSection={<IconLogout />} onClick={async () => {
                             const result = await logout()
@@ -55,7 +59,9 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                                 <IconBrandPatreonFilled />
                                 <Text>Supporter status</Text>
                             </Group>
-                            {account?.AccountLevel && <SupporterFlair level={account.AccountLevel} />}
+                            {account?.AccountLevel !== undefined && 
+                                <SupporterFlair level={account.AccountLevel} />
+                            }
                         </Group>
                         <Group justify="space-between">
                             <Group>
@@ -64,12 +70,20 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                             </Group>
                             {
                                 account?.ClaimedProfiles && account.ClaimedProfiles.length > 0
-                                ? <Text>{account.ClaimedProfiles.length}</Text>
-                                : <Text c="dimmed">None</Text>
+                                    ? <Text>{account.ClaimedProfiles.length}</Text>
+                                    : <Text c="dimmed">None</Text>
                             }
                         </Group>
                         {
-                            account?.ClaimedProfiles?.map((p) => <Text>{p.Nickname}</Text>).join(", ") ?? <Text c="dimmed">None</Text>
+                            account?.ClaimedProfiles?.map((p) => 
+                                <UnstyledButton key={p.Uid} className="profile-button"
+                                    onClick={() => {
+                                        close()
+                                        navigate(`user/${p.Uid}`)
+                                    }}>
+                                    <UserHeaderMemoized user={p} variant="compact" />
+                                </UnstyledButton>
+                            ) ?? <Text c="dimmed">None</Text>
                         }
                     </Stack>
                 </Modal.Body>
@@ -80,9 +94,10 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                 ? <Loader /> 
                 : account
                     ? <Button {...props} onClick={open} 
+                        pl="4px" pr="md"
                         leftSection={
                             <Avatar src={account.ProfilePictureUrl} 
-                                size="sm" style={{ outline: "2px solid black" }} />
+                                size="sm" style={{ outline: "1px solid black" }} />
                         }>
                         {account.Username}
                     </Button>
