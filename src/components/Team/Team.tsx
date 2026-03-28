@@ -2,11 +2,18 @@ import { BaseAvatar } from "@interknot/types"
 import { Group, Image, Tooltip } from "@mantine/core"
 import "./Team.css"
 import { useSettings } from "@components/SettingsProvider"
+import { useMemo } from "react"
+import { doroMode, hasDoro } from "@api/doro"
 
 function TeamMember({ ref, avatar }: { ref?: any, avatar: BaseAvatar }) {
+    const doro = doroMode() && hasDoro(avatar.Id) 
+    const url = useMemo(() => doro
+        ? avatar.ImageUrl    
+        : avatar.CircleIconUrl.replace("Circle", "Select")
+    , [doro, avatar.CircleIconUrl])
     return (
         <div className="member" ref={ref}>
-            <Image h="100%" src={avatar.CircleIconUrl.replace("Circle", "Select")} alt={avatar.Name} />
+            <Image h="100%" ml={doro ? "1rem" : undefined} src={url} alt={avatar.Name} />
         </div>
     )
 }

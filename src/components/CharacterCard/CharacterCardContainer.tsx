@@ -16,11 +16,11 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
     const cardRef = useRef<HTMLDivElement>(null)
 
     const CARD_ASPECT_RATIO = 1 / 2
-    const [cardScale, setCardScale] = useState(1)
+    // const [cardScale, setCardScale] = useState(1)
     const [cardContainerHeight, setCardContainerHeight] = useState(750 * CARD_ASPECT_RATIO)
     const { ref: cardContainerRef, width } = useElementSize()
     const { context } = useCardSettings()
-    const { showSubstatsBreakdown, setCardRef } = context || {}
+    const { showSubstatsBreakdown, cardScale, setCardRef, setCardScale } = context || {}
 
     useEffect(() => {
         if (parentRef?.current) {
@@ -41,7 +41,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
 
         // console.log(scaleFactor.toFixed(3), containerHeight, width)
         
-        setCardScale(scaleFactor)
+        setCardScale?.(scaleFactor)
         setCardContainerHeight(containerHeight)
     }, [width, showSubstatsBreakdown])
 

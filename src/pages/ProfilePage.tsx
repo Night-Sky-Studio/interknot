@@ -1,32 +1,35 @@
 import { useParams } from "react-router"
 import { UserHeaderMemoized } from "@components/UserHeader/UserHeader"
-import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Flex, Pagination, Select } from "@mantine/core"
+import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Flex, Pagination, Select, Popover, Code } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
-import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getUserLeaderboards, IQueryParams } from "../api/data"
-import { IconChevronDown, IconChevronUp, IconInfoCircle, IconReload, IconStar, IconStarFilled } from "@tabler/icons-react"
+import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getProfileClaim, getUserLeaderboards, initProfileClaim, IQueryParams } from "@api/data"
+import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconEyeOff, IconInfoCircle, IconKeyFilled, IconLockFilled, IconReload, IconSettingsFilled, IconStar, IconStarFilled } from "@tabler/icons-react"
 import Timer from "@components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "@components/LeaderboardGrid/LeaderboardGrid"
-import { BaseLeaderboardEntry, Character, DriveDisc, ProfileInfo, Property } from "@interknot/types"
+import { BaseLeaderboardEntry, Build, Character, DriveDisc, ProfileInfo, Property } from "@interknot/types"
 import LeaderboardProvider from "@components/LeaderboardProvider"
 import { useBackend } from "@components/BackendProvider"
 import { getRarityIcon } from "@components/icons/Icons"
 import { useSettings } from "@components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { DataTable } from "mantine-datatable"
-import WeaponCell from "@/components/cells/WeaponCell"
-import DriveDiscsCell from "@/components/cells/DriveDiscsCell"
-import CritCell, { discCvColor, discCvWeight } from "@/components/cells/CritCell"
-import PropertyCell from "@/components/cells/PropertyCell"
-import FilterSelector from "@/components/FilterSelector/FilterSelector"
-import CharacterCardContainer from "@/components/CharacterCard/CharacterCardContainer"
-import { DataProvider } from "@/components/DataProvider"
-import { TooltipData } from "@/components/CharacterCard/CharacterCard"
-import CardFooter from "@/components/CardFooter/CardFooter"
-import CardSettingsProvider from "@/components/CardSettingsProvider"
-import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
+import WeaponCell from "@components/cells/WeaponCell"
+import DriveDiscsCell from "@components/cells/DriveDiscsCell"
+import CritCell, { discCvColor, discCvWeight } from "@components/cells/CritCell"
+import PropertyCell from "@components/cells/PropertyCell"
+import FilterSelector from "@components/FilterSelector/FilterSelector"
+import CharacterCardContainer from "@components/CharacterCard/CharacterCardContainer"
+import { DataProvider } from "@components/DataProvider"
+import { ICardContext } from "@components/CharacterCard/CharacterCard"
+import CardFooter from "@components/CardFooter/CardFooter"
+import CardSettingsProvider from "@components/CardSettingsProvider"
+import DriveDiscCard from "@components/DriveDiscCard/DriveDiscCard"
+import { useAuth } from "@components/AuthProvider"
+import { notifications } from '@mantine/notifications'
+import BuildsSettingsModal from "@/components/BuildsSettingsModal"
 
 function timeAgoIntl(date: Date | string) {
     if (typeof date === "string") {
@@ -76,7 +79,7 @@ export default function ProfilePage(): React.ReactElement {
 
     const [ttl, setTtl] = useState(0)
     const [profile, setProfile] = useState<ProfileInfo | undefined>(undefined)
-    const [characters, setCharacters] = useState<Character[] | undefined>(undefined)
+    const [builds, setBuilds] = useState<Build[] | undefined>(undefined)
     const [discs, setDiscs] = useState<DriveDisc[]>([])
     const [leaderboards, setLeaderboards] = useState<Omit<BaseLeaderboardEntry, "RotationValue">[] | undefined>(undefined)
 
@@ -99,7 +102,7 @@ export default function ProfilePage(): React.ReactElement {
             filter: filterQuery as Record<string, string>
         })
         if (result && result.data) {
-            setCharacters(result.data.map(c => c.Character))
+            setBuilds(result.data)
         }
         return result
     }, [uid, profileState.value?.data, cursor, limitNum, filterQuery])
@@ -222,7 +225,29 @@ export default function ProfilePage(): React.ReactElement {
 
     const tableRef = useRef<HTMLDivElement>(null)
 
+    const { account } = useAuth()
+    const isClaimed = useMemo(() => account?.ClaimedProfiles.find(p => p.Uid === Number(uid)) !== undefined, [account, uid])
+
+    const [bindPopoverOpen, setBindPopoverOpen] = useState(false)
+
+    const { retry: refreshClaim, ...profileClaimState } = useAsyncRetry(async () => {
+        if (!uid) return undefined
+        if (!account) return undefined
+        return await getProfileClaim(Number(uid))
+    }, [uid, account])
+    const profileClaim = useMemo(() => profileClaimState.value?.data, [profileClaimState.value?.data])
+
+    const [buildsSettingsOpened, { open: openBuildsSettings, close: closeBuildsSettings }] = useDisclosure(false)
+
     return (<>
+        <BuildsSettingsModal 
+            opened={buildsSettingsOpened} 
+            onClose={closeBuildsSettings} 
+            onBuildsUpdated={() => {
+                charactersState.retry()
+            }}
+            uid={Number(uid)} />
+
         {profileState.loading && !profile && <>
             <title>{`${savedUsers.find(sp => sp.Uid === Number(uid))?.Nickname}'s Profile | Inter-Knot`}</title>
             <Center><Loader /></Center>
@@ -233,10 +258,44 @@ export default function ProfilePage(): React.ReactElement {
                 <Text ff="monospace">{profileState.error.message}</Text>
             </Alert>
         </>}
+        {profileClaim && <>
+            <Center>
+                <Alert variant="light" color="yellow" title="Profile claim in progress" icon={<IconKeyFilled />} mb="md" w="640px">
+                    <Stack gap="xs">
+                        <Group gap="xs">
+                            <Text fz="xl" fw="bold">Time left to bind this profile: </Text>
+                            <Code fz="xl" fw="bold">
+                                <Timer title="" isEnabled={true} 
+                                    endTime={Math.floor((Math.abs(new Date(profileClaim.createdAt).getTime() + 7200 * 1000 - new Date().getTime())) / 1000)} 
+                                    onTimerEnd={refreshClaim} />
+                            </Code>
+                        </Group>
+                        <Group gap="xs">
+                            <Text fz="xl" fw="bold">Your binding code is: </Text>
+                            <Code fz="xl" fw="bold">{profileClaim.secret}</Code>
+                            <ActionIcon variant="subtle" c="white" onClick={async () => {
+                                await navigator.clipboard.writeText(profileClaim.secret)
+                                notifications.show({
+                                    message: `Copied binding code to clipboard`,
+                                    color: "blue",
+                                    autoClose: 4000,
+                                    icon: <IconCheck size={16} />,
+                                    position: "bottom-center"
+                                })
+                            }}>
+                                <IconCopy />
+                            </ActionIcon>
+                        </Group>
+                        <Text>Add binding code to your in-game signature and press the Update button.</Text>
+                        <Text>Be aware it might take around 5 minutes for in-game changes to be reflected 
+                            on the profile page. To update it instantly, log out of the game.</Text>
+                    </Stack>
+                </Alert>
+            </Center>
+        </>}
         {profile && <>
             <title>{`${profile?.Nickname}'s Profile | Inter-Knot`}</title>
             <meta name="description" content={`${profile?.Nickname}'s Profile | Inter-Knot`} />
-            
                 <Stack>
                     <Group justify="flex-end" gap="xs">
                         <Text c="dimmed">Last updated {timeAgoIntl(profile.UpdatedAt)}</Text>
@@ -251,6 +310,9 @@ export default function ProfilePage(): React.ReactElement {
                                 setUpdateRequested(true)
                                 profileState.retry()
                                 leaderboardsState.retry()
+                                if (profileClaim) {
+                                    window.location.reload()
+                                }
                             }}>
                                 <Timer key={uid} title="Update" isEnabled={!canUpdate}
                                     endTime={ttl === 0 ? 60 : ttl}
@@ -260,13 +322,56 @@ export default function ProfilePage(): React.ReactElement {
                                     }} />
                             </Button>
                         }
-                        <ActionIcon onClick={toggleIsFavorite}>
-                            {favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar />}
-                        </ActionIcon>
-                        <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem" }}
-                            component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
-                            {""}
-                        </ActionIcon>
+                        {account && <>
+                            {isClaimed == false
+                                ? <Popover withArrow withinPortal position="top" 
+                                    opened={bindPopoverOpen} onChange={setBindPopoverOpen}>
+                                    <Popover.Target>
+                                        <Tooltip label={profileClaim ? "A claim is already in progress!" : "Bind profile"} withinPortal>
+                                            <ActionIcon disabled={profileClaim !== undefined} onClick={() => setBindPopoverOpen(true)}>
+                                                <IconKeyFilled />
+                                            </ActionIcon>
+                                        </Tooltip>
+                                    </Popover.Target>
+                                    <Popover.Dropdown>
+                                        <Text>Do you want to bind this profile?</Text>
+                                        <Flex gap="sm" justify="stretch">
+                                            <Button mt="sm" flex="1 0" leftSection={<IconCheck />}
+                                                onClick={async () => { 
+                                                    const claim = await initProfileClaim(Number(uid))
+                                                    if (claim.success) {
+                                                        refreshClaim()
+                                                    }
+                                                }}>Bind</Button>
+                                            <Button mt="sm" variant="light" onClick={() => setBindPopoverOpen(false)}>Cancel</Button>
+                                        </Flex>
+                                    </Popover.Dropdown>
+                                </Popover>
+                                : <Tooltip label="Lock profile updates" withinPortal>
+                                        <ActionIcon onClick={() => {
+                                            // TODO: send lock to backend
+                                        }}>
+                                            <IconLockFilled />
+                                        </ActionIcon>
+                                    </Tooltip>
+                            }
+                        </>}
+                        <Tooltip label="Mark as favorite" withinPortal>
+                            <ActionIcon onClick={toggleIsFavorite}>
+                                {favoriteUsers.includes(Number(uid)) ? <IconStarFilled /> : <IconStar />}
+                            </ActionIcon>
+                        </Tooltip>
+                        <Tooltip label="Open on Enka.Network" withinPortal>
+                            <ActionIcon style={{ fontFamily: "shicon", fontSize: "1.5rem" }}
+                                component="a" href={`https://enka.network/zzz/${uid}`} target="_blank">
+                                {""}
+                            </ActionIcon>
+                        </Tooltip>
+                        {account && isClaimed &&
+                            <ActionIcon onClick={openBuildsSettings}>
+                                <IconSettingsFilled />
+                            </ActionIcon>
+                        }
                     </Group>
                     <Stack gap="0px" align="center">
                         <UserHeaderMemoized user={profile} showDescription={profile.Description !== ""} />
@@ -326,7 +431,7 @@ export default function ProfilePage(): React.ReactElement {
                                 setQueryParams((prev) => ({ cursor: undefined, limit: prev.limit, ...q }), true)
                                 setPage(1)
                             }} />
-                        {characters?.length !== 0 &&
+                        {builds?.length !== 0 &&
                             <Card p="0" pos="relative" withBorder>
                                 <Stack>
                                     <LoadingOverlay visible={charactersState.loading} zIndex={9}
@@ -344,38 +449,52 @@ export default function ProfilePage(): React.ReactElement {
                                                         accessor: "Id",
                                                         title: "#",
                                                         cellsStyle: () => ({ maxWidth: "3ch" }),
-                                                        render: (_, r) => <Text>{((page ?? 1) - 1) * limitNum + r + 1}</Text>,
+                                                        render: (b, r) =>
+                                                            !b.IsPublic 
+                                                                ? <Tooltip label="Hidden build" withinPortal><IconEyeOff /></Tooltip>
+                                                                : <Text>{((page ?? 1) - 1) * limitNum + r + 1}</Text>,
                                                     },
                                                     {
                                                         accessor: "Name",
                                                         title: "Name",
                                                         cellsStyle: () => ({ maxWidth: "30%" }),
-                                                        render: (c) => (
-                                                            <Group gap="sm" wrap="nowrap">
-                                                                <Image src={c.Skin ? c.Skin.CircleIconUrl : c.CircleIconUrl} h="32px" />
-                                                                <Text style={{ whiteSpace: "nowrap" }}>{getLocalString(c.Name)}</Text>
-                                                                <div className="chip">{getLevel(c.Level)}</div>
-                                                            </Group>
-                                                        )
+                                                        render: (b) => {
+                                                            const localizedName = getLocalString(b.Character.Name)
+                                                            const displayName = b.Name ?? localizedName
+                                                            return (
+                                                                <Group gap="sm" wrap="nowrap">
+                                                                    <Image src={b.Character.Skin ? b.Character.Skin.CircleIconUrl : b.Character.CircleIconUrl} h="32px" />
+                                                                    <div className="chip">{getLevel(b.Character.Level)}</div>
+                                                                    { displayName !== localizedName
+                                                                        ? <>
+                                                                            <Text className="table-name-display" style={{ whiteSpace: "nowrap" }}>{displayName}</Text>
+                                                                            <Text className="table-name-local" style={{ whiteSpace: "nowrap" }}>{localizedName}</Text>
+                                                                        </>
+                                                                        : <Text style={{ whiteSpace: "nowrap" }}>{displayName}</Text>
+                                                                    }
+                                                                </Group>
+                                                            )
+                                                        }
                                                     },
                                                     {
                                                         accessor: "MindscapeLevel",
                                                         title: "Mindscape",
-                                                        render: (c) => (
-                                                            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(c.MindscapeLevel / 5 + 1) * 1}rem` }} data-level={c.MindscapeLevel}>
-                                                                <Text fw={700}>{c.MindscapeLevel}</Text>
+                                                        render: (b) => (
+                                                            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(b.Character.MindscapeLevel / 5 + 1) * 1}rem` }} 
+                                                                data-level={b.Character.MindscapeLevel}>
+                                                                <Text fw={700}>{b.Character.MindscapeLevel}</Text>
                                                             </div>
                                                         )
                                                     },
                                                     {
                                                         accessor: "Weapon",
                                                         title: "Weapon",
-                                                        render: (c) => <WeaponCell weapon={c.Weapon} />
+                                                        render: (b) => <WeaponCell weapon={b.Character.Weapon} />
                                                     },
                                                     {
                                                         accessor: "DriveDisksSet",
                                                         title: "Drive Discs",
-                                                        render: (c) => <DriveDiscsCell sets={c.DriveDisksSet} />
+                                                        render: (b) => <DriveDiscsCell sets={b.Character.DriveDisksSet} />
                                                     },
                                                     {
                                                         accessor: "CritValue",
@@ -384,11 +503,11 @@ export default function ProfilePage(): React.ReactElement {
                                                             width: "calc(10rem * var(--mantine-scale))",
                                                             background: "rgba(0 0 0 / 15%)"
                                                         }),
-                                                        render: (c) => (
+                                                        render: (b) => (
                                                             <CritCell
-                                                                cr={c.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
-                                                                cd={c.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
-                                                                cv={c.CritValue}
+                                                                cr={b.Character.Stats.find((p) => p.Id === 20101)?.formatted.replace("%", "") ?? ""}
+                                                                cd={b.Character.Stats.find((p) => p.Id === 21101)?.formatted.replace("%", "") ?? ""}
+                                                                cv={b.Character.CritValue}
                                                             />
                                                         )
                                                     }
@@ -403,8 +522,8 @@ export default function ProfilePage(): React.ReactElement {
                                                         title: idx === 0 ? "Stats" : "",
                                                         visibleMediaQuery: () => `(min-width: 1290px)`,
                                                         cellsStyle: () => ({ background: "rgba(0 0 0 / 5%)" }),
-                                                        render: (c: Character) => {
-                                                            const stats = getTopStats(c)
+                                                        render: (b: Build) => {
+                                                            const stats = getTopStats(b.Character)
                                                             const prop = stats[idx]
                                                             return prop ? <PropertyCell key={prop.Id} prop={prop} /> : null
                                                         }
@@ -414,29 +533,35 @@ export default function ProfilePage(): React.ReactElement {
                                         ]}
                                         rowExpansion={{
                                             allowMultiple: true,
-                                            content: ({ record: character }) => (
-                                                <LeaderboardProvider uid={Number(uid)} characterId={character.Id}>
-                                                    <DataProvider data={{ 
-                                                        charId: character.Id, 
-                                                        weaponId: character.Weapon?.Id,
-                                                        charName: character.Name,
-                                                        uid: Number(uid)
-                                                    } satisfies TooltipData}>
+                                            content: ({ record: build }) => (
+                                                <DataProvider data={{
+                                                    owner: profile,
+                                                    build: build
+                                                } satisfies ICardContext}>
+                                                    <LeaderboardProvider characterId={build.Character.Id} buildId={build.Id}>
                                                         <CardSettingsProvider>
                                                             <CharacterCardContainer parentRef={tableRef} cardProps={{
                                                                 uid: Number(uid),
                                                                 username: profile.Nickname,
-                                                                character: character,
+                                                                build: build
+                                                                // onFinishEditingImage(customization) {
+                                                                //     setIsEditingImage(false)
+                                                                // },
                                                             }} />
                                                             <Stack m="md">
-                                                                <CardFooter />
+                                                                <CardFooter 
+                                                                    onBuildsUpdated={() => charactersState.retry()} />
                                                             </Stack>
                                                         </CardSettingsProvider>
-                                                    </DataProvider>
-                                                </LeaderboardProvider>
+                                                    </LeaderboardProvider>
+                                                </DataProvider>
                                             )
                                         }}
-                                        records={characters}
+                                        rowClassName={(record) => record.IsPublic ? undefined : "hidden-build"}
+                                        rowStyle={(record) => ({
+                                            opacity: record.IsPublic ? 1 : 0.25,
+                                        })}
+                                        records={builds}
                                         idAccessor="Id"
                                     />
                                     <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
@@ -468,7 +593,7 @@ export default function ProfilePage(): React.ReactElement {
                                                     if (page === 1) {
                                                         setQueryParams({ cursor: undefined })
                                                     } else {
-                                                        setQueryParams({ cursor: `gte:crit_value=${characters?.[0].CritValue};id=${characters?.[0].Id}` })
+                                                        setQueryParams({ cursor: `gte:crit_value=${builds?.[0].Character.CritValue};id=${builds?.[0].Id}` })
                                                     }
                                                 }}>
                                                 <Group gap="xs">
@@ -499,7 +624,7 @@ export default function ProfilePage(): React.ReactElement {
                                 </Stack>
                             </Card>
                         }
-                        {characters?.length === 0 &&
+                        {builds?.length === 0 &&
                             <Center>
                                 <Alert variant="light" color="blue" title="No characters data found!" icon={<IconInfoCircle />}
                                     maw="50%">

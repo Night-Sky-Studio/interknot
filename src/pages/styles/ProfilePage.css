@@ -17,3 +17,14 @@
     margin-top: -8px;
     padding-top: 8px;
 }
+
+.table-name-local {
+    display: none;
+}
+
+.mantine-datatable-row:hover .table-name-local {
+    display: inline;
+}
+.mantine-datatable-row:hover .table-name-display {
+    display: none;
+}

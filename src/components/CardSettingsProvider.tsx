@@ -1,6 +1,10 @@
 import { CardCustomization } from "@interknot/types"
 import { createContext, useContext, useState } from "react"
 
+interface ICustomizationStorage {
+    [buildId: number]: CardCustomization | undefined
+}
+
 type CardSettingsContextType = {
     showSubstatsBreakdown: boolean
     showBuildName: boolean
@@ -10,6 +14,8 @@ type CardSettingsContextType = {
     showCritValue: boolean
     selectedLeaderboardId?: number
     cardCustomization?: CardCustomization
+    isEditing: boolean
+    cardScale: number
     setShowSubstatsBreakdown: (value: boolean) => void
     setShowBuildName: (value: boolean) => void
     setShowUserInfo: (value: boolean) => void
@@ -18,6 +24,11 @@ type CardSettingsContextType = {
     setShowCritValue: (value: boolean) => void
     setSelectedLeaderboardId: (value?: number) => void
     setCardCustomization: (value?: CardCustomization) => void
+    setIsEditing: (value: boolean) => void
+    setCardScale: (value: number) => void
+
+    getLocalCustomization: (buildId: number) => CardCustomization | undefined
+    setLocalCustomization: (buildId: number, customization: CardCustomization | undefined) => void
 
     cardRef?: React.RefObject<HTMLDivElement | null>
     setCardRef: (ref: React.RefObject<HTMLDivElement | null>) => void
@@ -32,6 +43,8 @@ const defaultValue: CardSettingsContextType = {
     showCritValue: false,
     selectedLeaderboardId: undefined,
     cardCustomization: undefined,
+    isEditing: false,
+    cardScale: 1,
     setShowSubstatsBreakdown: () => {},
     setShowBuildName: () => {},
     setShowUserInfo: () => {},
@@ -40,14 +53,19 @@ const defaultValue: CardSettingsContextType = {
     setShowCritValue: () => {},
     setSelectedLeaderboardId: () => {},
     setCardCustomization: () => {},
+    setIsEditing: () => {},
+    setCardScale: () => {},
+
+    getLocalCustomization: () => undefined,
+    setLocalCustomization: () => {},
 
     cardRef: undefined,
     setCardRef: () => {}
 }
 
-export const CardSettingsContext = createContext<CardSettingsContextType | undefined>(undefined)
+const CardSettingsContext = createContext<CardSettingsContextType | undefined>(undefined)
 
-export interface ICardSettingsProviderProps {
+interface ICardSettingsProviderProps {
     children: React.ReactNode
 }
 
@@ -78,6 +96,29 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     const setCardCustomization = (cardCustomization?: CardCustomization) => {
         setSettings((prev) => ({ ...prev, cardCustomization }))
     }
+    const setIsEditing = (isEditing: boolean) => {
+        setSettings((prev) => ({ ...prev, isEditing }))
+    }
+    const setCardScale = (cardScale: number) => {
+        setSettings((prev) => ({ ...prev, cardScale }))
+    }
+
+    const getLocalCustomization = (buildId: number): CardCustomization | undefined => {
+        const localData = localStorage.getItem("customizations")
+        const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
+        // const data = customizations[buildId]
+
+        // setSettings((prev) => ({ ...prev, cardCustomization: data }))
+
+        return customizations[buildId]
+    }
+
+    const setLocalCustomization = (buildId: number, customization: CardCustomization | undefined) => {
+        const localData = localStorage.getItem("customizations")
+        const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
+        customizations[buildId] = customization
+        localStorage.setItem("customizations", JSON.stringify(customizations))
+    }
 
     const setCardRef = (ref: React.RefObject<HTMLDivElement | null>) => {
         setSettings((prev) => ({ ...prev, cardRef: ref }))
@@ -94,6 +135,11 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
             setShowCritValue,
             setSelectedLeaderboardId,
             setCardCustomization,
+            setIsEditing,
+            setCardScale,
+
+            getLocalCustomization,
+            setLocalCustomization,
 
             setCardRef
         }}>

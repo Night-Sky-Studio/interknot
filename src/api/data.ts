@@ -16,7 +16,8 @@ import {
     Property, 
     Result, 
     url,
-    match
+    match,
+    SimpleBuild
 } from "@interknot/types"
 
 interface IFilter {
@@ -43,6 +44,7 @@ export interface BackendState {
 
 export const DATA_URL = match(process.env.NODE_ENV, [
     ["development", "http://localhost:5100/"],
+    ["dev", "https://data-dev.interknot.space/"],
     ["preview", "https://data-preview.interknot.space"],
     () => "https://data.interknot.space"
 ])
@@ -80,9 +82,9 @@ export async function req<T>(u: string, restoreProps: boolean = false, init?: Re
     return result
 }
 
-async function reqCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
+async function reqCursored<T>(u: string, restoreProps: boolean = false, init?: RequestInit): Promise<ICursoredResult<T>> {
     // console.log(u)
-    let response = await fetch(u)
+    let response = await fetch(u, init)
     let result = await response.json() as ICursoredResult<T>
     if (response.status !== 200 || !result.success) {
         throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
@@ -131,7 +133,9 @@ export async function getCharacters({ uid, cursor, limit, filter }: IQueryParams
             limit: limit?.toString(),
             ...filter
         }
-    }), true)
+    }), true, {
+        credentials: "include" // session should be included
+    })
 }
 export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
     return await req(url({
@@ -156,7 +160,6 @@ export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams
         }
     }), true)
 }
-
 export async function getDriveDiscsCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
     return await req(url({
         base: DATA_URL,
@@ -175,7 +178,7 @@ export async function getUserLeaderboards(uid: number, update: boolean = false):
         query: { update: `${update}` }
     }), true)
 }
-
+/** @deprecated */
 export async function getUserCharacterLeaderboards(
     uid: number, characterId: number
 ): Promise<IResult<Omit<LeaderboardEntry, "Build">[]>> {
@@ -184,6 +187,13 @@ export async function getUserCharacterLeaderboards(
         path: `leaderboards/${uid}/character/${characterId}`
     }), true)
 }
+export async function getBuildLeaderboards(buildId: number): Promise<IResult<Omit<LeaderboardEntry, "Build">[]>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `leaderboards/character/${buildId}`
+    }), true)
+}
+
 
 export async function getLeaderboards({ filter }: IQueryParams, expand: boolean = false): Promise<IResult<LeaderboardList[]>> {
     return await req(url({
@@ -195,14 +205,12 @@ export async function getLeaderboards({ filter }: IQueryParams, expand: boolean 
         }
     }), true)
 }
-
 export async function getLeaderboard(id: number): Promise<IResult<Leaderboard[]>> {
     return await req(url({
         base: DATA_URL,
         path: `/leaderboard/${id}`
     }), true)
 }
-
 export async function getLeaderboardUsers(leaderboardId: number, {
     cursor,
     limit = 20,
@@ -218,7 +226,6 @@ export async function getLeaderboardUsers(leaderboardId: number, {
         }
     }), true)
 }
-
 export async function getLeaderboardUsersCount(leaderboardId: number, hash?: string): Promise<IResult<number>> {
     return await req(url({
         base: DATA_URL,
@@ -226,7 +233,6 @@ export async function getLeaderboardUsersCount(leaderboardId: number, hash?: str
         query: { hash }
     }))
 }
-
 export async function getLeaderboardDmgDistribution(id: number): Promise<IResult<LeaderboardDistribution>> {
     return await req(url({
         base: DATA_URL,
@@ -272,4 +278,79 @@ export async function getNews(): Promise<IResult<BelleMessage[]>> {
         base: DATA_URL,
         path: "/news"
     }))
+}
+
+type ProfileClaim = { userId: number, secret: string, createdAt: Date }
+
+export function initProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
+    return req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/claim`,
+    }), false, {
+        method: "POST",
+        credentials: "include"
+    })
+}
+export function getProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
+    return req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/claim`,
+    }), false, {
+        method: "GET",
+        credentials: "include"
+    })
+}
+
+export async function getUserBuilds(uid: number): Promise<IResult<SimpleBuild[]>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds`
+    }), false, {
+        credentials: "include"
+    })
+}
+export async function setBuildVisibility(uid: number, buildId: number, isHidden: boolean): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ isHidden }),
+        credentials: "include"
+    })
+}
+export async function setBuildName(uid: number, buildId: number, name: string | null): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name }),
+        credentials: "include"
+    })
+}
+export async function archiveBuild(uid: number, buildId: number, name: string | null): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "PUT",
+        body: JSON.stringify({ name }),
+        credentials: "include"
+    })
+}
+export async function deleteBuild(uid: number, buildId: number): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "DELETE",
+        credentials: "include"
+    })
 }

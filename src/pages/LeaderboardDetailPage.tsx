@@ -21,7 +21,7 @@ import { ServerChip } from "@/components/UserHeader/UserHeader"
 import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
 import CoreSkill from "@/components/CoreSkill/CoreSkill"
 import { DataProvider } from "@/components/DataProvider"
-import { TooltipData } from "@/components/CharacterCard/CharacterCard"
+import { type ICardContext } from "@/components/CharacterCard/CharacterCard"
 import Talents from "@/components/Talents/Talents"
 import LeaderboardProvider from "@/components/LeaderboardProvider"
 import CardFooter from "@/components/CardFooter/CardFooter"
@@ -501,14 +501,12 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                 allowMultiple: true,
                                 content: ({ record: entry }) => (
                                     <LeaderboardProvider 
-                                        uid={entry.Build.Owner?.Uid ?? -1} 
+                                        buildId={entry.Build.Owner?.Uid ?? -1} 
                                         characterId={entry.Build.Character.Id}>
                                         <DataProvider data={{
-                                            charId: entry.Build.Character.Id,
-                                            charName: entry.Build.Character.Name,
-                                            uid: entry.Build.Owner?.Uid ?? -1,
-                                            weaponId: entry.Build.Character.Weapon?.Id ?? undefined
-                                        } satisfies TooltipData}>
+                                                owner: entry.Build.Owner!,
+                                                build: entry.Build
+                                            } satisfies ICardContext}>
                                             <Stack gap="xs" m="md" w="100%" style={{ 
                                                 "--accent": entry.Build.Character.Colors.Accent,
                                                 "--mindscape": entry.Build.Character.Colors.Mindscape

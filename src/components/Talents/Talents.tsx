@@ -1,10 +1,11 @@
 import { Talents as CharacterTalents } from "@interknot/types"
 import * as TalentIcons from "@icons/talents"
 import { Group, Title } from "@mantine/core"
-import { TooltipData } from "@components/CharacterCard/CharacterCard"
+import { ICardContext } from "@components/CharacterCard/CharacterCard"
 import { useData } from "@components/DataProvider"
 import { useSettings } from "@components/SettingsProvider"
 import "./Talents.css"
+import { useMemo } from "react"
 
 export default function Talents({ 
     talentLevels, 
@@ -17,8 +18,9 @@ export default function Talents({
 }): React.ReactElement {
     // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
     const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
-    const { charId } = useData<TooltipData>()
+    const { build } = useData<ICardContext>()
     const { language } = useSettings()
+    const charId = useMemo(() => build.Character.Id, [build.Character.Id])
     return (
         <Group className={`cc-talents ${mindscapeLevel > 2 ? "boosted" : ""}`} 
             gap="10px" justify="center" align="center" wrap="nowrap">

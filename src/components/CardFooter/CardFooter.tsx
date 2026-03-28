@@ -1,5 +1,5 @@
-import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon, Loader } from "@mantine/core"
-import { IconDownload, IconTools, IconX } from "@tabler/icons-react"
+import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon, Loader, Text, TextInput, Tooltip, LoadingOverlay } from "@mantine/core"
+import { IconArchiveFilled, IconDeviceFloppy, IconDownload, IconEye, IconEyeOff, IconPencil, IconPhotoCog, IconSettings, IconTools, IconTrashFilled, IconX } from "@tabler/icons-react"
 import { useEffect, useState } from "react"
 import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
@@ -10,11 +10,18 @@ import LeaderboardEntrySelect from "../LeaderboardEntrySelect"
 import { useSettings } from "../SettingsProvider"
 import { domToPng } from 'modern-screenshot'
 import { useData } from "../DataProvider"
-import { TooltipData } from "../CharacterCard/CharacterCard"
+import { useAuth } from "@components/AuthProvider"
+import { ICardContext } from "../CharacterCard/CharacterCard"
+import { match, type SimpleBuild } from "@interknot/types"
+import { archiveBuild, deleteBuild, setBuildName, setBuildVisibility } from "@/api/data"
 
 const data = ["Damage distribution", "Sub-stat priority", "Leaderboards"]
 
-export default function CardFooter(): React.ReactElement {
+interface ICardFooterProps {
+    onBuildsUpdated?: () => void
+}
+
+export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React.ReactElement {
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
     const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({})
     const [active, setActive] = useState(-1)
@@ -38,12 +45,14 @@ export default function CardFooter(): React.ReactElement {
         </UnstyledButton>
     ))
 
-    const [opened, { open, close }] = useDisclosure(false)
+    const [customizationOpened, { open: openCustomization, close: closeCustomization }] = useDisclosure(false)
+    const [buildSettingsOpened, { open: openBuildSettings, close: closeBuildSettings }] = useDisclosure(false)
 
     const { cvEnabled, getLocalString } = useSettings()
     const { isAvailable, entries, highlightId } = useLeaderboards()
     const { context: cardSettings, contextAvailable } = useCardSettings()
-    const cardData = useData<TooltipData>()
+    const { account } = useAuth()
+    const { build, owner } = useData<ICardContext>()
 
     useEffect(() => {
         cardSettings?.setShowGraph(isAvailable && cardSettings.showGraph)
@@ -51,10 +60,24 @@ export default function CardFooter(): React.ReactElement {
 
     const [downloading, setDownloading] = useState(false)
 
+    const [isLoading, setIsLoading] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
+    const [tempBuildName, setTempBuildName] = useState("")
+    const [isArchivePopoverOpened, { open, close }] = useDisclosure(false)
+    const [archivedBuildName, setArchivedBuildName] = useState("")
+
+    const resolveBuildName = (build: SimpleBuild, name: string) => match(name, [
+        [getLocalString(build.Character.Name), () => null], // default name by locale
+        [build.Character.Name, () => null], // default name by game data
+        [build.Name, () => build.Name ?? null], // current build name
+        ["", () => null], // empty string
+        () => name
+    ])
+
     return (<>        
         <Center w="100%">
             <Stack w="100%" maw="100%">
-                <Group wrap="nowrap">
+                <Group wrap="nowrap" gap="xs">
                     { contextAvailable && cardSettings && <>
                         <Button variant="subtle" disabled={downloading} leftSection={downloading ? <Loader size="sm" /> : <IconDownload />}
                             onClick={async () => {
@@ -86,21 +109,24 @@ export default function CardFooter(): React.ReactElement {
                                 document.body.removeChild(clone)
 
                                 const link = document.createElement("a")
-                                link.download = `${getLocalString(cardData.charName)}-${cardData.uid}.png`
+                                link.download = `${getLocalString(build.Character.Name)}-${owner.Uid}.png`
                                 link.href = dataUrl
                                 link.click()
 
                                 setDownloading(false)
                             }}>Download image</Button>
-                        <Popover opened={opened} withArrow position="top-start" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
+                        <Popover opened={customizationOpened} withArrow position="top-start" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
                             transitionProps={{ transition: "pop" }}
                             closeOnClickOutside={false} closeOnEscape={false}>
                             <Popover.Target>
-                                <Button variant={opened ? "filled" : "subtle"} leftSection={<IconTools />} onClick={() => {
-                                    if (opened) {
-                                        close()
+                                <Button variant={customizationOpened ? "filled" : "subtle"} leftSection={<IconTools />} onClick={() => {
+                                    if (buildSettingsOpened) {
+                                        closeBuildSettings()
+                                    }
+                                    if (customizationOpened) {
+                                        closeCustomization()
                                     } else {
-                                        open()
+                                        openCustomization()
                                     }
                                 }}>Card Customization</Button>
                             </Popover.Target>
@@ -108,7 +134,7 @@ export default function CardFooter(): React.ReactElement {
                                 <Stack>
                                     <Flex justify="space-between" align="center" w="100%">
                                         <Title order={3} miw="384px">Card Customization</Title>
-                                        <ActionIcon variant="subtle" onClick={close}><IconX /></ActionIcon>
+                                        <ActionIcon variant="subtle" onClick={closeCustomization}><IconX /></ActionIcon>
                                     </Flex>
                                     <Switch label="Show graph"
                                         checked={cardSettings.showGraph}
@@ -139,6 +165,119 @@ export default function CardFooter(): React.ReactElement {
                                 </Stack>
                             </Popover.Dropdown>
                         </Popover>
+                        {
+                            account && account.ClaimedProfiles.find(p => p.Uid === owner.Uid) &&
+                            <Popover opened={buildSettingsOpened} withArrow position="top-start" shadow="0px 0px 32px rgba(0 0 0 / 75%)"
+                                transitionProps={{ transition: "pop" }} 
+                                closeOnClickOutside={false} closeOnEscape={false}>
+                                <Popover.Target>
+                                    <Button variant={buildSettingsOpened ? "filled" : "subtle"} leftSection={<IconSettings />} onClick={() => {
+                                        if (customizationOpened) {
+                                            closeCustomization()
+                                        }
+                                        if (buildSettingsOpened) {
+                                            closeBuildSettings()
+                                        } else {
+                                            openBuildSettings()
+                                        }
+                                    }}>Build Settings</Button>
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <LoadingOverlay visible={isLoading} />
+                                    <Stack>
+                                        <Flex justify="space-between" align="center" w="100%">
+                                            <Title order={3} miw="384px">Build Settings</Title>
+                                            <ActionIcon variant="subtle" onClick={closeBuildSettings}><IconX /></ActionIcon>
+                                        </Flex>
+                                        <Flex gap="xs" align="center">
+                                            <Text fw="bold">Name</Text>
+                                            { !isEditing 
+                                                ? <Text style={{ flexGrow: 1 }}>
+                                                    {build.Name ?? getLocalString(build.Character.Name)}
+                                                    </Text>     
+                                                : <TextInput style={{ flexGrow: 1 }} value={tempBuildName} 
+                                                    onChange={(evt) => setTempBuildName(evt.target.value)} /> }
+                                            <ActionIcon onClick={async () => {
+                                                if (isEditing) {
+                                                    const finalName = resolveBuildName(build, tempBuildName)
+                                                    console.log(build.Id, tempBuildName, finalName)
+                                                    setIsLoading(true)
+                                                    await setBuildName(owner.Uid, build.Id, finalName)
+                                                    setIsLoading(false)
+                                                    onBuildsUpdated?.()
+                                                    // reloadBuilds()
+                                                } else {
+                                                    setTempBuildName(build.Name ?? getLocalString(build.Character.Name))
+                                                }
+                                                setIsEditing(!isEditing)
+                                            }}>
+                                                { isEditing ? <IconDeviceFloppy /> : <IconPencil /> }
+                                            </ActionIcon>
+                                        </Flex>
+                                        <Button.Group>
+                                            <Button variant="filled" leftSection={<IconPhotoCog />} onClick={() => {
+                                                // onImageCustomization?.()
+                                                cardSettings.setIsEditing(true)
+                                                closeBuildSettings()
+                                            }}>Adjust image</Button>
+                                            <Button variant="filled" leftSection={build.IsPublic ? <IconEyeOff /> : <IconEye />} 
+                                                onClick={async () => {
+                                                    setIsLoading(true)
+                                                    await setBuildVisibility(owner.Uid, build.Id, build.IsPublic)
+                                                    onBuildsUpdated?.()
+                                                    setIsLoading(false)
+                                                }}>
+                                                { build.IsPublic ? "Hide Build" : "Show Build" }
+                                            </Button>
+                                        <Popover withArrow withOverlay opened={isArchivePopoverOpened} onClose={close}>
+                                            <Popover.Target>
+                                                <Tooltip label="Archive Build" withinPortal>
+                                                    <Button leftSection={<IconArchiveFilled />} onClick={() => {
+                                                        if (isArchivePopoverOpened) {
+                                                            close()
+                                                        } else {
+                                                            open()
+                                                        }
+                                                    }}>
+                                                        Archive Build
+                                                    </Button>
+                                                </Tooltip>
+                                            </Popover.Target>
+                                            <Popover.Dropdown>
+                                                <Stack>
+                                                    <TextInput label="Enter build name"
+                                                        description="Can be left empty to use character name"
+                                                        placeholder={getLocalString(build.Character.Name)}
+                                                        value={archivedBuildName}
+                                                        onChange={(e) => setArchivedBuildName(e.currentTarget.value)}
+                                                        maxLength={16} />
+                                                    <Button onClick={async () => {
+                                                        setIsLoading(true)
+                                                        const finalName = resolveBuildName(build, archivedBuildName)
+                                                        await archiveBuild(owner.Uid, build.Id, finalName)
+                                                        setArchivedBuildName("")
+                                                        onBuildsUpdated?.()
+                                                        setIsLoading(false)
+                                                        close()
+                                                    }}>Archive Build</Button>
+                                                    <Button variant="light" onClick={() => {
+                                                        setArchivedBuildName("")
+                                                        close()
+                                                    }}>Cancel</Button>
+                                                </Stack>
+                                            </Popover.Dropdown>
+                                        </Popover>
+                                        <Button variant="filled" leftSection={<IconTrashFilled />} color="red" 
+                                            onClick={async () => {
+                                                await deleteBuild(owner.Uid, build.Id)
+                                                onBuildsUpdated?.()
+                                            }}>Delete Build</Button>
+                                        </Button.Group>
+                                        {/* </SimpleGrid> */}
+                                    </Stack>
+                                </Popover.Dropdown>
+                            </Popover>
+                        }
                     </> }
                     { isAvailable &&
                         <div className="root" ref={setRootRef}>

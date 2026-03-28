@@ -1,4 +1,4 @@
-import { getLeaderboards, getUserCharacterLeaderboards } from "@/api/data"
+import { getBuildLeaderboards, getLeaderboards } from "@/api/data"
 import { LeaderboardEntry, LeaderboardList } from "@interknot/types"
 import { Center, Loader } from "@mantine/core"
 import { createContext, useContext, useMemo } from "react"
@@ -21,13 +21,13 @@ const defaultValue: LeaderboardContextType = {
 export const LeaderboardContext = createContext(defaultValue)
 
 export interface ILeaderboardProviderProps {
-    uid: number
     characterId: number
+    buildId: number
     children: React.ReactNode
 }
 
-export default function LeaderboardProvider({ uid, characterId, children }: ILeaderboardProviderProps) {
-    const entriesState = useAsync(async () => await getUserCharacterLeaderboards(uid, characterId))
+export default function LeaderboardProvider({ characterId, buildId, children }: ILeaderboardProviderProps) {
+    const entriesState = useAsync(async () => await getBuildLeaderboards(buildId), [buildId])
     const leaderboardsState = useAsync(async () => await getLeaderboards({ filter: { characterId: characterId.toString() } }, true), [characterId])
 
     const entries = useMemo(() => entriesState.value?.data ?? [], [entriesState.value])
