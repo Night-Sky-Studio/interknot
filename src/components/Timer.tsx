@@ -11,11 +11,14 @@ export interface ITimerProps {
     onTimerEnd?: () => void
 }
 
+const MAX_TIME = 9 * 3600 + 59 * 60 + 59
+
 const Timer: React.FC<ITimerProps> = ({ title, endTime, elapsedTime, isEnabled, onTimerEnd }) => {
     const [currentTime, setCurrentTime] = useState(elapsedTime ?? 0)
 
-    if (endTime > 3599) {
-        throw new Error("endTime can't be more than 59:59 (3599 seconds)")
+    // no more than 9:59:59
+    if (endTime > MAX_TIME) {
+        throw new Error(`endTime can't be more than 9:59:59 (${MAX_TIME}s), was ${endTime}s`)
     }
 
     if (endTime < 0 || currentTime < 0) {
@@ -23,9 +26,11 @@ const Timer: React.FC<ITimerProps> = ({ title, endTime, elapsedTime, isEnabled, 
     }
 
     function formatTime(time: number) {
-        const minutes = Math.floor(time / 60)
+        const hours = Math.floor(time / 3600)
+        const hoursStr = hours > 0 ? `${hours}:` : ''
+        const minutes = Math.floor((time % 3600) / 60)
         const seconds = time % 60
-        return `${minutes.toString()}:${seconds.toString().padStart(2, '0')}`
+        return `${hoursStr}${minutes.toString()}:${seconds.toString().padStart(2, '0')}`
     }
 
     useEffect(() => {
