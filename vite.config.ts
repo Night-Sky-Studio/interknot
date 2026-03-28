@@ -49,6 +49,6 @@ export default defineConfig({
         sourcemap: true
     },
     preview: {
-        allowedHosts: ["preview.interknot.space"]
+        allowedHosts: ["preview.interknot.space", "dev.interknot.space"]
     }
 })
