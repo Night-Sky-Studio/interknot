@@ -19,10 +19,10 @@ import { ContextMenuProvider } from "mantine-contextmenu"
 import { Notifications } from "@mantine/notifications"
 import { BackendProvider } from "./components/BackendProvider"
 import { useEffect } from "react"
-import TestPage from "./pages/TestPage"
 import BuildsPage from "./pages/BuildsPage"
 import AuthCallback from "./pages/auth/AuthCallback"
 import { AuthProvider } from "./components/AuthProvider"
+import KitchenSinkPage from "./pages/KitchenSinkPage"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -71,7 +71,7 @@ export default function App() {
                                                 <Route path="builds" element={<BuildsPage />} />
                                                 <Route path="leaderboards" element={<LeaderboardsPage />} />
                                                 <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                                                <Route path="test" element={<TestPage />} />
+                                                <Route path="kitchen" element={<KitchenSinkPage />} />
 
                                                 <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
                                             </Route>
