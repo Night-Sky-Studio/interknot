@@ -7,8 +7,8 @@ import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
 import { UserHeader } from "@/components/UserHeader/UserHeader"
 // import BuildActions from "@/components/BuildActions"
-import { DataProvider } from "@/components/DataProvider"
-import { ICardContext } from "@/components/CharacterCard/CharacterCard"
+// import { DataProvider } from "@/components/DataProvider"
+// import { ICardContext } from "@/components/CharacterCard/CharacterCard"
 
 const uid = 1500438496
 
@@ -44,7 +44,7 @@ function ProfileTab() {
 function BuildsTab() {
     const buildsState = useAsync(async () => getCharacters({ uid }), [])
     const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data])
-    const build = useMemo(() => builds ? builds[0] : undefined, [builds])
+    // const build = useMemo(() => builds ? builds[0] : undefined, [builds])
 
     return <Stack p="md">
         { buildsState.loading && <Loader /> }

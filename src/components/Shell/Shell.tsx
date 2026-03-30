@@ -1,7 +1,7 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Burger, NavLink, useMantineTheme, Tooltip, Alert, Avatar, Divider } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { ProfileInfo } from "@interknot/types"
 import "./Shell.css"
 import enkaImg from "@assets/Enka.svg"
@@ -10,8 +10,7 @@ import InterknotLogo from "@icons/Interknot"
 import { useContextMenu } from 'mantine-contextmenu'
 import { getDiscordAuthUrl } from '@/api/discord'
 import AccountButton from '../AccountButton/AccountButton'
-import { doroMode } from '@/api/doro'
-
+import { useBackend } from "@components/BackendProvider.tsx"
 
 export default function Shell(): React.ReactElement {
     const theme = useMantineTheme()
@@ -61,6 +60,11 @@ export default function Shell(): React.ReactElement {
     const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] = useDisclosure(false)
 
     const [creditsModalOpened, { open: openCreditsModal, close: closeCreditsModal }] = useDisclosure(false)
+
+    // FIXME: better backend state management
+    const { state } = useBackend()
+    const doroMode = useMemo(() => (state?.data?.events?.doro?.length ?? 0) > 0,
+        [state?.data?.events?.doro?.length])
 
     return (<>
         <Modal opened={loginModalOpened} onClose={closeLoginModal}
@@ -138,7 +142,7 @@ export default function Shell(): React.ReactElement {
                                     }}>
                                         <Title order={3}>Fresh Sun</Title>
                                     </Anchor>
-                                    <Text c="dimmed">Moral support, Discord server keeper</Text>
+                                    <Text c="dimmed">(A)moral support, Discord server keeper</Text>
                                 </Stack>
                             </Group>
 
@@ -151,43 +155,6 @@ export default function Shell(): React.ReactElement {
                                     <Text c="dimmed">Doro artwork</Text>
                                 </Stack>
                             </Group>
-                            {/* <Stack align="center" gap="xs">
-                                    <Title order={3}>Developed and maintained by</Title>
-                                    <Button variant="light" size="xl" px="0" pr="lg" color="blue"
-                                        component="a" href="" target="_blank"
-                                        leftSection={}>
-                                        <Title order={3}>Lily Stilson</Title>
-                                    </Button>
-                                </Stack>
-                                <Flex gap="xl" mt="md" justify="space-evenly">
-                                    <Stack align="center" gap="xs">
-                                        <Title order={5}>Technical support</Title>
-                                        <Button variant="light" size="md" px="0" pr="lg" color="blue"
-                                            component="a" href="" target="_blank"
-                                            leftSection={<Avatar src="https://avatars.githubusercontent.com/u/55695564" alt="Eil RoviSoft" size="md" />}>
-                                            <Title order={5}>EilRoviSoft</Title>
-                                        </Button>
-                                    </Stack>
-
-                                    <Stack align="center" gap="xs">
-                                        <Title order={5}>Moral support</Title>
-                                        <Button variant="light" size="md" px="0" pr="lg" color="blue"
-                                            component="a" href="" target="_blank"
-                                            leftSection={<Avatar src="https://enka.network/ui/zzz/IconInterKnotRole0020.png" alt="Fresh Sun" size="md" />}>
-                                            <Title order={5}>Fresh Sun</Title>
-                                        </Button>
-                                    </Stack>
-
-                                    <Stack align="center" gap="xs">
-                                        <Title order={5}>Doro Artwork</Title>
-                                        <Button variant="light" size="md" px="0" pr="lg" color="blue"
-                                            component="a" href="" target="_blank"
-                                            leftSection={<Avatar src="https://cdn.interknot.space/aprilfools/ui/zzz/IconRoleCircle49.png" alt="HuLiNa" size="md" />}>
-                                            <Title order={5}>HuLiNa</Title>
-                                        </Button>
-                                    </Stack> 
-
-                                </Flex>*/}
                         </Flex>
                         <Divider />
                         <Stack align="center" gap="xs">
@@ -200,6 +167,16 @@ export default function Shell(): React.ReactElement {
                                             <Title order={3}>Algoinde</Title>
                                         </Anchor>
                                         <Text c="dimmed">Enka.Network, technical support</Text>
+                                    </Stack>
+                                </Group>
+
+                                <Group maw="50%" wrap="nowrap">
+                                    <Avatar src="https://avatars.githubusercontent.com/u/26521952" alt="Mimee" size="lg" />
+                                    <Stack gap="0">
+                                        <Anchor href="https://github.com/Peacerekam" target="_blank" c="gray">
+                                            <Title order={3}>Mimee</Title>
+                                        </Anchor>
+                                        <Text c="dimmed">Akasha.cv, inspiration, backend support</Text>
                                     </Stack>
                                 </Group>
 
@@ -227,7 +204,7 @@ export default function Shell(): React.ReactElement {
             <AppShell.Header>
                 <Container size="1600px" h="100%">
                     <Flex h="100%" justify="space-between" align="center">
-                        <Group gap="0px" wrap="nowrap">
+                        <Group gap="0" wrap="nowrap">
                             <Button variant="transparent" component="a" href="/" onClick={(evt) => {
                                 evt.preventDefault()
                                 navigate("/")
@@ -236,8 +213,7 @@ export default function Shell(): React.ReactElement {
                                     <Title>Inter-Knot</Title>
                                 </Group>
                             </Button>
-                            <Text c="dimmed" size="lg" fw={500}>β</Text>
-                            <Group ml="md" className="header-buttons" gap="xs">
+                            <Group ml="sm" className="header-buttons" gap="0.25rem">
                                 <Button size="xs"
                                     component="a" href="/leaderboards"
                                     variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"}
@@ -317,7 +293,7 @@ export default function Shell(): React.ReactElement {
             <AppShell.Main>
                 <Container size="1600px">
                     {
-                        doroMode() && <Alert variant="light" color="blue" mb="md"
+                        doroMode && <Alert variant="light" color="blue" mb="md"
                             title="A Doro invasion has begun!"
                             icon={<Image src="https://cdn.interknot.space/aprilfools/vivian_doro_rocket.gif"
                                 alt="doro" w={32} h={32} />} data-nosnippet>

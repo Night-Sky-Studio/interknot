@@ -1,5 +1,5 @@
 import { CardCustomization } from "@interknot/types"
-import { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 
 interface ICustomizationStorage {
     [buildId: number]: CardCustomization | undefined
@@ -16,6 +16,7 @@ type CardSettingsContextType = {
     cardCustomization?: CardCustomization
     isEditing: boolean
     cardScale: number
+
     setShowSubstatsBreakdown: (value: boolean) => void
     setShowBuildName: (value: boolean) => void
     setShowUserInfo: (value: boolean) => void
@@ -45,6 +46,7 @@ const defaultValue: CardSettingsContextType = {
     cardCustomization: undefined,
     isEditing: false,
     cardScale: 1,
+
     setShowSubstatsBreakdown: () => {},
     setShowBuildName: () => {},
     setShowUserInfo: () => {},
@@ -106,9 +108,6 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     const getLocalCustomization = (buildId: number): CardCustomization | undefined => {
         const localData = localStorage.getItem("customizations")
         const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
-        // const data = customizations[buildId]
-
-        // setSettings((prev) => ({ ...prev, cardCustomization: data }))
 
         return customizations[buildId]
     }

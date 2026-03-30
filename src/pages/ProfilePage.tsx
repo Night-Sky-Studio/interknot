@@ -4,12 +4,15 @@ import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
-import { getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getProfileClaim, getUserLeaderboards, initProfileClaim, IQueryParams } from "@api/data"
+import {
+    getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getProfileClaim,
+    getTopStats, getUserLeaderboards, initProfileClaim, IQueryParams
+} from "@api/data"
 import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconEyeOff, IconInfoCircle, IconKeyFilled, IconLockFilled, IconReload, IconSettingsFilled, IconStar, IconStarFilled } from "@tabler/icons-react"
 import Timer from "@components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "@components/LeaderboardGrid/LeaderboardGrid"
-import { BaseLeaderboardEntry, Build, Character, DriveDisc, ProfileInfo, Property } from "@interknot/types"
+import { BaseLeaderboardEntry, Build, DriveDisc, ProfileInfo } from "@interknot/types"
 import LeaderboardProvider from "@components/LeaderboardProvider"
 import { useBackend } from "@components/BackendProvider"
 import { getRarityIcon } from "@components/icons/Icons"
@@ -94,7 +97,7 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }, [uid, updateRequested])
     const charactersState = useAsyncRetry(async () => {
-        if (!profileState.value?.data) return undefined 
+        if (!profileState.value?.data) return undefined
         const result = await getCharacters({
             uid: Number(uid),
             cursor: cursor?.toString(),
@@ -107,7 +110,7 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }, [uid, profileState.value?.data, cursor, limitNum, filterQuery])
     const discsState = useAsyncRetry(async () => {
-        if (!profileState.value?.data) return undefined 
+        if (!profileState.value?.data) return undefined
         const result = await getDriveDiscs(discsQuery)
         if (result && result.data) {
             setDiscs(result.data)
@@ -115,7 +118,7 @@ export default function ProfilePage(): React.ReactElement {
         return result
     }, [profileState.value?.data, discsQuery])
     const leaderboardsState = useAsyncRetry(async () => {
-        if (!profileState.value?.data) return undefined 
+        if (!profileState.value?.data) return undefined
         const result = await getUserLeaderboards(Number(uid), updateRequested)
         if (result && result.data) {
             setLeaderboards(result.data)
@@ -170,63 +173,14 @@ export default function ProfilePage(): React.ReactElement {
         setCanUpdate((ttl ?? 0) == 0)
     }, [profile, ttl])
 
-    /*
-    // Initialize backups when profile loads successfully
-    useEffect(() => {
-        if (profileBackup && !profileState.error) {
-            setProfileBackup(profileBackup)
-        }
-    }, [profileBackup, profileState.error])
-
-    useEffect(() => {
-        if (leaderboardsState.value && !leaderboardsState.error) {
-            setLeaderboardsBackup(leaderboardsState.value)
-        }
-        if (leaderboardsState.error) {
-            toggle() // Collapse leaderboards on error
-        }
-    }, [leaderboardsState.value, leaderboardsState.error])
-
-    useEffect(() => {
-        if (profileBackup)
-            console.log(`User ${profileBackup.Information.Uid}, TTL: ${profileBackup.Ttl}, needsUpdate: ${updateRequested}, canUpdate: ${canUpdate}, favoriteUsers: ${favoriteUsers.join(',')}`)
-    }, [profileBackup, updateRequested, favoriteUsers])
-
-    */
-
     const [openedId, setOpenedId] = useState<number | null>(initialOpenedId ? Number(initialOpenedId) : null)
-
-    /*
-    const errorHandler = (error: string) => {
-        // try parse
-        try {
-            const parsedError = JSON.parse(error) as unknown as BackendError
-            return `Error ${parsedError.Code}: ${parsedError.Message}\n${parsedError.Details}`
-        } catch {
-            return `Error: ${error}`
-        }
-    }
-    */
-
-    const getTopStats = (c: Character): Property[] => {
-        const result: Property[] = []
-        let skippedStats = 0
-        for (const propId of (c.DisplayProps ?? [])) {
-            const stat = c.Stats.find((p) => p.Id === propId)
-            if (stat?.Value === 0) {
-                skippedStats++
-                if (c.DisplayProps.length - skippedStats >= 4) continue
-            }
-            if (result.length >= 4) break
-            if (stat) result.push(stat)
-        }
-        return result
-    }
 
     const tableRef = useRef<HTMLDivElement>(null)
 
     const { account } = useAuth()
-    const isClaimed = useMemo(() => account?.ClaimedProfiles.find(p => p.Uid === Number(uid)) !== undefined, [account, uid])
+    const isClaimed = useMemo(() =>
+        account?.ClaimedProfiles.find(p => p.Uid === Number(uid)) !== undefined,
+    [uid, account?.ClaimedProfiles])
 
     const [bindPopoverOpen, setBindPopoverOpen] = useState(false)
 
@@ -239,10 +193,13 @@ export default function ProfilePage(): React.ReactElement {
 
     const [buildsSettingsOpened, { open: openBuildsSettings, close: closeBuildsSettings }] = useDisclosure(false)
 
+    const doro = useMemo(() => backend?.data?.events?.doro ?? [], [backend?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
+
     return (<>
-        <BuildsSettingsModal 
-            opened={buildsSettingsOpened} 
-            onClose={closeBuildsSettings} 
+        <BuildsSettingsModal
+            opened={buildsSettingsOpened}
+            onClose={closeBuildsSettings}
             onBuildsUpdated={() => {
                 charactersState.retry()
             }}
@@ -265,8 +222,8 @@ export default function ProfilePage(): React.ReactElement {
                         <Group gap="xs">
                             <Text fz="xl" fw="bold">Time left to bind this profile: </Text>
                             <Code fz="xl" fw="bold">
-                                <Timer title="" isEnabled={true} 
-                                    endTime={Math.floor((Math.abs(new Date(profileClaim.createdAt).getTime() + 7200 * 1000 - new Date().getTime())) / 1000)} 
+                                <Timer title="" isEnabled={true}
+                                    endTime={Math.floor((Math.abs(new Date(profileClaim.createdAt).getTime() + 7200 * 1000 - new Date().getTime())) / 1000)}
                                     onTimerEnd={refreshClaim} />
                             </Code>
                         </Group>
@@ -287,7 +244,7 @@ export default function ProfilePage(): React.ReactElement {
                             </ActionIcon>
                         </Group>
                         <Text>Add binding code to your in-game signature and press the Update button.</Text>
-                        <Text>Be aware it might take around 5 minutes for in-game changes to be reflected 
+                        <Text>Be aware it might take around 5 minutes for in-game changes to be reflected
                             on the profile page. To update it instantly, log out of the game.</Text>
                     </Stack>
                 </Alert>
@@ -322,9 +279,9 @@ export default function ProfilePage(): React.ReactElement {
                                     }} />
                             </Button>
                         }
-                        {account && <>
-                            {isClaimed == false
-                                ? <Popover withArrow withinPortal position="top" 
+                        { account && <>
+                            { !isClaimed
+                                ? <Popover withArrow withinPortal position="top"
                                     opened={bindPopoverOpen} onChange={setBindPopoverOpen}>
                                     <Popover.Target>
                                         <Tooltip label={profileClaim ? "A claim is already in progress!" : "Bind profile"} withinPortal>
@@ -337,9 +294,10 @@ export default function ProfilePage(): React.ReactElement {
                                         <Text>Do you want to bind this profile?</Text>
                                         <Flex gap="sm" justify="stretch">
                                             <Button mt="sm" flex="1 0" leftSection={<IconCheck />}
-                                                onClick={async () => { 
+                                                onClick={async () => {
                                                     const claim = await initProfileClaim(Number(uid))
                                                     if (claim.success) {
+                                                        setBindPopoverOpen(false)
                                                         refreshClaim()
                                                     }
                                                 }}>Bind</Button>
@@ -396,7 +354,7 @@ export default function ProfilePage(): React.ReactElement {
                         </Button>
                     </Stack>
 
-                    
+
                     <Stack>
                         <FilterSelector
                             exclude={["region", "set_id"]}
@@ -450,7 +408,7 @@ export default function ProfilePage(): React.ReactElement {
                                                         title: "#",
                                                         cellsStyle: () => ({ maxWidth: "3ch" }),
                                                         render: (b, r) =>
-                                                            !b.IsPublic 
+                                                            !b.IsPublic
                                                                 ? <Tooltip label="Hidden build" withinPortal><IconEyeOff /></Tooltip>
                                                                 : <Text>{((page ?? 1) - 1) * limitNum + r + 1}</Text>,
                                                     },
@@ -461,9 +419,16 @@ export default function ProfilePage(): React.ReactElement {
                                                         render: (b) => {
                                                             const localizedName = getLocalString(b.Character.Name)
                                                             const displayName = b.Name ?? localizedName
+
+                                                            // FIXME: needs proper img replacing solution
+                                                            const url = b.Character.Skin ? b.Character.Skin.CircleIconUrl : b.Character.CircleIconUrl
+                                                            const src = doroMode && doro.includes(b.Character.Id)
+                                                                ? url.replace("enka.network", "cdn.interknot.space/aprilfools")
+                                                                : url
+
                                                             return (
                                                                 <Group gap="sm" wrap="nowrap">
-                                                                    <Image src={b.Character.Skin ? b.Character.Skin.CircleIconUrl : b.Character.CircleIconUrl} h="32px" />
+                                                                    <Image src={src} h="32px" />
                                                                     <div className="chip">{getLevel(b.Character.Level)}</div>
                                                                     { displayName !== localizedName
                                                                         ? <>
@@ -480,7 +445,7 @@ export default function ProfilePage(): React.ReactElement {
                                                         accessor: "MindscapeLevel",
                                                         title: "Mindscape",
                                                         render: (b) => (
-                                                            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(b.Character.MindscapeLevel / 5 + 1) * 1}rem` }} 
+                                                            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(b.Character.MindscapeLevel / 5 + 1)}rem` }}
                                                                 data-level={b.Character.MindscapeLevel}>
                                                                 <Text fw={700}>{b.Character.MindscapeLevel}</Text>
                                                             </div>
@@ -549,7 +514,7 @@ export default function ProfilePage(): React.ReactElement {
                                                                 // },
                                                             }} />
                                                             <Stack m="md">
-                                                                <CardFooter 
+                                                                <CardFooter
                                                                     onBuildsUpdated={() => charactersState.retry()} />
                                                             </Stack>
                                                         </CardSettingsProvider>

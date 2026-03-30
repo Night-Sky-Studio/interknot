@@ -3,17 +3,21 @@ import { Group, Image, Tooltip } from "@mantine/core"
 import "./Team.css"
 import { useSettings } from "@components/SettingsProvider"
 import { useMemo } from "react"
-import { doroMode, hasDoro } from "@api/doro"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 function TeamMember({ ref, avatar }: { ref?: any, avatar: BaseAvatar }) {
-    const doro = doroMode() && hasDoro(avatar.Id) 
-    const url = useMemo(() => doro
-        ? avatar.ImageUrl    
-        : avatar.CircleIconUrl.replace("Circle", "Select")
-    , [doro, avatar.CircleIconUrl])
+    // FIXME: needs proper img replacing solution
+    const { state } = useBackend()
+    const hasDoro = useMemo(() => state?.data?.events?.doro?.includes(avatar.Id) ?? false,
+        [state?.data?.events?.doro, avatar.Id])
+    const url = useMemo(() =>
+        hasDoro
+            ? avatar.ImageUrl.replace("enka.network", "cdn.interknot.space/aprilfools")
+            : avatar.CircleIconUrl.replace("Circle", "Select"),
+        [hasDoro, avatar.CircleIconUrl, avatar.ImageUrl])
     return (
         <div className="member" ref={ref}>
-            <Image h="100%" ml={doro ? "1rem" : undefined} src={url} alt={avatar.Name} />
+            <Image h="100%" ml={hasDoro ? "1rem" : undefined} src={url} alt={avatar.Name} />
         </div>
     )
 }

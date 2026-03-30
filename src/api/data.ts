@@ -17,7 +17,8 @@ import {
     Result, 
     url,
     match,
-    SimpleBuild
+    SimpleBuild,
+    Character
 } from "@interknot/types"
 
 interface IFilter {
@@ -40,6 +41,9 @@ export interface BackendState {
     version: string
     uptime: number
     currentDate: string
+    events: {
+        doro?: number[]
+    }
 }
 
 export const DATA_URL = match(process.env.NODE_ENV, [
@@ -64,6 +68,22 @@ export function restoreProperties(obj: any): any {
         }
     }
     return obj
+}
+
+// Extract up to 4 primary stats in the same way as before
+export function getTopStats(c: Character): Property[] {
+    const result: Property[] = []
+    let skippedStats = 0
+    for (const propId of (c.DisplayProps ?? [])) {
+        const stat = c.Stats.find((p) => p.Id === propId)
+        if (stat?.Value === 0) {
+            skippedStats++
+            if (c.DisplayProps.length - skippedStats >= 4) continue
+        }
+        if (result.length >= 4) break
+        if (stat) result.push(stat)
+    }
+    return result
 }
 
 export async function req<T>(u: string, restoreProps: boolean = false, init?: RequestInit): Promise<IResult<T>> {

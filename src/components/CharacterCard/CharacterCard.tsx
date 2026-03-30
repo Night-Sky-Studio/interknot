@@ -1,12 +1,24 @@
-import { Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme, Space, Overlay } from "@mantine/core"
+import {
+    Card,
+    ColorSwatch,
+    Group,
+    Image,
+    Overlay,
+    Paper,
+    Portal,
+    Space,
+    Stack,
+    Text,
+    Title,
+    useMantineTheme
+} from "@mantine/core"
 import { RadarChart } from "@mantine/charts"
 import "./CharacterCard.css"
-import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "@icons/Icons"
+import { getRarityIcon, ProfessionIcon, ZenlessIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
-import { Weapon, Property } from "@interknot/types"
-import React, { memo, useMemo, useRef } from "react"
-import { match } from "@interknot/types"
-import type { DriveDiscSet, LeaderboardList, LeaderboardEntry, Build, ProfileInfo } from "@interknot/types"
+import type { Build, DriveDiscSet, LeaderboardEntry, LeaderboardList, ProfileInfo } from "@interknot/types"
+import { match, Property, Weapon } from "@interknot/types"
+import React, { memo, useMemo, useRef, useState } from "react"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { SubStat } from "@components/SubStat/SubStat"
@@ -23,6 +35,7 @@ import CoreSkill from "@components/CoreSkill/CoreSkill"
 import Talents from "@components/Talents/Talents"
 import { Str } from "@icons/core"
 import CharacterImage from "./CharacterImage"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 export interface ICardContext {
     owner: ProfileInfo
@@ -198,7 +211,7 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
         return await getLeaderboardDmgDistribution(leaderboard.Id)
     }, [leaderboard.Id])
 
-    const graph = useMemo(() => graphState.value?.data, [graphState.value])
+    const graph = useMemo(() => graphState.value?.data, [graphState.value?.data])
 
     // useEffect(() => {
     //     console.log(graphState.loading, graphState.error, graphState.value)
@@ -212,13 +225,12 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
         if (!stat) {
             return -1
         }
-        const result = match(stat.FormatType, [
+        return match(stat.FormatType, [
             [0, () => stat.Value], // flat
             [1, () => stat.Value / 100], // percent
             [2, () => stat.Value / 10], // float
             () => stat.Value // default
         ])
-        return result
     }
 
     const filteredStats = useMemo(() => {
@@ -422,10 +434,12 @@ export default function CharacterCard({
 
     const { entries, leaderboards, highlightId } = useLeaderboards()
 
-    const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, selectedLeaderboardId, highlightId])
-    const entry = useMemo(() => entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
+    const leaderboard = useMemo(() =>
+        leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, highlightId])
+    const entry = useMemo(() =>
+        entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
 
-    const characterAccentColor = useMemo(() => {
+    const characterAccentColor = () => {
         if (cardCustomization?.AccentColor) {
             return cardCustomization.AccentColor
         }
@@ -434,15 +448,25 @@ export default function CharacterCard({
             case 1501: return character.Colors.AccentExtra // Aria
             default: return character.Colors.Mindscape
         }
-    }, [cardCustomization?.AccentColor, character.Id])
+    }
 
     const { getLocalString } = useSettings()
 
+    // FIXME: needs proper img replacing solution
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
+
+    const characterImage = useMemo(() => {
+        const url = character.Skin ? character.Skin.ImageUrl : character.ImageUrl
+        return doroMode && doro.includes(character.Id) ? url.replace("enka.network", "cdn.interknot.space/aprilfools") : url
+    }, [character.ImageUrl, character.Skin, doro, character.Id])
+
     return (
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="xs" p="0px"
-            style={{ "--accent": characterAccentColor, "--mindscape": character.Colors.Accent, accentColor: characterAccentColor }}>
+            style={{ "--accent": characterAccentColor(), "--mindscape": character.Colors.Accent, accentColor: characterAccentColor() }}>
             <Card.Section m="0" className="cc-grid" data-editing={isEditing}>
-                <CharacterImage src={character.Skin ? character.Skin.ImageUrl : character.ImageUrl} />
+                <CharacterImage src={characterImage} />
                 <Overlay className="cc-editing-overlay" zIndex={110} />
                 <div className="cc-info-bg" />
                 <div className="cc-cell cc-info">
@@ -499,7 +523,7 @@ export default function CharacterCard({
                 {showGraph &&
                     <div className="cc-leaderboard">
                         {leaderboard && entry &&
-                            <StatsGraph leaderboard={leaderboard} entry={entry} color={characterAccentColor} />
+                            <StatsGraph leaderboard={leaderboard} entry={entry} color={characterAccentColor()} />
                         }
                     </div>
                 }

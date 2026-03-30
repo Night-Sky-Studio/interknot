@@ -1,4 +1,4 @@
-import { getCharacters, getCharactersCount } from "@api/data"
+import { getCharacters, getCharactersCount, getTopStats } from "@api/data"
 import CritCell from "@components/cells/CritCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
 import PropertyCell from "@components/cells/PropertyCell"
@@ -8,7 +8,7 @@ import GameObject from "@components/GameObject/GameObject"
 import { useSettings } from "@components/SettingsProvider"
 import { ServerChip } from "@components/UserHeader/UserHeader"
 import { useQueryParams } from "@/hooks/useQueryParams"
-import { Character, Property, Build } from "@interknot/types"
+import { Build } from "@interknot/types"
 import { Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
@@ -37,26 +37,10 @@ export default function BuildsPage(): React.ReactElement {
 
     const mindscapeChip = (level: number) => {
         return (
-            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(level / 5 + 1) * 1}rem` }} data-level={level}>
+            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(level / 5 + 1)}rem` }} data-level={level}>
                 <Text fw={700}>{level}</Text>
             </div>
         )
-    }
-
-    // Extract up to 4 primary stats in the same way as before
-    const getTopStats = (c: Character): Property[] => {
-        const result: Property[] = []
-        let skippedStats = 0
-        for (const propId of (c.DisplayProps ?? [])) {
-            const stat = c.Stats.find((p) => p.Id === propId)
-            if (stat?.Value === 0) {
-                skippedStats++
-                if (c.DisplayProps.length - skippedStats >= 4) continue
-            }
-            if (result.length >= 4) break
-            if (stat) result.push(stat)
-        }
-        return result
     }
 
     const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
