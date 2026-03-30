@@ -1,6 +1,6 @@
-# Inter-Knot <span style="font-size: 16px">β</span>
+# <img src="public/favicon.svg#gh-dark-mode-only" width="96px" /> <img src="public/favicon.svg#gh-light-mode-only" width="96px" /> Inter-Knot
 
-A place for proxies to share their agents' builds.
+##### A place for proxies to share their agents' builds. Zenless Zone Zero leaderboards project.
 
 ## License
 ```
