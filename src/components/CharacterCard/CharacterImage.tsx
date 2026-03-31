@@ -345,7 +345,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                                             ...cardCustomization,
                                             CharacterTransform: {
                                                 ...fgTransform,
-                                                Scale: (fgTransform?.Scale ?? 1) - 0.05
+                                                Scale: Math.max(0.1, (fgTransform?.Scale ?? 1) - 0.05)
                                             }
                                         })
                                     }}>
