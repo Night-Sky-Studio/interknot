@@ -267,8 +267,9 @@ export default function ProfilePage(): React.ReactElement {
                                 setUpdateRequested(true)
                                 profileState.retry()
                                 leaderboardsState.retry()
+                                refreshClaim()
                                 if (profileClaim) {
-                                    window.location.reload()
+                                    setTimeout(() => window.location.reload(), 500)
                                 }
                             }}>
                                 <Timer key={uid} title="Update" isEnabled={!canUpdate}
@@ -308,7 +309,7 @@ export default function ProfilePage(): React.ReactElement {
                                 : <Tooltip label="Lock profile updates" withinPortal>
                                         <ActionIcon onClick={() => {
                                             // TODO: send lock to backend
-                                        }}>
+                                        }}  disabled>
                                             <IconLockFilled />
                                         </ActionIcon>
                                     </Tooltip>
