@@ -151,18 +151,15 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
     const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
     const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
-    const adjustForDoro = (c?: CardCustomization) => {
-        if (doroMode && doro.includes(build.Character.Id)) {
-            console.log("doro")
-            return c ?? {
-                CharacterTransform: {
-                    Scale: 0.6
-                }
-            }
-        }
+    const isDoro = doroMode && doro.includes(build.Character.Id)
 
-        return c
-    }
+    // Doro-only rendering fallback — never stored in cardCustomization
+    const doroFallbackTransform: Transform | undefined = useMemo(() => {
+        if (isDoro) {
+            return { Scale: 0.6 }
+        }
+        return undefined
+    }, [isDoro])
 
     // One-time init: load saved customization from localStorage
     const isInitialized = useRef(false)
@@ -171,7 +168,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         if (!state?.data) return
 
         const c = getLocalCustomization?.(build.Id)
-        setCardCustomization?.(adjustForDoro(c))
+        setCardCustomization?.(c)
 
         isInitialized.current = true
     }, [state, isInitialized, setCardCustomization, getLocalCustomization, build, doro])
@@ -186,7 +183,19 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         return URL.createObjectURL(pendingImageFile)
     }, [pendingImageFile])
 
-    const fgTransform = cardCustomization?.CharacterTransform
+    // ... existing code ...
+    const rawFgTransform = cardCustomization?.CharacterTransform
+    // Merge doro fallback for rendering only: apply doro Scale when the user hasn't set their own
+    const fgTransform = useMemo(() => {
+        if (!doroFallbackTransform) return rawFgTransform
+        // If there's no user transform at all, use the doro fallback
+        if (!rawFgTransform) return doroFallbackTransform
+        // If the user hasn't explicitly set Scale, overlay the doro default
+        if (rawFgTransform.Scale === undefined) {
+            return { ...rawFgTransform, Scale: doroFallbackTransform.Scale }
+        }
+        return rawFgTransform
+    }, [rawFgTransform, doroFallbackTransform])
     const fgImg = pendingImageUrl ?? savedImg
     const fgRef = useRef<HTMLDivElement>(null)
 
@@ -248,12 +257,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
 
     const [imgPos, setImgPos] = useState({ left: "center", top: "top 10px", scale: "cover" })
     useEffect(() => {
-        if (!state) {
-            console.log("waiting for backend")
-            return
-        }
         if (!fgRef.current || !imgSize) return
-        const fgTransform = cardCustomization?.CharacterTransform
         setImgPos({ left: left(fgRef, fgTransform), top: top(fgTransform), scale: scale(fgRef, fgTransform) })
     }, [fgRef.current, imgSize, cardCustomization?.CharacterTransform, state])
 

@@ -194,9 +194,11 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                             { !isEditing 
                                                 ? <Text style={{ flexGrow: 1 }}>
                                                     {build.Name ?? getLocalString(build.Character.Name)}
-                                                    </Text>     
+                                                </Text>
                                                 : <TextInput style={{ flexGrow: 1 }} value={tempBuildName} 
-                                                    onChange={(evt) => setTempBuildName(evt.target.value)} /> }
+                                                             onChange={(evt) => setTempBuildName(evt.target.value)}
+                                                             maxLength={16} />
+                                            }
                                             <ActionIcon onClick={async () => {
                                                 if (isEditing) {
                                                     const finalName = resolveBuildName(build, tempBuildName)

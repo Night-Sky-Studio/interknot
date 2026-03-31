@@ -73,7 +73,7 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
                     renderOption={({ option }) => {
                         const item = filterItems.get(option.value)
                         if (!item) return <Text>{ option.value }</Text>
-                        const hasIcon = /[M|P]\d/.test(option.label)
+                        const hasIcon = /([M|P]\d)|(Allow.*)/.test(option.label)
                         if (item.group === "Region") {
                             return <Title className="user-info" order={6}>{item.label}</Title>
                         }

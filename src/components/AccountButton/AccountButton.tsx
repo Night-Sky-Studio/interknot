@@ -101,7 +101,7 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                         }>
                         {account.Username}
                     </Button>
-                    : <Button onClick={loginClick} leftSection={<IconLogin />}>Log in</Button>
+                    : <Button {...props} onClick={loginClick} leftSection={<IconLogin />}>Log in</Button>
         }
     </>)
 }
