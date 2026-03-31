@@ -166,17 +166,26 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
     const isInitialized = useRef(false)
     useEffect(() => {
         if (isInitialized.current) return
-        isInitialized.current = true
+        if (!state?.data) return
 
         const c = getLocalCustomization?.(build.Id)
         setCardCustomization?.(adjustForDoro(c))
-    }, [isInitialized, setCardCustomization, getLocalCustomization, build])
+
+        isInitialized.current = true
+    }, [state, isInitialized, setCardCustomization, getLocalCustomization, build, doro])
 
     const { value: savedImg, loading: imgLoading, retry } = useAsyncRetry(async () =>
         await getSavedImageUrl(owner.Uid, build.Id), [owner.Uid, build.Id])
 
+    // Pending image state: holds a dropped file until Save is confirmed
+    const [pendingImageFile, setPendingImageFile] = useState<File | null>(null)
+    const pendingImageUrl = useMemo(() => {
+        if (!pendingImageFile) return undefined
+        return URL.createObjectURL(pendingImageFile)
+    }, [pendingImageFile])
+
     const fgTransform = cardCustomization?.CharacterTransform
-    const fgImg = savedImg
+    const fgImg = pendingImageUrl ?? savedImg
     const fgRef = useRef<HTMLDivElement>(null)
 
     const { value: imgSize, loading: imgSizeLoading } = useAsync(async () => {
@@ -419,10 +428,14 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                         <Dropzone className="drop-zone"
                                   accept={IMAGE_TYPES}
                                   onDrop={async (files) => {
-                                      const url = await saveImage(owner.Uid, build.Id, files[0])
-                                      console.log("Character URL", url)
-                                      setCardCustomization?.({ ...cardCustomization, CharacterImageUrl: url })
-                                      retry()
+                                      const file = files[0]
+                                      console.log("Character image staged for preview", file.name)
+                                      setPendingImageFile(file)
+                                      // Mark that we have a pending custom image so Art Source input becomes enabled
+                                      setCardCustomization?.({
+                                          ...cardCustomization,
+                                          CharacterImageUrl: "pending"
+                                      })
                                   }}>
                             <DropzoneContent title="Drag or click to change the image" img={fgImg}/>
                         </Dropzone>
@@ -430,27 +443,34 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
 
                     <Flex gap="sm" justify="space-between">
                         <Button variant="light" color="orange" onClick={async () => {
-                            const root = await navigator.storage.getDirectory()
-
-                            const characters = await root.getDirectoryHandle("characters", { create: true })
-                            const userDir = await characters.getDirectoryHandle(`${owner.Uid}`, { create: true })
-                            await userDir.removeEntry(`${build.Id}.png`).catch(() => {
-                            })
-
+                            setPendingImageFile(null)
                             setCardCustomization?.(undefined)
                             setLocalCustomization?.(build.Id, undefined)
                             await deleteSavedImage(owner.Uid, build.Id)
                             retry()
-                            // setPos({ x: 0, y: 0 })
                         }}>Reset</Button>
                         <Group gap="xs">
-                            <Button onClick={() => {
-                                // setCardCustomization?.(currentCustomization)
-                                setLocalCustomization?.(build.Id, cardCustomization)
+                            <Button onClick={async () => {
+                                let finalCustomization = cardCustomization
+                                    ? { ...cardCustomization }
+                                    : undefined
+
+                                // Persist pending image if one was dropped
+                                if (pendingImageFile && finalCustomization) {
+                                    const url = await saveImage(owner.Uid, build.Id, pendingImageFile)
+                                    console.log("Character URL saved", url)
+                                    finalCustomization.CharacterImageUrl = url
+                                    setCardCustomization?.(finalCustomization)
+                                    setPendingImageFile(null)
+                                }
+
+                                setLocalCustomization?.(build.Id, finalCustomization)
                                 setIsEditing?.(false)
                                 retry()
                             }}>Save</Button>
                             <Button variant="subtle" onClick={() => {
+                                // Discard pending image and restore previous customization
+                                setPendingImageFile(null)
                                 setCardCustomization?.(previousCustomizationRef.current)
 
                                 setIsEditing?.(false)
