@@ -3,10 +3,10 @@ import { useQueryParams } from "@/hooks/useQueryParams"
 import { Account } from "@interknot/types"
 import { Center, Group, Stack, Loader, Title, Text } from "@mantine/core"
 import { IconCheck } from "@tabler/icons-react"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 
-const REDIRECT_TIMEOUT = 5 * 1000
+const REDIRECT_TIMEOUT = 1000
 
 interface IAuthCallbackProps {
     title: string
@@ -61,7 +61,8 @@ const DiscordAuthCallback = () => {
                 .finally(() => {
                     setLoading(false)
                 })
-        } else {
+        } else if (!code && !authAttemptedRef.current) {
+            authAttemptedRef.current = true
             setError(new Error("No code provided"))
         }
     }, [code])
@@ -81,10 +82,7 @@ const DiscordAuthCallback = () => {
         }
 
         if (error) {
-            setStatus("Authentication failed, redirecting you back...")
-            setTimeout(() => {
-                navigate("/")
-            }, REDIRECT_TIMEOUT)
+            setStatus("Authentication failed, please contact developers if this issue persists.")
             return
         }
     }, [userData, error, loading, navigate])
