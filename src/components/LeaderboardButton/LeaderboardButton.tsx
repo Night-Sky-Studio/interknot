@@ -6,6 +6,7 @@ import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
 import { useMemo } from "react"
 import { nFormatter, toFixedCeil } from "@extensions/NumberExtensions"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 interface ILeaderboardButtonProps {
     id: number
@@ -32,7 +33,15 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
             case 2: return "Equipped weapon doesn't match leaderboard's weapon"
             default: return ""
         }
-    }, [type])
+    }, [type, getLocalString, weapon.Name, weapon.SecondaryStat.simpleName])
+
+    // FIXME: needs proper img replacing solution
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const agentIcon = useMemo(() => doro.length > 0 && doro.includes(agent.Id)
+        ? agent.CircleIconUrl.replace("enka.network", "cdn.interknot.space/aprilfools")
+        : agent.CircleIconUrl,
+    [doro, agent.Id, agent.CircleIconUrl])
 
     return (
         <Popover opened={opened} withArrow onDismiss={close}>
@@ -44,7 +53,7 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
                     }}>
                         <Group gap="4px" wrap="nowrap">
                             <Group className="lb-avatar" wrap="nowrap" gap="0">
-                                <Image src={agent.CircleIconUrl} alt={getLocalString(agent.Name)} />
+                                <Image src={agentIcon} alt={getLocalString(agent.Name)} />
                                 <Image src={weapon.ImageUrl} alt={getLocalString(weapon.Name)} />
                             </Group>
                             <Stack gap="0px" className="lb-info">

@@ -1,4 +1,4 @@
-import { getCharacters, getCharactersCount } from "@api/data"
+import { getCharacters, getCharactersCount, getTopStats } from "@api/data"
 import CritCell from "@components/cells/CritCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
 import PropertyCell from "@components/cells/PropertyCell"
@@ -8,13 +8,23 @@ import GameObject from "@components/GameObject/GameObject"
 import { useSettings } from "@components/SettingsProvider"
 import { ServerChip } from "@components/UserHeader/UserHeader"
 import { useQueryParams } from "@/hooks/useQueryParams"
-import { Character, Property, Build } from "@interknot/types"
-import { Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex } from "@mantine/core"
+import { Build } from "@interknot/types"
+import {
+    Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex,
+    Space
+} from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
-import { useState, useMemo } from "react"
+import React, { useState, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { useAsync } from "react-use"
+import LeaderboardProvider from "@components/LeaderboardProvider.tsx"
+import { DataProvider } from "@components/DataProvider.tsx"
+import type { ICardContext } from "@components/CharacterCard/CharacterCard.tsx"
+import CoreSkill from "@components/CoreSkill/CoreSkill.tsx"
+import Talents from "@components/Talents/Talents.tsx"
+import { DriveDisc } from "@components/DriveDisc/DriveDisc.tsx"
+import CardFooter from "@components/CardFooter/CardFooter.tsx"
 
 export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -37,26 +47,10 @@ export default function BuildsPage(): React.ReactElement {
 
     const mindscapeChip = (level: number) => {
         return (
-            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(level / 5 + 1) * 1}rem` }} data-level={level}>
+            <div className="chip mindscape-chip" style={{ padding: `0.125rem ${(level / 5 + 1)}rem` }} data-level={level}>
                 <Text fw={700}>{level}</Text>
             </div>
         )
-    }
-
-    // Extract up to 4 primary stats in the same way as before
-    const getTopStats = (c: Character): Property[] => {
-        const result: Property[] = []
-        let skippedStats = 0
-        for (const propId of (c.DisplayProps ?? [])) {
-            const stat = c.Stats.find((p) => p.Id === propId)
-            if (stat?.Value === 0) {
-                skippedStats++
-                if (c.DisplayProps.length - skippedStats >= 4) continue
-            }
-            if (result.length >= 4) break
-            if (stat) result.push(stat)
-        }
-        return result
     }
 
     const [page, setPage] = useState<number | undefined>(cursor === undefined ? 1 : undefined)
@@ -107,9 +101,9 @@ export default function BuildsPage(): React.ReactElement {
                                             name="EquipmentSuit_31000_name" /> drive discs equipped
                                 </Group>
                             </Anchor></li>
-                            <li><Anchor c="white" href="/builds?character_id=1261&disc_main_stats=23103" onClick={(e) => {
+                            <li><Anchor c="white" href="/builds?character_id=1261&main_stat_id=23103" onClick={(e) => {
                                 e.preventDefault()
-                                setQueryParams({ character_id: "1261", disc_main_stats: "23103" }, true)
+                                setQueryParams({ character_id: "1261", main_stat_id: "23103" }, true)
                             }}>
                                 <Group gap="0">
                                     Are <GameObject propId={23103} name="PenRatio" /> discs popular on
@@ -256,10 +250,57 @@ export default function BuildsPage(): React.ReactElement {
                                     }
                                 ]}
                                 records={builds}
-                                idAccessor="BuildId"
-                                // onRecordsPerPageChange={(l) => {
-                                //     setLimit(l)
-                                // }}
+                                idAccessor="Id"
+                                rowExpansion={{
+                                    allowMultiple: true,
+                                    content: ({ record: build }) => {
+                                        const characterAccentColor = () => {
+                                            switch (build.Character.Id) {
+                                                // case 1461: return character.Colors.Accent // Seed
+                                                case 1501: return build.Character.Colors.AccentExtra // Aria
+                                                default: return build.Character.Colors.Mindscape
+                                            }
+                                        }
+
+                                        return <LeaderboardProvider
+                                            buildId={build.Id}
+                                            characterId={build.Character.Id}>
+                                            <DataProvider data={{
+                                                owner: build.Owner!,
+                                                build: build
+                                            } satisfies ICardContext}>
+                                                <Stack gap="xs" m="md" w="100%" style={{
+                                                    "--accent": characterAccentColor(),
+                                                    "--mindscape": build.Character.Colors.Accent
+                                                }}>
+                                                    <Title order={4}>Talents</Title>
+                                                    <Group>
+                                                        <CoreSkill level={build.Character.SkillLevels.CoreSkill} />
+                                                        <Talents
+                                                            isRupture={build.Character.ProfessionType === "Rupture"}
+                                                            talentLevels={build.Character.SkillLevels}
+                                                            mindscapeLevel={build.Character.MindscapeLevel} />
+                                                    </Group>
+
+                                                    <Title order={4}>Drive Discs</Title>
+                                                    <Group w="100%" justify="space-evenly" gap="xs">
+                                                        {
+                                                            Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
+                                                                const disc = build.Character.DriveDisks.find(dd => dd.Slot === idx)
+                                                                return <DriveDisc key={`disc-${build.Id}-${idx}`}
+                                                                                  slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                                                            })
+                                                        }
+                                                    </Group>
+
+                                                    <Space h="md" />
+
+                                                    <CardFooter />
+                                                </Stack>
+                                            </DataProvider>
+                                        </LeaderboardProvider>
+                                    }}
+                                }
                             />
                             <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
                                 <div style={{ width: "25%" }} />

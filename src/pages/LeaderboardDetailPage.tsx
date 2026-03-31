@@ -6,7 +6,7 @@ import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, Ic
 import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
 import WeaponButton from "@components/WeaponButton"
-import { useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { LeaderboardEntry, Property } from "@interknot/types"
 import PropertyCell from "@components/cells/PropertyCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
@@ -21,7 +21,7 @@ import { ServerChip } from "@/components/UserHeader/UserHeader"
 import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
 import CoreSkill from "@/components/CoreSkill/CoreSkill"
 import { DataProvider } from "@/components/DataProvider"
-import { TooltipData } from "@/components/CharacterCard/CharacterCard"
+import { type ICardContext } from "@/components/CharacterCard/CharacterCard"
 import Talents from "@/components/Talents/Talents"
 import LeaderboardProvider from "@/components/LeaderboardProvider"
 import CardFooter from "@/components/CardFooter/CardFooter"
@@ -98,86 +98,6 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         }
         return result
     }
-
-    // const stats = useMemo(() => getDisplayStats(entry.Build.Character.DisplayProps, entry.FinalStats.BaseStats), [entry])
-
-    // const LeaderboardEntryRow = ({ user }: { user: LeaderboardEntry }) => {
-    //     const [isExpanded, { toggle }] = useDisclosure(false)
-    //     return (<>
-    //         <Table.Tr onClick={toggle}>
-    //             <Table.Td w="64px">{user.Rank}</Table.Td>
-    //             <Table.Td w="30%">
-    //                 <Group gap="sm" wrap="nowrap" w="fit-content">
-    //                     <Avatar src={user.Profile.ProfilePictureUrl} size="md" />
-    //                     <Anchor c="gray" href={`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`} onClick={(e) => {
-    //                         e.stopPropagation()
-    //                         e.preventDefault()
-    //                         navigate(`/user/${user.Profile.Uid}?openedId=${user.Character.Id}`)
-    //                     }}>{user.Profile.Nickname}</Anchor>
-    //                 </Group>
-    //             </Table.Td>
-    //             <WeaponCell weapon={user.Character.Weapon} compareWith={leaderboard?.Weapon} />
-    //             <DriveDiscsCell sets={user.Character.DriveDisksSet} />
-    //             <Table.Td w="160px" bg="rgba(0 0 0 / 15%)">
-    //                 <CritCell cr={user.FinalStats.BaseStats.find(p => p.Id === 20101)?.formatted?.replace("%", "") ?? ""}
-    //                     cd={user.Character.Stats.find(p => p.Id === 21101)?.formatted?.replace("%", "") ?? ""} 
-    //                     cv={user.Character.CritValue} />
-    //             </Table.Td>
-    //             {
-    //                 stats(user.Character.DisplayProps, user.FinalStats.BaseStats)
-    //                     .map(prop => <PropertyCell className="is-narrow" key={prop.Id} prop={prop} />)
-    //             }
-    //             <Table.Td w="128px" bg="rgba(0 0 0 / 25%)">
-    //                 <Text fz="12pt" fw={600}>{Math.round(user.TotalValue).toLocaleString()}</Text>
-    //             </Table.Td>
-    //         </Table.Tr>
-    //         <ExpandableRow opened={isExpanded}>
-    //             <Stack gap="xs" m="md">
-    //                 <Group gap="xs" align="center">
-    //                     <Title order={4}>Final calculated stats</Title>
-    //                     <Popover position="right" width="512px" withArrow withOverlay>
-    //                         <Popover.Dropdown>
-    //                             <Text>
-    //                                 These are the final stats before any damage calculations take place. 
-    //                                 They include all possible passives and bonuses as well as resistance shreds (such as weapon, drive disc set 4pc, and character passives) - either partially or with full uptime. 
-    //                                 For more details, check out the calculator 
-    //                                 <Text component="a" href="https://github.com/Night-Sky-Studio/interknot-calculator/wiki" target="_blank" c="blue"> wiki page.</Text>
-    //                             </Text>
-    //                         </Popover.Dropdown>
-    //                         <Popover.Target>
-    //                             <ActionIcon h="0.5rem" w="0.5rem" variant="light">
-    //                                 <IconQuestionMark size="1rem" />
-    //                             </ActionIcon>
-    //                         </Popover.Target>
-    //                     </Popover>
-    //                 </Group>
-                    
-    //                 <Group gap="xs">
-    //                     {user.FinalStats.CalculatedStats.filter(ss => ss.Value != 0).map(stat => {
-    //                         return (
-    //                             <Tooltip label={getLocalString(stat.simpleName)} key={stat.Id} portalProps={{ reuseTargetNode: true }}>
-    //                                 <PropertyCell className="final-stat" useDiv prop={stat} />
-    //                             </Tooltip>
-    //                         )
-    //                     })}
-    //                 </Group>
-
-    //                 <Space h="md" />
-
-    //                 <Title order={4}>Drive Discs</Title>
-    //                 <Group w="100%" justify="space-evenly" gap="xs">
-    //                     {
-    //                         Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
-    //                             const disc = user.Character.DriveDisks.find(dd => dd.Slot === idx)
-    //                             return <DriveDisc key={disc ? disc.Uid : user.Character.Id ^ idx} 
-    //                                 slot={disc ? disc.Slot : idx} disc={disc ?? null} />
-    //                         })
-    //                     }
-    //                 </Group>
-    //             </Stack>
-    //         </ExpandableRow>
-    //     </>)
-    // }
 
     const DistributionTooltip = ({ label, payload }: { label?: string, payload?: Record<string, any>[] }) => {
         if (!payload) return null;
@@ -302,8 +222,8 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             rightSection={rotationOpened ? <IconChevronUp /> : <IconChevronDown />}>
                                             <Title order={5}>Rotation</Title>
                                         </Button>
-                                        <ActionIcon variant="transparent" c="white" onClick={() => {
-                                            navigator.clipboard.writeText(
+                                        <ActionIcon variant="transparent" c="white" onClick={async () => {
+                                            await navigator.clipboard.writeText(
                                                 rotation
                                                     .map(r => r.join(" / "))
                                                     .join("\n")
@@ -325,9 +245,9 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                                 rotation.map((r, idx) => 
                                                     <Chip key={`${r.join(" ")}_${idx}`} checked={false}
                                                         radius="sm"
-                                                        onClick={(e) => {
+                                                        onClick={async (e) => {
                                                             e.stopPropagation()
-                                                            navigator.clipboard.writeText(r.join(" / "))
+                                                            await navigator.clipboard.writeText(r.join(" / "))
                                                             notifications.show({
                                                                 message: `Copied action "${r.join(" / ")}" to clipboard`,
                                                                 color: "blue",
@@ -499,19 +419,25 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                             ]}
                             rowExpansion={{
                                 allowMultiple: true,
-                                content: ({ record: entry }) => (
-                                    <LeaderboardProvider 
-                                        uid={entry.Build.Owner?.Uid ?? -1} 
+                                content: ({ record: entry }) => {
+                                    const characterAccentColor = () => {
+                                        switch (entry.Build.Character.Id) {
+                                            // case 1461: return character.Colors.Accent // Seed
+                                            case 1501: return entry.Build.Character.Colors.AccentExtra // Aria
+                                            default: return entry.Build.Character.Colors.Mindscape
+                                        }
+                                    }
+
+                                    return <LeaderboardProvider
+                                        buildId={entry.Build.Id}
                                         characterId={entry.Build.Character.Id}>
                                         <DataProvider data={{
-                                            charId: entry.Build.Character.Id,
-                                            charName: entry.Build.Character.Name,
-                                            uid: entry.Build.Owner?.Uid ?? -1,
-                                            weaponId: entry.Build.Character.Weapon?.Id ?? undefined
-                                        } satisfies TooltipData}>
+                                                owner: entry.Build.Owner!,
+                                                build: entry.Build
+                                            } satisfies ICardContext}>
                                             <Stack gap="xs" m="md" w="100%" style={{ 
-                                                "--accent": entry.Build.Character.Colors.Accent,
-                                                "--mindscape": entry.Build.Character.Colors.Mindscape
+                                                "--accent": characterAccentColor(),
+                                                "--mindscape": entry.Build.Character.Colors.Accent
                                             }}>
                                                 <Title order={4}>Talents</Title>
                                                 <Group>
@@ -570,7 +496,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             </Stack>
                                         </DataProvider> 
                                     </LeaderboardProvider>
-                                )}
+                                }}
                             }
                             records={leaderboardUsers}
                             idAccessor="Build.Id" />
@@ -610,8 +536,8 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                         <Pagination.First disabled={page === 1} />
                                         <Pagination.Previous disabled={page === 1} />
                                         <Button variant="filled" autoContrast>{page ?? "??"}</Button>
-                                        <Pagination.Next disabled={leaderboardUsersState.value?.hasNextPage === false} />
-                                        <Pagination.Last disabled={leaderboardUsersState.value?.hasNextPage === false} />
+                                        <Pagination.Next disabled={!leaderboardUsersState.value?.hasNextPage} />
+                                        <Pagination.Last disabled={!leaderboardUsersState.value?.hasNextPage} />
                                     </Group>
                                 </Pagination.Root>
                                 <Select w="128px"

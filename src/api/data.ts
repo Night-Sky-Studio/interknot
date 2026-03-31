@@ -15,7 +15,10 @@ import {
     ProfileInfo, 
     Property, 
     Result, 
-    url 
+    url,
+    match,
+    SimpleBuild,
+    Character
 } from "@interknot/types"
 
 interface IFilter {
@@ -38,13 +41,17 @@ export interface BackendState {
     version: string
     uptime: number
     currentDate: string
+    events: {
+        doro?: number[]
+    }
 }
 
-const dataUrl = process.env.NODE_ENV === "development"
-    ? "http://127.0.0.1:5100/"
-    : process.env.NODE_ENV === "preview"
-        ? "https://data-preview.interknot.space"
-        : "https://data.interknot.space"
+export const DATA_URL = match(process.env.NODE_ENV, [
+    ["development", "http://localhost:5100/"],
+    ["dev", "https://data-dev.interknot.space/"],
+    ["preview", "https://data-preview.interknot.space"],
+    () => "https://data.interknot.space"
+])
 
 // This should restore Property classes that's lost 
 // when converting from json
@@ -63,9 +70,25 @@ export function restoreProperties(obj: any): any {
     return obj
 }
 
-async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult<T>> {
+// Extract up to 4 primary stats in the same way as before
+export function getTopStats(c: Character): Property[] {
+    const result: Property[] = []
+    let skippedStats = 0
+    for (const propId of (c.DisplayProps ?? [])) {
+        const stat = c.Stats.find((p) => p.Id === propId)
+        if (stat?.Value === 0) {
+            skippedStats++
+            if (c.DisplayProps.length - skippedStats >= 4) continue
+        }
+        if (result.length >= 4) break
+        if (stat) result.push(stat)
+    }
+    return result
+}
+
+export async function req<T>(u: string, restoreProps: boolean = false, init?: RequestInit): Promise<IResult<T>> {
     // console.log(u)
-    let response = await fetch(u)
+    let response = await fetch(u, init)
     let result = await response.json() as IResult<T>
     if (response.status !== 200 || !result.success) {
         throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
@@ -79,9 +102,9 @@ async function get<T>(u: string, restoreProps: boolean = false): Promise<IResult
     return result
 }
 
-async function getCursored<T>(u: string, restoreProps: boolean = false): Promise<ICursoredResult<T>> {
+async function reqCursored<T>(u: string, restoreProps: boolean = false, init?: RequestInit): Promise<ICursoredResult<T>> {
     // console.log(u)
-    let response = await fetch(u)
+    let response = await fetch(u, init)
     let result = await response.json() as ICursoredResult<T>
     if (response.status !== 200 || !result.success) {
         throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
@@ -95,17 +118,18 @@ async function getCursored<T>(u: string, restoreProps: boolean = false): Promise
     return result
 }
 
+
 export async function searchUsers(query: string): Promise<IResult<ProfileInfo[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: "profile/search",
         query: { query }
     }))
 }
 
 export async function getProfile(uid: number, update: boolean = false): Promise<IResult<ProfileInfo>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `profile/${uid}`,
         query: { update: `${update}` }
     }))
@@ -120,8 +144,8 @@ export interface IQueryParams {
 }
 
 export async function getCharacters({ uid, cursor, limit, filter }: IQueryParams): Promise<ICursoredResult<Build>> {
-    return await getCursored(url({
-        base: dataUrl,
+    return await reqCursored(url({
+        base: DATA_URL,
         path: "characters",
         query: {
             uid: uid?.toString(),
@@ -129,11 +153,13 @@ export async function getCharacters({ uid, cursor, limit, filter }: IQueryParams
             limit: limit?.toString(),
             ...filter
         }
-    }), true)
+    }), true, {
+        credentials: "include" // session should be included
+    })
 }
 export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: "characters/count",
         query: {
             uid: uid?.toString(),
@@ -143,8 +169,8 @@ export async function getCharactersCount({ uid, hash }: { uid?: number, hash?: s
 }
 
 export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams): Promise<ICursoredResult<DriveDisc>> {
-    return await getCursored(url({
-        base: dataUrl,
+    return await reqCursored(url({
+        base: DATA_URL,
         path: "discs",
         query: {
             uid: uid?.toString(),
@@ -154,10 +180,9 @@ export async function getDriveDiscs({ uid, cursor, limit, filter }: IQueryParams
         }
     }), true)
 }
-
 export async function getDriveDiscsCount({ uid, hash }: { uid?: number, hash?: string }): Promise<IResult<number>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: "discs/count",
         query: {
             uid: uid?.toString(),
@@ -167,25 +192,32 @@ export async function getDriveDiscsCount({ uid, hash }: { uid?: number, hash?: s
 }
 
 export async function getUserLeaderboards(uid: number, update: boolean = false): Promise<IResult<Omit<BaseLeaderboardEntry, "RotationValue">[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `leaderboards/${uid}`,
         query: { update: `${update}` }
     }), true)
 }
-
+/** @deprecated */
 export async function getUserCharacterLeaderboards(
     uid: number, characterId: number
 ): Promise<IResult<Omit<LeaderboardEntry, "Build">[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `leaderboards/${uid}/character/${characterId}`
     }), true)
 }
+export async function getBuildLeaderboards(buildId: number): Promise<IResult<Omit<LeaderboardEntry, "Build">[]>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `leaderboards/character/${buildId}`
+    }), true)
+}
+
 
 export async function getLeaderboards({ filter }: IQueryParams, expand: boolean = false): Promise<IResult<LeaderboardList[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: "leaderboards",
         query: {
             ...filter,
@@ -193,21 +225,19 @@ export async function getLeaderboards({ filter }: IQueryParams, expand: boolean 
         }
     }), true)
 }
-
 export async function getLeaderboard(id: number): Promise<IResult<Leaderboard[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `/leaderboard/${id}`
     }), true)
 }
-
 export async function getLeaderboardUsers(leaderboardId: number, {
     cursor,
     limit = 20,
     filter
 }: IQueryParams): Promise<ICursoredResult<Omit<LeaderboardEntry, "Leaderboard">>> {
-    return await getCursored(url({
-        base: dataUrl,
+    return await reqCursored(url({
+        base: DATA_URL,
         path: `/leaderboard/${leaderboardId}/users`,
         query: {
             cursor,
@@ -216,18 +246,16 @@ export async function getLeaderboardUsers(leaderboardId: number, {
         }
     }), true)
 }
-
 export async function getLeaderboardUsersCount(leaderboardId: number, hash?: string): Promise<IResult<number>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `/leaderboard/${leaderboardId}/users/count`,
         query: { hash }
     }))
 }
-
 export async function getLeaderboardDmgDistribution(id: number): Promise<IResult<LeaderboardDistribution>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `/leaderboard/${id}/distribution`
     }), true)
 }
@@ -239,8 +267,8 @@ export interface CalcResponse {
 }
 
 export async function getCalc(uid: number, characterId: number): Promise<IResult<CalcResponse>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: `/calc`,
         query: {
             uid: uid.toString(),
@@ -252,7 +280,7 @@ export async function getCalc(uid: number, characterId: number): Promise<IResult
 export async function getStatus(): Promise<IResult<BackendState>> {
     try {
         let response = await fetch(url({
-            base: dataUrl,
+            base: DATA_URL,
             path: "/status"
         }))
 
@@ -266,8 +294,89 @@ export async function getStatus(): Promise<IResult<BackendState>> {
 }
 
 export async function getNews(): Promise<IResult<BelleMessage[]>> {
-    return await get(url({
-        base: dataUrl,
+    return await req(url({
+        base: DATA_URL,
         path: "/news"
     }))
+}
+
+type ProfileClaim = { userId: number, secret: string, createdAt: string }
+
+export function initProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
+    return req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/claim`,
+    }), false, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include"
+    })
+}
+export function getProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
+    return req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/claim`,
+    }), false, {
+        method: "GET",
+        credentials: "include"
+    })
+}
+
+export async function getUserBuilds(uid: number): Promise<IResult<SimpleBuild[]>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds`
+    }), false, {
+        credentials: "include"
+    })
+}
+export async function setBuildVisibility(uid: number, buildId: number, isHidden: boolean): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ isHidden }),
+        credentials: "include"
+    })
+}
+export async function setBuildName(uid: number, buildId: number, name: string | null): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name }),
+        credentials: "include"
+    })
+}
+export async function archiveBuild(uid: number, buildId: number, name: string | null): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name }),
+        credentials: "include"
+    })
+}
+export async function deleteBuild(uid: number, buildId: number): Promise<IResult<void>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/builds/${buildId}`
+    }), false, {
+        method: "DELETE",
+        credentials: "include"
+    })
 }

@@ -1,12 +1,24 @@
-import { BackgroundImage, Card, Group, Image, Stack, Title, Text, Paper, ColorSwatch, Portal, useMantineTheme, Space } from "@mantine/core"
+import {
+    Card,
+    ColorSwatch,
+    Group,
+    Image,
+    Overlay,
+    Paper,
+    Portal,
+    Space,
+    Stack,
+    Text,
+    Title,
+    useMantineTheme
+} from "@mantine/core"
 import { RadarChart } from "@mantine/charts"
-import { Character, match } from "@interknot/types"
 import "./CharacterCard.css"
-import { ProfessionIcon, ZenlessIcon, getRarityIcon } from "@icons/Icons"
+import { getRarityIcon, ProfessionIcon, ZenlessIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
-import { Weapon, Property } from "@interknot/types"
+import type { Build, DriveDiscSet, LeaderboardEntry, LeaderboardList, ProfileInfo } from "@interknot/types"
+import { match, Property, Weapon } from "@interknot/types"
 import React, { memo, useMemo, useRef, useState } from "react"
-import type { DriveDiscSet, LeaderboardList, LeaderboardEntry } from "@interknot/types"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { SubStat } from "@components/SubStat/SubStat"
@@ -21,12 +33,13 @@ import { useLeaderboards } from "../LeaderboardProvider"
 import { useCardSettings } from "../CardSettingsProvider"
 import CoreSkill from "@components/CoreSkill/CoreSkill"
 import Talents from "@components/Talents/Talents"
+import { Str } from "@icons/core"
+import CharacterImage from "./CharacterImage"
+import { useBackend } from "@components/BackendProvider.tsx"
 
-export interface TooltipData {
-    charId: number,
-    charName: string,
-    uid: number,
-    weaponId?: number
+export interface ICardContext {
+    owner: ProfileInfo
+    build: Build
 }
 
 function MindscapeIcons({ level, size }: { level: number, size?: number }): React.ReactElement {
@@ -34,33 +47,39 @@ function MindscapeIcons({ level, size }: { level: number, size?: number }): Reac
     const isActive = (lvl: number): string => (lvl <= level) ? "#fdf003" : "#4A4A4A"
 
     const { language } = useSettings()
-    const { charId } = useData<TooltipData>()
+    const { build } = useData<ICardContext>()
+
+    const charId = useMemo(() => build.Character.Id, [build.Character.Id])
 
     return (
         <Group gap="4px" h="100%" wrap="nowrap">
             <Mindscapes.Ms1 width={size} height={size} color={isActive(1)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={1} />
             <Mindscapes.Ms2 width={size} height={size} color={isActive(2)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={2} />
             <Mindscapes.Ms3 width={size} height={size} color={isActive(3)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={3} />
             <Mindscapes.Ms4 width={size} height={size} color={isActive(4)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={4} />
             <Mindscapes.Ms5 width={size} height={size} color={isActive(5)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={5} />
             <Mindscapes.Ms6 width={size} height={size} color={isActive(6)}
-                data-zzz-lang={language} data-zzz-type="constellation" 
+                data-zzz-lang={language} data-zzz-type="constellation"
                 data-zzz-id={charId} data-zzz-index={6} />
         </Group>
     )
 }
 
-function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }): React.ReactElement {
+function CharacterLevel({
+    level,
+    msLevel,
+    upgradeLevel
+}: { level: number, msLevel: number, upgradeLevel?: number }): React.ReactElement {
     const { getLevel } = useSettings()
     return (
         <Group gap="0" h="28px" align="center" wrap="nowrap">
@@ -70,6 +89,13 @@ function CharacterLevel({ level, msLevel }: { level: number, msLevel: number }):
             <div className="cc-mindscape">
                 <MindscapeIcons size={20} level={msLevel} />
             </div>
+            {upgradeLevel !== undefined && <>
+                <Space w="8px" />
+                <div className="cc-upgrade">
+                    <Str height={16} />
+                    <Text fz="16px" ml="2px" mb="3px" inline>{upgradeLevel + 1}</Text>
+                </div>
+            </>}
         </Group>
     )
 }
@@ -80,18 +106,19 @@ interface ICharacterNameProps {
     profession: string
     level: number
     msLevel: number
+    upgradeLevel?: number
 }
 
-function CharacterName({ name, element, profession, level, msLevel }: ICharacterNameProps): React.ReactElement {
-    const { getLocalString } = useSettings()
+function CharacterName({ name, element, profession, level, msLevel, upgradeLevel }: ICharacterNameProps): React.ReactElement {
     return (
         <Stack gap="0">
             <Group gap="4px" wrap="nowrap">
-                <Title order={1} fz="36px" className="cc-character-name">{getLocalString(name)}</Title>
+                <Title order={1} fz="36px" className="cc-character-name">{name}</Title>
                 <ZenlessIcon elementName={element} size={28} />
                 <ProfessionIcon name={profession} size={28} />
             </Group>
-            <CharacterLevel level={level} msLevel={msLevel}/>
+            <CharacterLevel level={level} msLevel={msLevel} upgradeLevel={upgradeLevel} />
+
         </Stack>
     )
 }
@@ -100,7 +127,7 @@ export interface ICharacterCardProps {
     ref?: React.Ref<HTMLDivElement>
     uid: number
     username: string
-    character: Character
+    build: Build
 }
 
 function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
@@ -121,11 +148,11 @@ function WeaponEngine({ weapon }: { weapon: Weapon }): React.ReactElement {
                 <div className="cc-weapon-icon">
                     <Image src={weapon.ImageUrl} p="4px"
                         data-zzz-type="weapon" data-zzz-lang={language}
-                        data-zzz-id={weapon.Id} data-zzz-level={weapon.Level} 
+                        data-zzz-id={weapon.Id} data-zzz-level={weapon.Level}
                         data-zzz-promote={weapon.BreakLevel} data-zzz-index={weapon.UpgradeLevel} />
                     <Image src={getRarityIcon(weapon.Rarity ?? 0)} alt={weapon.Rarity.toString()} />
                 </div>
-                <Stack gap="8px" justify="center"> 
+                <Stack gap="8px" justify="center">
                     <Title order={6} fz="20px">{getLocalString(weapon.Name)}</Title>
                     <Group gap="24px" align="flex-end" wrap="nowrap">
                         <Group gap="8px" wrap="nowrap">
@@ -184,7 +211,7 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
         return await getLeaderboardDmgDistribution(leaderboard.Id)
     }, [leaderboard.Id])
 
-    const graph = useMemo(() => graphState.value?.data, [graphState.value])
+    const graph = useMemo(() => graphState.value?.data, [graphState.value?.data])
 
     // useEffect(() => {
     //     console.log(graphState.loading, graphState.error, graphState.value)
@@ -198,13 +225,12 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
         if (!stat) {
             return -1
         }
-        const result = match(stat.FormatType, [
+        return match(stat.FormatType, [
             [0, () => stat.Value], // flat
             [1, () => stat.Value / 100], // percent
             [2, () => stat.Value / 10], // float
             () => stat.Value // default
         ])
-        return result
     }
 
     const filteredStats = useMemo(() => {
@@ -296,8 +322,8 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
 
                                 return (
                                     <Portal reuseTargetNode>
-                                        {active && 
-                                            <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{ 
+                                        {active &&
+                                            <Paper px="md" py="sm" withBorder shadow="md" radius="sm" style={{
                                                 position: "absolute",
                                                 left: x,
                                                 top: y,
@@ -309,21 +335,21 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                                                     {getLocalString(payload[0]?.payload?.prop?.simpleName ?? label)}
                                                 </Text>
                                                 <Stack gap="4px">
-                                                {payload.map((item: any, idx: number) => {
-                                                    let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
-                                                    let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
-                                                    return <Group key={item.name} justify="space-between" wrap="nowrap">
-                                                        <Group wrap="nowrap">
-                                                            <ColorSwatch color={item.color} size={16} />
+                                                    {payload.map((item: any, idx: number) => {
+                                                        let topOrCurrent = idx === 0 ? "Top 1%" : "Current"
+                                                        let topOrCurrentValue = idx === 0 ? item?.payload?.prop?.formatted : item?.payload?.currentProp?.formatted
+                                                        return <Group key={item.name} justify="space-between" wrap="nowrap">
+                                                            <Group wrap="nowrap">
+                                                                <ColorSwatch color={item.color} size={16} />
+                                                                <Text fz="sm">
+                                                                    {topOrCurrent}
+                                                                </Text>
+                                                            </Group>
                                                             <Text fz="sm">
-                                                                {topOrCurrent}
+                                                                {topOrCurrentValue}
                                                             </Text>
                                                         </Group>
-                                                        <Text fz="sm">
-                                                            {topOrCurrentValue}
-                                                        </Text>
-                                                    </Group>
-                                                })}
+                                                    })}
                                                 </Stack>
                                             </Paper>
                                         }
@@ -344,14 +370,14 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                             </div>
                             <Group className="cc-graph-lb" gap="4px">
                                 <Image h="22px" src={leaderboard.Weapon.ImageUrl}
-                                    data-zzz-type="weapon" data-zzz-lang={language} 
+                                    data-zzz-type="weapon" data-zzz-lang={language}
                                     data-zzz-id={leaderboard.Weapon.Id}
                                     data-zzz-level={60} data-zzz-promote={5} />
                                 <Title order={6} m="0" fz="14px">{leaderboard.Name}</Title>
                             </Group>
                         </Group>
                         <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
-                        {showRanking 
+                        {showRanking
                             ? <div className="cc-graph-lb">
                                 {entry.Rank} / {leaderboard.Total}
                             </div>
@@ -359,21 +385,27 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                         }
                     </Stack>
                 </Stack>
-            }   
+            }
         </div>
     )
 }
 
-export default function CharacterCard({ ref, uid, username, character }: ICharacterCardProps): React.ReactElement {
+export default function CharacterCard({ 
+    ref, uid, username, build
+}: ICharacterCardProps): React.ReactElement {
     const { context } = useCardSettings()
-    const { 
+    const {
         showSubstatsBreakdown,
         showUserInfo,
         showGraph,
         showCritValue,
-        selectedLeaderboardId
+        selectedLeaderboardId,
+        isEditing,
+        cardCustomization
     } = context ?? {}
-    
+
+    const character = useMemo(() => build.Character, [build.Character])
+
     const collectSubstats = useMemo((): [number, Property][] => {
         const result: [number, Property][] = []
         const substatValueMap: Record<number, number> = {}
@@ -402,30 +434,48 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
 
     const { entries, leaderboards, highlightId } = useLeaderboards()
 
-    const leaderboard = useMemo(() => leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, selectedLeaderboardId, highlightId])
-    const entry = useMemo(() => entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
+    const leaderboard = useMemo(() =>
+        leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, highlightId])
+    const entry = useMemo(() =>
+        entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
 
-    const characterAccentColor = useMemo(() => {
-        switch(character.Id) {
+    const characterAccentColor = () => {
+        if (cardCustomization?.AccentColor) {
+            return cardCustomization.AccentColor
+        }
+        switch (character.Id) {
             // case 1461: return character.Colors.Accent // Seed
+            case 1501: return character.Colors.AccentExtra // Aria
             default: return character.Colors.Mindscape
         }
-    }, [character.Id])
+    }
+
+    const { getLocalString } = useSettings()
+
+    // FIXME: needs proper img replacing solution
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
+
+    const characterImage = useMemo(() => {
+        const url = character.Skin ? character.Skin.ImageUrl : character.ImageUrl
+        return doroMode && doro.includes(character.Id) ? url.replace("enka.network", "cdn.interknot.space/aprilfools") : url
+    }, [character.ImageUrl, character.Skin, doro, character.Id])
 
     return (
         <Card className="character-card" ref={ref} withBorder shadow="xs" m="xs" p="0px"
-            style={{ "--accent": characterAccentColor, "--mindscape": character.Colors.Accent, accentColor: characterAccentColor }}>
-            <Card.Section m="0" className="cc-grid">
-                <div className="cc-image">
-                    <BackgroundImage mt="xs" className="character-img" src={character.Skin ? character.Skin.ImageUrl : character.ImageUrl} />
-                </div>
+            style={{ "--accent": characterAccentColor(), "--mindscape": character.Colors.Accent, accentColor: characterAccentColor() }}>
+            <Card.Section m="0" className="cc-grid" data-editing={isEditing}>
+                <CharacterImage src={characterImage} />
+                <Overlay className="cc-editing-overlay" zIndex={110} />
                 <div className="cc-info-bg" />
                 <div className="cc-cell cc-info">
                     <Group gap="8px" wrap="nowrap">
-                        <CharacterName name={character.Name} 
+                        <CharacterName name={build.Name ?? getLocalString(character.Name)}
                             element={character.ElementTypes[0]} profession={character.ProfessionType}
-                            level={character.Level} msLevel={character.MindscapeLevel} />
-                        {character.Weapon && <WeaponEngine weapon={character.Weapon} /> }
+                            level={character.Level} msLevel={character.MindscapeLevel}
+                            upgradeLevel={character.UpgradeLevel ?? undefined} />
+                        {character.Weapon && <WeaponEngine weapon={character.Weapon} />}
                     </Group>
                 </div>
                 <div className="cc-vignette" />
@@ -451,7 +501,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                         {
                             Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
                                 const disc = character.DriveDisks.find(dd => dd.Slot === idx)
-                                return <DriveDisc key={disc ? `disc-${disc.Uid}` : `disc-${character.Id * idx}`} 
+                                return <DriveDisc key={disc ? `disc-${disc.Uid}-${idx}` : `disc-${character.Id}-${idx}`}
                                     slot={disc ? disc.Slot : idx} disc={disc ?? null} />
                             })
                         }
@@ -464,7 +514,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                             <Text fz="20px" fw={600} mt="-2px">{username}</Text>
                         </Stack>
                     }
-                    {showCritValue && 
+                    {showCritValue &&
                         <Title className="cc-cv" fz="18px" mt="-4px" component="span">
                             CV {character.CritValue}
                         </Title>
@@ -473,7 +523,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
                 {showGraph &&
                     <div className="cc-leaderboard">
                         {leaderboard && entry &&
-                            <StatsGraph leaderboard={leaderboard} entry={entry} color={character.Colors.Mindscape} />
+                            <StatsGraph leaderboard={leaderboard} entry={entry} color={characterAccentColor()} />
                         }
                     </div>
                 }
@@ -481,7 +531,7 @@ export default function CharacterCard({ ref, uid, username, character }: ICharac
             {showSubstatsBreakdown === true &&
                 <Card.Section m="0px" className="cc-sub-stats">
                     {
-                        collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap" 
+                        collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap"
                             data-count={"*".repeat(cnt + 1)} key={ss.Id}>
                             <Text fz="16px">{cnt}</Text>
                             <SubStat stat={ss} />
