@@ -300,7 +300,7 @@ export async function getNews(): Promise<IResult<BelleMessage[]>> {
     }))
 }
 
-type ProfileClaim = { userId: number, secret: string, createdAt: Date }
+type ProfileClaim = { userId: number, secret: string, createdAt: string }
 
 export function initProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
     return req(url({
