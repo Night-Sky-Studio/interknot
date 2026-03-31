@@ -1,7 +1,7 @@
 import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Burger, NavLink, useMantineTheme, Tooltip, Alert, Avatar, Divider } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
-import { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { ProfileInfo } from "@interknot/types"
 import "./Shell.css"
 import enkaImg from "@assets/Enka.svg"
@@ -48,13 +48,6 @@ export default function Shell(): React.ReactElement {
     useEffect(() => {
         setSelectedUser(uid ?? "")
     }, [uid])
-
-    useEffect(() => {
-        const onboarding = localStorage.getItem("first-time")
-        if (!onboarding) {
-            open()
-        }
-    })
 
     const [navBarOpened, { toggle }] = useDisclosure(false)
     const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] = useDisclosure(false)
