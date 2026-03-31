@@ -21,5 +21,4 @@
     background-repeat: no-repeat;
     background-position: var(--img-y, top 10px) var(--img-x, center);
     background-size: var(--img-scale, cover);
-    background-origin: center;
 }
