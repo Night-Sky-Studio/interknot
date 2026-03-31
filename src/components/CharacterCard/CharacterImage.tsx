@@ -160,6 +160,8 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                 }
             }
         }
+
+        return c
     }
 
     // One-time init: load saved customization from localStorage
