@@ -23,5 +23,9 @@ export function DataProvider<T>({ children, data }: { children: React.ReactNode,
 }
 
 export function useData<T>(): T {
-    return React.useContext(DataContext) as T
+    const context = React.useContext(DataContext)
+    if (!context) {
+        throw new Error("useData must be used within a DataProvider")
+    }
+    return context as T
 }
