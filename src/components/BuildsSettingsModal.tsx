@@ -1,6 +1,6 @@
 import { archiveBuild, deleteBuild, getUserBuilds, setBuildName, setBuildVisibility } from "@/api/data"
 import { ActionIcon, Alert, Avatar, Button, Card, Center, Flex, Group, Input, LoadingOverlay, Modal, Popover, ScrollArea, Stack, Text, TextInput, Tooltip } from "@mantine/core"
-import { useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { useAsyncRetry } from "react-use"
 import { useSettings } from "./SettingsProvider"
 import {
@@ -25,11 +25,13 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
     const { retry: reloadBuilds, ...buildsState } = useAsyncRetry(async () => {
         return await getUserBuilds(uid)
     })
-    const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data, search])
+    const builds = useMemo(() => buildsState.value?.data,
+        [buildsState.value?.data, search])
 
     const filteredBuilds = useMemo(() => {
         if (search === "") return builds ?? []
-        return builds?.filter(b => (b.Name ?? getLocalString(b.Character.Name)).includes(search)) ?? []
+        return builds?.filter(b => (b.Name ?? getLocalString(b.Character.Name))
+            .toLowerCase().includes(search.toLowerCase())) ?? []
     }, [builds, search])
 
     const resolveBuildName = (build: SimpleBuild, name: string) => match(name, [
