@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react"
 import { useDisclosure } from "@mantine/hooks"
 import { match, type SimpleBuild } from "@interknot/types"
+import ConfirmationPopover from "@components/ConfirmationPopover.tsx"
 
 interface IBuildsSettingsModalProps {
     uid: number
@@ -50,6 +51,7 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
 
         const [isEditing, setIsEditing] = useState(false)
         const [tempBuildName, setTempBuildName] = useState<string>("")
+        const [deletePopoverOpened, { open: openDeletePopover, close: closeDeletePopover }] = useDisclosure(false)
 
         return (
             <Card shadow="sm" radius="xl" mb="xs">
@@ -140,17 +142,25 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
                                         </Stack>
                                     </Popover.Dropdown>
                                 </Popover>
-                                <Tooltip label="Delete Build" withinPortal>
-                                    <ActionIcon onClick={async () => {
+                                <ConfirmationPopover
+                                    opened={deletePopoverOpened}
+                                    onClose={closeDeletePopover}
+                                    label="Delete Build"
+                                    description="Are you sure you want to delete this build? This action cannot be undone."
+                                    onConfirm={async () => {
                                         setIsLoading(true)
                                         await deleteBuild(uid, build.Id)
                                         setIsLoading(false)
                                         onBuildsUpdated?.()
                                         reloadBuilds()
-                                    }}>
-                                        <IconTrashFilled />
-                                    </ActionIcon>
-                                </Tooltip>
+                                    }}
+                                    maw="256px">
+                                    <Tooltip label="Delete Build" withinPortal>
+                                        <ActionIcon color="red" onClick={openDeletePopover}>
+                                            <IconTrashFilled/>
+                                        </ActionIcon>
+                                    </Tooltip>
+                                </ConfirmationPopover>
                             </ActionIcon.Group>
                         </Group>
                     </Flex>

@@ -1,6 +1,6 @@
 import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title, Switch, Popover, Flex, ActionIcon, Loader, Text, TextInput, Tooltip, LoadingOverlay } from "@mantine/core"
 import { IconArchiveFilled, IconDeviceFloppy, IconDownload, IconEye, IconEyeOff, IconPencil, IconPhotoCog, IconSettings, IconTools, IconTrashFilled, IconX } from "@tabler/icons-react"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import BuildInfo from "@components/BuildInfo/BuildInfo"
 import "./CardFooter.css"
 import { useDisclosure } from "@mantine/hooks"
@@ -14,6 +14,7 @@ import { useAuth } from "@components/AuthProvider"
 import { ICardContext } from "../CharacterCard/CharacterCard"
 import { match, type SimpleBuild } from "@interknot/types"
 import { archiveBuild, deleteBuild, setBuildName, setBuildVisibility } from "@/api/data"
+import ConfirmationPopover from "@components/ConfirmationPopover.tsx"
 
 const data = ["Damage distribution", "Sub-stat priority", "Leaderboards"]
 
@@ -73,6 +74,8 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
         ["", () => null], // empty string
         () => name
     ])
+
+    const [deletePopoverOpened, { open: openDeletePopover, close: closeDeletePopover }] = useDisclosure(false)
 
     return (<>        
         <Center w="100%">
@@ -272,11 +275,20 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                                 </Stack>
                                             </Popover.Dropdown>
                                         </Popover>
-                                        <Button variant="filled" leftSection={<IconTrashFilled />} color="red" 
-                                            onClick={async () => {
-                                                await deleteBuild(owner.Uid, build.Id)
-                                                onBuildsUpdated?.()
-                                            }}>Delete Build</Button>
+                                            <ConfirmationPopover
+                                                opened={deletePopoverOpened}
+                                                onClose={closeDeletePopover}
+                                                label="Delete Build"
+                                                description="Are you sure you want to delete this build? This action cannot be undone."
+                                                onConfirm={async () => {
+                                                    await deleteBuild(owner.Uid, build.Id)
+                                                    onBuildsUpdated?.()
+                                                }}
+                                                maw="256px">
+                                                <Button variant="filled" leftSection={<IconTrashFilled />} color="red"
+                                                        onClick={openDeletePopover}>Delete Build</Button>
+                                            </ConfirmationPopover>
+
                                         </Button.Group>
                                         {/* </SimpleGrid> */}
                                     </Stack>
