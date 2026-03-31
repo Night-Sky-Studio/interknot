@@ -79,7 +79,7 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                                 <UnstyledButton key={p.Uid} className="profile-button"
                                     onClick={() => {
                                         close()
-                                        navigate(`user/${p.Uid}`)
+                                        navigate(`profile/${p.Uid}`)
                                     }}>
                                     <UserHeaderMemoized user={p} variant="compact" />
                                 </UnstyledButton>
