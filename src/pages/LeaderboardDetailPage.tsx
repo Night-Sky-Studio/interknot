@@ -419,8 +419,16 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                             ]}
                             rowExpansion={{
                                 allowMultiple: true,
-                                content: ({ record: entry }) => (
-                                    <LeaderboardProvider 
+                                content: ({ record: entry }) => {
+                                    const characterAccentColor = () => {
+                                        switch (entry.Build.Character.Id) {
+                                            // case 1461: return character.Colors.Accent // Seed
+                                            case 1501: return entry.Build.Character.Colors.AccentExtra // Aria
+                                            default: return entry.Build.Character.Colors.Mindscape
+                                        }
+                                    }
+
+                                    return <LeaderboardProvider
                                         buildId={entry.Build.Id}
                                         characterId={entry.Build.Character.Id}>
                                         <DataProvider data={{
@@ -428,8 +436,8 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                                 build: entry.Build
                                             } satisfies ICardContext}>
                                             <Stack gap="xs" m="md" w="100%" style={{ 
-                                                "--accent": entry.Build.Character.Colors.Accent,
-                                                "--mindscape": entry.Build.Character.Colors.Mindscape
+                                                "--accent": characterAccentColor(),
+                                                "--mindscape": entry.Build.Character.Colors.Accent
                                             }}>
                                                 <Title order={4}>Talents</Title>
                                                 <Group>
@@ -488,7 +496,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             </Stack>
                                         </DataProvider> 
                                     </LeaderboardProvider>
-                                )}
+                                }}
                             }
                             records={leaderboardUsers}
                             idAccessor="Build.Id" />
