@@ -147,21 +147,18 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
     }, [isEditing])
 
     // FIXME: needs proper img replacing solution
-    // const { state } = useBackend()
-    // const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
-    // const doroMode = useMemo(() => doro.length > 0, [doro.length])
     const { state } = useBackend()
     const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
     const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
     const adjustForDoro = (c?: CardCustomization) => {
         if (doroMode && doro.includes(build.Character.Id)) {
-            console.log("doro mode")
-            return c === undefined ? {
+            console.log("doro")
+            return c ?? {
                 CharacterTransform: {
                     Scale: 0.6
                 }
-            } : c
+            }
         }
     }
 
@@ -174,19 +171,6 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         const c = getLocalCustomization?.(build.Id)
         setCardCustomization?.(adjustForDoro(c))
     }, [isInitialized, setCardCustomization, getLocalCustomization, build])
-
-    // Doro override: apply scale whenever doroMode activates
-    // useEffect(() => {
-    //     if (!doroMode || !doro.includes(build.Character.Id)) return
-    //
-    //     updateCardCustomization?.((prev) => ({
-    //         ...prev,
-    //         CharacterTransform: {
-    //             ...(prev?.CharacterTransform ?? {}),
-    //             Scale: prev?.CharacterTransform?.Scale ?? 0.6
-    //         }
-    //     }))
-    // }, [doroMode])
 
     const { value: savedImg, loading: imgLoading, retry } = useAsyncRetry(async () =>
         await getSavedImageUrl(owner.Uid, build.Id), [owner.Uid, build.Id])
