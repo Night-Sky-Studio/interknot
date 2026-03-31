@@ -308,6 +308,9 @@ export function initProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
         path: `profile/${uid}/claim`,
     }), false, {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
         credentials: "include"
     })
 }
@@ -361,6 +364,9 @@ export async function archiveBuild(uid: number, buildId: number, name: string | 
         path: `profile/${uid}/builds/${buildId}`
     }), false, {
         method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({ name }),
         credentials: "include"
     })
