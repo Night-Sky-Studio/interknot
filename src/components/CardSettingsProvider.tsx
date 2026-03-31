@@ -106,17 +106,28 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     }
 
     const getLocalCustomization = (buildId: number): CardCustomization | undefined => {
-        const localData = localStorage.getItem("customizations")
-        const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
+        try {
+            const localData = localStorage.getItem("customizations")
 
-        return customizations[buildId]
+            const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
+
+            return customizations[buildId]
+        } catch (e) {
+            console.error(e)
+            return undefined
+        }
     }
 
     const setLocalCustomization = (buildId: number, customization: CardCustomization | undefined) => {
-        const localData = localStorage.getItem("customizations")
-        const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
-        customizations[buildId] = customization
-        localStorage.setItem("customizations", JSON.stringify(customizations))
+        try {
+            const localData = localStorage.getItem("customizations")
+            const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
+            customizations[buildId] = customization
+            localStorage.setItem("customizations", JSON.stringify(customizations))
+        } catch (e) {
+            console.error(e)
+            localStorage.setItem("customizations", JSON.stringify({}))
+        }
     }
 
     const setCardRef = (ref: React.RefObject<HTMLDivElement | null>) => {
