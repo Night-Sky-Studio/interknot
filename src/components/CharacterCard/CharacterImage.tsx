@@ -177,9 +177,15 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
 
     // Pending image state: holds a dropped file until Save is confirmed
     const [pendingImageFile, setPendingImageFile] = useState<File | null>(null)
-    const pendingImageUrl = useMemo(() => {
-        if (!pendingImageFile) return undefined
-        return URL.createObjectURL(pendingImageFile)
+    const [pendingImageUrl, setPendingImageUrl] = useState<string | undefined>(undefined)
+    useEffect(() => {
+        if (!pendingImageFile) {
+            setPendingImageUrl(undefined)
+            return
+        }
+        const url = URL.createObjectURL(pendingImageFile)
+        setPendingImageUrl(url)
+        return () => URL.revokeObjectURL(url)
     }, [pendingImageFile])
 
     // ... existing code ...
@@ -296,7 +302,6 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
 
                          const scaleF = cardScale ?? 1
                          const flipped = fgTransform?.Flipped ? -1 : 1
-                         console.log(scaleF)
 
                          const mouseX = (e.clientX - lastPos.current.x) * scaleF * flipped,
                              mouseY = (e.clientY - lastPos.current.y) * scaleF

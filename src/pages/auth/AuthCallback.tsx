@@ -44,12 +44,15 @@ const DiscordAuthCallback = () => {
     const authAttemptedRef = useRef(false)
     
     useEffect(() => {
-        if (code && !authAttemptedRef.current) {
+        if (typeof code === "string" && !authAttemptedRef.current) {
             authAttemptedRef.current = true
             setLoading(true)
 
-            authenticateDiscord(code as string)
+            authenticateDiscord(code)
                 .then((account) => {
+                    if (!account.success || !account.data) {
+                        throw new Error("Discord authentication failed")
+                    }
                     setSuccess(true)
                     setError(null)
                     setUserData(account.data)
