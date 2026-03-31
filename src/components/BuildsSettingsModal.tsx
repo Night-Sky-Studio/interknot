@@ -128,6 +128,10 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
                                                 onBuildsUpdated?.()
                                                 reloadBuilds()
                                             }}>Archive Build</Button>
+                                            <Button variant="light" onClick={() => {
+                                                setArchivedBuildName("")
+                                                close()
+                                            }}>Cancel</Button>
                                         </Stack>
                                     </Popover.Dropdown>
                                 </Popover>

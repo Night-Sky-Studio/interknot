@@ -187,7 +187,10 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                     <Stack>
                                         <Flex justify="space-between" align="center" w="100%">
                                             <Title order={3} miw="384px">Build Settings</Title>
-                                            <ActionIcon variant="subtle" onClick={closeBuildSettings}><IconX /></ActionIcon>
+                                            <ActionIcon variant="subtle" onClick={() => {
+                                                closeBuildSettings()
+                                                close()
+                                            }}><IconX /></ActionIcon>
                                         </Flex>
                                         <Flex gap="xs" align="center">
                                             <Text fw="bold">Name</Text>
