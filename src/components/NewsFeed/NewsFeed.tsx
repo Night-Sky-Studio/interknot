@@ -1,12 +1,12 @@
 import { useAsync } from "react-use"
 import { getNews } from "@api/data"
-import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Code, List, Modal, BackgroundImage } from "@mantine/core"
+import { Card, Center, Text, Loader, Title, Stack, Flex, Avatar, Group, Anchor, Image, Modal, BackgroundImage } from "@mantine/core"
 import { memo, useMemo, useState } from "react"
 import { BelleMessage } from "@interknot/types"
-import Markdown from "react-markdown"
 import "./NewsFeed.css"
 import { useDisclosure } from "@mantine/hooks"
 import { useNavigate } from "react-router"
+import { MantineMd } from "@components/MantineMd.tsx"
 
 function Message({ msg }: { msg: BelleMessage }) {
     const [opened, { open, close }] = useDisclosure(false)
@@ -43,22 +43,9 @@ function Message({ msg }: { msg: BelleMessage }) {
                         </Anchor>
                         <Text c="dimmed" size="xs">{new Date(msg.CreatedAt).toUTCString()}</Text>
                     </Group>
-                    <Markdown components={{
-                        a: ({ node, ...props }) => <Anchor {...props} />,
-                        h1: ({ node, ...props }) => <Title c="white" order={3} {...props} />,
-                        h2: ({ node, ...props }) => <Title c="white" order={4} {...props} />,
-                        h3: ({ node, ...props }) => <Title c="white" order={5} {...props} />,
-                        h4: ({ node, ...props }) => <Title c="white" order={6} {...props} />,
-                        h5: ({ node, ...props }) => <Title c="white" order={6} {...props} />,
-                        h6: ({ node, ...props }) => <Title c="white" order={6} {...props} />,
-                        p: ({ node, ...props }) => <Text c="white" {...props} />,
-                        img: ({ node, ...props }) => <Image {...props} />,
-                        code: ({ node, ...props }) => <Code {...props} />,
-                        ul: ({ node, ...props }) => <List ml="md" {...props} />,
-                        li: ({ node, ...props }) => <List.Item c="white" {...props} />
-                    }}>
+                    <MantineMd>
                         { msg.CleanContent.replace("@everyone", "").trim() }
-                    </Markdown>
+                    </MantineMd>
                     <Group>
                         {
                             msg.Attachments.map((attachment, index) => 

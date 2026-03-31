@@ -358,12 +358,14 @@ export default function Shell(): React.ReactElement {
                         <Anchor href="https://enka.network" target="_blank">
                             <Image src={enkaImg} alt="Powered by Enka.Network" w={256} />
                         </Anchor>
-                        {/* <Anchor href="https://github.com/Night-Sky-Studio" target="_blank">
-                            <Image src={nssImg} alt="Developed by Night Sky Studio" w={256} />
-                        </Anchor> */}
                         <Text fs="italic">Welcome to New Eridu - where humanity rises anew!</Text>
                         <Stack gap="0" align="end" w={256}>
-                            <Anchor c="dimmed">Privacy Policy</Anchor>
+                            <Anchor c="dimmed" onClick={(e) => {
+                                e.preventDefault()
+                                navigate("/privacy")
+                            }} href="/privace" target="_blank">
+                                Privacy Policy
+                            </Anchor>
                             <Anchor c="dimmed" onClick={openCreditsModal}>Credits</Anchor>
                         </Stack>
                     </Flex>

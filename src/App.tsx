@@ -23,6 +23,7 @@ import BuildsPage from "./pages/BuildsPage"
 import AuthCallback from "./pages/auth/AuthCallback"
 import { AuthProvider } from "./components/AuthProvider"
 import KitchenSinkPage from "./pages/KitchenSinkPage"
+import { PrivacyPage } from "@pages/PrivacyPage.tsx"
 
 const ProfilePageWrapper = () => {
     const { uid } = useParams()
@@ -72,6 +73,8 @@ export default function App() {
                                                 <Route path="leaderboards" element={<LeaderboardsPage />} />
                                                 <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
                                                 <Route path="kitchen" element={<KitchenSinkPage />} />
+
+                                                <Route path="privacy" element={<PrivacyPage />} />
 
                                                 <Route path="/auth/discord/callback" element={<AuthCallback.Discord />} />
                                             </Route>

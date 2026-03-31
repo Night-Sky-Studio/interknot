@@ -2,7 +2,7 @@ import { useParams } from "react-router"
 import { UserHeaderMemoized } from "@components/UserHeader/UserHeader"
 import { ActionIcon, Button, Group, Stack, Loader, Center, Collapse, Alert, Text, Tooltip, Image, LoadingOverlay, Card, Flex, Pagination, Select, Popover, Code } from "@mantine/core"
 import { useDisclosure, useLocalStorage } from "@mantine/hooks"
-import { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
 import {
     getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getProfileClaim,
@@ -223,8 +223,8 @@ export default function ProfilePage(): React.ReactElement {
                             <Text fz="xl" fw="bold">Time left to bind this profile: </Text>
                             <Code fz="xl" fw="bold">
                                 <Timer title="" isEnabled={true}
-                                    endTime={Math.floor((Math.abs(new Date(profileClaim.createdAt).getTime() + 7200 * 1000 - new Date().getTime())) / 1000)}
-                                    onTimerEnd={refreshClaim} />
+                                       endTime={Math.max(0, Math.floor((new Date(profileClaim.createdAt).getTime() + 7200 * 1000 - Date.now()) / 1000))}
+                                       onTimerEnd={refreshClaim} />
                             </Code>
                         </Group>
                         <Group gap="xs">

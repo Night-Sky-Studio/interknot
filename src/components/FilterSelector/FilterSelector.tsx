@@ -13,7 +13,7 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
     const { getLocalString } = useSettings()
     const { state: backend } = useBackend()
 
-    const filters = useMemo(() => backend?.data?.filters, [backend?.data])
+    const filters = useMemo(() => backend?.data?.filters, [backend?.data?.filters])
 
     const excludedColumns = useMemo(() => new Set(exclude ?? []), [exclude])
 
@@ -68,8 +68,8 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
         }
         {
             filterGroups &&
-                <MultiSelect 
-                    data={filterGroups} 
+                <MultiSelect
+                    data={filterGroups}
                     renderOption={({ option }) => {
                         const item = filterItems.get(option.value)
                         if (!item) return <Text>{ option.value }</Text>
@@ -85,23 +85,23 @@ export default function FilterSelector({ value, exclude, onFilterApply }: IFilte
                     }}
                     maxDropdownHeight={480}
                     styles={{
-                        dropdown: { 
+                        dropdown: {
                             boxShadow: "rgba(0 0 0 / 50%) 0px 16px 32px",
                             zIndex: 100,
-                        }, 
+                        },
                         group: {
                             marginBottom: "0.5rem"
                         },
-                        groupLabel: { 
-                            fontWeight: 600, 
+                        groupLabel: {
+                            fontWeight: 600,
                             color: "white",
                             fontSize: "1.25rem"
-                        } 
+                        }
                     }}
-                    placeholder="Filter by..." 
-                    searchable 
-                    clearable 
-                    hidePickedOptions 
+                    placeholder="Filter by..."
+                    searchable
+                    clearable
+                    hidePickedOptions
                     value={value}
                     onChange={onFilterApply} />
         }

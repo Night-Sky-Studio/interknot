@@ -9,12 +9,22 @@ import { useSettings } from "@components/SettingsProvider"
 import { ServerChip } from "@components/UserHeader/UserHeader"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { Build } from "@interknot/types"
-import { Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex } from "@mantine/core"
+import {
+    Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex,
+    Space
+} from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
-import { useState, useMemo } from "react"
+import React, { useState, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { useAsync } from "react-use"
+import LeaderboardProvider from "@components/LeaderboardProvider.tsx"
+import { DataProvider } from "@components/DataProvider.tsx"
+import type { ICardContext } from "@components/CharacterCard/CharacterCard.tsx"
+import CoreSkill from "@components/CoreSkill/CoreSkill.tsx"
+import Talents from "@components/Talents/Talents.tsx"
+import { DriveDisc } from "@components/DriveDisc/DriveDisc.tsx"
+import CardFooter from "@components/CardFooter/CardFooter.tsx"
 
 export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -91,9 +101,9 @@ export default function BuildsPage(): React.ReactElement {
                                             name="EquipmentSuit_31000_name" /> drive discs equipped
                                 </Group>
                             </Anchor></li>
-                            <li><Anchor c="white" href="/builds?character_id=1261&disc_main_stats=23103" onClick={(e) => {
+                            <li><Anchor c="white" href="/builds?character_id=1261&main_stat_id=23103" onClick={(e) => {
                                 e.preventDefault()
-                                setQueryParams({ character_id: "1261", disc_main_stats: "23103" }, true)
+                                setQueryParams({ character_id: "1261", main_stat_id: "23103" }, true)
                             }}>
                                 <Group gap="0">
                                     Are <GameObject propId={23103} name="PenRatio" /> discs popular on
@@ -240,10 +250,57 @@ export default function BuildsPage(): React.ReactElement {
                                     }
                                 ]}
                                 records={builds}
-                                idAccessor="BuildId"
-                                // onRecordsPerPageChange={(l) => {
-                                //     setLimit(l)
-                                // }}
+                                idAccessor="Id"
+                                rowExpansion={{
+                                    allowMultiple: true,
+                                    content: ({ record: build }) => {
+                                        const characterAccentColor = () => {
+                                            switch (build.Character.Id) {
+                                                // case 1461: return character.Colors.Accent // Seed
+                                                case 1501: return build.Character.Colors.AccentExtra // Aria
+                                                default: return build.Character.Colors.Mindscape
+                                            }
+                                        }
+
+                                        return <LeaderboardProvider
+                                            buildId={build.Id}
+                                            characterId={build.Character.Id}>
+                                            <DataProvider data={{
+                                                owner: build.Owner!,
+                                                build: build
+                                            } satisfies ICardContext}>
+                                                <Stack gap="xs" m="md" w="100%" style={{
+                                                    "--accent": characterAccentColor(),
+                                                    "--mindscape": build.Character.Colors.Accent
+                                                }}>
+                                                    <Title order={4}>Talents</Title>
+                                                    <Group>
+                                                        <CoreSkill level={build.Character.SkillLevels.CoreSkill} />
+                                                        <Talents
+                                                            isRupture={build.Character.ProfessionType === "Rupture"}
+                                                            talentLevels={build.Character.SkillLevels}
+                                                            mindscapeLevel={build.Character.MindscapeLevel} />
+                                                    </Group>
+
+                                                    <Title order={4}>Drive Discs</Title>
+                                                    <Group w="100%" justify="space-evenly" gap="xs">
+                                                        {
+                                                            Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
+                                                                const disc = build.Character.DriveDisks.find(dd => dd.Slot === idx)
+                                                                return <DriveDisc key={`disc-${build.Id}-${idx}`}
+                                                                                  slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                                                            })
+                                                        }
+                                                    </Group>
+
+                                                    <Space h="md" />
+
+                                                    <CardFooter />
+                                                </Stack>
+                                            </DataProvider>
+                                        </LeaderboardProvider>
+                                    }}
+                                }
                             />
                             <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
                                 <div style={{ width: "25%" }} />
