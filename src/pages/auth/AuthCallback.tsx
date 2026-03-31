@@ -75,7 +75,7 @@ const DiscordAuthCallback = () => {
         if (userData) {
             setStatus("Authenticated successfully, redirecting you back...")
             setTimeout(() => {
-                navigate("/")
+                window.location.href = "/"
                 window.location.reload()
             }, REDIRECT_TIMEOUT)
             return
