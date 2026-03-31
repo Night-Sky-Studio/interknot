@@ -33,11 +33,10 @@ import {
 // import { useAuth } from "@components/AuthProvider" // TODO: upload
 import { useData } from "@components/DataProvider"
 import { ICardContext } from "./CharacterCard"
-import { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { type CardCustomization, type Transform } from "@interknot/types"
-import { useAsync } from "react-use"
+import { useAsync, useAsyncRetry } from "react-use"
 import { useBackend } from "@components/BackendProvider.tsx"
-// import { useBackend } from "@components/BackendProvider.tsx"
 
 interface ICharacterImageProps {
     src: string
@@ -189,7 +188,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
     //     }))
     // }, [doroMode])
 
-    const { value: savedImg, loading: imgLoading } = useAsync(async () =>
+    const { value: savedImg, loading: imgLoading, retry } = useAsyncRetry(async () =>
         await getSavedImageUrl(owner.Uid, build.Id), [owner.Uid, build.Id])
 
     const fgTransform = cardCustomization?.CharacterTransform
@@ -439,6 +438,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                                       const url = await saveImage(owner.Uid, build.Id, files[0])
                                       console.log("Character URL", url)
                                       setCardCustomization?.({ ...cardCustomization, CharacterImageUrl: url })
+                                      retry()
                                   }}>
                             <DropzoneContent title="Drag or click to change the image" img={fgImg}/>
                         </Dropzone>
@@ -456,6 +456,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                             setCardCustomization?.(undefined)
                             setLocalCustomization?.(build.Id, undefined)
                             await deleteSavedImage(owner.Uid, build.Id)
+                            retry()
                             // setPos({ x: 0, y: 0 })
                         }}>Reset</Button>
                         <Group gap="xs">
@@ -463,11 +464,13 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                                 // setCardCustomization?.(currentCustomization)
                                 setLocalCustomization?.(build.Id, cardCustomization)
                                 setIsEditing?.(false)
+                                retry()
                             }}>Save</Button>
                             <Button variant="subtle" onClick={() => {
                                 setCardCustomization?.(previousCustomizationRef.current)
 
                                 setIsEditing?.(false)
+                                retry()
                             }}>Cancel</Button>
                         </Group>
                     </Flex>
