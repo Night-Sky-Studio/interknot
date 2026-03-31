@@ -3,7 +3,10 @@ import { ActionIcon, Alert, Avatar, Button, Card, Center, Flex, Group, Input, Lo
 import { useMemo, useState } from "react"
 import { useAsyncRetry } from "react-use"
 import { useSettings } from "./SettingsProvider"
-import { IconArchiveFilled, IconDeviceFloppy, IconEye, IconEyeOff, IconPencil, IconStarFilled, IconTrashFilled } from "@tabler/icons-react"
+import {
+    IconArchiveFilled, IconDeviceFloppy, IconEye,
+    IconEyeClosed, IconPencil, IconStarFilled, IconTrashFilled
+} from "@tabler/icons-react"
 import { useDisclosure } from "@mantine/hooks"
 import { match, type SimpleBuild } from "@interknot/types"
 
@@ -100,7 +103,7 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
                                         onBuildsUpdated?.()
                                         reloadBuilds()
                                     }}>
-                                        {build.IsPublic ? <IconEyeOff /> : <IconEye />}
+                                        {build.IsPublic ? <IconEye /> : <IconEyeClosed />}
                                     </ActionIcon>
                                 </Tooltip>
                                 <Popover withArrow withOverlay opened={isPopoverOpened} onClose={close}>
