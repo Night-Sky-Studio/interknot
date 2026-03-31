@@ -435,7 +435,7 @@ export default function CharacterCard({
     const { entries, leaderboards, highlightId } = useLeaderboards()
 
     const leaderboard = useMemo(() =>
-        leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, highlightId])
+        leaderboards.find(lb => lb.Id === (selectedLeaderboardId ?? highlightId)), [leaderboards, highlightId, selectedLeaderboardId])
     const entry = useMemo(() =>
         entries.find(e => e.Leaderboard.Id === leaderboard?.Id), [entries, leaderboard?.Id])
 
