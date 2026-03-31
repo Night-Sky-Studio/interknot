@@ -296,7 +296,7 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                          const target = e.currentTarget
                          const bounds = target.getBoundingClientRect()
 
-                         const scaleF = 1 + (cardScale ?? 1)
+                         const scaleF = cardScale ?? 1
                          const flipped = fgTransform?.Flipped ? -1 : 1
                          console.log(scaleF)
 
