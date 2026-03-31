@@ -363,7 +363,7 @@ export default function Shell(): React.ReactElement {
                             <Anchor c="dimmed" onClick={(e) => {
                                 e.preventDefault()
                                 navigate("/privacy")
-                            }} href="/privace" target="_blank">
+                            }} href="/privacy" target="_blank">
                                 Privacy Policy
                             </Anchor>
                             <Anchor c="dimmed" onClick={openCreditsModal}>Credits</Anchor>
