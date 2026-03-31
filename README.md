@@ -1,8 +1,9 @@
-# <img src="public/favicon.svg#gh-dark-mode-only" width="96px" /> <img src="public/favicon.svg#gh-light-mode-only" width="96px" /> Inter-Knot
+# <img src="public/favicon.svg#gh-dark-mode-only" alt="logo" width="96px" /> <img src="public/favicon.svg#gh-light-mode-only" alt="logo" width="96px" /> Inter-Knot
 
 ##### A place for proxies to share their agents' builds. Zenless Zone Zero leaderboards project.
 
 ## License
+
 ```
     Copyright (C) 2025  Night Sky Studio (Konstantin Romanets)
 
@@ -19,4 +20,5 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ```
+
 For more details, see the [full license text](https://www.gnu.org/licenses/gpl-3.0.txt).
