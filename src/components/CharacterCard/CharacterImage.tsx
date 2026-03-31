@@ -165,7 +165,6 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
     const isInitialized = useRef(false)
     useEffect(() => {
         if (isInitialized.current) return
-        if (!state?.data) return
 
         const c = getLocalCustomization?.(build.Id)
         setCardCustomization?.(c)
