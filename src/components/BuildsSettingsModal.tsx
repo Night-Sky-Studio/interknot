@@ -175,6 +175,23 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
             <Modal.Content>
                 <Modal.Header>
                     <Modal.Title>Builds Settings</Modal.Title>
+                    <Popover withArrow withOverlay position="right">
+                        <Popover.Target>
+                            <ActionIcon ml="xs" variant="light">?</ActionIcon>
+                        </Popover.Target>
+                        <Popover.Dropdown maw="512px">
+                            <Stack>
+                                <Text>
+                                    <b>Primary builds</b> are the builds you have in your profile showcase.
+                                    These will always be updated with the latest data from the game.
+                                </Text>
+                                <Text>
+                                    You can <b>Archive builds</b> to make a snapshot of your current
+                                    build that won't be updated anymore.
+                                </Text>
+                            </Stack>
+                        </Popover.Dropdown>
+                    </Popover>
                     <Modal.CloseButton />
                 </Modal.Header>
                 <Modal.Body p="0">

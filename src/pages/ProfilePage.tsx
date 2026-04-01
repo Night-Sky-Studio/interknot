@@ -306,7 +306,7 @@ export default function ProfilePage(): React.ReactElement {
                                         </Flex>
                                     </Popover.Dropdown>
                                 </Popover>
-                                : <Tooltip label="Lock profile updates" withinPortal>
+                                : <Tooltip label="TODO: Lock profile updates" withinPortal>
                                         <ActionIcon onClick={() => {
                                             // TODO: send lock to backend
                                         }}  disabled>
@@ -327,9 +327,11 @@ export default function ProfilePage(): React.ReactElement {
                             </ActionIcon>
                         </Tooltip>
                         {account && isClaimed &&
-                            <ActionIcon onClick={openBuildsSettings}>
-                                <IconSettingsFilled />
-                            </ActionIcon>
+                            <Tooltip label="Builds Settings" withinPortal>
+                                <ActionIcon onClick={openBuildsSettings}>
+                                    <IconSettingsFilled />
+                                </ActionIcon>
+                            </Tooltip>
                         }
                     </Group>
                     <Stack gap="0px" align="center">
