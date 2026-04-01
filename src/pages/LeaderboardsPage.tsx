@@ -7,6 +7,7 @@ import { useNavigate } from "react-router"
 import { Team } from "@components/Team/Team"
 import WeaponButton from "@components/WeaponButton"
 import { useMemo } from "react"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -16,6 +17,10 @@ export default function LeaderboardsPage(): React.ReactElement {
     })
 
     const leaderboards = useMemo(() => leaderboardsState.value?.data, [leaderboardsState.value])
+
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
     return (<>
         <title>Leaderboards | Inter-Knot</title>
@@ -62,6 +67,12 @@ export default function LeaderboardsPage(): React.ReactElement {
                         </Table.Thead>
                         <Table.Tbody>
                             {leaderboards?.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
+                                // FIXME: needs proper img replacing solution
+                                const url = leaderboard.Character.CircleIconUrl
+                                const src = doroMode && doro.includes(leaderboard.Character.Id)
+                                    ? url.replace("enka.network", "cdn.interknot.space/aprilfools")
+                                    : url
+
                                 return (
                                     <Table.Tr key={leaderboard.Id} onClick={() => {
                                         navigate(`/leaderboards/${leaderboard.Id}`)
@@ -71,7 +82,7 @@ export default function LeaderboardsPage(): React.ReactElement {
                                             <Group gap="xs">
                                                 <ZenlessIcon size={24} elementName={leaderboard.Character.ElementTypes[0]} />
                                                 <ProfessionIcon size={24} name={leaderboard.Character.ProfessionType} />
-                                                <Image h="32px" src={leaderboard.Character.CircleIconUrl} alt={leaderboard.Character.Name} />               
+                                                <Image h="32px" src={src} alt={leaderboard.Character.Name} />
                                                 {leaderboard.FullName}
                                             </Group>
                                         </Table.Td>

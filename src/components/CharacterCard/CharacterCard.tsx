@@ -445,7 +445,7 @@ export default function CharacterCard({
         }
         switch (character.Id) {
             // case 1461: return character.Colors.Accent // Seed
-            case 1501: return character.Colors.AccentExtra // Aria
+            // case 1501: return character.Colors.Mindscape // Aria
             default: return character.Colors.Mindscape
         }
     }

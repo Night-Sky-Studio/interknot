@@ -275,19 +275,19 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                                 </Stack>
                                             </Popover.Dropdown>
                                         </Popover>
-                                            <ConfirmationPopover
-                                                opened={deletePopoverOpened}
-                                                onClose={closeDeletePopover}
-                                                label="Delete Build"
-                                                description="Are you sure you want to delete this build? This action cannot be undone."
-                                                onConfirm={async () => {
-                                                    await deleteBuild(owner.Uid, build.Id)
-                                                    onBuildsUpdated?.()
-                                                }}
-                                                maw="256px">
-                                                <Button variant="filled" leftSection={<IconTrashFilled />} color="red"
-                                                        onClick={openDeletePopover}>Delete Build</Button>
-                                            </ConfirmationPopover>
+                                        <ConfirmationPopover
+                                            opened={deletePopoverOpened}
+                                            onClose={closeDeletePopover}
+                                            label="Delete Build"
+                                            description="Are you sure you want to delete this build? This action cannot be undone."
+                                            onConfirm={async () => {
+                                                await deleteBuild(owner.Uid, build.Id)
+                                                onBuildsUpdated?.()
+                                            }}
+                                            maw="256px">
+                                            <Button variant="filled" leftSection={<IconTrashFilled />} color="red"
+                                                    onClick={openDeletePopover}>Delete Build</Button>
+                                        </ConfirmationPopover>
 
                                         </Button.Group>
                                         {/* </SimpleGrid> */}

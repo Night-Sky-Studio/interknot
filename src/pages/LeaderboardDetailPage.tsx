@@ -26,6 +26,7 @@ import Talents from "@/components/Talents/Talents"
 import LeaderboardProvider from "@/components/LeaderboardProvider"
 import CardFooter from "@/components/CardFooter/CardFooter"
 import FilterSelector from "@/components/FilterSelector/FilterSelector"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -143,6 +144,10 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     }, [leaderboard?.Rotation])
 
     const [rotationOpened, { toggle: toggleRotation }] = useDisclosure(false)
+
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
     return (<>
         <title>{`${leaderboard?.FullName ?? "Loading..."} | Inter-Knot`}</title>
@@ -348,17 +353,23 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                         {
                                             accessor: "Build.Name",
                                             title: "Build name",
-                                            render: (entry) => (
-                                                <Group gap="sm" wrap="nowrap">
-                                                    <Image src={entry.Build.Character.Skin 
-                                                        ? entry.Build.Character.Skin.CircleIconUrl 
-                                                        : entry.Build.Character.CircleIconUrl} h="32px" />
-                                                    <Text c={entry.Build.Name !== undefined ? "white" : "dimmed"}
-                                                        style={{ whiteSpace: "nowrap" }}>
-                                                            { entry.Build.Name ?? getLocalString(entry.Build.Character.Name) }
-                                                    </Text>
-                                                </Group>
-                                            )
+                                            render: (entry) => {
+                                                // FIXME: needs proper img replacing solution
+                                                const url = entry.Build.Character.Skin ? entry.Build.Character.Skin.CircleIconUrl : entry.Build.Character.CircleIconUrl
+                                                const src = doroMode && doro.includes(entry.Build.Character.Id)
+                                                    ? url.replace("enka.network", "cdn.interknot.space/aprilfools")
+                                                    : url
+
+                                                return (
+                                                    <Group gap="sm" wrap="nowrap">
+                                                        <Image src={src} h="32px" />
+                                                        <Text c={entry.Build.Name !== undefined ? "white" : "dimmed"}
+                                                            style={{ whiteSpace: "nowrap" }}>
+                                                                { entry.Build.Name ?? getLocalString(entry.Build.Character.Name) }
+                                                        </Text>
+                                                    </Group>
+                                                )
+                                            }
                                         },
                                         { 
                                             accessor: "Build.Character.DriveDisksSet",
@@ -423,7 +434,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     const characterAccentColor = () => {
                                         switch (entry.Build.Character.Id) {
                                             // case 1461: return character.Colors.Accent // Seed
-                                            case 1501: return entry.Build.Character.Colors.AccentExtra // Aria
+                                            // case 1501: return entry.Build.Character.Colors.AccentExtra // Aria
                                             default: return entry.Build.Character.Colors.Mindscape
                                         }
                                     }

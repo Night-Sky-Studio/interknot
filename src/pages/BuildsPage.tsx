@@ -25,6 +25,7 @@ import CoreSkill from "@components/CoreSkill/CoreSkill.tsx"
 import Talents from "@components/Talents/Talents.tsx"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc.tsx"
 import CardFooter from "@components/CardFooter/CardFooter.tsx"
+import { useBackend } from "@components/BackendProvider.tsx"
 
 export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -60,6 +61,10 @@ export default function BuildsPage(): React.ReactElement {
     }, [buildsState.value?.totalCountHash])
 
     const totalCount = useMemo(() => totalCountState.value?.data, [totalCountState.value?.data])
+
+    const { state } = useBackend()
+    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
     return <>
         <title>Builds | Inter-Knot</title>
@@ -186,17 +191,23 @@ export default function BuildsPage(): React.ReactElement {
                                             {
                                                 accessor: "Name",
                                                 title: "Name",
-                                                render: (b) => (
-                                                    <Group gap="sm" wrap="nowrap">
-                                                        <Image src={b.Character.Skin 
-                                                            ? b.Character.Skin.CircleIconUrl 
-                                                            : b.Character.CircleIconUrl} h="32px" />
-                                                        <Text c={b.Name !== undefined ? "white" : "dimmed"}
-                                                            style={{ whiteSpace: "nowrap" }}>
-                                                            { b.Name ?? getLocalString(b.Character.Name) }
-                                                        </Text>
-                                                    </Group>
-                                                )
+                                                render: (b) => {
+                                                    // FIXME: needs proper img replacing solution
+                                                    const url = b.Character.Skin ? b.Character.Skin.CircleIconUrl : b.Character.CircleIconUrl
+                                                    const src = doroMode && doro.includes(b.Character.Id)
+                                                        ? url.replace("enka.network", "cdn.interknot.space/aprilfools")
+                                                        : url
+
+                                                    return (
+                                                        <Group gap="sm" wrap="nowrap">
+                                                            <Image src={src} h="32px" />
+                                                            <Text c={b.Name !== undefined ? "white" : "dimmed"}
+                                                                style={{ whiteSpace: "nowrap" }}>
+                                                                { b.Name ?? getLocalString(b.Character.Name) }
+                                                            </Text>
+                                                        </Group>
+                                                    )
+                                                }
                                             },
                                             { 
                                                 accessor: "Character.MindscapeLevel",
@@ -257,7 +268,7 @@ export default function BuildsPage(): React.ReactElement {
                                         const characterAccentColor = () => {
                                             switch (build.Character.Id) {
                                                 // case 1461: return character.Colors.Accent // Seed
-                                                case 1501: return build.Character.Colors.AccentExtra // Aria
+                                                // case 1501: return build.Character.Colors.AccentExtra // Aria
                                                 default: return build.Character.Colors.Mindscape
                                             }
                                         }
