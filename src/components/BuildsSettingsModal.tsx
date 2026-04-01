@@ -182,7 +182,7 @@ export default function BuildsSettingsModal({ uid, opened, onBuildsUpdated, onCl
                         <Popover.Dropdown maw="512px">
                             <Stack>
                                 <Text>
-                                    <b>Primary builds</b> are the builds you have in your profile showcase.
+                                    <b>Primary builds</b> are the builds you have in your in-game profile showcase.
                                     These will always be updated with the latest data from the game.
                                 </Text>
                                 <Text>
