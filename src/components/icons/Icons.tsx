@@ -122,7 +122,9 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     33300: ["#ffbf2c", "#ec8b02"],      // Dawn's Bloom
     33400: ["#1aaea3", "#4d53b9"],      // Moonlight Lullaby
     33500: ["#201a11", "#ff8158", "#c35244"],   // White Water Ballad 
-    33600: ["#fe6f95", "#ffb4ba"]       // Shining Aria
+    33600: ["#fe6f95", "#ffb4ba"],      // Shining Aria
+    33700: ["#1e61b5", "#328ed5"],      // Bunny in Wonderlan
+    33800: ["#0707c2", "#6e6eff", "#381ecb"]    // Notes From the Chained
 }
 
 export function getDriveDiscGradient(id: number) {
