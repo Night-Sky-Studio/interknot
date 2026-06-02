@@ -1,7 +1,28 @@
-import { ActionIcon, AppShell, Button, Container, Flex, Group, Title, Text, Image, Anchor, Tabs, Modal, Stack, Burger, NavLink, useMantineTheme, Tooltip, Alert, Avatar, Divider } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconLogin, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
+import {
+    ActionIcon,
+    AppShell,
+    Button,
+    Container,
+    Flex,
+    Group,
+    Title,
+    Text,
+    Image,
+    Anchor,
+    Tabs,
+    Modal,
+    Stack,
+    Burger,
+    NavLink,
+    Tooltip,
+    Alert,
+    Avatar,
+    Divider,
+    useMantineTheme,
+} from '@mantine/core'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from "react"
 import { ProfileInfo } from "@interknot/types"
 import "./Shell.css"
 import enkaImg from "@assets/Enka.svg"
@@ -53,6 +74,16 @@ export default function Shell(): React.ReactElement {
     const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] = useDisclosure(false)
 
     const [creditsModalOpened, { open: openCreditsModal, close: closeCreditsModal }] = useDisclosure(false)
+
+    useEffect(() => {
+        const previous = document.body.style.overflow
+        if (navBarOpened) {
+            document.body.style.overflow = 'hidden'
+        }
+        return () => {
+            document.body.style.overflow = previous
+        }
+    }, [navBarOpened])
 
     // FIXME: better backend state management
     const { state } = useBackend()
@@ -236,6 +267,14 @@ export default function Shell(): React.ReactElement {
             </AppShell.Header>
 
             <AppShell.Aside>
+                <AccountButton variant="navlink" loginClick={openLoginModal}
+                    onAccountModalClose={toggle}/>
+                <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
+                    navigate("/settings")
+                    toggle()
+                }} />
+
+                <Title m="sm" order={4}>Navigation</Title>
                 <NavLink label="Leaderboards" leftSection={<IconTrophyFilled />}
                     variant="filled"
                     autoContrast
@@ -252,14 +291,6 @@ export default function Shell(): React.ReactElement {
                         navigate("/builds")
                         toggle()
                     }} />
-                <NavLink label="Log in" leftSection={<IconLogin />} onClick={() => {
-                    openLoginModal()
-                    toggle()
-                }} />
-                <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
-                    navigate("/settings")
-                    toggle()
-                }} />
 
                 {users.length !== 0 && <>
                     <Title m="sm" order={4}>Users</Title>

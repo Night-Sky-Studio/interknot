@@ -1,4 +1,18 @@
-import { Text, Avatar, Button, Group, Modal, PolymorphicComponentProps, Stack, Title, Loader, type ButtonProps, UnstyledButton } from "@mantine/core"
+import {
+    Text,
+    Avatar,
+    Button,
+    Group,
+    Modal,
+    PolymorphicComponentProps,
+    Stack,
+    Title,
+    Loader,
+    type ButtonProps,
+    UnstyledButton,
+    NavLink,
+    NavLinkProps
+} from "@mantine/core"
 // import { useData } from "@components/DataProvider"
 import { IconBrandDiscordFilled, IconBrandPatreonFilled, IconLogin, IconLogout, IconUser } from "@tabler/icons-react"
 import { useAuth } from "@components/AuthProvider"
@@ -8,16 +22,43 @@ import SupporterFlair from "../SupporterFlair/SupporterFlair"
 import { UserHeaderMemoized } from "../UserHeader/UserHeader"
 import { useNavigate } from "react-router"
 
-interface ILoginButtonProps extends PolymorphicComponentProps<"button", ButtonProps> {
+interface ILoginButtonProps extends PolymorphicComponentProps<"button", ButtonProps & NavLinkProps> {
     loginClick?: () => void
+    onAccountModalClose?: () => void
+    variant?: "button" | "navlink"
 }
 
-export default function AccountButton({ loginClick, ...props }: ILoginButtonProps) {
+export default function AccountButton({ loginClick, onAccountModalClose, variant = "button", ...props }: ILoginButtonProps) {
     const { account, loading } = useAuth()
 
     const [opened, { open, close }] = useDisclosure(false)
+    const doClose = () => {
+        onAccountModalClose?.()
+        close()
+    }
 
     const navigate = useNavigate()
+
+    const ButtonVariant = (props: ButtonProps) => {
+        return account
+            ? <Button {...props} onClick={open}
+                      pl="4px" pr="md"
+                      leftSection={
+                          <Avatar src={account.ProfilePictureUrl}
+                                  size="sm" style={{ outline: "1px solid black" }} />
+                      }>
+                {account.Username}
+            </Button>
+            : <Button {...props} onClick={loginClick} leftSection={<IconLogin />}>Log in</Button>
+    }
+
+    const NavLinkVariant = () => {
+        return account
+            ? <NavLink onClick={open} leftSection={
+                <Avatar src={account.ProfilePictureUrl} size="sm" style={{ outline: "1px solid black" }} />
+            } label={account.Username} />
+            : <NavLink onClick={loginClick} leftSection={<IconLogin />} label="Log in" />
+    }
 
     return (<>
         <Modal.Root opened={opened} onClose={close}>
@@ -78,7 +119,7 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
                             account?.ClaimedProfiles?.map((p) => 
                                 <UnstyledButton key={p.Uid} className="profile-button"
                                     onClick={() => {
-                                        close()
+                                        doClose()
                                         navigate(`/profile/${p.Uid}`)
                                     }}>
                                     <UserHeaderMemoized user={p} variant="compact" />
@@ -91,17 +132,10 @@ export default function AccountButton({ loginClick, ...props }: ILoginButtonProp
         </Modal.Root>
         {
             loading 
-                ? <Loader /> 
-                : account
-                    ? <Button {...props} onClick={open} 
-                        pl="4px" pr="md"
-                        leftSection={
-                            <Avatar src={account.ProfilePictureUrl} 
-                                size="sm" style={{ outline: "1px solid black" }} />
-                        }>
-                        {account.Username}
-                    </Button>
-                    : <Button {...props} onClick={loginClick} leftSection={<IconLogin />}>Log in</Button>
+                ? <Loader />
+                : variant === "navlink"
+                    ? <NavLinkVariant />
+                    : <ButtonVariant {...props} />
         }
     </>)
 }
