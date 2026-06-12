@@ -19,6 +19,7 @@ import {
     Avatar,
     Divider,
     useMantineTheme,
+    ScrollArea,
 } from '@mantine/core'
 import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
@@ -267,51 +268,53 @@ export default function Shell(): React.ReactElement {
             </AppShell.Header>
 
             <AppShell.Aside>
-                <AccountButton variant="navlink" loginClick={openLoginModal}
-                    onAccountModalClose={toggle}/>
-                <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
-                    navigate("/settings")
-                    toggle()
-                }} />
-
-                <Title m="sm" order={4}>Navigation</Title>
-                <NavLink label="Leaderboards" leftSection={<IconTrophyFilled />}
-                    variant="filled"
-                    autoContrast
-                    active={location.pathname.includes("leaderboards")}
-                    onClick={() => {
-                        navigate("/leaderboards")
-                        toggle()
-                    }} />
-                <NavLink label="Builds" leftSection={<IconUsers />}
-                    variant="filled"
-                    autoContrast
-                    active={location.pathname.includes("builds")}
-                    onClick={() => {
-                        navigate("/builds")
+                <ScrollArea>
+                    <AccountButton variant="navlink" loginClick={openLoginModal}
+                        onAccountModalClose={toggle}/>
+                    <NavLink label="Settings" leftSection={<IconSettings />} onClick={() => {
+                        navigate("/settings")
                         toggle()
                     }} />
 
-                {users.length !== 0 && <>
-                    <Title m="sm" order={4}>Users</Title>
-                    {
-                        users.map(u => <NavLink key={u.Uid} label={u.Nickname}
-                            variant="filled"
-                            autoContrast
-                            leftSection={favoriteUsers.includes(u.Uid) ? <IconStarFilled size="16px" /> : undefined}
-                            active={`${u.Uid}` === selectedUser}
-                            onClick={() => {
-                                navigate(`/profile/${u.Uid}`)
-                                toggle()
-                            }} />)
+                    <Title m="sm" order={4}>Navigation</Title>
+                    <NavLink label="Leaderboards" leftSection={<IconTrophyFilled />}
+                        variant="filled"
+                        autoContrast
+                        active={location.pathname.includes("leaderboards")}
+                        onClick={() => {
+                            navigate("/leaderboards")
+                            toggle()
+                        }} />
+                    <NavLink label="Builds" leftSection={<IconUsers />}
+                        variant="filled"
+                        autoContrast
+                        active={location.pathname.includes("builds")}
+                        onClick={() => {
+                            navigate("/builds")
+                            toggle()
+                        }} />
+
+                    {users.length !== 0 && <>
+                        <Title m="sm" order={4}>Users</Title>
+                        {
+                            users.map(u => <NavLink key={u.Uid} label={u.Nickname}
+                                variant="filled"
+                                autoContrast
+                                leftSection={favoriteUsers.includes(u.Uid) ? <IconStarFilled size="16px" /> : undefined}
+                                active={`${u.Uid}` === selectedUser}
+                                onClick={() => {
+                                    navigate(`/profile/${u.Uid}`)
+                                    toggle()
+                                }} />)
+                        }
+                    </>
                     }
-                </>
-                }
 
-                <Title m="sm" order={4}>Links</Title>
-                <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
-                <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
-                <NavLink label="GitHub" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
+                    <Title m="sm" order={4}>Links</Title>
+                    <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
+                    <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
+                    <NavLink label="GitHub" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
+                </ScrollArea>
             </AppShell.Aside>
 
             <AppShell.Main>
