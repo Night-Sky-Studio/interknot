@@ -23,6 +23,7 @@ const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVG
     "FireFrost": Elements.Firefrost,
     "AuricEther": Elements.AuricEther,
     "ZhenZhenAssault": Elements.HonedEdge,
+    "Wind": Elements.Wind,
 }
 
 const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
@@ -47,6 +48,7 @@ const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SV
     31701: Elements.Ice, 31703: Elements.Ice, 31705: Elements.Ice, 
     31801: Elements.Elec, 31803: Elements.Elec, 31805: Elements.Elec, 
     31901: Elements.Ether, 31903: Elements.Ether, 31905: Elements.Ether,
+    32301: Elements.Wind, 32303: Elements.Wind, 32305: Elements.Wind,
 }
 
 interface IZenlessIconProps {
@@ -124,7 +126,9 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     33500: ["#201a11", "#ff8158", "#c35244"],   // White Water Ballad 
     33600: ["#fe6f95", "#ffb4ba"],      // Shining Aria
     33700: ["#1e61b5", "#328ed5"],      // Bunny in Wonderlan
-    33800: ["#0707c2", "#6e6eff", "#381ecb"]    // Notes From the Chained
+    33800: ["#0707c2", "#6e6eff", "#381ecb"],   // Notes From the Chained
+    33900: ["#a7baff", "#435dac"], // Wuthering Salon
+    34000: ["#0f141e", "#2c48c3", "#c5b47f"], // The Sky Ablaze
 }
 
 export function getDriveDiscGradient(id: number) {

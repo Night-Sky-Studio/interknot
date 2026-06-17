@@ -86,6 +86,8 @@ const ShortPropertyNameMap: Record<number, string> = {
     31803: "Electric DMG",
     31901: "Ether DMG",
     31903: "Ether DMG",
+    32301: "Wind DMG",
+    32303: "Wind DMG",
     12301: "Sheer"
 }
 

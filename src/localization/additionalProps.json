@@ -4,5 +4,6 @@
     "AddedDamagePenRatio_Fire": "Fire RES PEN",
     "AddedDamagePenRatio_Ice": "Ice RES PEN",
     "AddedDamagePenRatio_Elec": "Electric RES PEN",
-    "AddedDamagePenRatio_Ether": "Ether RES PEN"
+    "AddedDamagePenRatio_Ether": "Ether RES PEN",
+    "AddedDamagePenRatio_Wind": "Wind RES PEN"
 }
