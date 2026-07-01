@@ -1,16 +1,66 @@
 .member {
-    aspect-ratio: 180 / 250;
+   border-radius: 2px 4px 2px 4px; 
+}
+.member {
+    /* width: 90px; */
     height: 100%;
-    border-radius: 2px 4px 2px 4px;
-    transform: skew(16deg);
+    /* border-radius: 4px 8px 4px 8px; */
     background-color: var(--mantine-color-dark-9);
-    outline: var(--mantine-color-dark-5) solid 1px;
+    border : var(--mantine-color-dark-5) solid 2px;
     position: relative;
     overflow: hidden;
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+.member-agent {
+    aspect-ratio: 180 / 250;
 }
 .member > * {
+    height: 100%;
+}
+.member-equipment {
+    padding: 4px 0;
+    margin-right: 0px;
+    transform: skew(16deg);
+}
+.member-equipment .member {
+    width: auto;
+    margin-left: -2px;
+}
+.member-equipment:has(> :first-child):not(:has(> :nth-child(2))) .member:first-child {
+    border-radius: 0 4px 2px 0;
+}
+.member-equipment:has(> :nth-child(2)) .member:nth-child(1) {
+    border-radius: 0 4px 0 0;
+    margin-bottom: -1px;
+}
+.member-equipment:has(> :nth-child(2)) .member:nth-child(2) {
+    border-radius: 0 0 4px 0;
+    margin-top: -1px;
+}
+.member-equipment .member * {
+    transform: skew(-16deg);
+}
+.member-level {
+    position: absolute;
+    height: auto;
+    bottom: -2px;
+    left: -2px;
+    padding: 2px 6px;
+    font-family: "zzz";
+    color: white;
+    background-color: var(--mantine-color-dark-5);
+    border-radius: 0 8px 0 0;
+    transform: skew(8deg) !important;
+}
+.member-level > * {
+    transform: skew(-24deg) !important;
+}
+.member-skew {
+    transform: skew(16deg);
+}
+.member-skew > * {
     transform: skew(-16deg);
 }
 .empty-member::before {
