@@ -63,7 +63,8 @@
     left: 50%;
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
-    padding: 0 16px;
+    text-align: center;
+    min-width: 48px;
 
     background-color: var(--mantine-color-dark-9);
     border-radius: var(--mantine-radius-sm);
