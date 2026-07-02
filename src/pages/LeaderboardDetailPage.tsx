@@ -212,7 +212,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     {
                                         relatedLeaderboards.map(lb => {
                                             return (
-                                                <WeaponButton id={lb.Id} weapon={lb.Weapon} 
+                                                <WeaponButton key={lb.Id} id={lb.Id} weapon={lb.Weapon} 
                                                     compact refinementLevel={lb.Weapon.Rarity === 4 ? 1 : 5}
                                                     selected={lb.Id === Number(id)} />
                                             )

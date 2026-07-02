@@ -56,7 +56,7 @@ function DiscsTab() {
                 <Title order={2}>Drive Disc Card</Title>
                 <Flex gap="md">
                     { 
-                        discs.map(dd => <DriveDiscCard disc={dd} />)
+                        discs.map(dd => <DriveDiscCard key={dd.Uid} disc={dd} />)
                     }
                 </Flex>
             </>

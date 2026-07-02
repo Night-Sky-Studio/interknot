@@ -28,7 +28,7 @@ export default function DriveDiscCard({ disc }: { disc: DD }): React.ReactElemen
         <Card className="disc-card">
             <Card.Section bg={getDriveDiscGradient(disc.SetId)} h="96px">
                 <div className="disc-header">
-                    <div style={{ position: "relative" }}>
+                    <div>
                         <div className="disc-header-img">
                             <div className="disc-highlight" />
                             <Image draggable={false} className="disc-img" src={disc.IconUrl} alt={disc.Name} />
