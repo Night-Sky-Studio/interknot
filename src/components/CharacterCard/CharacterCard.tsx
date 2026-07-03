@@ -376,7 +376,7 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                                 <Title order={6} m="0" fz="14px">{leaderboard.Name}</Title>
                             </Group>
                         </Group>
-                        <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
+                        <Team h="64px" team={leaderboard.Team} />
                         {showRanking
                             ? <div className="cc-graph-lb">
                                 {entry.Rank} / {leaderboard.Total}

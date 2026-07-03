@@ -212,14 +212,16 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     {
                                         relatedLeaderboards.map(lb => {
                                             return (
-                                                <WeaponButton id={lb.Id} weapon={lb.Weapon} selected={lb.Id === Number(id)} />
+                                                <WeaponButton key={lb.Id} id={lb.Id} weapon={lb.Weapon} 
+                                                    compact refinementLevel={lb.Weapon.Rarity === 4 ? 1 : 5}
+                                                    selected={lb.Id === Number(id)} />
                                             )
                                         })
                                     }
                                 </Group>
                                 <Group gap="xs">
                                     <Title order={5}>Team</Title>
-                                    <Team h="64px" team={[leaderboard.Character, ...leaderboard.Team]} />
+                                    <Team h="80px" team={leaderboard.Team} />
                                 </Group>
                                 <Stack gap="xs" align="flex-start">
                                     <Group gap="0">

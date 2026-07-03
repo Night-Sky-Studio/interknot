@@ -1,13 +1,14 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "../api/data"
-import { Card, Center, Group, Image, Loader, Stack, Table, Text, Title, Alert, Anchor } from "@mantine/core"
+import { Card, Center, Group, Image, Loader, Stack, Text, Title, Alert, Anchor, Flex } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "../components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
 import { Team } from "@components/Team/Team"
 import WeaponButton from "@components/WeaponButton"
 import { useMemo } from "react"
-import { useBackend } from "@components/BackendProvider.tsx"
+// import { useBackend } from "@components/BackendProvider.tsx"
+import { DataTable } from "mantine-datatable"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -16,11 +17,11 @@ export default function LeaderboardsPage(): React.ReactElement {
         return await getLeaderboards({})
     })
 
-    const leaderboards = useMemo(() => leaderboardsState.value?.data, [leaderboardsState.value])
+    const leaderboards = useMemo(() => leaderboardsState.value?.data?.sort((a, b) => b.Total - a.Total), [leaderboardsState.value])
 
-    const { state } = useBackend()
-    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
-    const doroMode = useMemo(() => doro.length > 0, [doro.length])
+    // const { state } = useBackend()
+    // const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
+    // const doroMode = useMemo(() => doro.length > 0, [doro.length])
 
     return (<>
         <title>Leaderboards | Inter-Knot</title>
@@ -55,56 +56,85 @@ export default function LeaderboardsPage(): React.ReactElement {
             }
             {leaderboardsState.value &&
                 <Card p="0" withBorder radius="md">
-                    <Table stickyHeader>
-                        <Table.Thead>
-                            <Table.Tr>
-                                <Table.Th>#</Table.Th>
-                                <Table.Th>Name</Table.Th>
-                                <Table.Th>Weapons</Table.Th>
-                                <Table.Th>Team</Table.Th>
-                                <Table.Th>Total</Table.Th>
-                            </Table.Tr>
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {leaderboards?.sort((a, b) => b.Total - a.Total).map((leaderboard, index) => {
-                                // FIXME: needs proper img replacing solution
-                                const url = leaderboard.Character.CircleIconUrl
-                                const src = doroMode && doro.includes(leaderboard.Character.Id)
-                                    ? url.replace("enka.network", "cdn.interknot.space/aprilfools")
-                                    : url
-
-                                return (
-                                    <Table.Tr key={leaderboard.Id} onClick={() => {
-                                        navigate(`/leaderboards/${leaderboard.Id}`)
-                                    }}>
-                                        <Table.Td>{index + 1}</Table.Td>
-                                        <Table.Td>
+                    <Stack>
+                        <DataTable highlightOnHover
+                            className="data-table dt-header"
+                            records={leaderboards}
+                            idAccessor="Id"
+                            columns={[
+                                {
+                                    accessor: "Id",
+                                    title: "#",
+                                    cellsStyle: () => ({ maxWidth: "2ch" }),
+                                    render: (_, index) => <Text fz="inherit">{index + 1}</Text>
+                                },
+                                {
+                                    accessor: "FullName",
+                                    title: "Name",
+                                    render: (leaderboard) => {
+                                        return (
                                             <Group gap="xs">
                                                 <ZenlessIcon size={24} elementName={leaderboard.Character.ElementTypes[0]} />
                                                 <ProfessionIcon size={24} name={leaderboard.Character.ProfessionType} />
-                                                <Image h="32px" src={src} alt={leaderboard.Character.Name} />
-                                                {leaderboard.FullName}
+                                                <Image h="32px" src={leaderboard.Character.CircleIconUrl} 
+                                                    alt={leaderboard.Character.Name} />
+                                                <Anchor href={`/leaderboards/${leaderboard.Id}`} onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    e.preventDefault()
+                                                    navigate(`/leaderboards/${leaderboard.Id}`)
+                                                }} c="inherit" fz="inherit">
+                                                    {leaderboard.FullName}
+                                                </Anchor>
                                             </Group>
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Group gap="xs">
-                                                <WeaponButton id={leaderboard.Id} weapon={leaderboard.Weapon} />
-                                                {
-                                                    leaderboard.Children.map((child) => (
-                                                        <WeaponButton key={child.Id} id={child.Id} weapon={child.Weapon} />
-                                                    ))
-                                                }
-                                            </Group>
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Team team={[leaderboard.Character, ...leaderboard.Team]} />
-                                        </Table.Td>
-                                        <Table.Td>{leaderboard.Total}</Table.Td>
-                                    </Table.Tr>
+                                        )
+                                    }
+                                },
+                                {
+                                    accessor: "Weapons",
+                                    title: "Weapons",
+                                    render: (leaderboard) => (
+                                        <Group gap="xs">
+                                            {
+                                                [leaderboard, ...leaderboard.Children].map((child) => (
+                                                    <WeaponButton key={child.Id} id={child.Id} compact
+                                                        refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} 
+                                                        weapon={child.Weapon} />
+                                                ))
+                                            }
+                                        </Group>
+                                    )
+                                },
+                                {
+                                    accessor: "Team",
+                                    title: "Team",
+                                    render: (leaderboard) => <Team compact h="36px" team={leaderboard.Team} />
+                                },
+                                {
+                                    accessor: "Total",
+                                    title: "Total"
+                                }
+                            ]} 
+                            rowExpansion={{
+                                allowMultiple: true,
+                                content: ({ record: leaderboard }) => (
+                                    <Flex w="100%" justify="space-evenly" align="center">
+                                        <Stack p="md" gap="xs" align="flex-start">
+                                            <Text fz="sm" c="dimmed">Weapons</Text>
+                                            {
+                                                [leaderboard, ...leaderboard.Children].map((child) => (
+                                                    <WeaponButton key={child.Id} id={child.Id} 
+                                                        weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
+                                                ))
+                                            }
+                                        </Stack>
+                                        <Stack p="md" gap="xs">
+                                            <Text fz="sm" c="dimmed">Team</Text>
+                                            <Team h="96px" team={leaderboard.Team} />
+                                        </Stack>
+                                    </Flex>
                                 )
-                            })}
-                        </Table.Tbody>
-                    </Table>
+                            }} />
+                    </Stack>
                 </Card>
             }
         </Stack>

@@ -83,12 +83,14 @@ const ProfessionsMap: Record<string, string> = {
 interface IProfessionIconProps {
     name: string
     size?: number
+    h?: string
+    w?: string
     style?: React.CSSProperties
     className?: string
 }
 
-export function ProfessionIcon({ name, size, style, className }: IProfessionIconProps): React.ReactElement {
-    return (<Image className={className} style={style} h={(size ?? 16) + "px"} src={ProfessionsMap[name]} alt={name} />)
+export function ProfessionIcon({ name, size, h, w, style, className }: IProfessionIconProps): React.ReactElement {
+    return (<Image className={className} style={style} h={h ?? (size ?? 16) + "px"} w={w} src={ProfessionsMap[name]} alt={name} />)
 }
 
 export function getRarityIcon(rarity: number): string | undefined {

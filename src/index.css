@@ -107,7 +107,7 @@ text {
     background: var(--mantine-datatable-background-color) !important;
 }
 
-.data-table .mantine-Table-thead .mantine-Table-tr:first-child {
+.data-table:not(.dt-header) .mantine-Table-thead .mantine-Table-tr:first-child {
     display: none;
 }
 .mantine-Table-td.mantine-datatable-row-expansion-cell {

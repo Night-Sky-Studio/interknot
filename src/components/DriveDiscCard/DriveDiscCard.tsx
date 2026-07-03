@@ -1,4 +1,4 @@
-import { Card, Group, Stack, Title, Image } from "@mantine/core"
+import { Card, Group, Stack, Title, Image, Badge } from "@mantine/core"
 import "./DriveDiscCard.css"
 import { DriveDisc as DD, Property } from "@interknot/types"
 import { ZenlessIcon, getDriveDiscGradient, getRarityIcon } from "@components/icons/Icons"
@@ -32,6 +32,7 @@ export default function DriveDiscCard({ disc }: { disc: DD }): React.ReactElemen
                         <div className="disc-highlight" />
                         <Image draggable={false} className="disc-img" src={disc.IconUrl} alt={disc.Name} />
                     </div>
+                    <Badge color="dark" radius="4px" ff="zzz-jp" style={{ position: "absolute", right: "8px", top: "8px", padding: "0 6px" }}>{disc.Slot}</Badge>
                     <Stack gap="0">    
                         <span className="disc-title">
                             <Title order={3} c="white">{getLocalString(disc.Name)}</Title>
