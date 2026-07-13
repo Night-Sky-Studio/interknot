@@ -33,7 +33,13 @@ export const nFormatter = (num: number, digits: number = 0) => {
         { value: 1e15, symbol: "P" },
         { value: 1e18, symbol: "E" }
     ]
-    const regexp = /\.0+$|(?<=\.[0-9]*[1-9])0+$/
     const item = lookup.findLast(item => num >= item.value)
-    return item ? (num / item.value).toFixed(digits).replace(regexp, "").concat(item.symbol) : "0"
+    if (!item) return "0"
+
+    let formatted = (num / item.value).toFixed(digits)
+    // Old Safari workaround
+    if (formatted.includes(".")) {
+        formatted = formatted.replace(/0+$/, "").replace(/\.$/, "")
+    }
+    return formatted.concat(item.symbol)
 }
