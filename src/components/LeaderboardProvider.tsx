@@ -39,7 +39,7 @@ export default function LeaderboardProvider({ characterId, buildId, children }: 
     const highlightId = useMemo(() => {
         if (entries.length === 0) return undefined
         
-        const sorted = entries.toSorted((a, b) => a.Rank - b.Rank)
+        const sorted = entries.sort((a, b) => a.Rank - b.Rank)
         const best = 
             sorted.find(e => e.Type === 0) ?? 
             sorted.find(e => e.Type === 1) ?? 
