@@ -4,7 +4,6 @@ import PlayerSearch from "@components/PlayerSearch"
 import { UserHeaderMemoized } from "@components/UserHeader/UserHeader"
 import { useNavigate } from "react-router"
 import { ProfileInfo } from "@interknot/types"
-import { useLocalStorage } from "@mantine/hooks"
 import { IconInfoCircle, IconInfoTriangle } from "@tabler/icons-react"
 import { useBackend } from "@components/BackendProvider"
 import "./styles/HomePage.css"
@@ -16,8 +15,7 @@ export default function HomePage(): React.ReactElement {
     const navigate = useNavigate()
     const { state: backend } = useBackend()
 
-    const [savedUsers, _] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
-    const [users, setUsers] = useState<ProfileInfo[]>(savedUsers ?? [])
+    const [users, setUsers] = useState<ProfileInfo[]>([])
 
     const statusToColor = (status: string): MantineColor => {
         switch (status) {

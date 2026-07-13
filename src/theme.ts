@@ -1,4 +1,4 @@
-import { ActionIcon, Button, colorsTuple, createTheme, Title, Image, Switch, Anchor } from "@mantine/core"
+import { ActionIcon, Button, colorsTuple, createTheme, Title, Image, Switch, Anchor, TextInput } from "@mantine/core"
 
 const theme = createTheme({
     colors: { 
@@ -59,6 +59,13 @@ const theme = createTheme({
                 thumb: {
                     backgroundColor: "white",
                     outline: "1px solid var(--mantine-color-dark-3)"
+                }
+            }
+        }),
+        TextInput: TextInput.extend({
+            styles: {
+                error: {
+                    color: "var(--mantine-color-red-6)"
                 }
             }
         })
