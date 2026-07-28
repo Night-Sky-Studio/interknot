@@ -50,7 +50,7 @@ export function FeedbackFormModal({ data, opened, onClose }: IFeedbackFormModalP
     }, [opened])
 
     return <>
-        <Modal.Root opened={opened} onClose={onClose}>
+        <Modal.Root opened={opened} onClose={onClose} style={{ zIndex: 2 }}>
             <Modal.Overlay />
             <Modal.Content>
                 <div id="yt-form-content" ref={containerRef} />
