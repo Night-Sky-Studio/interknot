@@ -20,8 +20,9 @@ import {
     Divider,
     useMantineTheme,
     ScrollArea,
+    Affix,
 } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconClearAll, IconInputX, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconBugFilled, IconClearAll, IconInputX, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import React, { useEffect, useState, useMemo } from "react"
 import { ProfileInfo } from "@interknot/types"
@@ -33,6 +34,8 @@ import { useContextMenu } from 'mantine-contextmenu'
 import { getDiscordAuthUrl } from '@/api/discord'
 import AccountButton from '../AccountButton/AccountButton'
 import { useBackend } from "@components/BackendProvider.tsx"
+import { FeedbackFormModal } from '../FeedbackFormModal';
+import { useQueryParams } from '@/hooks/useQueryParams';
 
 export default function Shell(): React.ReactElement {
     const theme = useMantineTheme()
@@ -41,6 +44,7 @@ export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
     const location = useLocation()
     const { uid } = useParams()
+    const [{ mode }] = useQueryParams()
 
     const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
@@ -73,8 +77,8 @@ export default function Shell(): React.ReactElement {
 
     const [navBarOpened, { toggle }] = useDisclosure(false)
     const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] = useDisclosure(false)
-
     const [creditsModalOpened, { open: openCreditsModal, close: closeCreditsModal }] = useDisclosure(false)
+    const [feedbackModalOpened, { open: openFeedbackModal, close: closeFeedbackModal }] = useDisclosure(false)
 
     useEffect(() => {
         const previous = document.body.style.overflow
@@ -221,6 +225,8 @@ export default function Shell(): React.ReactElement {
             </Modal.Content>
         </Modal.Root>
 
+        <FeedbackFormModal opened={feedbackModalOpened} onClose={closeFeedbackModal} />
+
         <AppShell header={{ height: 60 }} aside={{
             width: 500,
             breakpoint: "md",
@@ -319,6 +325,15 @@ export default function Shell(): React.ReactElement {
 
             <AppShell.Main>
                 <Container size="1600px">
+                    { mode == "debug" &&
+                        <Affix position={{ bottom: 20, right: 20 }}>
+                            <Tooltip label="Report a problem">
+                                <ActionIcon size="xl" onClick={openFeedbackModal}>
+                                    <IconBugFilled />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Affix>
+                    }
                     {
                         doroMode && <Alert variant="light" color="blue" mb="md"
                             title="A Doro invasion has begun!"
