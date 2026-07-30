@@ -8,8 +8,8 @@ import "./styles/TestPage.css"
 import { UserHeader } from "@/components/UserHeader/UserHeader"
 import { Team } from "@components/Team/Team.tsx"
 import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
-import MembershipCard from "@/components/MembershipCard/MembershipCard"
-import { DriveDisc } from "@/components/DriveDisc/DriveDisc";
+// import MembershipCard from "@/components/MembershipCard/MembershipCard"
+import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
 // import BuildActions from "@/components/BuildActions"
 // import { DataProvider } from "@/components/DataProvider"
 // import { ICardContext } from "@/components/CharacterCard/CharacterCard"
@@ -20,7 +20,7 @@ function ApplicationTab() {
     return <Stack p="md">
         <Title>Application</Title>
 
-        <MembershipCard />
+        {/* <MembershipCard /> */}
     </Stack>
 }
 
