@@ -35,6 +35,7 @@ import { getDiscordAuthUrl } from '@/api/discord'
 import AccountButton from '../AccountButton/AccountButton'
 import { useBackend } from "@components/BackendProvider.tsx"
 import { FeedbackFormModal } from '../FeedbackFormModal'
+import { useQueryParams } from '@/hooks/useQueryParams';
 
 export default function Shell(): React.ReactElement {
     const theme = useMantineTheme()
@@ -43,6 +44,7 @@ export default function Shell(): React.ReactElement {
     const navigate = useNavigate()
     const location = useLocation()
     const { uid } = useParams()
+    const [{ mode }] = useQueryParams()
 
     const [users, setSavedUsers] = useLocalStorage<ProfileInfo[]>({ key: "savedUsers", defaultValue: [] })
     const [selectedUser, setSelectedUser] = useState(uid ?? "")
@@ -323,13 +325,15 @@ export default function Shell(): React.ReactElement {
 
             <AppShell.Main>
                 <Container size="1600px">
-                    <Affix position={{ bottom: 20, right: 20 }}>
-                        <Tooltip label="Report a problem">
-                            <ActionIcon size="xl" onClick={openFeedbackModal}>
-                                <IconBugFilled />
-                            </ActionIcon>
-                        </Tooltip>
-                    </Affix>
+                    { mode == "debug" && 
+                        <Affix position={{ bottom: 20, right: 20 }}>
+                            <Tooltip label="Report a problem">
+                                <ActionIcon size="xl" onClick={openFeedbackModal}>
+                                    <IconBugFilled />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Affix>
+                    }
                     {
                         doroMode && <Alert variant="light" color="blue" mb="md"
                             title="A Doro invasion has begun!"
