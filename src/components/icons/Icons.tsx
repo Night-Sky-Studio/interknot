@@ -24,6 +24,7 @@ const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVG
     "AuricEther": Elements.AuricEther,
     "ZhenZhenAssault": Elements.HonedEdge,
     "Wind": Elements.Wind,
+    "Lumen": Elements.Lumiflux
 }
 
 const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
@@ -131,6 +132,8 @@ const DriveDiscGradientMap: Record<number, string[]> = {
     33800: ["#0707c2", "#6e6eff", "#381ecb"],   // Notes From the Chained
     33900: ["#a7baff", "#435dac"], // Wuthering Salon
     34000: ["#0f141e", "#2c48c3", "#c5b47f"], // The Sky Ablaze
+    34100: ["#a388ff", "#ffb3e7", "#91caff"], // Feathered Fate
+    34200: ["#131725", "#621b16", "#94744d"], // Thorned Rose
 }
 
 export function getDriveDiscGradient(id: number) {

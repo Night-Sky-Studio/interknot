@@ -5,5 +5,6 @@ export { default as Fire } from "./Fire";
 export { default as Firefrost } from "./Firefrost";
 export { default as HonedEdge } from "./HonedEdge";
 export { default as Ice } from "./Ice";
+export { default as Lumiflux } from "./Lumiflux";
 export { default as Physics } from "./Physics";
 export { default as Wind } from "./Wind";

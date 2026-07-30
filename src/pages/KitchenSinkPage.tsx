@@ -7,7 +7,9 @@ import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
 import { UserHeader } from "@/components/UserHeader/UserHeader"
 import { Team } from "@components/Team/Team.tsx"
-import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard";
+import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
+import MembershipCard from "@/components/MembershipCard/MembershipCard"
+import { DriveDisc } from "@/components/DriveDisc/DriveDisc";
 // import BuildActions from "@/components/BuildActions"
 // import { DataProvider } from "@/components/DataProvider"
 // import { ICardContext } from "@/components/CharacterCard/CharacterCard"
@@ -17,6 +19,8 @@ const uid = 1500438496
 function ApplicationTab() {
     return <Stack p="md">
         <Title>Application</Title>
+
+        <MembershipCard />
     </Stack>
 }
 
@@ -44,9 +48,10 @@ function ProfileTab() {
 }
 
 function DiscsTab() {
-    const discsState = useAsync(async () => await getDriveDiscs({ uid, limit: 4 }), [uid])
+    const discsState = useAsync(async () => await getDriveDiscs({ uid, limit: 4, filter: {
+        "set_id": "34100"
+    } as Record<string, string> }), [uid])
     const discs = useMemo(() => discsState.value?.data, [discsState.value?.data])
-
 
     return <Stack p="md">
         <Title>Drive Discs</Title>
@@ -54,9 +59,16 @@ function DiscsTab() {
         { discsState.loading && <Loader /> }
         { discs && <>
                 <Title order={2}>Drive Disc Card</Title>
-                <Flex gap="md">
+                <Flex gap="md" wrap="wrap" w="calc(100% + 48px)">
                     { 
                         discs.map(dd => <DriveDiscCard key={dd.Uid} disc={dd} />)
+                    }
+                </Flex>
+
+                <Title order={2}>Drive Disc Slot</Title>
+                <Flex gap="md" wrap="wrap" w="calc(100% + 48px)">
+                    { 
+                        discs.map(dd => <DriveDisc key={dd.Uid} slot={dd.Slot} disc={dd} />)
                     }
                 </Flex>
             </>

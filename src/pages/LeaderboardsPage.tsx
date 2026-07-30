@@ -9,13 +9,16 @@ import WeaponButton from "@components/WeaponButton"
 import { useMemo } from "react"
 // import { useBackend } from "@components/BackendProvider.tsx"
 import { DataTable } from "mantine-datatable"
+import { useQueryParams } from "@/hooks/useQueryParams"
+import FilterSelector from "@components/FilterSelector/FilterSelector"
 
 export default function LeaderboardsPage(): React.ReactElement {
     const navigate = useNavigate()
+    const [{ mode, ...query }, setQueryParams] = useQueryParams()
 
     const leaderboardsState = useAsyncRetry(async () => {
-        return await getLeaderboards({})
-    })
+        return await getLeaderboards({ filter: query as Record<string, string> })
+    }, [query])
 
     const leaderboards = useMemo(() => leaderboardsState.value?.data?.sort((a, b) => b.Total - a.Total), [leaderboardsState.value])
 
@@ -44,6 +47,31 @@ export default function LeaderboardsPage(): React.ReactElement {
                 </Text>
                 </Stack>
             </Alert>
+
+
+            { mode == "debug" &&
+                <FilterSelector
+                    exclude={[
+                        "region", "set_id", "onlyPrimary", "partial_sets", "full_set", "main_stat_id", "rarity", "weapon_refinement_level"
+                    ]}
+                    value={Object.entries(query).flatMap(([k, v]) => {
+                        if (v === undefined) return []
+                        return v.toString().split(",").map(s => `${k}:${s}`)
+                    })}
+                    onFilterApply={(val) => {
+                        const q: Record<string, string> = {}
+                        val.forEach(v => {
+                            const [g, s] = v.split(":")
+                            if (q[g]) {
+                                q[g] += `,${s}`
+                            } else {
+                                q[g] = s
+                            }
+                        })
+                        setQueryParams(q)
+                    }} />
+            }
+
             {leaderboardsState.loading && !leaderboardsState.error && 
                 <Center>
                     <Loader />
