@@ -309,6 +309,7 @@ html[lang="fr"] .cc-stat * {
 .cc-graph-lb {
     color: white;
     font-family: "zzz-jp", monospace;
+    white-space: nowrap;
     font-size: 14px;
     padding: 4px 8px;
     border-radius: 4px;
