@@ -368,7 +368,7 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                             <div className="cc-graph-lb">
                                 Top {toFixedCeil(entry.Rank / leaderboard.Total * 100, decimalPlaces)}%
                             </div>
-                            <Group className="cc-graph-lb" gap="4px">
+                            <Group className="cc-graph-lb" gap="4px" wrap="nowrap">
                                 <Image h="22px" src={leaderboard.Weapon.ImageUrl}
                                     data-zzz-type="weapon" data-zzz-lang={language}
                                     data-zzz-id={leaderboard.Weapon.Id}
