@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect } from "react"
 import { useLocalStorage } from "@mantine/hooks"
-import { Localizations, AdditionalProps, AvailableLocs } from "../localization/Localization"
+import { Localizations, AdditionalProps, AvailableLocs, AssaultLocalizations } from "../localization/Localization"
 
 type InterknotSettingsBase = {
     decimalPlaces: number,
@@ -57,14 +57,21 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     const getLocalString = useCallback((value: string) => {
         const str = Localizations[settings.language][value]
-        if (!str) { // additionalProp?
-            const fallback = AdditionalProps[value]
-            if (!fallback) {
-                return value
+        if (!str) { 
+            const assault = AssaultLocalizations[settings.language][value]
+            if (assault !== undefined && assault !== "") {
+                return assault
             }
-            return fallback
+
+            // additionalProp?
+            const fallback = AdditionalProps[value]
+            if (fallback !== undefined && fallback !== "") {
+                return fallback
+            }
+
+            return value
         }
-        return Localizations[settings.language][value]
+        return str
     }, [settings.language])
 
     const getLevel = (level: number) => {

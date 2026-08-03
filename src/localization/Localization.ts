@@ -1,8 +1,10 @@
 import { match, SkillTag } from "@interknot/types"
 import locs from "./locs.json"
+import locs_assault from "./locs.assault.json"
 import additionalProps from "./additionalProps.json"
 
 export const Localizations = locs as Record<string, Record<string, string>>
+export const AssaultLocalizations = locs_assault as Record<string, Record<string, string>>
 export const AdditionalProps = additionalProps as Record<string, string>
 export const AvailableLocs = Object.keys(Localizations)
 
