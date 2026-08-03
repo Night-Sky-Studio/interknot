@@ -8,7 +8,16 @@
     "69014202_Title": "Sneak Attack",
     "69014202_Description": "Agent ATK <color=#2BAD00>increases by 10%</color>, their Anomaly Proficiency <color=#2BAD00>increases by 30 pts</color>, and their CRIT DMG <color=#2BAD00>increases by 40%</color>.\nAfter an Agent inflicts <color=#FFFFFF>Attribute Anomaly</color> on an enemy, their DEF <color=#2BAD00>decreases by 10%</color> for 10s. Repeated triggers reset the duration.",
     "69013201_Title": "Heartcrusher",
-    "69013201_Description": "Agent CRIT DMG <color=#2BAD00>increases by 30%</color>.\nATK of Agents with Attack specialty <color=#2BAD00>increases by 10%</color>. Their Basic Attack DMG <color=#2BAD00>increases by 30%</color> and ignore <color=#2BAD00>15%</color> of enemy DEF."
+    "69013201_Description": "Agent CRIT DMG <color=#2BAD00>increases by 30%</color>.\nATK of Agents with Attack specialty <color=#2BAD00>increases by 10%</color>. Their Basic Attack DMG <color=#2BAD00>increases by 30%</color> and ignore <color=#2BAD00>15%</color> of enemy DEF.",
+    "OfficialName_Monster_ClonedBlackWolf": "Rewritten - Sanguine Sweeper",
+    "69014407_Title": null,
+    "69014407_Description": "When an Agent lands Shutdown on an enemy, the enemy's All-Attribute RES decreases by 10%, Agents with Attack specialty gain 20% bonus ATK, 25% bonus PEN Ratio, and their Ice and Ether CRIT DMG increases by 60%. \nUpon triggering a special stagger, the whole squad's Anomaly Proficiency increases by 40 pts and their Anomaly DMG increases by 30%.",
+    "69013304_Description": "Each successful counter and subsequent trigger of a special stagger against the Boss's attacks grants <color=#FFAF2C>1,000 Performance Points</color>. During the <Term:2000003>Control Skill</Term>, each successful counter against the Boss's attacks grants <color=#FFAF2C>500 Performance Points</color>. Performing a <color=#FFAF2C>Shutdown</color> on the Boss's <color=#FFAF2C>Control Skill</color> grants <color=#FFAF2C>1,500 Performance Points</color>. Maximum obtainable Performance Points: 5,000.",
+    "69014301_Title": "Frost Reins",
+    "69014301_Description": "For Agents with Attack specialty, their ATK <color=#2BAD00>increases by 25%</color>. When their <color=#FFFFFF>Basic Attack</color>, <color=#FFFFFF>EX Special Attack</color>, or <color=#FFFFFF>Chain Attack</color> hits an enemy, it ignores <color=#2BAD00>30%</color> of the target's <color=#98EFF0>Ice RES</color> and <color=#FE437E>Ether RES</color>.\nWhen an Agent hits a Stunned enemy, the target's Stun DMG Multiplier <color=#2BAD00>increases by 40%</color> for 5s. Repeated triggers reset the duration.",
+    "69013604_Title": "Breakthrough",
+    "69013604_Description": "Rupture specialty Agent Sheer DMG <color=#2BAD00>increases by 15%</color>, and reduces Miasma Shield <color=#2BAD00>30% faster</color>.\nWhile in Ether Veil, Agent <color=#FE437E>Ether DMG</color> <color=#2BAD00>increases by 25%</color>, and hitting an enemy makes its Stun DMG Multiplier <color=#2BAD00>increase by 25%</color> for 10s. Repeated triggers reset the duration.",
+    "ElementIconTitle_Ice": "Ice"
   },
   "ja": {
     "OfficialName_Monster_Girtablu_HC": "異性体ギルタブルル",
@@ -19,7 +28,16 @@
     "69014202_Title": "奇襲",
     "69014202_Description": "エージェントの攻撃力<color=#2BAD00>+10%</color>、異常マスタリー<color=#2BAD00>+30Pt</color>、会心ダメージ<color=#2BAD00>+40%</color>。\nエージェントが敵に<color=#FFFFFF>状態異常</color>を付与した時、敵の防御力<color=#2BAD00>-10%</color>。継続時間10秒、重複して発動すると継続時間が更新される。",
     "69013201_Title": "砕心",
-    "69013201_Description": "エージェントの会心ダメージ<color=#2BAD00>+30%</color>。\n[強攻]エージェントの攻撃力<color=#2BAD00>+10%</color>、『通常攻撃』が敵に命中した時の与ダメージ<color=#2BAD00>+30%</color>、ターゲットの防御力を<color=#2BAD00>15%</color>無視する。"
+    "69013201_Description": "エージェントの会心ダメージ<color=#2BAD00>+30%</color>。\n[強攻]エージェントの攻撃力<color=#2BAD00>+10%</color>、『通常攻撃』が敵に命中した時の与ダメージ<color=#2BAD00>+30%</color>、ターゲットの防御力を<color=#2BAD00>15%</color>無視する。",
+    "OfficialName_Monster_ClonedBlackWolf": "レプリカ血狩りの掃除屋",
+    "69014407_Title": null,
+    "69014407_Description": "エージェントが敵に「完全反撃」を与えた後、敵の全属性耐性-10%、「強攻」エージェントの攻撃力+20%、貫通率+25%、氷属性およびエーテル属性ダメージの会心ダメージ+60%。\n敵を跪かせた時、チーム全体の異常マスタリー+40Pt、異常ダメージ+30%。",
+    "69013304_Description": "ボスの攻撃への対処に成功し、ターゲットを跪かせるたびに<color=#FFAF2C>1000操作スコア</color>を獲得する。<Term:2000003>『封殺スキル』</Term>期間中、ボスの攻撃への対処に成功するたびに<color=#FFAF2C>500操作スコア</color>を獲得する。ボスの<color=#FFAF2C>『封殺スキル』</color>に<color=#FFAF2C>『完全反撃』</color>すると、<color=#FFAF2C>1500操作スコア</color>を獲得する。最大5000操作スコアまで獲得可能。",
+    "69014301_Title": "霜御",
+    "69014301_Description": "[強攻]エージェントの攻撃力<color=#2BAD00>+25%</color>。<color=#FFFFFF>『通常攻撃』</color>、<color=#FFFFFF>『強化特殊スキル』</color>、<color=#FFFFFF>『連携スキル』</color>が命中した時、敵の<color=#98EFF0>氷属性ダメージ耐性</color>と<color=#FE437E>エーテル属性ダメージ耐性</color>を<color=#2BAD00>30%</color>無視する。\nエージェントの攻撃がブレイク状態の敵に命中した時、その敵のブレイク弱体倍率<color=#2BAD00>+40%</color>。継続時間5秒、重複して発動すると継続時間が更新される。",
+    "69013604_Title": "破境",
+    "69013604_Description": "[命破]エージェントの透徹ダメージ<color=#2BAD00>+15%</color>、与えるミアズマシールド減少値<color=#2BAD00>+30%</color>。\n「エーテルベール」の効果を受けているエージェントは、<color=#FE437E>エーテル属性ダメージ</color><color=#2BAD00>+25%</color>、攻撃が命中した敵のブレイク弱体倍率<color=#2BAD00>+25%</color>。継続時間10秒。重複して発動すると継続時間が更新される。",
+    "ElementIconTitle_Ice": "氷属性"
   },
   "ko": {
     "OfficialName_Monster_Girtablu_HC": "융합·기르타블리르",
@@ -30,7 +48,16 @@
     "69014202_Title": "기이한 습격",
     "69014202_Description": "에이전트의 공격력이 <color=#2BAD00>10% 증가</color>하고, 이상 마스터리가 <color=#2BAD00>30pt 증가</color>하며, 치명타 피해가 <color=#2BAD00>40% 증가</color>한다.\n에이전트가 적에게 <color=#FFFFFF>속성 이상</color> 효과를 부여한 후, 해당 적의 방어력이 <color=#2BAD00>10% 감소</color>한다. 지속 시간: 10초, 중복 발동 시 지속 시간이 갱신된다.",
     "69013201_Title": "극도의 상심",
-    "69013201_Description": "에이전트의 치명타 피해가 <color=#2BAD00>30% 증가한다</color>.\n[강공] 특성 에이전트의 공격력이 <color=#2BAD00>10% 증가하고</color>, [일반 공격] 명중 시 주는 피해가 <color=#2BAD00>30% 증가하며</color>, 적의 방어력을 <color=#2BAD00>15%</color> 무시한다."
+    "69013201_Description": "에이전트의 치명타 피해가 <color=#2BAD00>30% 증가한다</color>.\n[강공] 특성 에이전트의 공격력이 <color=#2BAD00>10% 증가하고</color>, [일반 공격] 명중 시 주는 피해가 <color=#2BAD00>30% 증가하며</color>, 적의 방어력을 <color=#2BAD00>15%</color> 무시한다.",
+    "OfficialName_Monster_ClonedBlackWolf": "레플리카·피의 청소부",
+    "69014407_Title": null,
+    "69014407_Description": "에이전트가 적에게 [완벽 대응]을 발생시킨 후, 적의 모든 속성 저항이 10% 감소하고, 파티 내 [강공] 특성 에이전트의 공격력이 20% 증가하며, 관통률이 25% 증가하고, 주는 얼음 속성 및 에테르 속성 피해의 치명타 피해가 60% 증가한다.\n특수 무력화 발동 시, 모든 파티원의 이상 마스터리가 40pt 증가하고, 이상 피해가 30% 증가한다.",
+    "69013304_Description": "보스의 공격에 성공적으로 대응하여 해당 적의 특수 무력화를 발동시킬 때마다 <color=#FFAF2C>조작 점수 1,000점</color>을 획득한다. <Term:2000003></Term> 기간 동안 보스의 공격에 성공적으로 대응할 때마다 <color=#FFAF2C>조작 점수 500점</color>을 획득한다. 보스의 <color=#FFAF2C>[제어 스킬]</color>에 <color=#FFAF2C>[완벽 대응]</color> 시 <color=#FFAF2C>조작 점수 1,500점</color>을 획득한다. 조작 점수 최대 획득: 5,000점",
+    "69014301_Title": "서리 제어",
+    "69014301_Description": "[강공] 특성 에이전트의 공격력이 <color=#2BAD00>25% 증가</color>하고, <color=#FFFFFF>[일반 공격]</color>, <color=#FFFFFF>[강화 특수 스킬]</color>, <color=#FFFFFF>[콤보 스킬]</color>로 적 명중 시 해당 적의 <color=#98EFF0>얼음 속성 피해 저항</color>과 <color=#FE437E>에테르 속성 피해 저항</color>을 <color=#2BAD00>30%</color> 무시한다.\n에이전트 공격이 그로기 상태의 적 명중 시, 해당 적의 그로기 약체화가 <color=#2BAD00>40% 증가</color>한다. 지속 시간: 5초, 중복 발동 시 지속 시간이 갱신된다.",
+    "69013604_Title": "경계 돌파",
+    "69013604_Description": "[명파] 특성 에이전트의 관입 피해가 <color=#2BAD00>15% 증가하고</color>, 주는 미아즈마 실드 감소 수치가 <color=#2BAD00>30% 증가한다</color>.\n에테르 장막 중에 있는 에이전트의 <color=#FE437E>에테르 속성 피해</color>가 <color=#2BAD00>25% 증가하고</color>, 공격이 적 명중 후 해당 적의 그로기 약체화 배율이 <color=#2BAD00>25% 증가한다</color>. 지속 시간: 10초, 중복 발동 시 지속 시간이 갱신된다.",
+    "ElementIconTitle_Ice": "얼음 속성"
   },
   "zh-cn": {
     "OfficialName_Monster_Girtablu_HC": "异构·基塔布鲁",
@@ -41,7 +68,16 @@
     "69014202_Title": "诡袭",
     "69014202_Description": "代理人的攻击力<color=#2BAD00>提升10%</color>，异常精通<color=#2BAD00>提升30点</color>，暴击伤害<color=#2BAD00>提升40%</color>。\n代理人对敌人施加<color=#FFFFFF>属性异常</color>效果后，其防御力<color=#2BAD00>降低10%</color>，持续10秒，重复触发时刷新持续时间。",
     "69013201_Title": "摧心",
-    "69013201_Description": "代理人的暴击伤害<color=#2BAD00>提升30%</color>。\n[强攻]特性的代理人攻击力<color=#2BAD00>提升10%</color>，[普通攻击]命中时造成的伤害<color=#2BAD00>提升30%</color>，并无视敌人<color=#2BAD00>15%</color>的防御力。"
+    "69013201_Description": "代理人的暴击伤害<color=#2BAD00>提升30%</color>。\n[强攻]特性的代理人攻击力<color=#2BAD00>提升10%</color>，[普通攻击]命中时造成的伤害<color=#2BAD00>提升30%</color>，并无视敌人<color=#2BAD00>15%</color>的防御力。",
+    "OfficialName_Monster_ClonedBlackWolf": "复写体·猎血清道夫",
+    "69014407_Title": null,
+    "69014407_Description": "代理人对敌人造成[完美反制]后，敌人的全属性抗性降低10%，且全队[强攻]特性的代理人攻击力提升20%，穿透率提升25%，造成的冰属性和以太属性伤害的暴击伤害提升60%。\n触发特殊跪地时，全队异常精通提升40点，异常伤害提升30%。",
+    "69013304_Description": "·每次成功应对首领的攻击并使其触发特殊跪地，可获得<color=#FFAF2C>1000操作得分</color>；<Term:2000003></Term>期间，每次成功应对首领的攻击，可获得<color=#FFAF2C>500操作得分</color>；<color=#FFAF2C>[完美反制]</color>首领的<color=#FFAF2C>[控制技]</color>时，可获得<color=#FFAF2C>1500操作得分</color>。最多获得5000操作得分。",
+    "69014301_Title": "掣霜",
+    "69014301_Description": "[强攻]特性的代理人攻击力<color=#2BAD00>提升25%</color>，<color=#FFFFFF>[普通攻击]</color>、<color=#FFFFFF>[强化特殊技]</color>、<color=#FFFFFF>[连携技]</color>命中敌人时，无视其<color=#2BAD00>30%</color>的<color=#98EFF0>冰属性伤害抗性</color>和<color=#FE437E>以太属性伤害抗性</color>。\n代理人命中处于失衡状态的敌人时，其失衡易伤<color=#2BAD00>提升40%</color>，持续5秒，重复触发时刷新持续时间。",
+    "69013604_Title": "破境",
+    "69013604_Description": "[命破]特性的代理人贯穿伤害<color=#2BAD00>提升15%</color>，造成的秽息盾削减值<color=#2BAD00>提升30%</color>。\n处于以太帷幕中的代理人，<color=#FE437E>以太属性伤害</color><color=#2BAD00>提升25%</color>，攻击命中敌人后使其失衡易伤倍率<color=#2BAD00>提升25%</color>，持续10秒，重复触发时刷新持续时间。",
+    "ElementIconTitle_Ice": "冰属性"
   },
   "zh-tw": {
     "OfficialName_Monster_Girtablu_HC": "異構·基塔布魯",
@@ -52,7 +88,16 @@
     "69014202_Title": "詭襲",
     "69014202_Description": "·代理人的攻擊力<color=#2BAD00>提升10%</color>，異常精通<color=#2BAD00>提升30點</color>，暴擊傷害<color=#2BAD00>提升40%</color>。\n·代理人對敵人施加<color=#FFFFFF>屬性異常</color>效果後，其防禦力<color=#2BAD00>降低10%</color>，持續10秒，重複觸發時重置持續時間。",
     "69013201_Title": "摧心",
-    "69013201_Description": "·代理人的暴擊傷害<color=#2BAD00>提升30%</color>。\n·[強攻]特性的代理人攻擊力<color=#2BAD00>提升10%</color>，[普通攻擊]命中時造成的傷害<color=#2BAD00>提升30%</color>，並無視敵人<color=#2BAD00>15%</color>的防禦力。"
+    "69013201_Description": "·代理人的暴擊傷害<color=#2BAD00>提升30%</color>。\n·[強攻]特性的代理人攻擊力<color=#2BAD00>提升10%</color>，[普通攻擊]命中時造成的傷害<color=#2BAD00>提升30%</color>，並無視敵人<color=#2BAD00>15%</color>的防禦力。",
+    "OfficialName_Monster_ClonedBlackWolf": "複寫體·獵血清道夫",
+    "69014407_Title": null,
+    "69014407_Description": "代理人對敵人造成[完美反制]後，敵人的全屬性抗性降低10%，且全隊[強攻]特性的代理人攻擊力提升20%，穿透率提升25%，造成的冰屬性和以太屬性傷害的暴擊傷害提升60%。\n觸發特殊跪地時，全隊異常精通提升40點，異常傷害提升30%。",
+    "69013304_Description": "·每次成功應對首領的攻擊並使其觸發特殊跪地，可獲得<color=#FFAF2C>1000操作得分</color>。<Term:2000003></Term>期間，每次成功應對首領的攻擊，可獲得<color=#FFAF2C>500操作得分</color>。<color=#FFAF2C>[完美反制]</color>首領的<color=#FFAF2C>[控制技]</color>時，可獲得<color=#FFAF2C>1500操作得分</color>。最多獲得5000操作得分。",
+    "69014301_Title": "掣霜",
+    "69014301_Description": "·[強攻]特性的代理人攻擊力<color=#2BAD00>提升25%</color>，<color=#FFFFFF>[普通攻擊]</color>、<color=#FFFFFF>[強化特殊技]</color>、<color=#FFFFFF>[連攜技]</color>命中敵人時，無視其<color=#2BAD00>30%</color>的<color=#98EFF0>冰屬性傷害抗性</color>和<color=#FE437E>以太屬性傷害抗性</color>。\n·代理人命中處於失衡狀態的敵人時，其失衡易傷<color=#2BAD00>提升40%</color>，持續5秒，重複觸發時重置持續時間。",
+    "69013604_Title": "破境",
+    "69013604_Description": "[命破]特性的代理人貫穿傷害<color=#2BAD00>提升15%</color>，造成的穢息盾削減值<color=#2BAD00>提升30%</color>。\n處於以太帷幕中的代理人，<color=#FE437E>以太屬性傷害</color><color=#2BAD00>提升25%</color>，攻擊命中敵人後使其失衡易傷倍率<color=#2BAD00>提升25%</color>，持續10秒，重複觸發時重置持續時間。",
+    "ElementIconTitle_Ice": "冰屬性"
   },
   "fr": {
     "OfficialName_Monster_Girtablu_HC": "Isomorphe - Girtablullu",
@@ -63,7 +108,16 @@
     "69014202_Title": "Attaque furtive",
     "69014202_Description": "L'ATQ des agents <color=#2BAD00>augmente de 10 %</color>, leur adresse d'anomalie <color=#2BAD00>augmente de 30</color> et leurs DGT CRIT <color=#2BAD00>augmentent de 40 %</color>.\nLorsqu'un agent inflige une <color=#FFFFFF>anomalie d'attribut</color> à un ennemi, la DÉF de ce dernier <color=#2BAD00>diminue de 10 %</color> pendant 10 s. Les déclenchements répétés réinitialisent la durée.",
     "69013201_Title": "Brise-cœur",
-    "69013201_Description": "Les DGT CRIT des agents <color=#2BAD00>augmentent de 30 %</color>.\nL'ATQ des agents Attaque <color=#2BAD00>augmente de 10 %</color>. Les DGT des attaques normales <color=#2BAD00>augmentent de 30 %</color> et ignorent <color=#2BAD00>15 %</color> de la DÉF ennemie."
+    "69013201_Description": "Les DGT CRIT des agents <color=#2BAD00>augmentent de 30 %</color>.\nL'ATQ des agents Attaque <color=#2BAD00>augmente de 10 %</color>. Les DGT des attaques normales <color=#2BAD00>augmentent de 30 %</color> et ignorent <color=#2BAD00>15 %</color> de la DÉF ennemie.",
+    "OfficialName_Monster_ClonedBlackWolf": "Réplique - Balayeur sanguinaire",
+    "69014407_Title": null,
+    "69014407_Description": "Lorsqu'un agent réussit un Contre parfait sur un ennemi, la RÉS à tous les attributs de l'ennemi diminue de 10 %. Les agents de spécialisation Attaque gagnent un bonus d'ATQ de 20 %, un bonus de taux de PÉN de 25 %, et leur DGT CRIT de glace et éthériques augmentent de 60 %.\nEn déclenchant un vacillement spécial, l'adresse d'anomalie de toute l'escouade augmente de 40 et leurs DGT d'anomalie augmentent de 30 %.",
+    "69013304_Description": "Chaque contre réussi d'une attaque du boss et déclenchement subséquent d'une mise à genoux spéciale accorde <color=#FFAF2C>1 000 points de performance</color>. Pendant la <Term:2000003>compétence de contrôle</Term>, chaque contre réussi des attaques du boss accorde <color=#FFAF2C>500 points de performance</color>. Réaliser un <color=#FFAF2C>contre parfait</color> de la <color=#FFAF2C>compétence de contrôle</color> du boss accorde <color=#FFAF2C>1 500 points de performance</color>. Maximum de points de performance : 5 000.",
+    "69014301_Title": "Rênes de givre",
+    "69014301_Description": "Pour les agents de spécialisation Attaque, leur ATQ <color=#2BAD00>augmente de 25 %</color>. Lorsque leur <color=#FFFFFF>attaque normale</color>, leur <color=#FFFFFF>attaque spéciale EX</color> ou leur <color=#FFFFFF>enchaînement</color> touche un ennemi, la compétence ignore <color=#2BAD00>30 %</color> de la <color=#98EFF0>RÉS à la glace</color> et de la <color=#FE437E>RÉS éthérique</color> de la cible.\nLorsqu'un agent touche un ennemi étourdi, le multiplicateur de DGT d'étourdissement de la cible <color=#2BAD00>augmente de 40 %</color> pendant 5 s. Les déclenchements répétés réinitialisent la durée.",
+    "69013604_Title": "Percée",
+    "69013604_Description": "Les DGT de Transpercement des agents de spécialisation Rupture <color=#2BAD00>augmentent de 15 %</color> et ils réduisent le Bouclier miasmatique <color=#2BAD00>30 % plus rapidement</color>.\nDans le Voile éthérique, les <color=#FE437E>DGT éthériques</color> des agents <color=#2BAD00>augmentent également de 25 %</color> et toucher un ennemi augmente son <color=#2BAD00>multiplicateur de DGT d'étourdissement de 25 %</color> pendant 10 s. Les déclenchements répétés réinitialisent la durée.",
+    "ElementIconTitle_Ice": "Glace"
   },
   "de": {
     "OfficialName_Monster_Girtablu_HC": "Isomer – Girtablullu",
@@ -74,7 +128,16 @@
     "69014202_Title": "Hinterhältiger Angriff",
     "69014202_Description": "Der ANG von Agenten erhöht sich um <color=#2BAD00>10 %</color>, die Anomaliekunde um <color=#2BAD00>30 Pkt.</color> und der KRIT-SCH um <color=#2BAD00>40 %</color>.\nNachdem ein Agent einem Gegner eine <color=#FFFFFF>Attributanomalie</color> zugefügt hat, verringert sich die VTD des Gegners um <color=#2BAD00>10 %</color>, hält 10 s. Beim wiederholten Auslösen wird die Dauer aktualisiert.",
     "69013201_Title": "Herzbrecher",
-    "69013201_Description": "Der KRIT-SCH von Agenten <color=#2BAD00>erhöht sich um 30 %</color>.\nDer ANG von Agenten mit der Spezialität „Attacke“ <color=#2BAD00>erhöht sich um 10 %</color>, der durch Basisangriffe beim Treffen verursachte SCH <color=#2BAD00>erhöht sich um 30 %</color> und ignoriert <color=#2BAD00>15 %</color> der gegnerischen VTD."
+    "69013201_Description": "Der KRIT-SCH von Agenten <color=#2BAD00>erhöht sich um 30 %</color>.\nDer ANG von Agenten mit der Spezialität „Attacke“ <color=#2BAD00>erhöht sich um 10 %</color>, der durch Basisangriffe beim Treffen verursachte SCH <color=#2BAD00>erhöht sich um 30 %</color> und ignoriert <color=#2BAD00>15 %</color> der gegnerischen VTD.",
+    "OfficialName_Monster_ClonedBlackWolf": "Neugeschrieben – Blutjagender Räumer",
+    "69014407_Title": null,
+    "69014407_Description": "Nachdem ein Agent beim Gegner einen perfekten Konter verursacht hat, verringert sich der WDS des Gegners gegen alle Attribute um 10 %, und der ANG aller Attacke-Agenten in der Truppe erhöht sich um 20 %, die Durchschlagsrate um 25 % sowie der KRIT-SCH von verursachtem Eis- und Äther-SCH um 60 %.\nWenn ein spezielles Niederknien ausgelöst wird, erhöht sich die Anomaliekunde der gesamten Truppe um 40 Pkt. und der Anomalie-SCH um 30 %.",
+    "69013304_Description": "Jedes Mal, wenn du einen Angriff des Bosses erfolgreich abwehrst und dadurch sein spezielles Niederknien auslöst, erhältst du <color=#FFAF2C>1.000 Steuerpunkte</color>. Während des <Term:2000003>Kontrollangriffs</Term> erhältst du jedes Mal, wenn du erfolgreich mit dem Angriff des Bosses umgehst, <color=#FFAF2C>500 Steuerpunkte</color>. Beim <color=#FFAF2C>perfekten Konter</color> des <color=#FFAF2C>Kontrollangriffs</color> des Bosses erhältst du <color=#FFAF2C>1.500 Steuerpunkte</color>. Max. 5.000 Steuerpunkte erzielbar.",
+    "69014301_Title": "Frostzügel",
+    "69014301_Description": "Der ANG von Attacke-Agenten erhöht sich um <color=#2BAD00>25 %</color>. Wenn ein <color=#FFFFFF>Basisangriff</color>, <color=#FFFFFF>verstärkter Spezialangriff</color> oder <color=#FFFFFF>Kettenangriff</color> einen Gegner trifft, ignoriert dieser <color=#2BAD00>30 %</color> des <color=#98EFF0>Eis-SCH-WDS</color> und <color=#FE437E>Äther-SCH-WDS</color> des Gegners.\nWenn ein Agent einen benommenen Gegner trifft, erhöht sich der Benommenheit-SCH-Multiplikator des Gegners um <color=#2BAD00>40 %</color>, hält 5 s. Beim wiederholten Auslösen wird die Dauer aktualisiert.",
+    "69013604_Title": "Durchbohren",
+    "69013604_Description": "Der durch Spaltung-Agenten verursachte Roh-SCH erhöht sich um <color=#2BAD00>15 %</color> und die Miasma-Schildreduktion um <color=#2BAD00>30 %</color>.\nDer <color=#FE437E>Äther-SCH</color> von Agenten im Ätherschleier erhöht sich um <color=#2BAD00>25 %</color>. Beim Treffen von Gegnern wird deren Benommenheit-SCH-Multiplikator um <color=#2BAD00>25 %</color> erhöht, hält 10 s. Beim wiederholten Auslösen wird die Dauer aktualisiert.",
+    "ElementIconTitle_Ice": "Eis"
   },
   "es": {
     "OfficialName_Monster_Girtablu_HC": "Girtablilu integrado",
@@ -85,7 +148,16 @@
     "69014202_Title": "Ataque furtivo",
     "69014202_Description": "El Ataque de los agentes <color=#2BAD00>aumenta en un 10 %</color>, la Maestría de Anomalía <color=#2BAD00>aumenta en 30 ptos.</color>, y el Daño Crítico <color=#2BAD00>aumenta en un 40 %</color>.\nCuando un agente provoca una <color=#FFFFFF>Anomalía de Atributo</color> sobre el enemigo, su Defensa <color=#2BAD00>se reduce en un 10 %</color> durante 10 s. La duración se reinicia con cada activación.",
     "69013201_Title": "Quebrantacorazones",
-    "69013201_Description": "El Daño Crítico de los agentes <color=#2BAD00>aumenta en un 30 %</color>.\nEl Ataque de los agentes atacantes <color=#2BAD00>aumenta en un 10 %</color>. El daño infligido al golpear a un enemigo con el ataque normal <color=#2BAD00>aumenta en un 30 %</color> e ignora un <color=#2BAD00>15 %</color> de la Defensa del enemigo."
+    "69013201_Description": "El Daño Crítico de los agentes <color=#2BAD00>aumenta en un 30 %</color>.\nEl Ataque de los agentes atacantes <color=#2BAD00>aumenta en un 10 %</color>. El daño infligido al golpear a un enemigo con el ataque normal <color=#2BAD00>aumenta en un 30 %</color> e ignora un <color=#2BAD00>15 %</color> de la Defensa del enemigo.",
+    "OfficialName_Monster_ClonedBlackWolf": "Réplica: barrendero sanguinario",
+    "69014407_Title": null,
+    "69014407_Description": "Cuando un agente ejecuta un contraataque perfecto contra el enemigo, la resistencia a todos los atributos del enemigo se reduce en un 10 %, el Ataque de los agentes atacantes de todo el equipo aumenta en un 20 %, la Tasa de Perforación aumenta en un 25 %, y el Daño Crítico del daño glacial y etéreo aumenta en un 60 %.\nAl activar el arrodillamiento especial, la Maestría de Anomalía de todo el equipo aumenta en 40 ptos. y el daño de Anomalía de Atributo aumenta en un 30 %.",
+    "69013304_Description": "Cada vez que se responde con éxito a un ataque de un jefe y se provoca un arrodillamiento especial, se obtienen <color=#FFAF2C>1000 puntos de control</color>. Durante la <Term:2000003>técnica de control</Term>, cada vez que se responde con éxito a un ataque de un jefe, se obtienen <color=#FFAF2C>500 puntos de control</color>. Al ejecutar un <color=#FFAF2C>contraataque perfecto</color> contra la <color=#FFAF2C>técnica de control</color> de un jefe, se obtienen <color=#FFAF2C>1500 puntos de control</color>. Se pueden obtener hasta 5000 puntos de control.",
+    "69014301_Title": "Riendas heladas",
+    "69014301_Description": "El Ataque de los agentes atacantes <color=#2BAD00>aumenta en un 25 %</color>. Al golpear al enemigo con un <color=#FFFFFF>ataque normal</color>, una <color=#FFFFFF>técnica especial EX</color> o una <color=#FFFFFF>técnica en cadena</color>, ignoran un <color=#2BAD00>30 %</color> de su <color=#98EFF0>resistencia glacial</color> y <color=#FE437E>resistencia etérea</color>.\nCuando un agente golpea al enemigo afectado por Aturdimiento, su vulnerabilidad de Aturdimiento <color=#2BAD00>aumenta en un 40 %</color> durante 5 s. La duración se reinicia con cada activación.",
+    "69013604_Title": "Avance",
+    "69013604_Description": "El daño bruto de los agentes disruptivos <color=#2BAD00>aumenta en un 15 %</color> y la reducción del escudo miasmático que causan <color=#2BAD00>aumenta en un 30 %</color>.\nCuando los agentes están afectados por velo etéreo, el <color=#FE437E>daño etéreo</color> <color=#2BAD00>aumenta en un 25 %</color> y, al golpear a un enemigo, su tasa de vulnerabilidad de Aturdimiento <color=#2BAD00>aumenta en un 25 %</color> durante 10 s. La duración se reinicia con cada activación.",
+    "ElementIconTitle_Ice": "Glacial"
   },
   "pt": {
     "OfficialName_Monster_Girtablu_HC": "Heteromorfo: Girtablullu",
@@ -96,7 +168,16 @@
     "69014202_Title": "Ataque Furtivo",
     "69014202_Description": "O ATQ do Agente <color=#2BAD00>aumenta 10%</color>, a Proficiência de Anomalia <color=#2BAD00>aumenta 30</color> e o Dano CRIT <color=#2BAD00>aumenta 40%</color>.\nApós o Agente aplicar o efeito de <color=#FFFFFF>Anomalia de Atributo</color> em um inimigo, a DEF do inimigo <color=#2BAD00>diminui 10%</color> durante 10s. Ativações repetidas reiniciam a duração.",
     "69013201_Title": "Destruição de Coração",
-    "69013201_Description": "O Dano CRIT dos Agentes <color=#2BAD00>aumenta 30%</color>.\nAgentes do tipo Atacante têm o ATQ <color=#2BAD00>aumentado em 10%</color>, o dano causado ao acertar com o Ataque Básico <color=#2BAD00>aumenta 30%</color> e ignoram <color=#2BAD00>15%</color> da DEF do inimigo."
+    "69013201_Description": "O Dano CRIT dos Agentes <color=#2BAD00>aumenta 30%</color>.\nAgentes do tipo Atacante têm o ATQ <color=#2BAD00>aumentado em 10%</color>, o dano causado ao acertar com o Ataque Básico <color=#2BAD00>aumenta 30%</color> e ignoram <color=#2BAD00>15%</color> da DEF do inimigo.",
+    "OfficialName_Monster_ClonedBlackWolf": "Réplica: Carniceiro Sanguinário",
+    "69014407_Title": null,
+    "69014407_Description": "Quando um Agente executa um Contra-Ataque Perfeito contra um inimigo, a resistência a todos os atributos do inimigo diminui 10%, o ATQ dos Agentes com Especialidade Atacante de toda a equipe aumenta 20%, a Taxa de Perfuração aumenta 25% e o Dano CRIT de Gelo e Éter causado aumenta 60%. Ao acionar o atordoamento especial, a Proficiência de Anomalia de toda a equipe aumenta 40 pontos e o dano de Anomalia de Atributo aumenta 30%.",
+    "69013304_Description": "Sempre que bloquear e revidar um ataque de chefe com sucesso e fazê-lo entrar em estado de Atordoamento, você obtém <color=#FFAF2C>1.000 Pontos de Desempenho</color>. Durante <Term:2000003></Term>, cada vez que responder a um ataque do chefe com sucesso, você obtém <color=#FFAF2C>500 Pontos de Desempenho</color>. Ao realizar um <color=#FFAF2C>Contra-Ataque Perfeito</color> contra a <color=#FFAF2C>Técnica de Controle</color> do chefe, você obtém <color=#FFAF2C>1.500 Pontos de Desempenho</color>. Limite máximo de Pontos de Desempenho obtidos: 5.000.",
+    "69014301_Title": "Rédeas de Gelo",
+    "69014301_Description": "O ATQ do Agente do tipo Atacante <color=#2BAD00>aumenta 25%</color>. Ao acertar inimigos com <color=#FFFFFF>Ataque Básico</color>, <color=#FFFFFF>Ataque Especial Reforçado</color> ou <color=#FFFFFF>Ataque em Cadeia</color>, ignora <color=#2BAD00>30%</color> da <color=#98EFF0>resistência ao Gelo</color> e da <color=#FE437E>resistência ao Éter</color> do inimigo.\nAo acertar um inimigo em estado de Atordoamento, a vulnerabilidade ao Atordoamento do inimigo <color=#2BAD00>aumenta 40%</color> durante 5s. Ativações repetidas reiniciam a duração.",
+    "69013604_Title": "Iluminação",
+    "69013604_Description": "O Dano Bruto dos Agentes do tipo Destruidor <color=#2BAD00>aumenta 15%</color> e o escudo de miasma <color=#2BAD00>diminui 30%</color> mais rapidamente. \nQuando os Agentes estão no Véu de Éter, o <color=#FE437E>Dano de Éter </color><color=#2BAD00>aumenta 25%</color>, e atingir um inimigo faz seu Multiplicador de Dano de Atordoamento <color=#2BAD00>aumentar 25%</color> por 10 segundos. Ativações repetidas reiniciam a duração.",
+    "ElementIconTitle_Ice": "Gelo"
   },
   "ru": {
     "OfficialName_Monster_Girtablu_HC": "Изоморф — Гиртаблилу",
@@ -107,7 +188,16 @@
     "69014202_Title": "Коварный удар",
     "69014202_Description": "<color=#2BAD00>+10%</color> к силе атаки, <color=#2BAD00>+30 ед.</color> к знанию аномалии, <color=#2BAD00>+40%</color> к крит. урону агентов.\nКогда агент накладывает на врага эффект <color=#FFFFFF>аномалии атрибута</color>, защита врага <color=#2BAD00>снижается на 10%</color> на 10 сек. Повторные запуски обновляют время действия.",
     "69013201_Title": "Терзание",
-    "69013201_Description": "<color=#2BAD00>+30%</color> к крит. урону агентов.\nАгенты со специальностью «Нападение» получают <color=#2BAD00>+10%</color> к силе атаки, <color=#2BAD00>+30%</color> к урону от базовых атак и игнорируют <color=#2BAD00>15%</color> защиты врага."
+    "69013201_Description": "<color=#2BAD00>+30%</color> к крит. урону агентов.\nАгенты со специальностью «Нападение» получают <color=#2BAD00>+10%</color> к силе атаки, <color=#2BAD00>+30%</color> к урону от базовых атак и игнорируют <color=#2BAD00>15%</color> защиты врага.",
+    "OfficialName_Monster_ClonedBlackWolf": "Копия — Кровавый чистильщик",
+    "69014407_Title": null,
+    "69014407_Description": "Когда агент наносит врагу идеальный контрудар, сопротивление врага всем атрибутам снижается на 10%, сила атаки агентов Нападения в отряде повышается на 20%, процент пробивания — на 25%, а ледяной и эфирный крит. урон — на 60%.\nПри срабатывании особой подсечки знание аномалии всего отряда повышается на 40 ед., а урон от аномалии — на 30%.",
+    "69013304_Description": "За каждое успешное парирование атаки босса, вызвавшее его особую подсечку, вы получаете <color=#FFAF2C>1000 очков эффективности</color>. Пока активен <Term:2000003>захват</Term>, за каждое успешное парирование атаки босса вы получаете <color=#FFAF2C>500 очков эффективности</color>. При <color=#FFAF2C>идеальном контрударе</color> во время <color=#FFAF2C>захвата</color> босса вы получаете <color=#FFAF2C>1500 очков эффективности</color>. Максимум очков эффективности — 5000.",
+    "69014301_Title": "Ледяной захват",
+    "69014301_Description": "<color=#2BAD00>+25%</color> к силе атаки агентов <color=#FFFFFF>Нападения</color>. Попадания по врагу <color=#FFFFFF>базовыми</color>, <color=#FFFFFF>усиленными особыми</color> атаками или <color=#FFFFFF>цепочками атак</color> игнорируют <color=#2BAD00>30%</color> сопротивления <color=#98EFF0>ледяному</color> и <color=#FE437E>эфирному</color> урону врага.\nПри попадании по оглушённому врагу его уязвимость к урону в оглушении <color=#2BAD00>повышается на 40%</color> на 5 сек. Повторные запуски обновляют время действия.",
+    "69013604_Title": "Запредельность",
+    "69013604_Description": "Агенты со специальностью «Разрушение» наносят <color=#2BAD00>на 15% больше</color> сквозного урона и снимают <color=#2BAD00>на 30% больше</color> очков щита скверны.\nУ агентов в Эфирной завесе <color=#FE437E>эфирный урон</color> <color=#2BAD00>повышается на 25%</color>, а попадание по врагу повышает его множитель уязвимости при оглушении <color=#2BAD00>на 25%</color> на 10 сек. Повторные запуски обновляют время действия.",
+    "ElementIconTitle_Ice": "Лёд"
   },
   "th": {
     "OfficialName_Monster_Girtablu_HC": "Integrated: Girtablullu",
@@ -118,7 +208,16 @@
     "69014202_Title": "Sneak Attack",
     "69014202_Description": "Agent มี ATK <color=#2BAD00>เพิ่มขึ้น 10%</color>, มีความชำนาญ Anomaly <color=#2BAD00>เพิ่มขึ้น 30 แต้ม</color> และมี CRIT DMG <color=#2BAD00>เพิ่มขึ้น 40%</color>\nหลังจากที่ Agent ทำให้ศัตรูติดเอฟเฟกต์ <color=#FFFFFF>Attribute Anomaly</color> ศัตรูดังกล่าวจะมี DEF <color=#2BAD00>ลดลง 10%</color> ต่อเนื่อง 10 วินาที โดยเมื่อเกิดซ้ำ จะรีเฟรชช่วงเวลาต่อเนื่อง",
     "69013201_Title": "Heartcrusher",
-    "69013201_Description": "Agent มี CRIT DMG <color=#2BAD00>เพิ่มขึ้น 30%</color>\nAgent สาย [โจมตีรุนแรง] มี ATK <color=#2BAD00>เพิ่มขึ้น 10%</color> โดยเมื่อ [โจมตีปกติ] โจมตีถูกศัตรู จะสร้างความเสียหาย<color=#2BAD00>เพิ่มขึ้น 30%</color> และมองข้าม <color=#2BAD00>15%</color> ของ DEF ของศัตรู"
+    "69013201_Description": "Agent มี CRIT DMG <color=#2BAD00>เพิ่มขึ้น 30%</color>\nAgent สาย [โจมตีรุนแรง] มี ATK <color=#2BAD00>เพิ่มขึ้น 10%</color> โดยเมื่อ [โจมตีปกติ] โจมตีถูกศัตรู จะสร้างความเสียหาย<color=#2BAD00>เพิ่มขึ้น 30%</color> และมองข้าม <color=#2BAD00>15%</color> ของ DEF ของศัตรู",
+    "OfficialName_Monster_ClonedBlackWolf": "Rewritten - Sanguine Sweeper",
+    "69014407_Title": null,
+    "69014407_Description": "หลังจาก Agent ทำให้เกิด [ตอบโต้สมบูรณ์แบบ] กับศัตรู ศัตรูจะมีความต้านทานธาตุทั้งหมดลดลง 10% และ Agent สาย [โจมตีรุนแรง] ทั้งทีมจะมี ATK เพิ่มขึ้น 20%, PEN Ratio เพิ่มขึ้น 25% และ CRIT DMG ที่เกิดจากความเสียหายธาตุน้ำแข็ง และความเสียหายธาตุอีเทอร์ จะเพิ่มขึ้น 60%\nเมื่อทำให้เกิดการทรุดตัวลงแบบพิเศษ ทั้งทีมจะมีความชำนาญ Anomaly เพิ่มขึ้น 40 แต้ม และมีความเสียหาย Anomaly เพิ่มขึ้น 30%",
+    "69013304_Description": "ทุกครั้งที่รับมือการโจมตีของบอสได้สำเร็จ และทำให้เกิดการทรุดตัวลงแบบพิเศษกับบอสดังกล่าว จะได้รับ<color=#FFAF2C>คะแนนแมคคานิก 1,000 คะแนน</color>; ระหว่างช่วงเวลาของ <Term:2000003></Term> ทุกครั้งที่สามารถรับมือการโจมตีของบอสได้สำเร็จ จะได้รับ<color=#FFAF2C>คะแนนแมคคานิก 500 คะแนน</color>; เมื่อสามารถใช้ <color=#FFAF2C>[ตอบโต้สมบูรณ์แบบ]</color> กับ <color=#FFAF2C>[สกิลควบคุม]</color> ของบอสได้สำเร็จ จะได้รับ<color=#FFAF2C>คะแนนแมคคานิก 1,500 คะแนน</color> (รับคะแนนแมคคานิกได้มากสุด 5,000 คะแนน)",
+    "69014301_Title": "Frost Reins",
+    "69014301_Description": "Agent สาย [โจมตีรุนแรง] มี ATK <color=#2BAD00>เพิ่มขึ้น 25%</color> โดยเมื่อ <color=#FFFFFF>[โจมตีปกติ]</color>, <color=#FFFFFF>[สกิลพิเศษ-EX]</color> หรือ <color=#FFFFFF>[สกิลต่อเนื่อง]</color> โจมตีถูกศัตรู จะมองข้าม<color=#98EFF0>ความต้านทานความเสียหายธาตุน้ำแข็ง</color> และ<color=#FE437E>ความต้านทานความเสียหายธาตุอีเทอร์</color>ของศัตรูดังกล่าว <color=#2BAD00>30%</color>\nเมื่อ Agent โจมตีถูกศัตรูที่อยู่ในสภาวะสตั๊น ศัตรูดังกล่าวจะมีตัวคูณ Stun DMG <color=#2BAD00>เพิ่มขึ้น 40%</color> ต่อเนื่อง 5 วินาที โดยเมื่อเกิดซ้ำ จะรีเฟรชช่วงเวลาต่อเนื่อง",
+    "69013604_Title": "Breakthrough",
+    "69013604_Description": "Agent สาย [ตัดสะบั้น] มี Sheer DMG <color=#2BAD00>เพิ่มขึ้น 15%</color> และสร้างค่าการลด Miasma Shield <color=#2BAD00>เพิ่มขึ้น 30%</color>\nAgent ที่อยู่ใน Ether Veil จะมี<color=#FE437E>ความเสียหายธาตุอีเทอร์</color><color=#2BAD00>เพิ่มขึ้น 25%</color> โดยหลังจากที่โจมตีโดนศัตรู จะทำให้ศัตรูดังกล่าวมีตัวคูณ Stun DMG <color=#2BAD00>เพิ่มขึ้น 25%</color> ต่อเนื่อง 10 วินาที ซึ่งเมื่อเกิดซ้ำ จะรีเฟรชช่วงเวลาต่อเนื่อง",
+    "ElementIconTitle_Ice": "น้ำแข็ง"
   },
   "vi": {
     "OfficialName_Monster_Girtablu_HC": "Dị Cấu - Girtablullu",
@@ -129,7 +228,16 @@
     "69014202_Title": "Tập Kích",
     "69014202_Description": "Tấn Công của Người Đại Diện <color=#2BAD00>tăng 10%</color>, Tinh Thông Dị Thường <color=#2BAD00>tăng 30 điểm</color>, DMG Bạo Kích <color=#2BAD00>tăng 40%</color>.\nSau khi Người Đại Diện gán hiệu quả <color=#FFFFFF>Thuộc Tính Dị Thường</color> lên kẻ địch, Phòng Thủ của kẻ địch <color=#2BAD00>giảm 10%</color>, duy trì 10s, khi kích hoạt trùng lặp sẽ làm mới thời gian duy trì.",
     "69013201_Title": "Hủy Tâm",
-    "69013201_Description": "DMG Bạo Kích của Người Đại Diện <color=#2BAD00>tăng 30%</color>.\nTấn Công của Người Đại Diện có đặc tính Tiên Phong <color=#2BAD00>tăng 10%</color>, sát thương gây ra khi Tấn Công Thường trúng mục tiêu <color=#2BAD00>tăng 30%</color>, đồng thời bỏ qua <color=#2BAD00>15%</color> Phòng Thủ của mục tiêu."
+    "69013201_Description": "DMG Bạo Kích của Người Đại Diện <color=#2BAD00>tăng 30%</color>.\nTấn Công của Người Đại Diện có đặc tính Tiên Phong <color=#2BAD00>tăng 10%</color>, sát thương gây ra khi Tấn Công Thường trúng mục tiêu <color=#2BAD00>tăng 30%</color>, đồng thời bỏ qua <color=#2BAD00>15%</color> Phòng Thủ của mục tiêu.",
+    "OfficialName_Monster_ClonedBlackWolf": "Bản Sao - Kẻ Thanh Trừng Khát Máu",
+    "69014407_Title": null,
+    "69014407_Description": "Sau khi Người Đại Diện gây Phản Đòn Hoàn Hảo cho kẻ địch, kháng toàn bộ thuộc tính của kẻ địch giảm 10%, đồng thời tấn công của Người Đại Diện có đặc tính Tiên Phong trong toàn đội tăng 20%, Tỷ Lệ Xuyên Giáp tăng 25%, DMG Bạo Kích của DMG Băng và DMG Ether gây ra tăng 60%.\nKhi kích hoạt ngã quỵ đặc biệt, Tinh Thông Dị Thường toàn đội tăng 40 điểm, DMG Dị Thường tăng 30%.",
+    "69013304_Description": "Mỗi lần ứng phó thành công đòn tấn công của BOSS và khiến nó kích hoạt ngã quỵ đặc biệt, sẽ nhận được <color=#FFAF2C>1000 Điểm Thao Tác</color>. Trong thời gian <Term:2000003></Term>, mỗi lần ứng phó thành công đòn tấn công của BOSS, sẽ nhận được <color=#FFAF2C>500 Điểm Thao Tác</color>. Khi <color=#FFAF2C>Phản Đòn Hoàn Hảo</color> <color=#FFAF2C>Kỹ Năng Khống Chế</color> của BOSS, sẽ nhận được <color=#FFAF2C>1500 Điểm Thao Tác</color>. Tối đa nhận được 5000 Điểm Thao Tác.",
+    "69014301_Title": "Xiết Sương",
+    "69014301_Description": "Tấn Công của Người Đại Diện đặc tính Tiên Phong <color=#2BAD00>tăng 25%</color>, khi <color=#FFFFFF>Tấn Công Thường</color>, <color=#FFFFFF>Siêu Chiến Kỹ</color>, <color=#FFFFFF>Liên Kích</color> trúng kẻ địch, bỏ qua <color=#2BAD00>30%</color> <color=#98EFF0>Kháng DMG Băng</color> và <color=#FE437E>Kháng DMG Ether</color> của kẻ địch.\nKhi Người Đại Diện đánh trúng kẻ địch trong trạng thái Choáng, DMG Choáng của kẻ địch <color=#2BAD00>tăng 40%</color>, duy trì 5s, kích hoạt trùng lặp sẽ làm mới thời gian duy trì.",
+    "69013604_Title": "Phá Cảnh",
+    "69013604_Description": "DMG Quán Xuyến của Người Đại Diện có đặc tính Mệnh Phá <color=#2BAD00>tăng 15%</color>, lượng giảm giá trị Khiên Uế Tức gây ra <color=#2BAD00>tăng 30%</color>.\nNgười Đại Diện trong Tấm Rèm Ether, <color=#FE437E>DMG Ether</color> <color=#2BAD00>tăng 25%</color>, sau khi đánh trúng kẻ địch sẽ khiến Bội Số DMG Choáng của chúng <color=#2BAD00>tăng 25%</color>, duy trì 10s, khi kích hoạt trùng lặp sẽ làm mới thời gian duy trì.",
+    "ElementIconTitle_Ice": "Băng"
   },
   "id": {
     "OfficialName_Monster_Girtablu_HC": "Integrated - Girtablullu",
@@ -140,6 +248,15 @@
     "69014202_Title": "Sneak Attack",
     "69014202_Description": "ATK Agen <color=#2BAD00>meningkat 10%</color>, Anomaly Proficiency <color=#2BAD00>meningkat 30 poin</color>, dan CRIT DMG <color=#2BAD00>meningkat 40%</color>.\nSetelah Agen mengakibatkan efek <color=#FFFFFF>Attribute Anomaly</color> terhadap musuh, DEF musuh tersebut akan <color=#2BAD00>berkurang 10%</color> selama 10 detik. Memicu ulang akan memperbarui durasi.",
     "69013201_Title": "Heartcrusher",
-    "69013201_Description": "CRIT DMG Agen <color=#2BAD00>meningkat 30%</color>.\nATK Agen spesialisasi Attack <color=#2BAD00>meningkat 10%</color>, DMG yang diakibatkan saat Basic Attack mengenai target <color=#2BAD00>meningkat 30%</color> dan mengabaikan <color=#2BAD00>15%</color> DEF musuh."
+    "69013201_Description": "CRIT DMG Agen <color=#2BAD00>meningkat 30%</color>.\nATK Agen spesialisasi Attack <color=#2BAD00>meningkat 10%</color>, DMG yang diakibatkan saat Basic Attack mengenai target <color=#2BAD00>meningkat 30%</color> dan mengabaikan <color=#2BAD00>15%</color> DEF musuh.",
+    "OfficialName_Monster_ClonedBlackWolf": "Rewritten - Sanguine Sweeper",
+    "69014407_Title": null,
+    "69014407_Description": "Setelah Agen mengakibatkan Shutdown pada musuh, ketahanan semua atribut musuh berkurang 10%, dan ATK semua anggota tim Agen dengan Spesialisasi \"Attack\" meningkat 20%, PEN Ratio meningkat 25%, serta CRIT DMG Ice dan CRIT DMG Ether yang diakibatkan meningkat 60%.\nSaat membuat musuh tidak berdaya, Anomaly Proficiency semua anggota tim meningkat 40 poin, dan Anomaly DMG meningkat 30%.",
+    "69013304_Description": "Setiap kali berhasil menangkis serangan musuh Boss dan membuatnya tidak berdaya, kamu akan mendapatkan <color=#FFAF2C>1.000 Skor Operasi</color>. Selama <Term:2000003></Term>, setiap kali berhasil menangkis serangan musuh Boss, kamu akan mendapatkan <color=#FFAF2C>500 Skor Operasi</color>. Saat melakukan <color=#FFAF2C>Shutdown</color> terhadap <color=#FFAF2C>Control Skill</color> milik Boss, kamu akan mendapatkan <color=#FFAF2C>1.500 Skor Operasi</color>. Maksimal Skor Operasi yang bisa didapatkan adalah 5000.",
+    "69014301_Title": "Frost Reins",
+    "69014301_Description": "ATK Agen dengan spesialisasi Attack <color=#2BAD00>meningkat 25%</color>. Saat <color=#FFFFFF>Basic Attack</color>, <color=#FFFFFF>EX Special Attack</color>, <color=#FFFFFF>Chain Attack</color> mengenai musuh, akan mengabaikan <color=#2BAD00>30%</color> <color=#98EFF0>Ketahanan Ice DMG</color> dan <color=#FE437E>Ketahanan Ether DMG</color> musuh tersebut.\nSaat serangan Agen mengenai musuh yang berada dalam status Stun, Kelipatan Stun DMG musuh akan <color=#2BAD00>meningkat 40%</color> selama 5 detik. Memicu ulang akan memperbarui durasi.",
+    "69013604_Title": "Breakthrough",
+    "69013604_Description": "Sheer DMG yang diakibatkan Agen spesialisasi Rupture meningkat <color=#2BAD00>15%</color>, dan pengurangan nilai Miasma Shield meningkat <color=#2BAD00>30%</color>.\nUntuk Agen yang berada dalam Ether Veil, <color=#FE437E>Ether DMG</color> akan meningkat <color=#2BAD00>25%</color> dan Kelipatan Stun DMG setelah serangan mengenai musuh meningkat <color=#2BAD00>25%</color>. Efek ini berlangsung selama 10 detik. Memicu ulang akan memperbarui durasi.",
+    "ElementIconTitle_Ice": "Ice"
   }
 }

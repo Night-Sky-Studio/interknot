@@ -4,7 +4,7 @@ import { ServerChip, UserHeaderMemoized } from "@/components/UserHeader/UserHead
 import { useSettings } from "@/components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import type { Buff } from "@interknot/types"
-import { Alert, Anchor, Avatar, Badge, Button, Card, Center, Chip, Flex, Grid, Group, Image, Loader, LoadingOverlay, Pagination, Select, Stack, Title, Text, Collapse, Divider } from "@mantine/core"
+import { Alert, Anchor, Avatar, Badge, Button, Card, Center, Flex, Grid, Group, Image, Loader, LoadingOverlay, Pagination, Select, Stack, Title, Text, Collapse, Divider, UnstyledButton } from "@mantine/core"
 import { IconChevronDown, IconChevronUp, IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable";
 import { useCallback, useMemo, useState } from "react"
@@ -13,6 +13,7 @@ import { useAsync } from "react-use"
 import "./styles/AssaultLeaderboardsDetailsPage.css"
 import GameText from "@/components/GameText"
 import { useDisclosure } from "@mantine/hooks"
+import { ZenlessIcon } from "@/components/icons/Icons";
 
 function isLive(from: string, to: string): boolean {
     const fromDate = new Date(from).getTime(),
@@ -153,7 +154,10 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                     <Group gap="xs">
                                         <Title order={5}>Weaknesses</Title>
                                         {leaderboard.EnemyWeaknesses.map(w =>
-                                            <Chip key={w} radius="sm" checked={false}>{getLocalString(w)}</Chip>
+                                            <Badge key={w} radius="sm" color="dark"
+                                                leftSection={<ZenlessIcon size={14} elementName={getLocalString(w, "en")} />}>
+                                                    {getLocalString(w)}
+                                            </Badge>
                                         )}
                                     </Group>
                                 }
@@ -231,24 +235,36 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                         accessor: "Rank",
                                         title: "#",
                                         width: "7ch",
-                                        cellsStyle: () => ({ maxWidth: "7ch" })
+                                        cellsStyle: () => ({ maxWidth: "7ch" }),
+                                        render: (entry) => <>
+                                            {entry.IsBanned 
+                                                ? <>
+                                                    <Text className="table-name-display">-</Text> 
+                                                    <Text className="table-name-local">{entry.Rank}</Text> 
+                                                </>
+                                                : <Text>{entry.Rank}</Text> 
+                                            }
+                                        </>
                                     },
                                     {
                                         accessor: "Profile.Nickname",
                                         title: "Nickname",
+                                        cellsStyle: () => ({
+                                            maxWidth: "24ch"
+                                        }),
                                         render: (entry) => (
                                             <Group gap="sm" wrap="nowrap">
                                                 <ServerChip uid={entry.Profile.Uid.toString() ?? ""} />
                                                 <Avatar src={entry.Profile.ProfilePictureUrl} size="md" />
                                                 <Title className="user-info" order={6}>IL {entry.Profile.Level}</Title>
                                                 <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
-                                                    href={`/user/${entry.Profile.Uid}`} onClick={(e) => {
+                                                    href={`/profile/${entry.Profile.Uid}`} onClick={(e) => {
                                                     e.stopPropagation()
                                                     e.preventDefault()
-                                                    navigate(`/user/${entry.Profile.Uid}`)
+                                                    navigate(`/profile/${entry.Profile.Uid}`)
                                                 }}>{entry.Profile.Nickname}</Anchor>
                                                 {entry.IsBanned &&
-                                                    <Badge color="red">Banned</Badge>
+                                                    <Badge color="red">Sus</Badge>
                                                 }
                                             </Group>
                                         )
@@ -257,8 +273,7 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                         accessor: "Profile.Description",
                                         title: "Description",
                                         render: (entry) => (
-                                            <Text maw="256px" truncate="end"
-                                                title={entry.Profile.Description}>{entry.Profile.Description}</Text>
+                                            <Text truncate="end">{entry.Profile.Description}</Text>
                                         )
                                     },
                                     {
@@ -269,7 +284,9 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                             background: "rgba(0 0 0 / 25%)"
                                         }),
                                         render: (entry) => (
-                                            <Text fz="12pt" fw={600}>{entry.TotalValue.toLocaleString()}</Text>
+                                            <Text fz="12pt" fw={600} style={{
+                                                textDecoration: entry.IsBanned ? "line-through" : undefined
+                                            }}>{entry.TotalValue.toLocaleString()}</Text>
                                         )
                                     }
                                 ]}
@@ -277,9 +294,12 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                     allowMultiple: true,
                                     content: ({ record: entry }) => (
                                         <Center w="100%" p="md">
-                                            <Stack maw="640px" w="100%">
+                                            <UnstyledButton maw="640px" w="100%" component="a" className="profile-button"
+                                                onClick={() => {
+                                                    navigate(`/profile/${entry.Profile.Uid}`)
+                                                }}>
                                                 <UserHeaderMemoized user={entry.Profile} />
-                                            </Stack>
+                                            </UnstyledButton>
                                         </Center>
                                     )
                                 }}

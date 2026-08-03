@@ -27,10 +27,16 @@ export default function AssaultLeaderboards(): React.ReactElement {
             <Alert variant="light" color="blue" 
                 title={<Title order={3}>Deadly Assault Leaderboards</Title>} icon={<IconInfoCircle />}>
                 <Stack>
-                <Text>
-                    To participate in these leaderboards, you must have <b>AT LEAST 3</b> characters in your Profile
-                    and have a Hardcore Deadly Assault medal on your profile.
-                </Text>
+                    <Text>
+                        All entries go through a very basic anti-cheat system. If you have {(40000).toLocaleString()}+ points, 
+                        but have all characters in your profile at M0 or have mostly A-rank characters - you will be flagged. 
+                        This check is ran on every profile update, so it is possible to get the sus flag removed.
+                    </Text>
+                    <Text>
+                        To participate in these leaderboards, you must have <b>AT LEAST 3</b> characters in your Profile, 
+                        have reached the <b>Inter-Knot Level 50</b> and have a <b>Hardcore Deadly Assault Medal</b> with the score 
+                        in your profile.
+                    </Text>
                 
                 </Stack>
             </Alert>
@@ -61,26 +67,26 @@ export default function AssaultLeaderboards(): React.ReactElement {
                                 },
                                 {
                                     accessor: "EnemyName",
-                                    title: "Name",
+                                    title: "Deadly Assault",
                                     render: (leaderboard) => {
                                         return (
                                             <Group gap="xs">
                                                 <Image h="32px" src={leaderboard.EnemyIconUrl} 
                                                     alt={leaderboard.EnemyName} />
-                                                <Anchor href={`/leaderboards/assault/${leaderboard.Id}`} onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    e.preventDefault()
-                                                    navigate(`/leaderboards/assault/${leaderboard.Id}`)
-                                                }} c="inherit" fz="inherit">
-                                                    <Group gap="xs">
-                                                        <Badge bg="dark">{leaderboard.GameVersion}</Badge>
+                                                <Group gap="xs">
+                                                    <Badge bg="dark">{leaderboard.GameVersion}</Badge>
+                                                    <Anchor href={`/leaderboards/assault/${leaderboard.Id}`} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        e.preventDefault()
+                                                        navigate(`/leaderboards/assault/${leaderboard.Id}`)
+                                                    }} c="inherit" fz="inherit">
                                                         {getLocalString(leaderboard.EnemyName)}
+                                                    </Anchor>
                                                     {
                                                         isLive(leaderboard.StartDate, leaderboard.EndDate) 
                                                             && <Badge c="black">Live</Badge>
                                                     }
-                                                    </Group>
-                                                </Anchor>
+                                                </Group>
 
                                             </Group>
                                         )
@@ -100,27 +106,12 @@ export default function AssaultLeaderboards(): React.ReactElement {
                                     accessor: "Count",
                                     title: "Total"
                                 }
-                            ]} 
-                            // rowExpansion={{
-                            //     allowMultiple: true,
-                            //     content: ({ record: leaderboard }) => (
-                            //         <Flex w="100%" justify="space-evenly" align="center">
-                            //             <Stack p="md" gap="xs" align="flex-start">
-                            //                 <Text fz="sm" c="dimmed">Weapons</Text>
-                            //                 {
-                            //                     [leaderboard, ...leaderboard.Children].map((child) => (
-                            //                         <WeaponButton key={child.Id} id={child.Id} 
-                            //                             weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
-                            //                     ))
-                            //                 }
-                            //             </Stack>
-                            //             <Stack p="md" gap="xs">
-                            //                 <Text fz="sm" c="dimmed">Team</Text>
-                            //                 <Team h="96px" team={leaderboard.Team} />
-                            //             </Stack>
-                            //         </Flex>
-                            //     )
-                            // }} 
+                            ]}
+                            onRowClick={({ event, record }) => {
+                                event.stopPropagation()
+                                event.preventDefault()
+                                navigate(`/leaderboards/assault/${record.Id}`)
+                            }}
                             />
                     </Stack>
                 </Card>
