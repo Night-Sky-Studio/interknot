@@ -51,7 +51,7 @@ export default function Leaderboards() {
             { mode == "debug" &&
                 <FilterSelector
                     exclude={[
-                        "region", "set_id", "onlyPrimary", "partial_sets", "full_set", "main_stat_id", "rarity", "weapon_refinement_level"
+                        "region", "set_id", "onlyPrimary", "partial_sets", "full_set", "main_stat_id", "rarity", "weapon_refinement_level", "isBanned"
                     ]}
                     value={Object.entries(query).flatMap(([k, v]) => {
                         if (v === undefined) return []
@@ -67,7 +67,15 @@ export default function Leaderboards() {
                                 q[g] = s
                             }
                         })
-                        setQueryParams(q)
+                        setQueryParams((current) => {  
+                            const next: Record<string, string | undefined> = { ...q }  
+                            for (const key of Object.keys(current)) {  
+                                if (key !== "mode" && !(key in next)) {  
+                                    next[key] = undefined  
+                                }  
+                            }  
+                            return next  
+                        })  
                     }} />
             }
 
