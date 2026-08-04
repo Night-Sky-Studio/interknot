@@ -1,10 +1,10 @@
 import { useMemo } from "react"
 import { Stack, Text } from "@mantine/core"
+import { getTerm } from "@/localization/Localization";
+import { GetLocalStringFunc, useSettings } from "./SettingsProvider";
 
 export interface IGameTextProps {
     text: string
-    /** Display names for `<Term:id>` tags that ship without an inline label. */
-    terms?: Record<string, string>
     size?: string
     /** Spacing between paragraphs. */
     gap?: string
@@ -170,11 +170,11 @@ function hasContent(node: GameNode): boolean {
     return node.type === "text" ? node.value.trim().length > 0 : node.children.some(hasContent)
 }
 
-function renderNodes(nodes: GameNode[], terms?: Record<string, string>): React.ReactNode {
+function renderNodes(nodes: GameNode[], getLocalString: GetLocalStringFunc): React.ReactNode {
     return nodes.map((node, i) => {
         if (node.type === "text") return node.value
 
-        const inner = renderNodes(node.children, terms)
+        const inner = renderNodes(node.children, getLocalString)
 
         switch (node.tag) {
             case "color":
@@ -193,9 +193,9 @@ function renderNodes(nodes: GameNode[], terms?: Record<string, string>): React.R
                 return <Text key={i} span fz={node.value ? `${node.value}px` : undefined}>{inner}</Text>
             case "term": {
                 // Some locales ship `<Term:id></Term>` with no label, then the id is all we have.
-                const label = node.children.length > 0 ? inner : node.value && terms?.[node.value]
+                const label: string | undefined = node.children.length > 0 ? `${inner}` : getTerm(node.value)
                 if (!label) return null
-                return <Text key={i} span fw={600}>{label}</Text>
+                return <Text key={i} span fw={800}>{getLocalString(label)}</Text>
             }
             default:
                 return inner
@@ -203,10 +203,12 @@ function renderNodes(nodes: GameNode[], terms?: Record<string, string>): React.R
     })
 }
 
-export default function GameText({ text, terms, size, gap = "xs" }: IGameTextProps): React.ReactElement {
+export default function GameText({ text, size, gap = "xs" }: IGameTextProps): React.ReactElement {
     const paragraphs = useMemo(() => parseGameText(text), [text])
 
+    const { getLocalString } = useSettings()
+
     return <Stack gap={gap}>
-        {paragraphs.map((nodes, i) => <Text key={i} size={size}>{renderNodes(nodes, terms)}</Text>)}
+        {paragraphs.map((nodes, i) => <Text key={i} size={size}>{renderNodes(nodes, getLocalString)}</Text>)}
     </Stack>
 }

@@ -9,11 +9,13 @@ type InterknotSettingsBase = {
     cvEnabled?: boolean
 }
 
+export type GetLocalStringFunc = (value: string, lang?: string) => string
+
 type InterknotSettings = InterknotSettingsBase & {
     setDecimalPlaces: (value: number) => void,
     setCvEnabled: (value: boolean) => void,
     setLanguage: (value: string) => void,
-    getLocalString: (value: string, lang?: string) => string,
+    getLocalString: GetLocalStringFunc,
     getLevel: (level: number) => string,
     setLbButtonVariant: (value: number) => void
 }
@@ -59,7 +61,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         const str = Localizations[lang ?? settings.language][value]
         if (!str) { 
             const assault = AssaultLocalizations[lang ?? settings.language][value]
-            if (assault !== undefined && assault !== "") {
+            if (assault !== undefined && assault !== null && assault !== "") {
                 return assault
             }
 
