@@ -75,4 +75,5 @@
     padding: 2px 8px;
     border-radius: var(--mantine-radius-sm);
     box-shadow: 0 0 8px rgb(0 0 0 / 50%);
+    white-space: nowrap;
 }

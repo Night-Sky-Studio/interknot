@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect } from "react"
 import { useLocalStorage } from "@mantine/hooks"
-import { Localizations, AdditionalProps, AvailableLocs } from "../localization/Localization"
+import { Localizations, AdditionalProps, AvailableLocs, AssaultLocalizations } from "../localization/Localization"
 
 type InterknotSettingsBase = {
     decimalPlaces: number,
@@ -9,11 +9,13 @@ type InterknotSettingsBase = {
     cvEnabled?: boolean
 }
 
+export type GetLocalStringFunc = (value: string, lang?: string) => string
+
 type InterknotSettings = InterknotSettingsBase & {
     setDecimalPlaces: (value: number) => void,
     setCvEnabled: (value: boolean) => void,
     setLanguage: (value: string) => void,
-    getLocalString: (value: string) => string,
+    getLocalString: GetLocalStringFunc,
     getLevel: (level: number) => string,
     setLbButtonVariant: (value: number) => void
 }
@@ -55,16 +57,23 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.setAttribute("lang", settings.language)
     }, [settings.language])
 
-    const getLocalString = useCallback((value: string) => {
-        const str = Localizations[settings.language][value]
-        if (!str) { // additionalProp?
-            const fallback = AdditionalProps[value]
-            if (!fallback) {
-                return value
+    const getLocalString = useCallback((value: string, lang?: string) => {
+        const str = Localizations[lang ?? settings.language][value]
+        if (!str) { 
+            const assault = AssaultLocalizations[lang ?? settings.language][value]
+            if (assault !== undefined && assault !== null && assault !== "") {
+                return assault
             }
-            return fallback
+
+            // additionalProp?
+            const fallback = AdditionalProps[value]
+            if (fallback !== undefined && fallback !== "") {
+                return fallback
+            }
+
+            return value
         }
-        return Localizations[settings.language][value]
+        return str
     }, [settings.language])
 
     const getLevel = (level: number) => {

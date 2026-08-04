@@ -1,0 +1,21 @@
+.enemy-img {
+    height: 220px;
+}
+/* 
+@media (max-width: $mantine-breakpoint-sm) {
+    .enemy-img {
+        height: 160px;
+    }
+} */
+
+/* `.namecard-medal-level` is sized for the 42px medals on the profile
+   header - tighten it up for the smaller ones in the table. */
+.assault-medals .namecard-medal-level {
+    min-width: 32px;
+    font-size: 9px !important;
+    bottom: -6px;
+}
+
+.assault-row-banned {
+    opacity: 0.5;
+}

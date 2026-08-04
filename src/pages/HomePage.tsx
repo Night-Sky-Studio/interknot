@@ -68,9 +68,12 @@ export default function HomePage(): React.ReactElement {
                 {
                     users.map(u => {
                         return (
-                            <UnstyledButton key={u.Uid} className="profile-button"
-                                onClick={() => {
-                                    navigate(`user/${u.Uid}`)
+                            <UnstyledButton key={u.Uid} component="a" className="profile-button"
+                                href={`/profile/${u.Uid}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    navigate(`/profile/${u.Uid}`)
                                 }}>
                                 <UserHeaderMemoized user={u} />
                             </UnstyledButton>

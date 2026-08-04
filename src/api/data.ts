@@ -18,7 +18,10 @@ import {
     url,
     match,
     SimpleBuild,
-    Character
+    Character,
+    AssaultList,
+    AssaultDetail,
+    AssaultLeaderboardEntry
 } from "@interknot/types"
 
 interface IFilter {
@@ -258,6 +261,41 @@ export async function getLeaderboardDmgDistribution(id: number): Promise<IResult
         base: DATA_URL,
         path: `/leaderboard/${id}/distribution`
     }), true)
+}
+
+export async function getAssaultLeaderboards(): Promise<IResult<AssaultList[]>> {
+    return await req(url({
+        base: DATA_URL,
+        path: "/leaderboards/assault"
+    }))
+}
+export async function getAssaultLeaderboard(id: number): Promise<IResult<AssaultDetail>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `/leaderboard/assault/${id}`
+    }))
+}
+export async function getAssaultLeaderboardUsers(leaderboardId: number, {
+    cursor,
+    limit = 20,
+    filter
+}: IQueryParams): Promise<ICursoredResult<AssaultLeaderboardEntry>> {
+    return await reqCursored(url({
+        base: DATA_URL,
+        path: `/leaderboard/assault/${leaderboardId}/users`,
+        query: {
+            cursor,
+            limit: limit?.toString(),
+            ...filter
+        }
+    }), true)
+}
+export async function getAssaultLeaderboardUsersCount(leaderboardId: number, hash?: string): Promise<IResult<number>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `/leaderboard/assault/${leaderboardId}/users/count`,
+        query: { hash }
+    }))
 }
 
 export interface CalcResponse {

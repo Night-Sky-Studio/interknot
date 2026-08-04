@@ -1,9 +1,13 @@
 import { match, SkillTag } from "@interknot/types"
 import locs from "./locs.json"
+import locs_assault from "./locs.assault.json"
+import terms from "./terms.json"
 import additionalProps from "./additionalProps.json"
 
 export const Localizations = locs as Record<string, Record<string, string>>
+export const AssaultLocalizations = locs_assault as Record<string, Record<string, string | null>>
 export const AdditionalProps = additionalProps as Record<string, string>
+export const Terms = terms as Record<string, string>
 export const AvailableLocs = Object.keys(Localizations)
 
 const tagNameMap: Record<SkillTag, string> = {
@@ -107,4 +111,8 @@ export function getErrorString(error?: string): string {
         ["E_INTERNAL", "Internal server error"],
         () => "Internal error"
     ])
+}
+
+export function getTerm(key?: string): string | undefined {
+    return key && Terms[key]
 }
