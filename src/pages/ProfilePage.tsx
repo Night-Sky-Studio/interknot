@@ -360,7 +360,7 @@ export default function ProfilePage(): React.ReactElement {
 
                     <Stack>
                         <FilterSelector
-                            exclude={["region", "set_id", "onlyPrimary"]}
+                            exclude={["region", "set_id", "onlyPrimary", "isBanned"]}
                             value={Object.entries(filterQuery).flatMap(([k, v]) => {
                                 if (v === undefined) return []
                                 return v.toString().split(",").map(s => `${k}:${s}`)
@@ -610,7 +610,7 @@ export default function ProfilePage(): React.ReactElement {
 
                     <Stack mt="4rem">
                         <FilterSelector
-                            exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level", "onlyPrimary"]}
+                            exclude={["region", "character_id", "weapon_id", "partial_sets", "full_set", "mindscape_level", "weapon_refinement_level", "onlyPrimary", "isBanned"]}
                             value={Object.entries(discsQuery.filter ?? {}).flatMap(([k, v]) => {
                                 if (v === undefined) return []
                                 return v.toString().split(",").map(s => `${k}:${s}`)

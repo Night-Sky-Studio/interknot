@@ -287,7 +287,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                 </Center>
             }
             <FilterSelector 
-                exclude={["character_id", "set_id", "rarity"]}
+                exclude={["character_id", "set_id", "rarity", "isBanned"]}
                 value={Object.entries(filterQuery).flatMap(([k, v]) => {
                     if (v === undefined) return []
                     return v.toString().split(",").map(s => `${k}:${s}`)
