@@ -33,7 +33,7 @@ export default function AssaultLeaderboards(): React.ReactElement {
                         This check is ran on every profile update, so it is possible to get the sus flag removed.
                     </Text>
                     <Text>
-                        To participate in these leaderboards, you must have <b>AT LEAST 3</b> characters in your Profile, 
+                        To participate in these leaderboards, you must have <b>AT LEAST 2</b> characters in your Profile, 
                         have reached the <b>Inter-Knot Level 50</b> and have a <b>Hardcore Deadly Assault Medal</b> with the score 
                         in your profile.
                     </Text>
