@@ -90,6 +90,10 @@ export default function PlayerSearch({ search }: { search: (result: ProfileInfo[
 
     const onSubmit = () => {
         const query = value.trim()
+        if (query === "") {
+            setError("That's an empty field, you doofus")
+            return
+        }
         if (!looksNumeric(query)) {
             setError("Adding profile by Nickname is not supported")
             return
