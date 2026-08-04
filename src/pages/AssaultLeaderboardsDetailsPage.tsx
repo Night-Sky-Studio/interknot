@@ -118,9 +118,9 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
     return (<>
         <title>{`${getName()} | Inter-Knot`}</title>
         <Stack>
-            {leaderboardUsersState.error &&
+            {(leaderboardState.error || leaderboardUsersState.error) &&
                 <Alert variant="light" color="red" title="Failed to load users" icon={<IconInfoCircle />}>
-                    <Text ff="monospace">Error: {leaderboardUsersState.error.message}</Text>
+                    <Text ff="monospace">Error: {leaderboardState.error?.message ?? leaderboardUsersState.error?.message}</Text>
                 </Alert>
             }
             {leaderboard &&
@@ -178,7 +178,7 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                 </Card>
             }
 
-            {leaderboardUsersState.loading &&
+            {(leaderboardState.loading || leaderboardUsersState.loading) &&
                 <Center>
                     <Loader />
                 </Center>
