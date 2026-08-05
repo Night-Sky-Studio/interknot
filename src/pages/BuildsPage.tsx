@@ -120,7 +120,7 @@ export default function BuildsPage(): React.ReactElement {
                 </Stack>
             </Alert>
             <FilterSelector 
-                exclude={["set_id"]}
+                exclude={["set_id", "isBanned"]}
                 value={Object.entries(filterQuery).flatMap(([k, v]) => {
                     if (v === undefined) return []
                     return v.toString().split(",").map(s => `${k}:${s}`)
