@@ -1,5 +1,6 @@
 import { getAssaultLeaderboards } from "@/api/data"
 import { useSettings } from "@/components/SettingsProvider"
+import { url } from "@interknot/types"
 import { Alert, Anchor, Card, Center, Group, Loader, Stack, Title, Text, Image, Badge } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
@@ -30,11 +31,22 @@ export default function AssaultLeaderboards(): React.ReactElement {
                     <Text>
                         All entries go through a very basic anti-cheat system. If you have {(40000).toLocaleString()}+ points, 
                         but have all characters in your profile at M0 or have mostly A-rank characters - you will be flagged. 
-                        This check is ran on every profile update, so it is possible to get the sus flag removed.
+                        This check is ran on every profile update, so it is possible to get the sus flag removed. <b>THIS 
+                        SYSTEM IS NOT PERFECT</b> and it may change at any moment without any warning. 
+                    </Text>
+                    <Text>
+                        If you think that your clear was unjustly marked as suspicious, use our <Anchor href={url({
+                            base: "https://youtrack.interknot.space",
+                            path: "form/c84dbde1-02ee-4caf-8c96-bdb862ec50c1",
+                            query: {
+                                "summary": "Suspicious clear - <YOUR UID HERE>",
+                                "description": `My HC DA clear was marked as suspicious. My proof of the clear is: <YOUR PROOF HERE/attached image`
+                            }
+                        })} target="_blank">feedback form</Anchor> to send us a report (don't forget to fill in all the fields!).
                     </Text>
                     <Text>
                         To participate in these leaderboards, you must have <b>AT LEAST 2</b> characters in your Profile, 
-                        have reached the <b>Inter-Knot Level 50</b> and have a <b>Hardcore Deadly Assault Medal</b> with the score 
+                        have reached <b>Inter-Knot Level 50</b> and have a <b>Hardcore Deadly Assault Medal</b> with the score 
                         in your profile.
                     </Text>
                 
