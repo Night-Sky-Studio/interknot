@@ -39,8 +39,8 @@ export default function AssaultLeaderboards(): React.ReactElement {
                             base: "https://youtrack.interknot.space",
                             path: "form/c84dbde1-02ee-4caf-8c96-bdb862ec50c1",
                             query: {
-                                "summary": "Suspicious clear - <YOUR UID HERE>",
-                                "description": `My HC DA clear was marked as suspicious. My proof of the clear is: <YOUR PROOF HERE/attached image`
+                                "summary": "Suspicious HC DA clear - <YOUR UID HERE>",
+                                "description": `My HC DA clear was marked as suspicious. My proof of the clear is: <YOUR PROOF HERE> (images are supported).`
                             }
                         })} target="_blank">feedback form</Anchor> to send us a report (don't forget to fill in all the fields!).
                     </Text>

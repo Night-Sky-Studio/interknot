@@ -48,7 +48,7 @@ export default function Leaderboards() {
             </Alert>
 
 
-            { mode == "debug" &&
+            { mode === "debug" &&
                 <FilterSelector
                     exclude={[
                         "region", "set_id", "onlyPrimary", "partial_sets", "full_set", "main_stat_id", "rarity", "weapon_refinement_level", "isBanned"

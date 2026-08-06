@@ -21,8 +21,9 @@ import {
     useMantineTheme,
     ScrollArea,
     Affix,
+    Menu,
 } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconBugFilled, IconClearAll, IconInputX, IconSettings, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconBugFilled, IconClearAll, IconInputX, IconSettings, IconSkull, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import React, { useEffect, useState, useMemo } from "react"
 import { ProfileInfo } from "@interknot/types"
@@ -245,13 +246,27 @@ export default function Shell(): React.ReactElement {
                                 </Group>
                             </Button>
                             <Group ml="sm" className="header-buttons" gap="0.25rem">
-                                <Button size="xs"
-                                    component="a" href="/leaderboards"
-                                    variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"}
-                                    onClick={(evt) => {
-                                        evt.preventDefault()
-                                        navigate("/leaderboards")
-                                    }}>Leaderboards</Button>
+                                <Menu trigger="hover" disabled={mode !== "debug"} position="bottom-start">
+                                    <Menu.Target>
+                                        <Button size="xs"
+                                            component="a" href="/leaderboards"
+                                            variant={location.pathname.includes("leaderboards") ? "filled" : "subtle"}
+                                            onClick={(evt) => {
+                                                evt.preventDefault()
+                                                navigate("/leaderboards")
+                                            }}>Leaderboards</Button>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Item leftSection={<IconSkull />}
+                                            component="a" href="/leaderboards/assault"
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                navigate("/leaderboards/assault")
+                                            }}>
+                                            Deadly Assault Leaderboards
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
                                 <Button size="xs"
                                     component="a" href="/builds"
                                     variant={location.pathname.includes("builds") ? "filled" : "subtle"}
@@ -286,11 +301,22 @@ export default function Shell(): React.ReactElement {
                     <NavLink label="Leaderboards" leftSection={<IconTrophyFilled />}
                         variant="filled"
                         autoContrast
-                        active={location.pathname.includes("leaderboards")}
+                        active={location.pathname.includes("leaderboards") 
+                            && !location.pathname.includes("assault")}
                         onClick={() => {
                             navigate("/leaderboards")
                             toggle()
                         }} />
+                    { mode === "debug" &&
+                        <NavLink label="Deadly Assault Leaderboards" leftSection={<IconSkull />}
+                            variant="filled"
+                            autoContrast pl="xl"
+                            active={location.pathname.includes("assault")}
+                            onClick={() => {
+                                navigate("/leaderboards/assault")
+                                toggle()
+                            }} />
+                    }
                     <NavLink label="Builds" leftSection={<IconUsers />}
                         variant="filled"
                         autoContrast
