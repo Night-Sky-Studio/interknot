@@ -56,7 +56,6 @@
 }
 .namecard-medal-rank {
     display: none;
-    min-width: 56px !important;
 }
 .namecard-medal:hover .namecard-medal-value {
     display: none;
@@ -74,7 +73,7 @@
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
     text-align: center;
-    min-width: 50px;
+    min-width: 56px;
     bottom: -8px;
 
     background-color: var(--mantine-color-dark-9);

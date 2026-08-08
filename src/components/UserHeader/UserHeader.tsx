@@ -15,6 +15,7 @@ import "./UserHeader.css"
 import { useSettings } from "@components/SettingsProvider"
 import { useAsync } from "react-use"
 import { getAssaultLeaderboardEntry } from "@/api/data"
+import { toFixedCeil } from "@/extensions/NumberExtensions";
 
 export function userServer(uid: string) {
         if (uid.length === 10) {
@@ -49,7 +50,7 @@ interface IMedalProps {
 
 function Medal({ m, entry }: IMedalProps) {
     const { getLocalString, decimalPlaces } = useSettings()
-    const top = useMemo(() => entry ? (entry.Rank / entry.TotalCount).toFixed(decimalPlaces) : undefined, [entry])
+    const top = useMemo(() => entry ? toFixedCeil((entry.Rank / entry.TotalCount) * 100, decimalPlaces) : undefined, [entry])
     
     return <div className="namecard-medal">
         <MantineImage src={m.MedalIcon.IconUrl} alt={getLocalString(m.MedalIcon.Name)} h="42px" />
