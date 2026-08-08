@@ -73,7 +73,7 @@
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
     text-align: center;
-    min-width: 56px;
+    min-width: 50px;
     bottom: -8px;
 
     background-color: var(--mantine-color-dark-9);
