@@ -203,7 +203,7 @@
 
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.33.5", "", { "os": "win32", "cpu": "x64" }, "sha512-MpY/o8/8kj+EcnxwvrP4aTJSWw/aZ7JIGR4aBeZkZw5B7/Jn+tY9/VNwtcoGmdT7GfggGIU4kygOMSbYnOrAbg=="],
 
-    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#a3fab75", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-a3fab75"],
+    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#7e1052f", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-7e1052f"],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 

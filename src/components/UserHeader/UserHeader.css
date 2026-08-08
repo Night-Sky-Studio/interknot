@@ -54,17 +54,28 @@
     display: flex;
     align-items: center;
 }
-.namecard-medal-level {
+.namecard-medal-rank {
+    display: none;
+    min-width: 56px !important;
+}
+.namecard-medal:hover .namecard-medal-value {
+    display: none;
+}
+.namecard-medal:hover .namecard-medal-rank {
+    display: block;
+}
+.namecard-medal-group > * {
     font-family: "zzz-jp", monospace !important;
     letter-spacing: -1px;
     color: white;
     position: absolute;
-    bottom: -8px;
+    
     left: 50%;
     /* voodoo abs positioned element centering hack  */
     transform: translateX(-50%); 
     text-align: center;
-    min-width: 48px;
+    min-width: 50px;
+    bottom: -8px;
 
     background-color: var(--mantine-color-dark-9);
     border-radius: var(--mantine-radius-sm);

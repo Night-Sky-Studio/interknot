@@ -1,5 +1,5 @@
-import React, { memo } from "react"
-import { match, Medal, ProfileInfo } from "@interknot/types"
+import React, { memo, useMemo } from "react"
+import { type AssaultLeaderboardEntry, match, type Medal, MedalType, type ProfileInfo } from "@interknot/types"
 import { 
     BackgroundImage, 
     Card, 
@@ -13,6 +13,8 @@ import {
 } from "@mantine/core"
 import "./UserHeader.css"
 import { useSettings } from "@components/SettingsProvider"
+import { useAsync } from "react-use"
+import { getAssaultLeaderboardEntry } from "@/api/data"
 
 export function userServer(uid: string) {
         if (uid.length === 10) {
@@ -40,6 +42,25 @@ export function ServerChip({ uid }: { uid: string }) {
     )
 }
 
+interface IMedalProps {
+    m: Medal
+    entry?: Omit<AssaultLeaderboardEntry, "Profile">
+}
+
+function Medal({ m, entry }: IMedalProps) {
+    const { getLocalString, decimalPlaces } = useSettings()
+    const top = useMemo(() => entry ? (entry.Rank / entry.TotalCount).toFixed(decimalPlaces) : undefined, [entry])
+    
+    return <div className="namecard-medal">
+        <MantineImage src={m.MedalIcon.IconUrl} alt={getLocalString(m.MedalIcon.Name)} h="42px" />
+        <div className="namecard-medal-group">
+            <Title order={6} fz="10px" className="namecard-medal-value">{m.Value}</Title>
+            <Title order={6} fz="10px" className="namecard-medal-rank">{top ? `top ${top}%` : m.Value}</Title>
+        </div>
+    </div>
+}
+
+
 interface IUserHeaderProps {
     user: ProfileInfo,
     showDescription?: boolean,
@@ -49,16 +70,13 @@ interface IUserHeaderProps {
 export function UserHeader({ user, showDescription, variant = "default" }: IUserHeaderProps): React.ReactElement {
     const { getLocalString } = useSettings()
     
-    const Medal = ({ m }: { m: Medal }) => {
-        return (
-            <div className="namecard-medal">
-                <MantineImage src={m.MedalIcon.IconUrl} alt={getLocalString(m.MedalIcon.Name)} h="42px" />
-                <Title order={6} fz="10px" className="namecard-medal-level">{m.Value}</Title>
-            </div>
-        )
-    }
-    
     const UserData = () => {
+        const hcDaMedal = user.Medals.find(m => m.MedalType == MedalType.DeadlyAssaultHardcore)
+        const hcDaEntryState = useAsync(async () => {
+            if (!hcDaMedal) return
+            return await getAssaultLeaderboardEntry(user.Uid)
+        }, [user.Uid, hcDaMedal])
+
         return (
             <Group className="user-data">         
                 <Avatar className="namecard-avatar" src={user.ProfilePictureUrl} size="xl" mr="sm" />
@@ -82,7 +100,9 @@ export function UserHeader({ user, showDescription, variant = "default" }: IUser
                         {
                             user.Medals.map(m => {
                                 return (
-                                    <Medal key={m.MedalType} m={m} />
+                                    <Medal key={m.MedalType} m={m} 
+                                        entry={m.MedalType === MedalType.DeadlyAssaultHardcore 
+                                                ? hcDaEntryState.value?.data : undefined} />
                                 )
                             })
                         }

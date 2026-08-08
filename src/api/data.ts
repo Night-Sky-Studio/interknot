@@ -297,6 +297,14 @@ export async function getAssaultLeaderboardUsersCount(leaderboardId: number, has
         query: { hash }
     }))
 }
+export async function getAssaultLeaderboardEntry(
+    uid: number
+): Promise<IResult<Omit<AssaultLeaderboardEntry, "Profile">>> {
+    return await req(url({
+        base: DATA_URL,
+        path: `/leaderboard/assault/user/${uid}`
+    }))
+}
 
 export interface CalcResponse {
     FinalStats: FinalStats
