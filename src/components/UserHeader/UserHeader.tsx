@@ -50,11 +50,13 @@ interface IMedalProps {
 
 function Medal({ m, entry }: IMedalProps) {
     const { getLocalString, decimalPlaces } = useSettings()
-    const top = useMemo(() => entry ? toFixedCeil((entry.Rank / entry.TotalCount) * 100, decimalPlaces) : undefined, [entry])
+    const top = useMemo(() => entry && entry.IsBanned !== true 
+        ? toFixedCeil((entry.Rank / entry.TotalCount) * 100, decimalPlaces) 
+        : undefined, [entry])
     
     return <div className="namecard-medal">
         <MantineImage src={m.MedalIcon.IconUrl} alt={getLocalString(m.MedalIcon.Name)} h="42px" />
-        <div className="namecard-medal-group">
+        <div className={"namecard-medal-group" + (entry?.IsBanned ? " sus" : "")}>
             <Title order={6} fz="10px" className="namecard-medal-value">{m.Value}</Title>
             <Title order={6} fz="10px" className="namecard-medal-rank">{top ? `top ${top}%` : m.Value}</Title>
         </div>
