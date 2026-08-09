@@ -1,5 +1,6 @@
 import Markdown, { Options } from "react-markdown"
 import { Anchor, Code, Divider, Image, List, Text, Title } from "@mantine/core"
+import remarkGfm from "remark-gfm";
 
 interface IMantineMdProps {
     children?: string | null,
@@ -29,8 +30,8 @@ export function MantineMd({ children, options, size }: IMantineMdProps) {
             code: ({ node, ...props }) => <Code {...props} />,
             ul: ({ node, ...props }) => <List ml="md" {...props} />,
             li: ({ node, ...props }) => <List.Item c="white" {...props} />,
-            hr: ({ node, ...props }) => <Divider c="white" my="md" {...props} />
-        }} {...options}>
+            hr: ({ node, ...props }) => <Divider c="white" my="md" {...props} />,
+        }} remarkPlugins={[remarkGfm]} {...options}>
             { children }
         </Markdown>
     )

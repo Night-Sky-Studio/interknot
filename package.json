@@ -27,7 +27,8 @@
         "react-error-boundary": "^6.0.0",
         "react-markdown": "^10.1.0",
         "react-router": "^7.10.1",
-        "react-use": "^17.6.0"
+        "react-use": "^17.6.0",
+        "remark-gfm": "^4.0.1"
     },
     "devDependencies": {
         "@cloudflare/vite-plugin": "^1.17.1",
