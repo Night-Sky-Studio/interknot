@@ -61,8 +61,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         const str = Localizations[lang ?? settings.language][value]
         if (!str) { 
             const assault = AssaultLocalizations[lang ?? settings.language][value]
-            if (assault !== undefined && assault !== null && assault !== "") {
-                return assault
+            if (assault !== undefined && assault !== "") {
+                return assault == null ? "" : assault
             }
 
             // additionalProp?
