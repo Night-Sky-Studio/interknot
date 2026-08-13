@@ -227,6 +227,7 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
 
                             <DataTable
                                 highlightOnHover
+                                minHeight={144}
                                 className="data-table dt-header"
                                 idAccessor="Profile.Uid"
                                 rowClassName={(entry) => entry.IsBanned ? "assault-row-banned" : undefined}

@@ -124,7 +124,7 @@ export default function AssaultLeaderboards(): React.ReactElement {
                                 event.preventDefault()
                                 navigate(`/leaderboards/assault/${record.Id}`)
                             }}
-                            />
+                        />
                     </Stack>
                 </Card>
             }

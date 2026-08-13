@@ -160,6 +160,7 @@ export default function BuildsPage(): React.ReactElement {
                         <Stack>
                             <DataTable
                                 highlightOnHover
+                                minHeight={144}
                                 className="data-table"
                                 // borderRadius="sm"
                                 groups={[

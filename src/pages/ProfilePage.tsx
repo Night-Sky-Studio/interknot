@@ -400,6 +400,7 @@ export default function ProfilePage(): React.ReactElement {
                                     <DataTable
                                         scrollViewportRef={tableRef}
                                         highlightOnHover
+                                        minHeight={144}
                                         className="data-table"
                                         groups={[
                                             {
@@ -646,6 +647,7 @@ export default function ProfilePage(): React.ReactElement {
                                     <DataTable
                                         highlightOnHover
                                         className="data-table"
+                                        minHeight={144}
                                         groups={[
                                             {
                                                 id: "main",

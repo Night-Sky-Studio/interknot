@@ -326,6 +326,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                             overlayProps={{ radius: "sm", blur: 2 }} />
                         <DataTable 
                             highlightOnHover
+                            minHeight={144}
                             className="data-table"
                             groups={[
                                 {
