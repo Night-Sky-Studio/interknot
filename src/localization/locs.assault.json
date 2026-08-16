@@ -20,7 +20,12 @@
     "ElementIconTitle_Ice": "Ice",
     "69013903_Description_explanation": "Corruptive Barrier",
     "MultiParry_Explanation": "Chain Parry",
-    "ControlSkill_Explanation": "Control Skill"
+    "ControlSkill_Explanation": "Control Skill",
+    "ElementIconTitle_Physics": "Physical",
+    "69014401_Title": "Icy Raid",
+    "69014401_Description": "DMG dealt by Agents' <color=#FFFFFF>Basic Attack</color> and <color=#FFFFFF>Ultimate</color> <color=#2BAD00>increases by 30%</color>. When an Agent with Attack specialty hits an enemy, their attacks ignore <color=#2BAD00>20%</color> of the target's <color=#98EFF0>Ice RES</color>.\nAfter an Agent uses an <color=#FFFFFF>EX Special Attack</color>, their own <color=#98EFF0>Ice DMG</color> <color=#2BAD00>increases by 30%</color> for 15s. Repeated triggers reset the duration.",
+    "69014402_Title": "Mutation",
+    "69014402_Description": "If there are 2/3 Agents with <color=#FFFFFF>Anomaly</color> specialty in your squad, the whole squad's Attribute Anomaly DMG <color=#2BAD00>increases by 10%/30%</color>, and their ATK <color=#2BAD00>increases by 5%/15%</color> respectively.\nWhen dealing Attribute Anomaly DMG to an enemy, ignore <color=#2BAD00>10%</color> of their All-Attribute RES and <color=#2BAD00>10%</color> of their DEF."
   },
   "ja": {
     "OfficialName_Monster_Girtablu_HC": "異性体ギルタブルル",
@@ -43,7 +48,12 @@
     "ElementIconTitle_Ice": "氷属性",
     "69013903_Description_explanation": "「侵蝕障壁」",
     "MultiParry_Explanation": "『連携パリィ』",
-    "ControlSkill_Explanation": "『封殺スキル』"
+    "ControlSkill_Explanation": "『封殺スキル』",
+    "ElementIconTitle_Physics": "物理属性",
+    "69014401_Title": "氷撃",
+    "69014401_Description": "エージェントの<color=#FFFFFF>『通常攻撃』</color>、<color=#FFFFFF>『終結スキル』</color>が与えるダメージ<color=#2BAD00>+30%</color>。[強攻]エージェントの攻撃が敵に命中した時、敵の<color=#98EFF0>氷属性ダメージ耐性</color>を<color=#2BAD00>20%</color>無視する。\nエージェントが<color=#FFFFFF>『強化特殊スキル』</color>を発動した後、自身の<color=#98EFF0>氷属性ダメージ</color><color=#2BAD00>+30%</color>、継続時間15秒。重複して発動すると継続時間が更新される。",
+    "69014402_Title": "異変",
+    "69014402_Description": "チームに<color=#FFFFFF>[異常]</color>エージェントが2名/3名いる時、チーム全体の状態異常ダメージ<color=#2BAD00>+10%/+30%</color>、チーム全体の攻撃力<color=#2BAD00>+5%/+15%</color>。\n敵に状態異常ダメージを与えた時、ターゲットの全属性ダメージ耐性を<color=#2BAD00>10%</color>、防御力を<color=#2BAD00>10%</color>無視する。"
   },
   "ko": {
     "OfficialName_Monster_Girtablu_HC": "융합·기르타블리르",
@@ -66,7 +76,12 @@
     "ElementIconTitle_Ice": "얼음 속성",
     "69013903_Description_explanation": "[침식 장벽]",
     "MultiParry_Explanation": "[콤보 패링]",
-    "ControlSkill_Explanation": "[제어 스킬]"
+    "ControlSkill_Explanation": "[제어 스킬]",
+    "ElementIconTitle_Physics": "물리 속성",
+    "69014401_Title": "얼음 강습",
+    "69014401_Description": "에이전트의 <color=#FFFFFF>[일반 공격]</color>, <color=#FFFFFF>[궁극기]</color>로 주는 피해가 <color=#2BAD00>30% 증가</color>한다. [강공] 특성 에이전트의 공격이 적 명중 시, 해당 적의 <color=#98EFF0>얼음 속성 피해 저항</color>을 <color=#2BAD00>20%</color> 무시한다.\n에이전트가 <color=#FFFFFF>[강화 특수 스킬]</color>을 시전한 후, 자신의 <color=#98EFF0>얼음 속성 피해</color>가 <color=#2BAD00>30% 증가</color>한다. 지속 시간: 15초, 중복 발동 시 지속 시간이 갱신된다.",
+    "69014402_Title": "이변",
+    "69014402_Description": "파티에 <color=#FFFFFF>[이상]</color> 특성 에이전트가 2/3명 존재할 때, 모든 파티원이 주는 속성 이상 피해가 각각 <color=#2BAD00>10%/30% 증가</color>하고, 모든 파티원의 공격력이 각각 <color=#2BAD00>5%/15% 증가</color>한다.\n적에게 속성 이상 피해를 줄 시, 해당 적의 모든 속성 피해 저항 <color=#2BAD00>10%</color>와 방어력 <color=#2BAD00>10%</color>를 무시한다."
   },
   "zh-cn": {
     "OfficialName_Monster_Girtablu_HC": "异构·基塔布鲁",
@@ -89,7 +104,12 @@
     "ElementIconTitle_Ice": "冰属性",
     "69013903_Description_explanation": "[侵蚀壁垒]",
     "MultiParry_Explanation": "[连携招架]",
-    "ControlSkill_Explanation": "[控制技]"
+    "ControlSkill_Explanation": "[控制技]",
+    "ElementIconTitle_Physics": "物理属性",
+    "69014401_Title": "冰袭",
+    "69014401_Description": "代理人的<color=#FFFFFF>[普通攻击]</color>、<color=#FFFFFF>[终结技]</color>造成的伤害<color=#2BAD00>提升30%</color>。[强攻]特性的代理人攻击命中敌人时，无视其<color=#2BAD00>20%</color>的<color=#98EFF0>冰属性伤害抗性</color>。\n代理人发动<color=#FFFFFF>[强化特殊技]</color>后，自身的<color=#98EFF0>冰属性伤害</color><color=#2BAD00>提升30%</color>，持续15秒，重复触发时刷新持续时间。",
+    "69014402_Title": "异变",
+    "69014402_Description": "队伍中存在2/3名<color=#FFFFFF>[异常]</color>特性的代理人时，全队造成的属性异常伤害分别<color=#2BAD00>提升10%/30%</color>，全队的攻击力分别<color=#2BAD00>提升5%/15%</color>。\n对敌人造成属性异常伤害时，无视其<color=#2BAD00>10%</color>的全属性伤害抗性与<color=#2BAD00>10%</color>的防御力。"
   },
   "zh-tw": {
     "OfficialName_Monster_Girtablu_HC": "異構·基塔布魯",
@@ -112,7 +132,12 @@
     "ElementIconTitle_Ice": "冰屬性",
     "69013903_Description_explanation": "[侵蝕壁壘]",
     "MultiParry_Explanation": "[連攜招架]",
-    "ControlSkill_Explanation": "[控制技]"
+    "ControlSkill_Explanation": "[控制技]",
+    "ElementIconTitle_Physics": "物理屬性",
+    "69014401_Title": "冰襲",
+    "69014401_Description": "·代理人的<color=#FFFFFF>[普通攻擊]</color>、<color=#FFFFFF>[終結技]</color>造成的傷害<color=#2BAD00>提升30%</color>。[強攻]特性的代理人攻擊命中敵人時，無視其<color=#2BAD00>20%</color>的<color=#98EFF0>冰屬性傷害抗性</color>。\n·代理人發動<color=#FFFFFF>[強化特殊技]</color>後，自身的<color=#98EFF0>冰屬性傷害</color><color=#2BAD00>提升30%</color>，持續15秒，重複觸發時重置持續時間。",
+    "69014402_Title": "異變",
+    "69014402_Description": "·隊伍中包含2/3名<color=#FFFFFF>[異常]</color>特性的代理人時，全隊造成的屬性異常傷害分別<color=#2BAD00>提升10%/30%</color>，全隊的攻擊力分別<color=#2BAD00>提升5%/15%</color>。\n·對敵人造成屬性異常傷害時，無視其<color=#2BAD00>10%</color>的全屬性傷害抗性與<color=#2BAD00>10%</color>的防禦力。"
   },
   "fr": {
     "OfficialName_Monster_Girtablu_HC": "Isomorphe - Girtablullu",
@@ -135,7 +160,12 @@
     "ElementIconTitle_Ice": "Glace",
     "69013903_Description_explanation": "Barrière corruptrice",
     "MultiParry_Explanation": "Parade en chaîne",
-    "ControlSkill_Explanation": "Compétence de contrôle"
+    "ControlSkill_Explanation": "Compétence de contrôle",
+    "ElementIconTitle_Physics": "Physique",
+    "69014401_Title": "Raid glacé",
+    "69014401_Description": "Les DGT infligés par les <color=#FFFFFF>attaques normales</color> et les <color=#FFFFFF>ultimes</color> des agents <color=#2BAD00>augmentent de 30 %</color>. Lorsqu'un agent de spécialisation Attaque touche un ennemi, ses attaques ignorent <color=#2BAD00>20 %</color> de la <color=#98EFF0>RÉS à la glace</color> de la cible.\nAprès qu'un agent utilise une <color=#FFFFFF>attaque spéciale EX</color>, ses <color=#98EFF0>DGT de glace</color> <color=#2BAD00>augmentent de 30 %</color> pendant 15 s. Les déclenchements répétés réinitialisent la durée.",
+    "69014402_Title": "Réfraction",
+    "69014402_Description": "Si votre escouade compte 2/3 agents de spécialisation <color=#FFFFFF>Anomalie</color>, les DGT d'anomalie d'attribut de toute l'escouade <color=#2BAD00>augmentent de 10 %/30 %</color>, et leur ATQ <color=#2BAD00>augmente de 5 %/15 %</color> respectivement.\nLorsque vous infligez des DGT d'anomalie d'attribut à un ennemi, vous ignorez <color=#2BAD00>10 %</color> de sa RÉS à tous les attributs et <color=#2BAD00>10 %</color> de sa DÉF."
   },
   "de": {
     "OfficialName_Monster_Girtablu_HC": "Isomer – Girtablullu",
@@ -158,7 +188,12 @@
     "ElementIconTitle_Ice": "Eis",
     "69013903_Description_explanation": "Korrosionsbarriere",
     "MultiParry_Explanation": "Kettenparade",
-    "ControlSkill_Explanation": "Kontrollangriff"
+    "ControlSkill_Explanation": "Kontrollangriff",
+    "ElementIconTitle_Physics": "Physisch",
+    "69014401_Title": "Eisiger Überfall",
+    "69014401_Description": "Der durch <color=#FFFFFF>Basisangriffe</color> und <color=#FFFFFF>Ultimates</color> von Agenten verursachte SCH erhöht sich um <color=#2BAD00>30 %</color>. Wenn ein Angriff eines Attacke-Agenten einen Gegner trifft, ignoriert dieser <color=#2BAD00>20 %</color> des <color=#98EFF0>Eis-WDS</color> des Gegners.\nNachdem ein Agent einen <color=#FFFFFF>verstärkten Spezialangriff</color> angewendet hat, erhöht sich sein <color=#98EFF0>Eis-SCH</color> um <color=#2BAD00>30 %</color>, hält 15 s. Beim wiederholten Auslösen wird die Dauer aktualisiert.",
+    "69014402_Title": "Mutation",
+    "69014402_Description": "Befinden sich 2/3 <color=#FFFFFF>Anomalie</color>-Agenten in der Truppe, erhöht sich der von der gesamten Truppe verursachte Attributanomalie-SCH jeweils um <color=#2BAD00>10 %/30 %</color> und der ANG der gesamten Truppe erhöht sich jeweils um <color=#2BAD00>5 %/15 %</color>.\nWenn einem Gegner Attributanomalie-SCH zugefügt wird, werden <color=#2BAD00>10 %</color> des SCH-WDS gegen alle Attribute und <color=#2BAD00>10 %</color> der VTD des Gegners ignoriert."
   },
   "es": {
     "OfficialName_Monster_Girtablu_HC": "Girtablilu integrado",
@@ -181,7 +216,12 @@
     "ElementIconTitle_Ice": "Glacial",
     "69013903_Description_explanation": "Barrera corruptiva",
     "MultiParry_Explanation": "Bloqueo en cadena",
-    "ControlSkill_Explanation": "Técnica de control"
+    "ControlSkill_Explanation": "Técnica de control",
+    "ElementIconTitle_Physics": "Físico",
+    "69014401_Title": "Redada de hielo",
+    "69014401_Description": "El daño infligido mediante el <color=#FFFFFF>ataque normal</color> y la <color=#FFFFFF>técnica definitiva</color> de los agentes <color=#2BAD00>aumenta en un 30 %</color>. Cuando un agente atacante golpea al enemigo, ignora un <color=#2BAD00>20 %</color> de su <color=#98EFF0>resistencia glacial</color>.\nTras ejecutar una <color=#FFFFFF>técnica especial EX</color>, el <color=#98EFF0>daño glacial</color> del agente <color=#2BAD00>aumenta en un 30 %</color> durante 15 s. La duración se reinicia con cada activación.",
+    "69014402_Title": "Mutación",
+    "69014402_Description": "Si en el equipo hay 2/3 agentes <color=#FFFFFF>anómalos</color>, el daño de Anomalía de Atributo que inflige todo el equipo <color=#2BAD00>aumenta en un 10 %/30 %</color>, y el Ataque de todo el equipo <color=#2BAD00>aumenta en un 5 %/15 %</color>.\nAl infligir daño de Anomalía de Atributo al enemigo, ignora un <color=#2BAD00>10 %</color> de su resistencia a todos los tipos de daño y un <color=#2BAD00>10 %</color> de su Defensa."
   },
   "pt": {
     "OfficialName_Monster_Girtablu_HC": "Heteromorfo: Girtablullu",
@@ -204,7 +244,12 @@
     "ElementIconTitle_Ice": "Gelo",
     "69013903_Description_explanation": "Barreira de Corrosão",
     "MultiParry_Explanation": "Defensiva Combinada",
-    "ControlSkill_Explanation": "Técnica de Controle"
+    "ControlSkill_Explanation": "Técnica de Controle",
+    "ElementIconTitle_Physics": "Físico",
+    "69014401_Title": "Investida Glacial",
+    "69014401_Description": "O dano causado pelo <color=#FFFFFF>Ataque Básico</color> e pelo <color=#FFFFFF>Supremo</color> do Agente <color=#2BAD00>aumenta 30%</color>. Quando um Agente do tipo Atacante acerta um inimigo, ignora <color=#2BAD00>20%</color> da <color=#98EFF0>resistência ao Gelo</color> do alvo.\nApós o Agente usar o <color=#FFFFFF>Ataque Especial Reforçado</color>, o seu <color=#98EFF0>Dano de Gelo</color> <color=#2BAD00>aumenta 30%</color> durante 15s. Ativações repetidas reiniciam a duração.",
+    "69014402_Title": "Mutação",
+    "69014402_Description": "Quando há 2 ou 3 Agentes do tipo <color=#FFFFFF>Anômalo</color> na equipe, o dano de Anomalia de Atributo causado por toda a equipe <color=#2BAD00>aumenta 10%/30%</color> respectivamente, e o ATQ de toda a equipe <color=#2BAD00>aumenta 5%/15%</color> respectivamente.\nQuando causa dano de Anomalia de Atributo a um inimigo, ignora <color=#2BAD00>10%</color> da Resistência a todos os atributos e <color=#2BAD00>10%</color> da DEF dele."
   },
   "ru": {
     "OfficialName_Monster_Girtablu_HC": "Изоморф — Гиртаблилу",
@@ -227,7 +272,12 @@
     "ElementIconTitle_Ice": "Лёд",
     "69013903_Description_explanation": "Барьер заражения",
     "MultiParry_Explanation": "Совместный блок",
-    "ControlSkill_Explanation": "Захват"
+    "ControlSkill_Explanation": "Захват",
+    "ElementIconTitle_Physics": "Физ.",
+    "69014401_Title": "Ледяной натиск",
+    "69014401_Description": "Урон <color=#FFFFFF>базовых атак</color> и <color=#FFFFFF>суперспособностей</color> агентов <color=#2BAD00>повышается на 30%</color>. Попадания атак агентов <color=#FFFFFF>Нападения</color> по врагу игнорируют <color=#2BAD00>20%</color> его <color=#98EFF0>сопротивления ледяному урону</color>.\nПосле запуска агентом <color=#FFFFFF>усиленной особой атаки</color> его <color=#98EFF0>ледяной урон</color> <color=#2BAD00>повышается на 30%</color> на 15 сек. Повторные запуски обновляют время действия.",
+    "69014402_Title": "Мутация",
+    "69014402_Description": "Когда в отряде есть 2/3 агента <color=#FFFFFF>Аномалии</color>, урон от аномалии атрибута всего отряда <color=#2BAD00>повышается на 10%/30%</color>, а сила атаки всего отряда — на <color=#2BAD00>5%/15%</color>.\nПри нанесении урона от аномалии атрибута врагу игнорируется <color=#2BAD00>10%</color> его сопротивления урону всех атрибутов и <color=#2BAD00>10%</color> его защиты."
   },
   "th": {
     "OfficialName_Monster_Girtablu_HC": "Integrated: Girtablullu",
@@ -250,7 +300,12 @@
     "ElementIconTitle_Ice": "น้ำแข็ง",
     "69013903_Description_explanation": "[Corruptive Barrier]",
     "MultiParry_Explanation": "[ตั้งรับต่อเนื่อง]",
-    "ControlSkill_Explanation": "[สกิลควบคุม]"
+    "ControlSkill_Explanation": "[สกิลควบคุม]",
+    "ElementIconTitle_Physics": "กายภาพ",
+    "69014401_Title": "Icy Raid",
+    "69014401_Description": "<color=#FFFFFF>[โจมตีปกติ]</color> และ <color=#FFFFFF>[สกิลอัลติเมท]</color> ของ Agent จะสร้างความเสียหาย<color=#2BAD00>เพิ่มขึ้น 30%</color> และเมื่อ Agent สาย [โจมตีรุนแรง] โจมตีโดนศัตรู จะมองข้าม<color=#98EFF0>ความต้านทานความเสียหายธาตุน้ำแข็ง</color>ของศัตรูดังกล่าว <color=#2BAD00>20%</color>\nหลังจากที่ Agent ใช้ <color=#FFFFFF>[สกิลพิเศษ-EX]</color> ตนเองจะมี<color=#98EFF0>ความเสียหายธาตุน้ำแข็ง</color><color=#2BAD00>เพิ่มขึ้น 30%</color> ต่อเนื่อง 15 วินาที โดยเมื่อเกิดซ้ำ จะรีเฟรชช่วงเวลาต่อเนื่อง",
+    "69014402_Title": "Mutation",
+    "69014402_Description": "เมื่อในทีมมี Agent สาย <color=#FFFFFF>[ธาตุผิดปกติ]</color> 2 คน/ 3 คน ทั้งทีมจะสร้างความเสียหาย Attribute Anomaly <color=#2BAD00>เพิ่มขึ้น 10%/30%</color> ตามลำดับ โดยที่ ATK ของทั้งทีมจะ<color=#2BAD00>เพิ่มขึ้น 5%/15%</color> ตามลำดับ\nเมื่อสร้างความเสียหาย Attribute Anomaly ใส่ศัตรู จะมองข้ามความต้านทานความเสียหายธาตุทั้งหมดของศัตรูดังกล่าว <color=#2BAD00>10%</color> และมองข้าม DEF ของศัตรูดังกล่าว <color=#2BAD00>10%</color>"
   },
   "vi": {
     "OfficialName_Monster_Girtablu_HC": "Dị Cấu - Girtablullu",
@@ -273,7 +328,12 @@
     "ElementIconTitle_Ice": "Băng",
     "69013903_Description_explanation": "Lá Chắn Ăn Mòn",
     "MultiParry_Explanation": "Liên Thủ Chống Đỡ",
-    "ControlSkill_Explanation": "Kỹ Năng Khống Chế"
+    "ControlSkill_Explanation": "Kỹ Năng Khống Chế",
+    "ElementIconTitle_Physics": "Vật Lý",
+    "69014401_Title": "Băng Tập",
+    "69014401_Description": "Sát thương do <color=#FFFFFF>Tấn Công Thường</color>, <color=#FFFFFF>Tuyệt Kỹ</color> của Người Đại Diện gây ra <color=#2BAD00>tăng 30%</color>. Khi Người Đại Diện có đặc tính Tiên Phong tấn công trúng kẻ địch, bỏ qua <color=#2BAD00>20%</color> <color=#98EFF0>Kháng DMG Băng</color> của mục tiêu.\nSau khi Người Đại Diện phát động <color=#FFFFFF>Siêu Chiến Kỹ</color>, <color=#98EFF0>DMG Băng</color> của bản thân <color=#2BAD00>tăng 30%</color>, duy trì 15s, khi kích hoạt trùng lặp sẽ làm mới thời gian duy trì.",
+    "69014402_Title": "Dị Biến",
+    "69014402_Description": "Khi trong đội có 2/3 Người Đại Diện đặc tính <color=#FFFFFF>Dị Thường</color>, sát thương Thuộc Tính Dị Thường toàn đội gây ra lần lượt <color=#2BAD00>tăng 10%/30%</color>, Tấn Công của toàn đội lần lượt <color=#2BAD00>tăng 5%/15%</color>.\nKhi gây sát thương Thuộc Tính Dị Thường cho kẻ địch, bỏ qua <color=#2BAD00>10%</color> Kháng DMG toàn bộ thuộc tính và <color=#2BAD00>10%</color> Phòng Thủ của kẻ địch."
   },
   "id": {
     "OfficialName_Monster_Girtablu_HC": "Integrated - Girtablullu",
@@ -296,6 +356,11 @@
     "ElementIconTitle_Ice": "Ice",
     "69013903_Description_explanation": "Corruptive Barrier",
     "MultiParry_Explanation": "Chain Parry",
-    "ControlSkill_Explanation": "[Control Skill]"
+    "ControlSkill_Explanation": "[Control Skill]",
+    "ElementIconTitle_Physics": "Physical",
+    "69014401_Title": "Icy Raid",
+    "69014401_Description": "DMG yang diakibatkan dari <color=#FFFFFF>Basic Attack</color> dan <color=#FFFFFF>Ultimate</color> Agen <color=#2BAD00>meningkat 30%</color>. Saat serangan Agen dengan Spesialisasi \"Attack\" mengenai musuh, akan mengabaikan <color=#2BAD00>20%</color> <color=#98EFF0>Ketahanan Ice DMG</color> musuh tersebut.\nSetelah Agen melancarkan <color=#FFFFFF>EX Special Attack</color>, <color=#98EFF0>Ice DMG</color> yang diakibatkannya akan <color=#2BAD00>meningkat 30%</color> selama 15 detik. Memicu ulang akan memperbarui durasi.",
+    "69014402_Title": "Mutation",
+    "69014402_Description": "Saat terdapat 2/3 Agen spesialisasi <color=#FFFFFF>Anomaly</color> di dalam tim, Attribute Anomaly DMG yang diakibatkan semua anggota tim masing-masing akan <color=#2BAD00>meningkat 10%/30%</color>, dan ATK semua anggota tim akan <color=#2BAD00>meningkat 5%/15%</color>.\nSaat memberikan Attribute Anomaly DMG pada musuh, akan mengabaikan <color=#2BAD00>10%</color> ketahanan semua atribut dan <color=#2BAD00>10%</color> DEF musuh."
   }
 }

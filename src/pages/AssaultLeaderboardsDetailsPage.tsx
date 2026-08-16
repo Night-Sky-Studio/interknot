@@ -154,8 +154,19 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                     <Group gap="xs">
                                         <Title order={5}>Weaknesses</Title>
                                         {leaderboard.EnemyWeaknesses.map(w =>
-                                            <Badge key={w} radius="sm" color="dark"
-                                                leftSection={<ZenlessIcon size={14} elementName={getLocalString(w, "en")} />}>
+                                            <Badge key={w} px="4px" radius="sm" color="dark"
+                                                leftSection={<ZenlessIcon size={14} elementName={w} />}>
+                                                    {getLocalString(w)}
+                                            </Badge>
+                                        )}
+                                    </Group>
+                                }
+                                {leaderboard.EnemyResistances.length > 0 &&
+                                    <Group gap="xs">
+                                        <Title order={5}>Resistances</Title>
+                                        {leaderboard.EnemyResistances.map(w =>
+                                            <Badge key={w} px="4px" radius="sm" color="dark"
+                                                leftSection={<ZenlessIcon size={14} elementName={w} />}>
                                                     {getLocalString(w)}
                                             </Badge>
                                         )}

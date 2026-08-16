@@ -24,7 +24,18 @@ const ElementTypesMap: Record<string, React.FunctionComponent<React.SVGProps<SVG
     "AuricEther": Elements.AuricEther,
     "ZhenZhenAssault": Elements.HonedEdge,
     "Wind": Elements.Wind,
-    "Lumen": Elements.Lumiflux
+    "Lumen": Elements.Lumiflux,
+
+    // textmap
+    "ElementIconTitle_Physics": Elements.Physics,
+    "ElementIconTitle_Ice": Elements.Ice,
+    "ElementIconTitle_Fire": Elements.Fire,
+    "ElementIconTitle_FireFrost": Elements.Firefrost,
+    "ElementIconTitle_Elec": Elements.Elec,
+    "ElementIconTitle_Wind": Elements.Wind,
+    "ElementIconTitle_Ether": Elements.Ether,
+    "ElementIconTitle_AuricEther": Elements.AuricEther,
+    "ElementIconTitle_Lumen": Elements.Lumiflux
 }
 
 const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SVGSVGElement>>> = {
