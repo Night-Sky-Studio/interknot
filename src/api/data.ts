@@ -1,11 +1,9 @@
 import { getErrorString } from "@/localization/Localization"
 import { 
-    AgentAction, 
     BaseLeaderboardEntry, 
     BelleMessage, 
     Build, 
     DriveDisc, 
-    FinalStats, 
     ICursoredResult, 
     IResult, 
     Leaderboard, 
@@ -306,22 +304,6 @@ export async function getAssaultLeaderboardEntry(
     }))
 }
 
-export interface CalcResponse {
-    FinalStats: FinalStats
-    PerAction: AgentAction[]
-    Total: number
-}
-
-export async function getCalc(uid: number, characterId: number): Promise<IResult<CalcResponse>> {
-    return await req(url({
-        base: DATA_URL,
-        path: `/calc`,
-        query: {
-            uid: uid.toString(),
-            characterId: characterId.toString()
-        }
-    }), true)
-}
 
 export async function getStatus(): Promise<IResult<BackendState>> {
     try {
