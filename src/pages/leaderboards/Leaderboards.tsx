@@ -1,6 +1,6 @@
 import { useAsyncRetry } from "react-use"
 import { getLeaderboards } from "@api/data"
-import { Card, Center, Group, Image, Loader, Stack, Text, Title, Alert, Anchor, Flex } from "@mantine/core"
+import { Card, Center, Group, Image, Loader, Stack, Text, Title, Alert, Anchor, Flex, Badge } from "@mantine/core"
 import { ProfessionIcon, ZenlessIcon } from "@components/icons/Icons"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { useNavigate } from "react-router"
@@ -11,6 +11,7 @@ import { useMemo } from "react"
 import { DataTable } from "mantine-datatable"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import FilterSelector from "@components/FilterSelector/FilterSelector"
+import { useSettings } from "@/components/SettingsProvider";
 
 export default function Leaderboards() {
     const navigate = useNavigate()
@@ -21,6 +22,8 @@ export default function Leaderboards() {
     }, [query])
 
     const leaderboards = useMemo(() => leaderboardsState.value?.data?.sort((a, b) => b.Total - a.Total), [leaderboardsState.value])
+
+    const { getLocalString } = useSettings()
 
     // const { state } = useBackend()
     // const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
@@ -109,17 +112,28 @@ export default function Leaderboards() {
                                     render: (leaderboard) => {
                                         return (
                                             <Group gap="xs">
-                                                <ZenlessIcon size={24} elementName={leaderboard.Character.ElementTypes[0]} />
-                                                <ProfessionIcon size={24} name={leaderboard.Character.ProfessionType} />
-                                                <Image h="32px" src={leaderboard.Character.CircleIconUrl} 
-                                                    alt={leaderboard.Character.Name} />
-                                                <Anchor href={`/leaderboards/${leaderboard.Id}`} onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    e.preventDefault()
-                                                    navigate(`/leaderboards/${leaderboard.Id}`)
-                                                }} c="inherit" fz="inherit">
-                                                    {leaderboard.FullName}
-                                                </Anchor>
+                                                <Group gap="xs" wrap="nowrap">
+                                                    <ZenlessIcon size={24} elementName={leaderboard.Character.ElementTypes[0]} />
+                                                    <ProfessionIcon size={24} name={leaderboard.Character.ProfessionType} />
+                                                    <Image h="32px" src={leaderboard.Character.CircleIconUrl} 
+                                                        alt={leaderboard.Character.Name} />
+                                                    {
+                                                        leaderboard.MindscapeLevelMin > 0 &&
+                                                            <Badge c="black">M{leaderboard.MindscapeLevelMin}</Badge>
+                                                    }
+                                                </Group>
+
+                                                <Group gap="xs" wrap="nowrap">
+                                                    <Anchor href={`/leaderboards/${leaderboard.Id}`} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        e.preventDefault()
+                                                        navigate(`/leaderboards/${leaderboard.Id}`)
+                                                    }} c="inherit" fz="inherit">
+                                                        {leaderboard.FullName}
+                                                    </Anchor>
+
+                                                    <Text c="dimmed" fz="xs">{getLocalString(leaderboard.Character.Name)}</Text>
+                                                </Group>
                                             </Group>
                                         )
                                     }

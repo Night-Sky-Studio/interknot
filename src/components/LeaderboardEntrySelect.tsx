@@ -1,5 +1,5 @@
 import { BaseLeaderboardEntry } from "@interknot/types"
-import { Group, useCombobox, Combobox, InputBase, Input, Image, Text } from "@mantine/core"
+import { Group, useCombobox, Combobox, InputBase, Input, Image, Text, Badge } from "@mantine/core"
 import { useState, useMemo, useEffect } from "react"
 import { useSettings } from "./SettingsProvider"
 import { toFixedCeil } from "@/extensions/NumberExtensions"
@@ -23,7 +23,13 @@ export default function LeaderboardEntrySelect({ entries, showRanking, initialLe
                     <Text miw="160px">top {toFixedCeil((entry.Rank / entry.Leaderboard.Total) * 100, decimalPlaces)}%</Text>
                 }
                 
-                <Text>{entry.Leaderboard.FullName}</Text>
+                <Group gap="xs" wrap="nowrap">
+                    {
+                        entry.Leaderboard.MindscapeLevelMin > 0 &&
+                            <Badge c="black">M{entry.Leaderboard.MindscapeLevelMin}</Badge>
+                    }
+                    <Text>{entry.Leaderboard.FullName}</Text>
+                </Group>
             </Group>
         )
     }

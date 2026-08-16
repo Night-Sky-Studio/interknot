@@ -1,5 +1,5 @@
 import { BaseAvatar, BaseWeapon } from "@interknot/types"
-import { Group, UnstyledButton, Image, Title, Stack, Popover, Button, Tooltip } from "@mantine/core"
+import { Group, UnstyledButton, Image, Title, Stack, Popover, Button, Tooltip, Badge } from "@mantine/core"
 import "./LeaderboardButton.css"
 import { useSettings } from "@components/SettingsProvider"
 import { useDisclosure } from "@mantine/hooks"
@@ -16,10 +16,11 @@ interface ILeaderboardButtonProps {
     rank: number
     total: number
     type: number
+    mindscape: number
     onClick?: () => void
 }
 
-export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, onClick }: ILeaderboardButtonProps) {
+export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, mindscape, onClick }: ILeaderboardButtonProps) {
     const navigate = useNavigate()
 
     const { decimalPlaces, getLocalString } = useSettings()
@@ -62,6 +63,10 @@ export function LeaderboardButton({ id, agent, weapon, name, rank, total, type, 
                                 <Title order={6} fz="10px" ff="zzz-jp">{rank} / {nFormatter(total, 1)}</Title>
                             </Stack>
                         </Group>
+
+                        {
+                            mindscape > 0 && <Badge color="dark" className="lb-mindscape">M{mindscape}</Badge>
+                        }
                     </UnstyledButton>
                 </Tooltip>
             </Popover.Target>

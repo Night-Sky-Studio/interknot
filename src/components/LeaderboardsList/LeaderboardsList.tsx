@@ -1,7 +1,7 @@
 
 import { nFormatter, toFixedCeil } from "@/extensions/NumberExtensions"
 import { BaseLeaderboardEntry, LeaderboardList } from "@interknot/types"
-import { Card, Group, Text, Image, Table, ScrollArea, Anchor } from "@mantine/core"
+import { Card, Group, Text, Image, Table, ScrollArea, Anchor, Badge } from "@mantine/core"
 import { useSettings } from "@components/SettingsProvider"
 import { Team } from "@components/Team/Team"
 import "./LeaderboardsList.css"
@@ -45,7 +45,13 @@ export default function LeaderboardsList({ leaderboards, entries, highlightId }:
                     { leaderboard && <Team compact team={leaderboard.Team} /> }
                 </Table.Td>
                 <Table.Td>
-                    <Text>{entry.Leaderboard.FullName}</Text>
+                    <Group gap="xs" wrap="nowrap">
+                        {
+                            leaderboard && leaderboard.MindscapeLevelMin > 0 &&
+                                <Badge c="black">M{leaderboard.MindscapeLevelMin}</Badge>
+                        }
+                        <Text>{entry.Leaderboard.FullName}</Text>
+                    </Group>
                 </Table.Td>
                 <Table.Td>
                     <Text fw="bold">{toFixedCeil(entry.TotalValue, 0)}</Text>

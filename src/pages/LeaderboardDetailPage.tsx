@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router"
 import { useAsync } from "react-use"
 import { getLeaderboard, getLeaderboardDmgDistribution, getLeaderboardUsers, getLeaderboardUsersCount } from "../api/data"
-import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex, Popover, Space, Tooltip, LoadingOverlay } from "@mantine/core"
+import { Alert, Card, Center, Group, Loader, Pagination, Select, Stack, Text, Title, Image, ActionIcon, Grid, Paper, ColorSwatch, Avatar, Chip, Collapse, Button, Anchor, Flex, Popover, Space, Tooltip, LoadingOverlay, Badge } from "@mantine/core"
 import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconInfoCircle, IconQuestionMark } from "@tabler/icons-react"
 import CritCell from "@components/cells/CritCell"
 import { LineChart } from "@mantine/charts"
@@ -122,7 +122,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
 
     const rotation = useMemo(() => {
         return leaderboard?.Rotation.map(r => {
-            const parts = r.trim().split(/\s+/)
+            const parts = r.trim().replace("#", "").split(/\s+/)
             const [main, maybeNumber] = parts
             const result: string[] = []
 
@@ -201,7 +201,13 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                         </Grid.Col>
                         <Grid.Col span={{ base: 12, md: 5, lg: "auto" }}>
                             <Stack c="white">
-                                <Title order={2}>{leaderboard?.FullName}</Title>
+                                <Group gap="xs" wrap="nowrap">
+                                    {
+                                        leaderboard && leaderboard.MindscapeLevelMin > 0 &&
+                                            <Badge c="black">M{leaderboard.MindscapeLevelMin}</Badge>
+                                    }
+                                    <Title order={2}>{getLocalString(leaderboard.Character.Name)} - {leaderboard?.FullName}</Title>
+                                </Group>
                                 <Stack gap="0">
                                     {
                                         leaderboard?.Description.split(";").map(line => <Text fz="12pt">{line}</Text>)

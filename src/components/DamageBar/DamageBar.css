@@ -20,7 +20,8 @@
     position: relative;
 }
 .dmg-bar > div[data-tag="Dash"],
-.dmg-bar > div[data-tag="Chain"] {
+.dmg-bar > div[data-tag="Chain"],
+.dmg-bar > div[data-tag="Entry"] {
     min-width: 6ch;
 }
 .dmg-bar > div[data-tag="Ultimate"] {
@@ -38,6 +39,7 @@
 .dmg-bar > div[data-tag="Counter"]:hover {
     background-color: var(--basic-hover);
 }
+.dmg-bar > div[data-tag="Entry"],
 .dmg-bar > div[data-tag="QuickAssist"],
 .dmg-bar > div[data-tag="DefensiveAssist"],
 .dmg-bar > div[data-tag="EvasiveAssist"],
@@ -45,6 +47,7 @@
     background-color: var(--assist);
     color: white;
 }
+.dmg-bar > div[data-tag="Entry"],
 .dmg-bar > div[data-tag="QuickAssist"]:hover,
 .dmg-bar > div[data-tag="DefensiveAssist"]:hover,
 .dmg-bar > div[data-tag="EvasiveAssist"]:hover,

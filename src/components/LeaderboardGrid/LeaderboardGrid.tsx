@@ -23,6 +23,7 @@ export function LeaderboardGrid({ entries, onProfileClick }: ILeaderboardGridPro
                                 rank={a.Rank}
                                 total={a.Leaderboard.Total}
                                 type={a.Type}
+                                mindscape={a.Leaderboard.MindscapeLevelMin}
                                 onClick={() => {
                                     onProfileClick?.(a.Leaderboard.Character.Id)
                                 }} />
