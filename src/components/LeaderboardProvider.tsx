@@ -30,23 +30,15 @@ export default function LeaderboardProvider({ characterId, buildId, children }: 
     const entriesState = useAsync(async () => await getBuildLeaderboards(buildId), [buildId])
     const leaderboardsState = useAsync(async () => await getLeaderboards({ filter: { characterId: characterId.toString() } }, true), [characterId])
 
-    const entries = useMemo(() => entriesState.value?.data ?? [], [entriesState.value])
+    const entriesData = useMemo(() => entriesState.value?.data, [entriesState.value])
+
+    const entries = useMemo(() => entriesData?.Entries ?? [], [entriesData?.Entries])
+    const highlightId = useMemo(() => entriesData?.HighlightId, [entriesData?.HighlightId])
     const leaderboards = useMemo(() => leaderboardsState.value?.data ?? [], [leaderboardsState.value])
 
     const isAvailable = useMemo(() => leaderboards.length > 0, [leaderboards])
 
     const isLoading = useMemo(() => entriesState.loading || leaderboardsState.loading, [entriesState.loading, leaderboardsState.loading])
-    const highlightId = useMemo(() => {
-        if (entries.length === 0) return undefined
-        
-        const sorted = entries.sort((a, b) => a.Rank - b.Rank)
-        const best = 
-            sorted.find(e => e.Type === 0) ?? 
-            sorted.find(e => e.Type === 1) ?? 
-            sorted.find(e => e.Type === 2)
-        
-        return best?.Leaderboard.Id
-    }, [entries])
 
     const value = useMemo(() => ({
         isAvailable,
