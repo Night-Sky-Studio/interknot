@@ -373,7 +373,8 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                                     data-zzz-type="weapon" data-zzz-lang={language}
                                     data-zzz-id={leaderboard.Weapon.Id}
                                     data-zzz-level={60} data-zzz-promote={5} />
-                                <Title order={6} m="0" fz="14px">{leaderboard.Name}</Title>
+                                <Title order={6} m="0" fz="14px">{leaderboard.MindscapeLevelMin > 0 
+                                ? `M${leaderboard.MindscapeLevelMin}` : ""} {leaderboard.Name}</Title>
                             </Group>
                         </Group>
                         <Team h="64px" team={leaderboard.Team} />
