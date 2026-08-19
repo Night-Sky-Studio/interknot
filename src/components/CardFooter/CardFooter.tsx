@@ -99,7 +99,9 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                 clone.style.top = "0px"
                                 clone.style.left = "0px"
                                 clone.style.zIndex = "-9999"
-                                clone.style.transform = "scale(1) !important"
+
+                                clone.style.setProperty("--scale", "1")
+                                clone.style.transform = "scale(1)"
                                 document.body.appendChild(clone)
 
                                 const dataUrl = await domToPng(clone, {

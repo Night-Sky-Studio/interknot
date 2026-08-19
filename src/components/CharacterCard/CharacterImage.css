@@ -16,10 +16,42 @@
     color: var(--mantine-color-dark-7);
 }
 
+.cc-image-frame {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
 .cc-img {
-    height: 100%;
-    background-repeat: no-repeat;
-    background-position: var(--img-y, top 10px) var(--img-x, center);
-    background-size: var(--img-scale, cover);
-    transform: translateZ(1px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: none;
+    transform-origin: 50% 50%;
+    image-rendering: high-quality;
+}
+
+.cc-img-loader {
+    position: absolute;
+    inset: 0;
+}
+
+.cc-art-source {
+    position: absolute;
+    right: 16px;
+    bottom: 228px;
+    z-index: 500;
+}
+
+.cc-image[data-dragging="true"] .cc-img {
+    filter: brightness(0.8);
+    will-change: transform;
+}
+
+[data-editing="true"] .cc-image {
+    cursor: grab;
+}
+[data-editing="true"] .cc-image[data-dragging="true"] {
+    cursor: grabbing;
+    user-select: none;
 }

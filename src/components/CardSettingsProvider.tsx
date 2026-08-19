@@ -1,8 +1,63 @@
 import { CardCustomization } from "@interknot/types"
 import React, { createContext, useContext, useState } from "react"
 
+const CUSTOMIZATIONS_KEY = "customizations"
+const SCHEMA_VERSION = 2
+
 interface ICustomizationStorage {
-    [buildId: number]: CardCustomization | undefined
+    Version: number
+    Entries: Record<number, CardCustomization | undefined>
+}
+
+type LegacyCustomizationStorage = Record<number, CardCustomization | undefined>
+
+function isVersioned(data: unknown): data is ICustomizationStorage {
+    return typeof data === "object" && data !== null
+        && typeof (data as ICustomizationStorage).Version === "number"
+}
+
+function migrate(legacy: LegacyCustomizationStorage): ICustomizationStorage {
+    const entries: Record<number, CardCustomization | undefined> = {}
+
+    for (const [buildId, customization] of Object.entries(legacy)) {
+        if (!customization) continue
+
+        const transform = customization.CharacterTransform
+        entries[Number(buildId)] = {
+            ...customization,
+            CharacterTransform: transform
+                ? { Flipped: transform.Flipped, Rotation: transform.Rotation }
+                : undefined
+        }
+    }
+
+    return { Version: SCHEMA_VERSION, Entries: entries }
+}
+
+function writeStorage(storage: ICustomizationStorage) {
+    try {
+        localStorage.setItem(CUSTOMIZATIONS_KEY, JSON.stringify(storage))
+    } catch (e) {
+        console.error("Failed to write card customizations", e)
+    }
+}
+
+function readStorage(): ICustomizationStorage {
+    try {
+        const localData = localStorage.getItem(CUSTOMIZATIONS_KEY)
+        if (!localData) return { Version: SCHEMA_VERSION, Entries: {} }
+
+        const data: unknown = JSON.parse(localData)
+        if (isVersioned(data)) return data
+
+        const migrated = migrate(data as LegacyCustomizationStorage)
+        writeStorage(migrated)
+        console.log("Migrated card customizations to schema", SCHEMA_VERSION)
+        return migrated
+    } catch (e) {
+        console.error("Failed to read card customizations", e)
+        return { Version: SCHEMA_VERSION, Entries: {} }
+    }
 }
 
 type CardSettingsContextType = {
@@ -106,28 +161,13 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     }
 
     const getLocalCustomization = (buildId: number): CardCustomization | undefined => {
-        try {
-            const localData = localStorage.getItem("customizations")
-
-            const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
-
-            return customizations[buildId]
-        } catch (e) {
-            console.error(e)
-            return undefined
-        }
+        return readStorage().Entries[buildId]
     }
 
     const setLocalCustomization = (buildId: number, customization: CardCustomization | undefined) => {
-        try {
-            const localData = localStorage.getItem("customizations")
-            const customizations: ICustomizationStorage = localData ? JSON.parse(localData) : {}
-            customizations[buildId] = customization
-            localStorage.setItem("customizations", JSON.stringify(customizations))
-        } catch (e) {
-            console.error(e)
-            localStorage.setItem("customizations", JSON.stringify({}))
-        }
+        const storage = readStorage()
+        storage.Entries[buildId] = customization
+        writeStorage(storage)
     }
 
     const setCardRef = (ref: React.RefObject<HTMLDivElement | null>) => {

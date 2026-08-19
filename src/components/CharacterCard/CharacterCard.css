@@ -60,13 +60,11 @@
 
 .cc-image {
     grid-area: 1 / 1 / 5 / 2;
+    position: relative;
     background-size: 16px;
     background-image: url("/assets/pattern.png"),
         linear-gradient(var(--accent), color-mix(in oklab, black 100%, var(--accent) 100%));
     overflow: hidden;
-}
-.cc-image > img {
-    image-rendering: high-quality !important;
 }
 
 .cc-info-bg {

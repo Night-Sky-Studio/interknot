@@ -3,7 +3,6 @@ import "./CharacterImage.css"
 import { useCardSettings } from "@components/CardSettingsProvider"
 import {
     ActionIcon,
-    BackgroundImage,
     Button,
     Center,
     ColorInput,
@@ -18,6 +17,7 @@ import {
     Title,
     Tooltip
 } from "@mantine/core"
+import { useElementSize } from "@mantine/hooks"
 import { Dropzone } from "@mantine/dropzone"
 import {
     IconFlipVertical,
@@ -33,16 +33,41 @@ import {
 // import { useAuth } from "@components/AuthProvider" // TODO: upload
 import { useData } from "@components/DataProvider"
 import { ICardContext } from "./CharacterCard"
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { type CardCustomization, type Transform } from "@interknot/types"
-import { useAsync, useAsyncRetry } from "react-use"
-import { useBackend } from "@components/BackendProvider.tsx"
+import { useAsyncRetry } from "react-use"
+import { getDefaultCustomization } from "./imageDefaults"
+import {
+    clamp,
+    computePlacement,
+    MAX_SCALE,
+    mergeTransforms,
+    MIN_SCALE,
+    placementTransform,
+    ZOOM_STEP,
+    useImageSize
+} from "./imageTransforms"
 
 interface ICharacterImageProps {
     src: string
 }
 
 const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif", "image/avif"]
+
+/** Marks that custom art for this build lives in OPFS */
+const CUSTOM_IMAGE_MARKER = "local"
+
+interface DragState {
+    pointerId: number
+    clientX: number
+    clientY: number
+    /** Normalized offsets when the drag started */
+    originX: number
+    originY: number
+    /** Live normalized offsets */
+    x: number
+    y: number
+}
 
 function DropzoneContent({ title, img }: { title: string, img?: string }) {
     return (<>
@@ -102,7 +127,6 @@ async function saveImage(uid: number, buildId: number, file: File) {
         await writable.close()
 
         console.log("Saved image", `/${uid}/${buildId}.png`)
-        return URL.createObjectURL(file)
     } catch (e) {
         console.warn("Failed to save image", e, buildId)
     }
@@ -127,7 +151,6 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         isEditing,
         cardScale,
         setCardCustomization,
-        // updateCardCustomization,
         setIsEditing,
         getLocalCustomization,
         setLocalCustomization
@@ -146,31 +169,10 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         }
     }, [isEditing])
 
-    // FIXME: needs proper img replacing solution
-    const { state } = useBackend()
-    const doro = useMemo(() => state?.data?.events?.doro ?? [], [state?.data?.events?.doro])
-    const doroMode = useMemo(() => doro.length > 0, [doro.length])
-
-    const isDoro = doroMode && doro.includes(build.Character.Id)
-
-    // Doro-only rendering fallback — never stored in cardCustomization
-    const doroFallbackTransform: Transform | undefined = useMemo(() => {
-        if (isDoro) {
-            return { Scale: 0.6 }
-        }
-        return undefined
-    }, [isDoro])
-
-    // One-time init: load saved customization from localStorage
-    const isInitialized = useRef(false)
+    // Load the saved customization once per build
     useEffect(() => {
-        if (isInitialized.current) return
-
-        const c = getLocalCustomization?.(build.Id)
-        setCardCustomization?.(c)
-
-        isInitialized.current = true
-    }, [state, isInitialized, setCardCustomization, getLocalCustomization, build, doro])
+        setCardCustomization?.(getLocalCustomization?.(build.Id))
+    }, [build.Id])
 
     const { value: savedImg, loading: imgLoading, retry } = useAsyncRetry(async () =>
         await getSavedImageUrl(owner.Uid, build.Id), [owner.Uid, build.Id])
@@ -188,167 +190,153 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
         return () => URL.revokeObjectURL(url)
     }, [pendingImageFile])
 
-    // ... existing code ...
-    const rawFgTransform = cardCustomization?.CharacterTransform
-    // Merge doro fallback for rendering only: apply doro Scale when the user hasn't set their own
-    const fgTransform = useMemo(() => {
-        if (!doroFallbackTransform) return rawFgTransform
-        // If there's no user transform at all, use the doro fallback
-        if (!rawFgTransform) return doroFallbackTransform
-        // If the user hasn't explicitly set Scale, overlay the doro default
-        if (rawFgTransform.Scale === undefined) {
-            return { ...rawFgTransform, Scale: doroFallbackTransform.Scale }
-        }
-        return rawFgTransform
-    }, [rawFgTransform, doroFallbackTransform])
-    const fgImg = pendingImageUrl ?? savedImg
-    const fgRef = useRef<HTMLDivElement>(null)
+    const customImg = pendingImageUrl ?? savedImg
+    // Hold off until the stored-image lookup settles, so the default art is never loaded for a
+    // build that turns out to have custom art
+    const url = imgLoading ? undefined : (customImg ?? src)
 
-    const { value: imgSize, loading: imgSizeLoading } = useAsync(async () => {
-        const url = fgImg ?? src
-        if (!url) return undefined
+    const { value: imgSize, loading: sizeLoading } = useImageSize(url)
 
-        const img = new Image()
-        img.src = url
-        await img.decode()
-        return { width: img.naturalWidth, height: img.naturalHeight }
-    }, [fgImg, src])
+    // Art overrides describe the game's own image, not whatever the user uploaded
+    const artOverride = useMemo(() => customImg
+        ? undefined
+        : getDefaultCustomization(build.Character.Id, build.Character.Skin?.Id),
+        [customImg, build.Character.Id, build.Character.Skin?.Id])
 
-    const loading = useMemo(() => imgLoading || imgSizeLoading, [imgLoading, imgSizeLoading])
+    // Per-art override <- user customization, each field independently
+    const transform = useMemo(() =>
+        mergeTransforms(artOverride?.CharacterTransform, cardCustomization?.CharacterTransform),
+        [artOverride, cardCustomization?.CharacterTransform])
 
-    const left = (imgRef: React.RefObject<HTMLDivElement | null>, t?: Transform) => {
-        let offsetX = 0
-        if (imgRef.current) {
-            const width = imgSize?.width ?? 1
-            const height = imgSize?.height ?? 1
+    const { ref: frameRef, width: frameWidth, height: frameHeight } = useElementSize<HTMLDivElement>()
 
-            const parentWidth = imgRef.current.offsetWidth
-            const parentHeight = imgRef.current.offsetHeight
+    const placement = useMemo(() => {
+        if (!imgSize || frameWidth <= 0 || frameHeight <= 0) return undefined
+        return computePlacement({ width: frameWidth, height: frameHeight }, imgSize, transform)
+    }, [imgSize, frameWidth, frameHeight, transform])
 
-            const scale = Math.max(parentWidth / width, parentHeight / height)
-            const scaledWidth = width * scale * (t?.Scale ?? 1)
-
-            offsetX = (parentWidth - scaledWidth) / 2
-        } else {
-            return "center"
-        }
-
-        return `left ${(offsetX + (t?.X ?? 0)).toFixed(2)}px`
-    }
-    const top = (t?: Transform) => `top ${(((t?.Y ?? 0) + 10) * (t?.Scale ?? 1)).toFixed(2)}px`
-
-    const scale = (imgRef: React.RefObject<HTMLDivElement | null>, t?: Transform) => {
-        if (!imgRef.current || !t) return "cover"
-
-        const iw = imgSize?.width ?? 1
-        const ih = imgSize?.height ?? 1
-
-        const cw = imgRef.current.offsetWidth
-        const ch = imgRef.current.offsetHeight
-
-        const coverScale = Math.max(cw / iw, ch / ih)
-
-        const finalScale = t?.Scale !== undefined
-            ? coverScale * t.Scale   // apply user zoom
-            : coverScale
-
-        const percentX = (iw * finalScale) / cw * 100
-        const percentY = (ih * finalScale) / ch * 100
-
-        return `${percentX.toFixed(2)}% ${percentY.toFixed(2)}%`
+    const updateTransform = (patch: Partial<Transform>) => {
+        setCardCustomization?.({
+            ...cardCustomization,
+            CharacterTransform: { ...cardCustomization?.CharacterTransform, ...patch }
+        })
     }
 
-    const lastPos = useRef<{ x: number, y: number } | null>(null)
+    const imgRef = useRef<HTMLImageElement>(null)
+    const dragRef = useRef<DragState | null>(null)
+    const frameIdRef = useRef<number | null>(null)
+    const [dragging, setDragging] = useState(false)
 
-    const [imgPos, setImgPos] = useState({ left: "center", top: "top 10px", scale: "cover" })
-    useEffect(() => {
-        if (!fgRef.current || !imgSize) return
-        setImgPos({ left: left(fgRef, fgTransform), top: top(fgTransform), scale: scale(fgRef, fgTransform) })
-    }, [fgRef.current, imgSize, cardCustomization?.CharacterTransform, state])
+    const syncLiveTransform = useCallback(() => {
+        const drag = dragRef.current
+        const img = imgRef.current
+        if (!drag || !img || !imgSize || frameWidth <= 0 || frameHeight <= 0) return
 
-    const [active, setActive] = useState(false)
+        img.style.transform = placementTransform(computePlacement(
+            { width: frameWidth, height: frameHeight },
+            imgSize,
+            mergeTransforms(transform, { X: drag.x, Y: drag.y })
+        ))
+    }, [imgSize, frameWidth, frameHeight, transform])
 
-    useEffect(() => {
-        const handleUp = () => setActive(false)
-        window.addEventListener("mouseup", handleUp)
-        return () => window.removeEventListener("mouseup", handleUp)
+    // Re-assert the live position after any render that happens mid-drag; otherwise React paints
+    // the last committed offsets and the image jumps back
+    useLayoutEffect(syncLiveTransform)
+
+    useEffect(() => () => {
+        if (frameIdRef.current !== null) cancelAnimationFrame(frameIdRef.current)
     }, [])
+
+    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!isEditing || !placement) return
+
+        e.preventDefault()
+        e.stopPropagation()
+        e.currentTarget.setPointerCapture(e.pointerId)
+
+        const x = transform?.X ?? 0
+        const y = transform?.Y ?? 0
+
+        dragRef.current = {
+            pointerId: e.pointerId,
+            clientX: e.clientX,
+            clientY: e.clientY,
+            originX: x,
+            originY: y,
+            x,
+            y
+        }
+        setDragging(true)
+    }
+
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        const drag = dragRef.current
+        if (!drag || drag.pointerId !== e.pointerId) return
+
+        e.preventDefault()
+
+        // Pointer coordinates are screen pixels and the card is CSS-scaled, so divide by the card
+        // scale to get card pixels, then normalize against the frame
+        const scale = cardScale || 1
+        drag.x = drag.originX + (e.clientX - drag.clientX) / scale / frameWidth
+        drag.y = drag.originY + (e.clientY - drag.clientY) / scale / frameHeight
+
+        if (frameIdRef.current === null) {
+            frameIdRef.current = requestAnimationFrame(() => {
+                frameIdRef.current = null
+                syncLiveTransform()
+            })
+        }
+    }
+
+    const handlePointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+        const drag = dragRef.current
+        if (!drag || drag.pointerId !== e.pointerId) return
+
+        if (frameIdRef.current !== null) {
+            cancelAnimationFrame(frameIdRef.current)
+            frameIdRef.current = null
+        }
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId)
+        }
+
+        dragRef.current = null
+        setDragging(false)
+
+        if (drag.x !== drag.originX || drag.y !== drag.originY) {
+            updateTransform({ X: drag.x, Y: drag.y })
+        }
+    }
+
+    const loading = imgLoading || sizeLoading || !placement
 
     return (
         <Popover opened={isEditing} withArrow position="right">
             <Popover.Target>
-                <div className="cc-image cc-image-container"
-                     style={{
-                         userSelect: active ? "none" : "auto",
-                         position: "relative"
-                     }}
-                     onMouseDown={(e) => {
-                         if (!isEditing) return
-                         e.preventDefault()
-                         e.stopPropagation()
-
-                         lastPos.current = { x: e.clientX, y: e.clientY }
-
-                         setActive(true)
-                     }}
-                     onMouseMove={(e) => {
-                         if (!active || !lastPos.current) return
-
-                         e.preventDefault()
-                         e.stopPropagation()
-
-                         const target = e.currentTarget
-                         const bounds = target.getBoundingClientRect()
-
-                         const scaleF = cardScale ?? 1
-                         const flipped = fgTransform?.Flipped ? -1 : 1
-
-                         const mouseX = (e.clientX - lastPos.current.x) * scaleF * flipped,
-                             mouseY = (e.clientY - lastPos.current.y) * scaleF
-
-                         lastPos.current = { x: e.clientX, y: e.clientY }
-
-                         if (bounds.left + mouseX < 0 || bounds.right + mouseX > window.innerWidth ||
-                             bounds.top + mouseY < 0 || bounds.bottom + mouseY > window.innerHeight) {
-                             setActive(false)
-                             return
-                         }
-
-                         setCardCustomization?.({
-                             ...cardCustomization,
-                             CharacterTransform: {
-                                 ...cardCustomization?.CharacterTransform,
-                                 X: (fgTransform?.X ?? 0) + mouseX,
-                                 Y: (fgTransform?.Y ?? 0) + mouseY
-                             }
-                         })
-                     }}
-                     onMouseUp={(e) => {
-                         if (!isEditing) return
-                         e.preventDefault()
-                         e.stopPropagation()
-
-                         lastPos.current = null
-                         setActive(false)
-                     }}>
+                <div className="cc-image" data-dragging={dragging}
+                     style={{ touchAction: isEditing ? "none" : undefined }}
+                     onPointerDown={handlePointerDown}
+                     onPointerMove={handlePointerMove}
+                     onPointerUp={handlePointerEnd}
+                     onPointerCancel={handlePointerEnd}>
                     {cardCustomization?.ArtSource &&
-                        <Group gap="xs" c="white"
-                               style={{ position: "absolute", bottom: "228px", right: "16px", zIndex: 500 }}>
+                        <Group gap="xs" c="white" className="cc-art-source">
                             <IconPaletteFilled/>
                             <Title order={5}>{cardCustomization?.ArtSource}</Title>
                         </Group>
                     }
-                    {loading
-                        ? <Center h="100%"><Loader/></Center>
-                        : <BackgroundImage className="cc-img" ref={fgRef} src={fgImg ?? src}
-                                           style={{
-                                               "--img-x": imgPos.left,
-                                               "--img-y": imgPos.top,
-                                               "--img-scale": imgPos.scale,
-                                               transform: fgTransform?.Flipped ? "scaleX(-1)" : undefined,
-                                               filter: active ? "brightness(0.8)" : undefined
-                                           } as React.CSSProperties}/>
-                    }
+                    <div className="cc-image-frame" ref={frameRef}>
+                        {placement &&
+                            <img className="cc-img" ref={imgRef} src={url} alt="" draggable={false}
+                                 style={{
+                                     width: `${placement.width.toFixed(2)}px`,
+                                     height: `${placement.height.toFixed(2)}px`,
+                                     transform: placementTransform(placement)
+                                 }}/>
+                        }
+                    </div>
+                    {loading && <Center className="cc-img-loader"><Loader/></Center>}
                 </div>
             </Popover.Target>
             <Popover.Dropdown>
@@ -359,95 +347,65 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
                         <Group>
                             <ActionIcon.Group>
                                 <Tooltip label="Zoom out" withinPortal>
-                                    <ActionIcon onClick={() => {
-                                        setCardCustomization?.({
-                                            ...cardCustomization,
-                                            CharacterTransform: {
-                                                ...fgTransform,
-                                                Scale: Math.max(0.1, (fgTransform?.Scale ?? 1) - 0.05)
-                                            }
-                                        })
-                                    }}>
+                                    <ActionIcon onClick={() => updateTransform({
+                                        Scale: clamp((transform?.Scale ?? 1) - ZOOM_STEP, MIN_SCALE, MAX_SCALE)
+                                    })}>
                                         <IconZoomOut/>
                                     </ActionIcon>
                                 </Tooltip>
                                 <Tooltip label="Reset zoom" withinPortal>
-                                    <ActionIcon onClick={() => {
-                                        setCardCustomization?.({
-                                            ...cardCustomization,
-                                            CharacterTransform: {
-                                                ...fgTransform,
-                                                Scale: 1
-                                            }
-                                        })
-                                    }}>
+                                    <ActionIcon onClick={() => updateTransform({ Scale: 1 })}>
                                         <IconZoomReset/>
                                     </ActionIcon>
                                 </Tooltip>
                                 <Tooltip label="Zoom in" withinPortal>
-                                    <ActionIcon onClick={() => {
-                                        setCardCustomization?.({
-                                            ...cardCustomization,
-                                            CharacterTransform: {
-                                                ...fgTransform,
-                                                Scale: (fgTransform?.Scale ?? 1) + 0.05
-                                            }
-                                        })
-                                    }}>
+                                    <ActionIcon onClick={() => updateTransform({
+                                        Scale: clamp((transform?.Scale ?? 1) + ZOOM_STEP, MIN_SCALE, MAX_SCALE)
+                                    })}>
                                         <IconZoomIn/>
                                     </ActionIcon>
                                 </Tooltip>
                             </ActionIcon.Group>
                             <Button leftSection={<IconFlipVertical/>}
-                                    onClick={() => {
-                                        setCardCustomization?.({
-                                            ...cardCustomization,
-                                            CharacterTransform: {
-                                                ...fgTransform,
-                                                Flipped: !(fgTransform?.Flipped ?? false)
-                                            }
-                                        })
-                                    }}>Flip</Button>
-                            <Button leftSection={<IconRestore/>} onClick={() => {
-                                setCardCustomization?.({
-                                    ...cardCustomization,
-                                    CharacterTransform: {
-                                        ...cardCustomization?.CharacterTransform,
-                                        X: undefined,
-                                        Y: undefined
-                                    }
-                                })
-                            }}>Reset position</Button>
+                                onClick={() => updateTransform({
+                                    Flipped: !(transform?.Flipped ?? false)
+                                })}>Flip</Button>
+                            <Button leftSection={<IconRestore/>}
+                                onClick={() => updateTransform({
+                                    X: undefined,
+                                    Y: undefined
+                                })}>Reset position</Button>
                         </Group>
                         <Flex justify="stretch" gap="md">
                             <ColorInput label="Accent color" w="100%"
-                                        defaultValue={build.Character.Colors.Mindscape}
-                                        value={cardCustomization?.AccentColor}
-                                        onChange={(val) => setCardCustomization?.({
-                                            ...cardCustomization,
-                                            AccentColor: val
-                                        })}/>
+                                defaultValue={build.Character.Colors.Mindscape}
+                                value={cardCustomization?.AccentColor}
+                                onChange={(val) => setCardCustomization?.({
+                                    ...cardCustomization,
+                                    AccentColor: val
+                                })}/>
                             <TextInput label="Art Source" maxLength={32} w="100%"
-                                       disabled={cardCustomization?.CharacterImageUrl === undefined}
-                                       value={cardCustomization?.ArtSource}
-                                       onChange={(e) => setCardCustomization?.({
-                                           ...cardCustomization,
-                                           ArtSource: e.currentTarget.value
-                                       })}/>
+                                disabled={cardCustomization?.CharacterImageUrl === undefined}
+                                value={cardCustomization?.ArtSource}
+                                onChange={(e) => setCardCustomization?.({
+                                    ...cardCustomization,
+                                    ArtSource: e.currentTarget.value
+                                })}/>
                         </Flex>
-                        <Dropzone className="drop-zone"
-                                  accept={IMAGE_TYPES}
-                                  onDrop={async (files) => {
-                                      const file = files[0]
-                                      console.log("Character image staged for preview", file.name)
-                                      setPendingImageFile(file)
-                                      // Mark that we have a pending custom image so Art Source input becomes enabled
-                                      setCardCustomization?.({
-                                          ...cardCustomization,
-                                          CharacterImageUrl: "pending"
-                                      })
-                                  }}>
-                            <DropzoneContent title="Drag or click to change the image" img={fgImg}/>
+                        <Dropzone 
+                            className="drop-zone"
+                            accept={IMAGE_TYPES}
+                            onDrop={async (files) => {
+                                const file = files[0]
+                                console.log("Character image staged for preview", file.name)
+                                setPendingImageFile(file)
+                                // Marks that custom art exists so the Art Source input becomes enabled
+                                setCardCustomization?.({
+                                    ...cardCustomization,
+                                    CharacterImageUrl: CUSTOM_IMAGE_MARKER
+                                })
+                            }}>
+                            <DropzoneContent title="Drag or click to change the image" img={customImg}/>
                         </Dropzone>
                     </Stack>
 
@@ -467,9 +425,8 @@ export default function CharacterImage({ src }: ICharacterImageProps): React.Rea
 
                                 // Persist pending image if one was dropped
                                 if (pendingImageFile && finalCustomization) {
-                                    const url = await saveImage(owner.Uid, build.Id, pendingImageFile)
-                                    console.log("Character URL saved", url)
-                                    finalCustomization.CharacterImageUrl = url
+                                    await saveImage(owner.Uid, build.Id, pendingImageFile)
+                                    finalCustomization.CharacterImageUrl = CUSTOM_IMAGE_MARKER
                                     setCardCustomization?.(finalCustomization)
                                     setPendingImageFile(null)
                                 }
