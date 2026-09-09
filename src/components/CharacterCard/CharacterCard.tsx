@@ -489,7 +489,7 @@ export default function CharacterCard({
                     <Stack gap="12px">
                         <CoreSkill level={character.SkillLevels.CoreSkill} />
                         <Talents talentLevels={character.SkillLevels} mindscapeLevel={character.MindscapeLevel}
-                            isRupture={character.ProfessionType === "Rupture"} />
+                            profession={character.ProfessionType} />
                     </Stack>
                     <Stack gap="4px" justify="flex-end">
                         {

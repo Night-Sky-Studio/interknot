@@ -1,3 +1,4 @@
+export { default as ArmorerSkill } from "./ArmorerSkill";
 export { default as Dodge } from "./Dodge";
 export { default as NormalAtk } from "./NormalAtk";
 export { default as RuptureSkill } from "./RuptureSkill";
