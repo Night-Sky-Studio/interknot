@@ -1,4 +1,4 @@
-import { Talents as CharacterTalents } from "@interknot/types"
+import { Talents as CharacterTalents, match } from "@interknot/types"
 import * as TalentIcons from "@icons/talents"
 import { Group, Title } from "@mantine/core"
 import { ICardContext } from "@components/CharacterCard/CharacterCard"
@@ -10,11 +10,11 @@ import { useMemo } from "react"
 export default function Talents({ 
     talentLevels, 
     mindscapeLevel, 
-    isRupture 
+    profession 
 }: { 
     talentLevels: CharacterTalents, 
     mindscapeLevel: number, 
-    isRupture: boolean 
+    profession: string 
 }): React.ReactElement {
     // mindscapeLevel >= 5 ? 4 : mindscapeLevel >= 3 ? 2 : 0
     const mindscapeBoost = Math.floor(Math.min(mindscapeLevel, 6) / 2.5) * 2
@@ -45,7 +45,13 @@ export default function Talents({
             <div className="cc-talent"
                 data-zzz-lang={language} data-zzz-id={charId} 
                 data-zzz-type="talent" data-zzz-id-b={1} data-zzz-level={talentLevels.SpecialAttack + mindscapeBoost} >
-                { isRupture ? <TalentIcons.RuptureSkill width="56px" /> : <TalentIcons.Skill width="56px" /> }
+                { 
+                    match(profession, [
+                        ["Rupture", <TalentIcons.RuptureSkill width="56px" />],
+                        ["Armorer", <TalentIcons.ArmorerSkill width="56px" />],
+                        <TalentIcons.Skill width="56px" /> 
+                    ])
+                }
                 <Title order={6} className="cc-talent-level">{talentLevels.SpecialAttack + mindscapeBoost}</Title>
             </div>
             <div className="cc-talent"
