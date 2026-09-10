@@ -289,7 +289,7 @@ export default function BuildsPage(): React.ReactElement {
                                                     <Group>
                                                         <CoreSkill level={build.Character.SkillLevels.CoreSkill} />
                                                         <Talents
-                                                            isRupture={build.Character.ProfessionType === "Rupture"}
+                                                            profession={build.Character.ProfessionType}
                                                             talentLevels={build.Character.SkillLevels}
                                                             mindscapeLevel={build.Character.MindscapeLevel} />
                                                     </Group>

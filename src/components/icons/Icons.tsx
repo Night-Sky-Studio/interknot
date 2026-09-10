@@ -9,6 +9,7 @@ import defense from "@assets/icons/spec/defense.webp"
 import stun from "@assets/icons/spec/stun.webp"
 import support from "@assets/icons/spec/support.webp"
 import rupture from "@assets/icons/spec/rupture.webp"
+import armorer from "@assets/icons/spec/armorer.webp"
 
 import b_rarity from "@assets/icons/rarity/ItemRarityB.png"
 import a_rarity from "@assets/icons/rarity/ItemRarityA.png"
@@ -90,6 +91,7 @@ const ProfessionsMap: Record<string, string> = {
     "Stun": stun,
     "Support": support,
     "Rupture": rupture,
+    "Armorer": armorer
 }
 
 interface IProfessionIconProps {

@@ -27,6 +27,7 @@ import LeaderboardProvider from "@/components/LeaderboardProvider"
 import CardFooter from "@/components/CardFooter/CardFooter"
 import FilterSelector from "@/components/FilterSelector/FilterSelector"
 import { useBackend } from "@components/BackendProvider.tsx"
+import { type TooltipPayload } from "recharts/types/state/tooltipSlice"
 
 export default function LeaderboardDetailPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -100,7 +101,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
         return result
     }
 
-    const DistributionTooltip = ({ label, payload }: { label?: string, payload?: Record<string, any>[] }) => {
+    const DistributionTooltip = ({ label, payload }: { label?: string, payload?: TooltipPayload }) => {
         if (!payload) return null;
 
         return (
@@ -186,7 +187,8 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                             dataKey="top" 
                                             tooltipAnimationDuration={250}
                                             tooltipProps={{ 
-                                                content: ({ label, payload }) => <DistributionTooltip label={label?.toString()} payload={payload} />,
+                                                content: ({ label, payload }) =>
+                                                    <DistributionTooltip label={label?.toString()} payload={payload} />,
                                             }}
                                             tickLine="xy"
                                             strokeDasharray="0"
@@ -463,7 +465,7 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                                 <Group>
                                                     <CoreSkill level={entry.Build.Character.SkillLevels.CoreSkill} />
                                                     <Talents 
-                                                        isRupture={entry.Build.Character.ProfessionType === "Rupture"}
+                                                        profession={entry.Build.Character.ProfessionType}
                                                         talentLevels={entry.Build.Character.SkillLevels}
                                                         mindscapeLevel={entry.Build.Character.MindscapeLevel} />
                                                 </Group>
