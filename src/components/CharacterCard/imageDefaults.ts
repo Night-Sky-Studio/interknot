@@ -143,6 +143,10 @@ const DEFAULTS: Record<number, CharacterArtOverride> = {
     1591: {
         base: { CharacterTransform: { X: 0.15, Y: -0.05, Scale: 1.2 } },
         3115911: { CharacterTransform: { X: -0.03, Y: -0.35 } }
+    },
+    // Claret
+    1611: {
+        base: { CharacterTransform: { X: -0.18, Y: -0.17, Scale: 1.3 } }
     }
 }
 

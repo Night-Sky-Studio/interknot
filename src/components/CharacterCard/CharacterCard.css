@@ -163,7 +163,10 @@ html[lang="vi"] .cc-character-name {
     font-size: 16px;
     line-height: 1em;
 }
-.cc-stat[data-id="32001"] .cc-stat-name {
+:is(
+    .cc-stat[data-id="32001"],
+    .cc-stat[data-id="32401"]
+) .cc-stat-name {
     font-size: 12px;
     width: 90%;
 }
