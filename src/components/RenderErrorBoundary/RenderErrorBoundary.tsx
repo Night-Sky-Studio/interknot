@@ -9,7 +9,7 @@ export default function RenderErrorBoundary({ children }: { children: React.Reac
     const [errorInfo, setErrorInfo] = useState<ErrorInfo | null>(null)
     return <ErrorBoundary 
         onError={(error, info) => {
-            setError(error)
+            setError(error as any)
             setErrorInfo(info)
         }}
         fallbackRender={() => {
