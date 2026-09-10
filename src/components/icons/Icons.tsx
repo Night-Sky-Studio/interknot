@@ -54,6 +54,8 @@ const PropertyTypesMap: Record<number, React.FunctionComponent<React.SVGProps<SV
     23201: Stats.Pen, 23203: Stats.Pen, 23205: Stats.Pen,
     12301: Stats.Sheer, 12303: Stats.Sheer, 12305: Stats.Sheer,
     32001: Stats.Adr, 32003: Stats.Adr, 32005: Stats.Adr,
+    21301: Stats.Laceration, 21303: Stats.Laceration,
+    32401: Stats.Sharpness, 32402: Stats.Sharpness, 32403: Stats.Sharpness,
 
     // Elements
     31501: Elements.Physics, 31503: Elements.Physics, 31505: Elements.Physics, 

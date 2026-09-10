@@ -220,7 +220,7 @@
 
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.35.2", "", { "os": "win32", "cpu": "x64" }, "sha512-imoOyBcoM/iiUr4J6VPpCNjPnjvP/Gks95898yB8YqoGGYmHYbOyCuNv9FMhFgtaiHFGbHW8bxKqRV6VjtXThQ=="],
 
-    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#ec5f037", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-ec5f037", "sha512-Oh39G/UZigLBqYFwdguHU8AtyVwDD34hQD1Sb3+bkp9UgQl3opJmh2JJAUK4hSqDw09tYZjcpmhOZntcvy9jaQ=="],
+    "@interknot/types": ["@interknot/types@github:Night-Sky-Studio/interknot-types#6dd3f94", { "peerDependencies": { "typescript": "^5" } }, "Night-Sky-Studio-interknot-types-6dd3f94", "sha512-zyTA04SwX65vAh5Wv1K0YnLUdXQFaZsBFVy/sQwYVpTlFLF1bMHAs4rl7WmH3EMEfXY5235QgsvOfmUqmCGOLw=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 

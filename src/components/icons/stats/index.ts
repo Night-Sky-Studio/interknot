@@ -8,6 +8,8 @@ export { default as Def } from "./Def";
 export { default as Er } from "./Er";
 export { default as Hp } from "./Hp";
 export { default as Impact } from "./Impact";
+export { default as Laceration } from "./Laceration";
 export { default as Pen } from "./Pen";
 export { default as PenRatio } from "./PenRatio";
+export { default as Sharpness } from "./Sharpness";
 export { default as Sheer } from "./Sheer";
