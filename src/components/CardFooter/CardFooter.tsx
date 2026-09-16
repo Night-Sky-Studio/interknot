@@ -124,7 +124,7 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                             transitionProps={{ transition: "pop" }}
                             closeOnClickOutside={false} closeOnEscape={false}>
                             <Popover.Target>
-                                <Button variant={customizationOpened ? "filled" : "subtle"} leftSection={<IconTools />} onClick={() => {
+                                <Button variant={customizationOpened ? "filled" : "subtle"} leftSection={<IconSettings />} onClick={() => {
                                     if (buildSettingsOpened) {
                                         closeBuildSettings()
                                     }
@@ -133,12 +133,12 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                     } else {
                                         openCustomization()
                                     }
-                                }}>Card Customization</Button>
+                                }}>Card Settings</Button>
                             </Popover.Target>
                             <Popover.Dropdown>
                                 <Stack>
                                     <Flex justify="space-between" align="center" w="100%">
-                                        <Title order={3} miw="384px">Card Customization</Title>
+                                        <Title order={3} miw="384px">Card Settings</Title>
                                         <ActionIcon variant="subtle" onClick={closeCustomization}><IconX /></ActionIcon>
                                     </Flex>
                                     <Switch label="Show graph"
@@ -153,15 +153,18 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                             checked={cardSettings.showRanking}
                                             onChange={(evt) => cardSettings.setShowRanking(evt.target.checked)} />
                                     </>}
-                                    <Switch label="Show substats breakdown" 
-                                        checked={cardSettings.showSubstatsBreakdown}
-                                        onChange={(evt) => cardSettings.setShowSubstatsBreakdown(evt.target.checked)} />
                                     {/* <Switch label="Show build name"
                                         checked={cardSettings.showBuildName}
                                         onChange={(evt) => cardSettings.setShowBuildName(evt.target.checked)} /> */}
                                     <Switch label="Show user information"
                                         checked={cardSettings.showUserInfo}
                                         onChange={(evt) => cardSettings.setShowUserInfo(evt.target.checked)} />
+                                    <Switch label="Show substats breakdown"
+                                        checked={cardSettings.showSubstatsBreakdown}
+                                        onChange={(evt) => cardSettings.setShowSubstatsBreakdown(evt.target.checked)} />
+                                    <Switch label="Show watermark"
+                                        checked={cardSettings.showWatermark}
+                                        onChange={(evt) => cardSettings.setShowWatermark(evt.target.checked)} />
                                     { cvEnabled &&
                                         <Switch label="Show crit value"
                                             checked={cardSettings.showCritValue}
@@ -176,7 +179,7 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                 transitionProps={{ transition: "pop" }} 
                                 closeOnClickOutside={false} closeOnEscape={false}>
                                 <Popover.Target>
-                                    <Button variant={buildSettingsOpened ? "filled" : "subtle"} leftSection={<IconSettings />} onClick={() => {
+                                    <Button variant={buildSettingsOpened ? "filled" : "subtle"} leftSection={<IconTools />} onClick={() => {
                                         if (customizationOpened) {
                                             closeCustomization()
                                         }
@@ -185,13 +188,13 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                         } else {
                                             openBuildSettings()
                                         }
-                                    }}>Build Settings</Button>
+                                    }}>Build Customization</Button>
                                 </Popover.Target>
                                 <Popover.Dropdown>
                                     <LoadingOverlay visible={isLoading} />
                                     <Stack>
                                         <Flex justify="space-between" align="center" w="100%">
-                                            <Title order={3} miw="384px">Build Settings</Title>
+                                            <Title order={3} miw="384px">Build Customization</Title>
                                             <ActionIcon variant="subtle" onClick={() => {
                                                 closeBuildSettings()
                                                 close()
@@ -300,7 +303,7 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                     </> }
                     { isAvailable &&
                         <div className="root" ref={setRootRef}>
-                            {controls}
+                            { controls }
 
                             <FloatingIndicator
                                 target={controlsRefs[active]}

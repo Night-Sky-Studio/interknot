@@ -67,6 +67,7 @@ type CardSettingsContextType = {
     showGraph: boolean
     showRanking: boolean
     showCritValue: boolean
+    showWatermark: boolean
     selectedLeaderboardId?: number
     cardCustomization?: CardCustomization
     isEditing: boolean
@@ -78,6 +79,7 @@ type CardSettingsContextType = {
     setShowGraph: (value: boolean) => void
     setShowRanking: (value: boolean) => void
     setShowCritValue: (value: boolean) => void
+    setShowWatermark: (value: boolean) => void
     setSelectedLeaderboardId: (value?: number) => void
     setCardCustomization: (value?: CardCustomization) => void
     setIsEditing: (value: boolean) => void
@@ -97,6 +99,7 @@ const defaultValue: CardSettingsContextType = {
     showGraph: true,
     showRanking: true,
     showCritValue: false,
+    showWatermark: true,
     selectedLeaderboardId: undefined,
     cardCustomization: undefined,
     isEditing: false,
@@ -108,6 +111,7 @@ const defaultValue: CardSettingsContextType = {
     setShowGraph: () => {},
     setShowRanking: () => {},
     setShowCritValue: () => {},
+    setShowWatermark: () => {},
     setSelectedLeaderboardId: () => {},
     setCardCustomization: () => {},
     setIsEditing: () => {},
@@ -147,6 +151,9 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     const setShowCritValue = (showCritValue: boolean) => {
         setSettings((prev) => ({ ...prev, showCritValue }))
     }
+    const setShowWatermark = (showWatermark: boolean) => {
+        setSettings((prev) => ({ ...prev, showWatermark }))
+    }
     const setSelectedLeaderboardId = (selectedLeaderboardId?: number) => {
         setSettings((prev) => ({ ...prev, selectedLeaderboardId }))
     }
@@ -183,6 +190,7 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
             setShowGraph,
             setShowRanking,
             setShowCritValue,
+            setShowWatermark,
             setSelectedLeaderboardId,
             setCardCustomization,
             setIsEditing,
