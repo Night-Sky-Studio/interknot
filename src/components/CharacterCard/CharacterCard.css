@@ -6,6 +6,7 @@
     position: absolute;
     left: 0;
     top: 0;
+    transition: height 0.1s ease-in-out;
 }
 .cc-grid {
     width: 100%;
@@ -39,6 +40,14 @@
 }
 .cc-sub-stats > div[data-count^="*****"] {
     color: var(--mantine-color-gray-1);
+}
+
+.cc-watermark {
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--mantine-color-dark-7);
 }
 
 .cc-vignette {

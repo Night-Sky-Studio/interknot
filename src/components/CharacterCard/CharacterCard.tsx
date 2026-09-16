@@ -400,6 +400,7 @@ export default function CharacterCard({
         showUserInfo,
         showGraph,
         showCritValue,
+        showWatermark,
         selectedLeaderboardId,
         isEditing,
         cardCustomization
@@ -538,6 +539,11 @@ export default function CharacterCard({
                             <SubStat stat={ss} />
                         </Group>)
                     }
+                </Card.Section>
+            }
+            {showWatermark === true &&
+                <Card.Section m="0px" className="cc-watermark">
+                    <Title order={6} ff="zzz-jp" fz="9pt">interknot.space</Title>
                 </Card.Section>
             }
         </Card>

@@ -20,7 +20,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
     const [cardContainerHeight, setCardContainerHeight] = useState(750 * CARD_ASPECT_RATIO)
     const { ref: cardContainerRef, width } = useElementSize()
     const { context } = useCardSettings()
-    const { showSubstatsBreakdown, cardScale, setCardRef, setCardScale } = context || {}
+    const { showSubstatsBreakdown, showWatermark, cardScale, setCardRef, setCardScale } = context || {}
 
     useEffect(() => {
         if (parentRef?.current) {
@@ -37,13 +37,14 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
         scaleFactor = Math.min(Math.max(scaleFactor, SCALE_FACTOR_MIN), 1.05)
 
         let containerHeight = Math.round(width * CARD_ASPECT_RATIO) + (showSubstatsBreakdown ? 48 : 0)
+            + (showWatermark ? 24 : 0)
         containerHeight = Math.max(containerHeight, MIN_HEIGHT + 67)
 
         // console.log(scaleFactor.toFixed(3), containerHeight, width)
         
         setCardScale?.(scaleFactor)
         setCardContainerHeight(containerHeight)
-    }, [width, showSubstatsBreakdown])
+    }, [width, showSubstatsBreakdown, showWatermark])
 
     useEffect(() => {
         setCardRef?.(cardRef)
