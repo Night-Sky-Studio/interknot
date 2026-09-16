@@ -38,10 +38,8 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
 
         let containerHeight = Math.round(width * CARD_ASPECT_RATIO) + (showSubstatsBreakdown ? 48 : 0)
             + (showWatermark ? 24 : 0)
-        containerHeight = Math.max(containerHeight, MIN_HEIGHT + 67)
+        containerHeight = Math.max(containerHeight, MIN_HEIGHT + 67 + (showWatermark ? 24 : 0))
 
-        // console.log(scaleFactor.toFixed(3), containerHeight, width)
-        
         setCardScale?.(scaleFactor)
         setCardContainerHeight(containerHeight)
     }, [width, showSubstatsBreakdown, showWatermark])
@@ -49,7 +47,7 @@ export default function CharacterCardContainer({ parentRef, ref, cardProps }: IC
     useEffect(() => {
         setCardRef?.(cardRef)
     }, [cardRef])
-    
+
     return (
         <div ref={ref} style={{ "--scale": cardScale, height: `${cardContainerHeight - 64}px`, position: "relative" } as React.CSSProperties}>
             <CharacterCardMemoized ref={cardRef} {...cardProps} />
