@@ -5,10 +5,24 @@ import { useDisclosure, useLocalStorage } from "@mantine/hooks"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useAsync, useAsyncRetry } from "react-use"
 import {
-    getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile, getProfileClaim,
-    getTopStats, getUserLeaderboards, initProfileClaim, IQueryParams
+    getCharacters, getCharactersCount, getDriveDiscs, getDriveDiscsCount, getProfile,
+    getTopStats, getUserLeaderboards, IQueryParams
 } from "@api/data"
-import { IconCheck, IconChevronDown, IconChevronUp, IconCopy, IconEyeOff, IconInfoCircle, IconKeyFilled, IconLockFilled, IconReload, IconSettingsFilled, IconStar, IconStarFilled } from "@tabler/icons-react"
+import {
+    IconCheck,
+    IconChevronDown,
+    IconChevronUp,
+    IconCopy,
+    IconEyeOff,
+    IconInfoCircle,
+    IconKeyFilled,
+    IconLockFilled,
+    IconReload,
+    IconSettingsFilled,
+    IconStar,
+    IconStarFilled,
+    IconX
+} from "@tabler/icons-react"
 import Timer from "@components/Timer"
 import "./styles/ProfilePage.css"
 import { LeaderboardGridMemorized } from "@components/LeaderboardGrid/LeaderboardGrid"
@@ -18,6 +32,7 @@ import { useBackend } from "@components/BackendProvider"
 import { getRarityIcon } from "@components/icons/Icons"
 import { useSettings } from "@components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
+import { useProfileClaim } from "@/hooks/useProfileClaim"
 import { DataTable } from "mantine-datatable"
 import WeaponCell from "@components/cells/WeaponCell"
 import DriveDiscsCell from "@components/cells/DriveDiscsCell"
@@ -177,19 +192,30 @@ export default function ProfilePage(): React.ReactElement {
 
     const tableRef = useRef<HTMLDivElement>(null)
 
-    const { account } = useAuth()
+    const { account, refresh: refreshAccount } = useAuth()
     const isClaimed = useMemo(() =>
         account?.ClaimedProfiles.find(p => p.Uid === Number(uid)) !== undefined,
     [uid, account?.ClaimedProfiles])
 
     const [bindPopoverOpen, setBindPopoverOpen] = useState(false)
 
-    const { retry: refreshClaim, ...profileClaimState } = useAsyncRetry(async () => {
-        if (!uid) return undefined
-        if (!account) return undefined
-        return await getProfileClaim(Number(uid))
-    }, [uid, account])
-    const profileClaim = useMemo(() => profileClaimState.value?.data, [profileClaimState.value?.data])
+    const {
+        claim: profileClaim,
+        busy: claimBusy,
+        refresh: refreshClaim,
+        init: initClaim,
+        cancel: cancelClaim
+    } = useProfileClaim(uid ? Number(uid) : undefined, account)
+
+    // The backend resolves a pending claim while updating the profile, so both the
+    // claim and the account's claimed profiles can change once an update lands
+    const updateInFlight = useRef(false)
+    useEffect(() => {
+        if (!updateInFlight.current || profileState.loading) return
+        updateInFlight.current = false
+        refreshClaim()
+        refreshAccount()
+    }, [profileState.loading, profileState.value])
 
     const [buildsSettingsOpened, { open: openBuildsSettings, close: closeBuildsSettings }] = useDisclosure(false)
 
@@ -233,7 +259,7 @@ export default function ProfilePage(): React.ReactElement {
                             <ActionIcon variant="subtle" c="white" onClick={async () => {
                                 await navigator.clipboard.writeText(profileClaim.secret)
                                 notifications.show({
-                                    message: `Copied binding code to clipboard`,
+                                    message: "Copied binding code to clipboard",
                                     color: "blue",
                                     autoClose: 4000,
                                     icon: <IconCheck size={16} />,
@@ -246,6 +272,11 @@ export default function ProfilePage(): React.ReactElement {
                         <Text>Add binding code to your in-game signature and press the Update button.</Text>
                         <Text>Be aware it might take around 5 minutes for in-game changes to be reflected
                             on the profile page. To update it instantly, log out of the game.</Text>
+
+                        <Button color="red" leftSection={claimBusy ? <Loader size="sm" /> : <IconX />}
+                            disabled={claimBusy} onClick={cancelClaim}>
+                            Cancel ongoing claim
+                        </Button>
                     </Stack>
                 </Alert>
             </Center>
@@ -265,12 +296,9 @@ export default function ProfilePage(): React.ReactElement {
                             <Button rightSection={<IconReload />} disabled={!canUpdate} onClick={() => {
                                 setCanUpdate(false)
                                 setUpdateRequested(true)
+                                updateInFlight.current = true
                                 profileState.retry()
                                 leaderboardsState.retry()
-                                refreshClaim()
-                                if (profileClaim) {
-                                    setTimeout(() => window.location.reload(), 500)
-                                }
                             }}>
                                 <Timer key={uid} title="Update" isEnabled={!canUpdate}
                                     endTime={ttl === 0 ? 60 : ttl}
@@ -295,11 +323,10 @@ export default function ProfilePage(): React.ReactElement {
                                         <Text>Do you want to bind this profile?</Text>
                                         <Flex gap="sm" justify="stretch">
                                             <Button mt="sm" flex="1 0" leftSection={<IconCheck />}
+                                                disabled={claimBusy}
                                                 onClick={async () => {
-                                                    const claim = await initProfileClaim(Number(uid))
-                                                    if (claim.success) {
+                                                    if (await initClaim()) {
                                                         setBindPopoverOpen(false)
-                                                        refreshClaim()
                                                     }
                                                 }}>Bind</Button>
                                             <Button mt="sm" variant="light" onClick={() => setBindPopoverOpen(false)}>Cancel</Button>
