@@ -208,14 +208,19 @@ export default function ProfilePage(): React.ReactElement {
     } = useProfileClaim(uid ? Number(uid) : undefined, account)
 
     // The backend resolves a pending claim while updating the profile, so both the
-    // claim and the account's claimed profiles can change once an update lands
-    const updateInFlight = useRef(false)
+    // claim and the account's claimed profiles can change once an update lands.
+    // `loading` alone is not a completion signal: react-use starts the request in
+    // an effect, so it can still describe the request that preceded the click.
+    const requestedUpdate = useRef<{ value?: unknown, error?: unknown } | null>(null)
     useEffect(() => {
-        if (!updateInFlight.current || profileState.loading) return
-        updateInFlight.current = false
-        refreshClaim()
-        refreshAccount()
-    }, [profileState.loading, profileState.value])
+        const requested = requestedUpdate.current
+        if (!requested || profileState.loading) return
+        if (profileState.value === requested.value && profileState.error === requested.error) return
+
+        requestedUpdate.current = null
+        void refreshClaim()
+        void refreshAccount()
+    }, [profileState.loading, profileState.value, profileState.error])
 
     const [buildsSettingsOpened, { open: openBuildsSettings, close: closeBuildsSettings }] = useDisclosure(false)
 
@@ -293,10 +298,13 @@ export default function ProfilePage(): React.ReactElement {
                             </Tooltip>
                         }
                         {backend?.data && backend.data.params.update_enabled &&
-                            <Button rightSection={<IconReload />} disabled={!canUpdate} onClick={() => {
+                            <Button rightSection={<IconReload />}
+                                // `retry()` is a no-op while a request is in flight, so a
+                                // click during one would be silently dropped
+                                disabled={!canUpdate || profileState.loading} onClick={() => {
                                 setCanUpdate(false)
                                 setUpdateRequested(true)
-                                updateInFlight.current = true
+                                requestedUpdate.current = { value: profileState.value, error: profileState.error }
                                 profileState.retry()
                                 leaderboardsState.retry()
                             }}>
