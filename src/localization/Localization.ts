@@ -11,6 +11,7 @@ export const Terms = terms as Record<string, string>
 export const AvailableLocs = Object.keys(Localizations)
 
 const tagNameMap: Record<SkillTag, string> = {
+    [SkillTag.None]: "None",
     [SkillTag.DirectHit]: "Direct Hit",
     [SkillTag.BasicAtk]: "Basic Attack",
     [SkillTag.Dash]: "Dash",
@@ -29,6 +30,7 @@ const tagNameMap: Record<SkillTag, string> = {
 }
 
 const tagShortNameMap: Record<SkillTag, string> = {
+    [SkillTag.None]: "N/A",
     [SkillTag.DirectHit]: "Hit",
     [SkillTag.BasicAtk]: "BA",
     [SkillTag.Dash]: "Dash",
