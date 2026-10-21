@@ -112,6 +112,7 @@ export function getErrorString(error?: string): string {
         ["E_SESSION", "Session is missing"],
         ["E_INVALID", "Invalid request"],
         ["E_ENKA", "Enka error"],
+        ["E_DISABLED", "Module disabled"],
         ["E_CALC", "Calculator error"],
         ["E_NOT_ALLOWED", "Method not allowed"],
         ["E_INTERNAL", "Internal server error"],
