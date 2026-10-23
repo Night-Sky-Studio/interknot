@@ -7,6 +7,7 @@ import { DataTable } from "mantine-datatable"
 import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { useAsync } from "react-use"
+import "./styles/AssaultLeaderboards.css"
 
 function isLive(from: string, to: string): boolean {
     const fromDate = new Date(from).getTime(), 
@@ -83,8 +84,11 @@ export default function AssaultLeaderboards(): React.ReactElement {
                                     render: (leaderboard) => {
                                         return (
                                             <Group gap="xs">
-                                                <Image h="32px" src={leaderboard.EnemyIconUrl} 
-                                                    alt={leaderboard.EnemyName} />
+                                                <div className="enemy-icon">
+                                                    <div className="enemy-icon-bg" />
+                                                    <Image h="32px" src={leaderboard.EnemyIconUrl} 
+                                                        alt={leaderboard.EnemyName} className="enemy-icon-img" />
+                                                </div>
                                                 <Group gap="xs">
                                                     <Badge bg="dark">{leaderboard.GameVersion}</Badge>
                                                     <Anchor href={`/leaderboards/assault/${leaderboard.Id}`} onClick={(e) => {
