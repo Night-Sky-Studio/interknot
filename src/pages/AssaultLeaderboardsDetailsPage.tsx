@@ -3,8 +3,30 @@ import FilterSelector from "@/components/FilterSelector/FilterSelector"
 import { ServerChip, UserHeaderMemoized } from "@/components/UserHeader/UserHeader"
 import { useSettings } from "@/components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
-import type { Buff } from "@interknot/types"
-import { Alert, Anchor, Avatar, Badge, Button, Card, Center, Flex, Grid, Group, Image, Loader, LoadingOverlay, Pagination, Select, Stack, Title, Text, Collapse, Divider, UnstyledButton } from "@mantine/core"
+import { type Buff } from "@interknot/types"
+import {
+    Alert,
+    Anchor,
+    Avatar,
+    Badge,
+    Button,
+    Card,
+    Center,
+    Flex,
+    Grid,
+    Group,
+    Image,
+    Loader,
+    LoadingOverlay,
+    Pagination,
+    Select,
+    Stack,
+    Title,
+    Text,
+    Collapse,
+    Divider,
+    UnstyledButton
+} from "@mantine/core"
 import { IconChevronDown, IconChevronUp, IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable";
 import { useCallback, useMemo, useState } from "react"
@@ -14,6 +36,7 @@ import "./styles/AssaultLeaderboardsDetailsPage.css"
 import GameText from "@/components/GameText"
 import { useDisclosure } from "@mantine/hooks"
 import { ZenlessIcon } from "@/components/icons/Icons";
+import { EndGameStar } from "@/components/icons";
 
 function isLive(from: string, to: string): boolean {
     const fromDate = new Date(from).getTime(),
@@ -31,6 +54,14 @@ function formatDuration(ms: number): string {
     if (d > 0) return `${d}d ${h}h`
     if (h > 0) return `${h}h ${m}m`
     return `${m}m`
+}
+
+function StarRating({ score }: { score: number }): React.ReactElement {
+    return (<Group wrap="nowrap" gap="4px" bg="dark.9" p="4px" bdrs="16px">
+        <EndGameStar height={24} state={ score >= 10000 ? score >= 40000 ? "radiant" : "active" : "regular" } />
+        <EndGameStar height={24} state={ score >= 20000 ? score >= 50000 ? "radiant" : "active" : "regular" } />
+        <EndGameStar height={24} state={ score >= 30000 ? score >= 60000 ? "radiant" : "active" : "regular" } />
+    </Group>)
 }
 
 export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
@@ -241,12 +272,16 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                 minHeight={144}
                                 className="data-table dt-header"
                                 idAccessor="Profile.Uid"
+                                rowStyle={() => ({
+                                    height: "64px",
+                                })}
                                 rowClassName={(entry) => entry.IsBanned ? "assault-row-banned" : undefined}
                                 columns={[
                                     {
                                         accessor: "Rank",
                                         title: "#",
                                         width: "7ch",
+                                        cellsClassName: "assault-rank-cell",
                                         cellsStyle: () => ({ maxWidth: "7ch" }),
                                         render: (entry) => <>
                                             {entry.IsBanned 
@@ -259,18 +294,22 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                         </>
                                     },
                                     {
-                                        accessor: "Profile.Nickname",
-                                        title: "Nickname",
-                                        cellsStyle: () => ({
-                                            maxWidth: "24ch"
-                                        }),
-                                        render: (entry) => (
-                                            <Group gap="sm" wrap="nowrap">
+                                        accessor: "Profile",
+                                        title: "User",
+                                        // Namecard is absolutely positioned against the <td>: percentage
+                                        // heights don't resolve for in-flow children of table cells.
+                                        cellsClassName: "assault-user-cell",
+                                        render: (entry) => (<>
+                                            <div className="assault-user-namecard">
+                                                <img src={entry.Profile.NamecardUrl} alt="" />
+                                            </div>
+                                            <Group className="assault-user-content" gap="sm" wrap="nowrap">
                                                 <ServerChip uid={entry.Profile.Uid.toString() ?? ""} />
-                                                <Avatar src={entry.Profile.ProfilePictureUrl} size="md" />
                                                 <Title className="user-info" order={6}>IL {entry.Profile.Level}</Title>
+                                                <Avatar src={entry.Profile.ProfilePictureUrl} size="md" />
                                                 <Anchor c="gray" style={{ whiteSpace: "nowrap" }}
-                                                    href={`/profile/${entry.Profile.Uid}`} onClick={(e) => {
+                                                        href={`/profile/${entry.Profile.Uid}`}
+                                                        onClick={(e) => {
                                                     e.stopPropagation()
                                                     e.preventDefault()
                                                     navigate(`/profile/${entry.Profile.Uid}`)
@@ -279,26 +318,23 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                                     <Badge color="red">Sus</Badge>
                                                 }
                                             </Group>
-                                        )
-                                    },
-                                    {
-                                        accessor: "Profile.Description",
-                                        title: "Description",
-                                        render: (entry) => (
-                                            <Text truncate="end">{entry.Profile.Description}</Text>
-                                        )
+                                        </>)
                                     },
                                     {
                                         accessor: "TotalValue",
                                         title: "Score",
                                         cellsStyle: () => ({
-                                            width: "128px",
-                                            background: "rgba(0 0 0 / 25%)"
+                                            width: "180px",
+                                            background: "rgba(0 0 0 / 25%)",
+                                            zIndex: 1
                                         }),
                                         render: (entry) => (
-                                            <Text fz="12pt" fw={600} style={{
-                                                textDecoration: entry.IsBanned ? "line-through" : undefined
-                                            }}>{entry.TotalValue.toLocaleString()}</Text>
+                                            <Group gap="xs">
+                                                <StarRating score={entry.TotalValue} />
+                                                <Text fw={600} style={{
+                                                    textDecoration: entry.IsBanned ? "line-through" : undefined
+                                                }}>{entry.TotalValue.toLocaleString()}</Text>
+                                            </Group>
                                         )
                                     }
                                 ]}

@@ -2,7 +2,6 @@ import { UnstyledButton, Center, Stack, Group, Button, FloatingIndicator, Title,
 import { IconArchiveFilled, IconDeviceFloppy, IconDownload, IconEye, IconEyeOff, IconPencil, IconPhotoCog, IconSettings, IconTools, IconTrashFilled, IconX } from "@tabler/icons-react"
 import React, { useEffect, useState } from "react"
 import BuildInfo from "@components/BuildInfo/BuildInfo"
-import "./CardFooter.css"
 import { useDisclosure } from "@mantine/hooks"
 import { useLeaderboards } from "@components/LeaderboardProvider"
 import { useCardSettings } from "@components/CardSettingsProvider"
@@ -34,7 +33,7 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
     const controls = data.map((item, index) => (
         <UnstyledButton
             key={item}
-            className="control"
+            className="float-tab-control"
             size="xs"
             variant="transparent"
             ref={setControlRef(index)}
@@ -42,7 +41,7 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
             mod={{ active: active === index }}
             disabled={index === 1}
             data-disabled={index === 1 ? true : undefined}>
-            <span className="controlLabel">{item}</span>
+            <span className="float-tab-control-label">{item}</span>
         </UnstyledButton>
     ))
 
@@ -302,13 +301,13 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                         }
                     </> }
                     { isAvailable &&
-                        <div className="root" ref={setRootRef}>
+                        <div className="float-tab-root" ref={setRootRef}>
                             { controls }
 
                             <FloatingIndicator
                                 target={controlsRefs[active]}
                                 parent={rootRef}
-                                className="indicator"
+                                className="float-tab-indicator"
                             />
                         </div>
                     }
