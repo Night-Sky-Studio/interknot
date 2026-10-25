@@ -4,6 +4,7 @@ import Leaderboards from "./leaderboards/Leaderboards"
 import { memo, useState } from "react"
 import { IconTrophy } from "@tabler/icons-react"
 import { DeadlyAssaultOutline } from "@components/icons"
+import { useMediaQuery } from "@mantine/hooks";
 
 const tabs = [
     {
@@ -28,6 +29,8 @@ export default function LeaderboardsPage(): React.ReactElement {
         setControlsRefs(controlsRefs)
     }
 
+    const isNarrow = useMediaQuery(`(max-width: 500px)`)
+
     const controls = tabs.map((item, idx) => (
         <UnstyledButton
             key={item.title}
@@ -39,7 +42,7 @@ export default function LeaderboardsPage(): React.ReactElement {
             mod={{ active: active === idx }}>
             <Group className="float-tab-control-label">
                 {item.icon}
-                {item.title}
+                {(!isNarrow || active === idx) && item.title}
             </Group>
         </UnstyledButton>
     ))
