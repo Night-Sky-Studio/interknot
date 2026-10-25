@@ -13,7 +13,7 @@ const tabs = [
     },
     {
         icon: <DeadlyAssaultOutline height={24} />,
-        title: "Deadly Assault leaderboards"
+        title: "Deadly Assault Leaderboards"
     }
 ]
 
