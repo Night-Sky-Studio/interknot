@@ -1,21 +1,48 @@
 .enemy-img {
     height: 220px;
 }
-/* 
-@media (max-width: $mantine-breakpoint-sm) {
-    .enemy-img {
-        height: 160px;
-    }
-} */
-
-/* `.namecard-medal-level` is sized for the 42px medals on the profile
-   header - tighten it up for the smaller ones in the table. */
-.assault-medals .namecard-medal-level {
-    min-width: 32px;
-    font-size: 9px !important;
-    bottom: -6px;
-}
 
 .assault-row-banned {
     opacity: 0.5;
+}
+
+/* Clip the namecard at the top, bottom and the score column, but let it
+   spill left under the rank column - the Card clips anything past that. */
+.assault-user-cell {
+    position: relative;
+    clip-path: inset(0 0 0 -100vw);
+}
+/* Keeps the rank above a namecard spilling into it. Only the content is
+   raised - raising the <td> would paint its (inherited) hover background
+   over the namecard. */
+.assault-rank-cell > * {
+    position: relative;
+    z-index: 1;
+}
+.assault-user-namecard {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+.assault-user-namecard > img {
+    position: absolute;
+    height: 100%;
+    --namecard-fade: linear-gradient(to right, transparent, black 25%, black 100%);
+    mask-image: var(--namecard-fade);
+}
+/* Same shift as `.background` in UserHeader.css */
+@media (max-width: 1000px) {
+    .assault-user-namecard > img {
+        right: -200px;
+    }
+}
+/*@media (max-width: 740px) {*/
+/*    .assault-user-namecard > img {*/
+/*        right: -50%;*/
+/*    }*/
+/*}*/
+.assault-user-content {
+    position: relative;
 }
