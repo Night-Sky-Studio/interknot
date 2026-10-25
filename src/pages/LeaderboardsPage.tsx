@@ -35,7 +35,7 @@ export default function LeaderboardsPage(): React.ReactElement {
             size="xs"
             variant="transparent"
             ref={setControlRef(idx)}
-            onClick={() => setActive(idx === active ? -1 : idx)}
+            onClick={() => setActive(idx)}
             mod={{ active: active === idx }}>
             <Group className="float-tab-control-label">
                 {item.icon}
