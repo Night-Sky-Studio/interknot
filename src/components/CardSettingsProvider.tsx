@@ -68,6 +68,7 @@ type CardSettingsContextType = {
     showRanking: boolean
     showCritValue: boolean
     showWatermark: boolean
+    highlightSubStats: boolean
     selectedLeaderboardId?: number
     cardCustomization?: CardCustomization
     isEditing: boolean
@@ -80,6 +81,7 @@ type CardSettingsContextType = {
     setShowRanking: (value: boolean) => void
     setShowCritValue: (value: boolean) => void
     setShowWatermark: (value: boolean) => void
+    setHighlightSubStats: (value: boolean) => void
     setSelectedLeaderboardId: (value?: number) => void
     setCardCustomization: (value?: CardCustomization) => void
     setIsEditing: (value: boolean) => void
@@ -100,6 +102,7 @@ const defaultValue: CardSettingsContextType = {
     showRanking: true,
     showCritValue: false,
     showWatermark: true,
+    highlightSubStats: true,
     selectedLeaderboardId: undefined,
     cardCustomization: undefined,
     isEditing: false,
@@ -112,6 +115,7 @@ const defaultValue: CardSettingsContextType = {
     setShowRanking: () => {},
     setShowCritValue: () => {},
     setShowWatermark: () => {},
+    setHighlightSubStats: () => {},
     setSelectedLeaderboardId: () => {},
     setCardCustomization: () => {},
     setIsEditing: () => {},
@@ -154,6 +158,9 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
     const setShowWatermark = (showWatermark: boolean) => {
         setSettings((prev) => ({ ...prev, showWatermark }))
     }
+    const setHighlightSubStats = (highlightSubStats: boolean) => {
+        setSettings((prev) => ({ ...prev, highlightSubStats }))
+    }
     const setSelectedLeaderboardId = (selectedLeaderboardId?: number) => {
         setSettings((prev) => ({ ...prev, selectedLeaderboardId }))
     }
@@ -191,6 +198,7 @@ export default function CardSettingsProvider({ children }: ICardSettingsProvider
             setShowRanking,
             setShowCritValue,
             setShowWatermark,
+            setHighlightSubStats,
             setSelectedLeaderboardId,
             setCardCustomization,
             setIsEditing,

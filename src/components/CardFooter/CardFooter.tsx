@@ -164,6 +164,9 @@ export default function CardFooter({ onBuildsUpdated }: ICardFooterProps): React
                                     <Switch label="Show watermark"
                                         checked={cardSettings.showWatermark}
                                         onChange={(evt) => cardSettings.setShowWatermark(evt.target.checked)} />
+                                    <Switch label="Highlight preferred sub-stats"
+                                        checked={cardSettings.highlightSubStats}
+                                        onChange={(evt) => cardSettings.setHighlightSubStats(evt.target.checked)} />
                                     { cvEnabled &&
                                         <Switch label="Show crit value"
                                             checked={cardSettings.showCritValue}
