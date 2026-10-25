@@ -313,7 +313,7 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                                     e.stopPropagation()
                                                     e.preventDefault()
                                                     navigate(`/profile/${entry.Profile.Uid}`)
-                                                }}>{entry.Profile.Nickname}</Anchor>
+                                                }}><Title order={5} className="namecard-nickname" title={entry.Profile.Nickname}>{entry.Profile.Nickname}</Title></Anchor>
                                                 {entry.IsBanned &&
                                                     <Badge color="red">Sus</Badge>
                                                 }
