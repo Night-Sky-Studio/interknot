@@ -15,7 +15,13 @@ function SlotIcon({ slot }: { slot: number }): React.ReactElement {
     </div>
 }
 
-export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): React.ReactElement {
+interface IDriveDiscProps {
+    slot: number
+    disc: DD | null
+    highlightProps?: number[]
+}
+
+export function DriveDisc({ slot, disc, highlightProps = [] }: IDriveDiscProps): React.ReactElement {
     const theme = useMantineTheme()
 
     const { getLevel } = useSettings()
@@ -57,7 +63,7 @@ export function DriveDisc({ slot, disc }: { slot: number, disc: DD | null }): Re
                 </Group>
                 <SimpleGrid cols={2} spacing="8px" verticalSpacing="8px" className="cc-disc-stats">
                     {
-                        disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} />)
+                        disc.SubStats.map(ss => <SubStat key={disc.Uid ^ ss.Id} stat={ss} highlight={highlightProps.includes(ss.Id)} />)
                     }
                 </SimpleGrid>
             </div>

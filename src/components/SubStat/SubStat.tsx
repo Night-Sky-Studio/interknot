@@ -4,7 +4,7 @@ import { ZenlessIcon } from "@icons/Icons"
 import "./SubStat.css"
 import { useSettings } from "@components/SettingsProvider"
 
-export function SubStat({ stat }: { stat: Property }): React.ReactElement {
+export function SubStat({ stat, highlight = false }: { stat: Property, highlight?: boolean }): React.ReactElement {
     const SubStatLevel = ({ level, className }: { level: number, className?: string }) => {
         const isActive = (lvl: number) => lvl <= level
         return <SimpleGrid cols={5} spacing="3px" verticalSpacing="0" className={className}> 
@@ -20,7 +20,7 @@ export function SubStat({ stat }: { stat: Property }): React.ReactElement {
 
     return (
         <Tooltip label={getLocalString(stat.simpleName)} openDelay={500} portalProps={{ reuseTargetNode: true }}>
-            <Stack className="cc-disc-stat" gap="4px" justify="center">
+            <Stack className="cc-disc-stat" data-highlight={highlight} gap="4px" justify="center">
                 <Group align="center" gap="4px" wrap="nowrap">
                     <ZenlessIcon id={stat.Id} size={20} />
                     <Title order={6} fz="18px">{stat.formatted}</Title>

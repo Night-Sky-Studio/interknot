@@ -504,7 +504,7 @@ export default function CharacterCard({
                             Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
                                 const disc = character.DriveDisks.find(dd => dd.Slot === idx)
                                 return <DriveDisc key={disc ? `disc-${disc.Uid}-${idx}` : `disc-${character.Id}-${idx}`}
-                                    slot={disc ? disc.Slot : idx} disc={disc ?? null} />
+                                    slot={disc ? disc.Slot : idx} disc={disc ?? null} highlightProps={character.Highlights.SubStats} />
                             })
                         }
                     </div>
@@ -536,7 +536,7 @@ export default function CharacterCard({
                         collectSubstats.map(([cnt, ss]) => <Group gap="2px" wrap="nowrap"
                             data-count={"*".repeat(cnt + 1)} key={ss.Id}>
                             <Text fz="16px">{cnt}</Text>
-                            <SubStat stat={ss} />
+                            <SubStat stat={ss} highlight={character.Highlights.SubStats.includes(ss.Id)} />
                         </Group>)
                     }
                 </Card.Section>
