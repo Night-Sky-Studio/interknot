@@ -52,25 +52,25 @@ const SvgEndGameStar = ({ state = "regular", ...props }: EndGameStarProps) => {
                 </linearGradient>
                 <linearGradient id={`eg_star_${id}_radiant`}
                     gradientUnits="userSpaceOnUse"
-                    x1={0} x2={0} y1={0} y2={45}>
+                    x1={0} x2={0} y1={45} y2={0}>
                     <stop
                         offset={0}
                         style={{
-                            stopColor: "#F48BFF",
+                            stopColor: "#f7aeff",
                             stopOpacity: 1
                         }}
                     />
                     <stop
-                        offset={0}
+                        offset={0.5}
                         style={{
-                            stopColor: "#8FD2FF",
+                            stopColor: "#9ed8ff",
                             stopOpacity: 1
                         }}
                     />
                     <stop
                         offset={1}
                         style={{
-                            stopColor: "#00DBDE",
+                            stopColor: "#68fcff",
                             stopOpacity: 1
                         }}
                     />
