@@ -36,10 +36,11 @@ export default function LeaderboardsPage(): React.ReactElement {
             key={item.title}
             className="float-tab-control"
             size="xs"
-            variant="transparent"
             ref={setControlRef(idx)}
             onClick={() => setActive(idx)}
-            mod={{ active: active === idx }}>
+            mod={{ active: active === idx }}
+            title={item.title} 
+            aria-label={item.title} aria-pressed={active === idx}>
             <Group className="float-tab-control-label">
                 {item.icon}
                 {(!isNarrow || active === idx) && item.title}
