@@ -7,6 +7,9 @@
     border-radius: 16px 8px 16px 8px;
     position: relative;
 }
+.cc-disc-stat[data-highlight="true"] {
+    box-shadow: 2px 2px 0 1px var(--accent);
+}
 .cc-disc-stat-levels {
     position: absolute;
     bottom: 4px;

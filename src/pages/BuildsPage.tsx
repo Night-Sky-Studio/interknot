@@ -9,23 +9,14 @@ import { useSettings } from "@components/SettingsProvider"
 import { ServerChip } from "@components/UserHeader/UserHeader"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { Build } from "@interknot/types"
-import {
-    Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex,
-    Space
-} from "@mantine/core"
+import { Stack, Card, LoadingOverlay, Group, Pagination, Button, Select, Text, Image, Alert, Anchor, Title, Flex } from "@mantine/core"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
 import React, { useState, useMemo } from "react"
 import { useNavigate } from "react-router"
 import { useAsync } from "react-use"
-import LeaderboardProvider from "@components/LeaderboardProvider.tsx"
-import { DataProvider } from "@components/DataProvider.tsx"
-import type { ICardContext } from "@components/CharacterCard/CharacterCard.tsx"
-import CoreSkill from "@components/CoreSkill/CoreSkill.tsx"
-import Talents from "@components/Talents/Talents.tsx"
-import { DriveDisc } from "@components/DriveDisc/DriveDisc.tsx"
-import CardFooter from "@components/CardFooter/CardFooter.tsx"
 import { useBackend } from "@components/BackendProvider.tsx"
+import BuildRowExpansion from "@/components/BuildRowExpansion";
 
 export default function BuildsPage(): React.ReactElement {
     const navigate = useNavigate()
@@ -265,53 +256,7 @@ export default function BuildsPage(): React.ReactElement {
                                 idAccessor="Id"
                                 rowExpansion={{
                                     allowMultiple: true,
-                                    content: ({ record: build }) => {
-                                        const characterAccentColor = () => {
-                                            switch (build.Character.Id) {
-                                                // case 1461: return character.Colors.Accent // Seed
-                                                // case 1501: return build.Character.Colors.AccentExtra // Aria
-                                                default: return build.Character.Colors.Mindscape
-                                            }
-                                        }
-
-                                        return <LeaderboardProvider
-                                            buildId={build.Id}
-                                            characterId={build.Character.Id}>
-                                            <DataProvider data={{
-                                                owner: build.Owner!,
-                                                build: build
-                                            } satisfies ICardContext}>
-                                                <Stack gap="xs" m="md" w="100%" style={{
-                                                    "--accent": characterAccentColor(),
-                                                    "--mindscape": build.Character.Colors.Accent
-                                                }}>
-                                                    <Title order={4}>Talents</Title>
-                                                    <Group>
-                                                        <CoreSkill level={build.Character.SkillLevels.CoreSkill} />
-                                                        <Talents
-                                                            profession={build.Character.ProfessionType}
-                                                            talentLevels={build.Character.SkillLevels}
-                                                            mindscapeLevel={build.Character.MindscapeLevel} />
-                                                    </Group>
-
-                                                    <Title order={4}>Drive Discs</Title>
-                                                    <Group w="100%" justify="space-evenly" gap="xs">
-                                                        {
-                                                            Array.from({ length: 6 }, (_, i) => i + 1).map(idx => {
-                                                                const disc = build.Character.DriveDisks.find(dd => dd.Slot === idx)
-                                                                return <DriveDisc key={`disc-${build.Id}-${idx}`}
-                                                                                  slot={disc ? disc.Slot : idx} disc={disc ?? null} />
-                                                            })
-                                                        }
-                                                    </Group>
-
-                                                    <Space h="md" />
-
-                                                    <CardFooter />
-                                                </Stack>
-                                            </DataProvider>
-                                        </LeaderboardProvider>
-                                    }}
+                                    content: ({ record: build }) => <BuildRowExpansion build={build} />}
                                 }
                             />
                             <Flex mb="1rem" mx="1rem" justify="space-between" align="center" wrap="wrap">
