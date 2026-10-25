@@ -1,7 +1,7 @@
-import { getAssaultLeaderboard, getAssaultLeaderboardUsers, getAssaultLeaderboardUsersCount } from "@/api/data"
-import FilterSelector from "@/components/FilterSelector/FilterSelector"
-import { ServerChip, UserHeaderMemoized } from "@/components/UserHeader/UserHeader"
-import { useSettings } from "@/components/SettingsProvider"
+import { getAssaultLeaderboard, getAssaultLeaderboardUsers, getAssaultLeaderboardUsersCount } from "@api/data"
+import FilterSelector from "@components/FilterSelector/FilterSelector"
+import { ServerChip, UserHeaderMemoized } from "@components/UserHeader/UserHeader"
+import { useSettings } from "@components/SettingsProvider"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import { type Buff } from "@interknot/types"
 import {
@@ -33,10 +33,10 @@ import { useCallback, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import { useAsync } from "react-use"
 import "./styles/AssaultLeaderboardsDetailsPage.css"
-import GameText from "@/components/GameText"
+import GameText from "@components/GameText"
 import { useDisclosure } from "@mantine/hooks"
-import { ZenlessIcon } from "@/components/icons/Icons";
-import { EndGameStar } from "@/components/icons";
+import { ZenlessIcon } from "@components/icons/Icons"
+import { EndGameStar } from "@components/icons"
 
 function isLive(from: string, to: string): boolean {
     const fromDate = new Date(from).getTime(),
@@ -313,7 +313,11 @@ export default function AssaultLeaderboardsDetailsPage(): React.ReactElement {
                                                     e.stopPropagation()
                                                     e.preventDefault()
                                                     navigate(`/profile/${entry.Profile.Uid}`)
-                                                }}><Title order={5} className="namecard-nickname" title={entry.Profile.Nickname}>{entry.Profile.Nickname}</Title></Anchor>
+                                                }}>
+                                                    <Title order={5} className="namecard-nickname" title={entry.Profile.Nickname}>
+                                                        {entry.Profile.Nickname}
+                                                    </Title>
+                                                </Anchor>
                                                 {entry.IsBanned &&
                                                     <Badge color="red">Sus</Badge>
                                                 }

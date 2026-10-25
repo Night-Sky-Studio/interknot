@@ -32,6 +32,7 @@
     width: 632px;
     object-fit: cover;
     object-position: center center;
+    z-index: -2;
     --namecard-fade: linear-gradient(to right, transparent, black 25%, black 100%);
     mask-image: var(--namecard-fade);
 }
