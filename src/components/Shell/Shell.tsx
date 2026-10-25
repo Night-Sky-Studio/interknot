@@ -23,7 +23,7 @@ import {
     Affix,
     Menu,
 } from '@mantine/core'
-import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconBugFilled, IconClearAll, IconInputX, IconSettings, IconSkull, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
+import { IconBrandDiscordFilled, IconBrandGithubFilled, IconBrandPatreonFilled, IconBrandTwitterFilled, IconBugFilled, IconClearAll, IconInputX, IconSettings, IconSkull, IconStarFilled, IconTrophyFilled, IconUsers, IconX } from '@tabler/icons-react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import React, { useEffect, useState, useMemo } from "react"
 import { ProfileInfo } from "@interknot/types"
@@ -279,9 +279,18 @@ export default function Shell(): React.ReactElement {
                         <Burger opened={navBarOpened} onClick={toggle} hiddenFrom="md" size="sm" />
                         <Group className="header-buttons" gap="xs">
                             <Button leftSection={<IconSettings />} onClick={() => navigate("/settings")}>Settings</Button>
-                            <ActionIcon disabled><IconBrandPatreonFilled /></ActionIcon>
-                            <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
-                            <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
+                            <Tooltip label="Coming Soon!">
+                                <ActionIcon disabled><IconBrandPatreonFilled /></ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Twitter">
+                                <ActionIcon component="a" href="https://x.com/interknotspace" target="_blank"><IconBrandTwitterFilled /></ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Discord">
+                                <ActionIcon component="a" href="https://discord.gg/hFNheySRQD" target="_blank"><IconBrandDiscordFilled /></ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Github">
+                                <ActionIcon component="a" href="https://github.com/Night-Sky-Studio/interknot" target="_blank"><IconBrandGithubFilled /></ActionIcon>
+                            </Tooltip>
                             <AccountButton loginClick={openLoginModal} />
                         </Group>
                     </Flex>
@@ -343,9 +352,10 @@ export default function Shell(): React.ReactElement {
                     }
 
                     <Title m="sm" order={4}>Links</Title>
-                    <NavLink label="Patreon" variant="filled" leftSection={<IconBrandPatreonFilled />} />
+                    <NavLink label="Patreon" disabled leftSection={<IconBrandPatreonFilled />} />
+                    <NavLink label="Twitter" leftSection={<IconBrandTwitterFilled />} href="https://x.com/interknotspace" target="_blank" />
                     <NavLink label="Discord" leftSection={<IconBrandDiscordFilled />} href="https://discord.gg/hFNheySRQD" target="_blank" />
-                    <NavLink label="GitHub" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
+                    <NavLink label="Github" leftSection={<IconBrandGithubFilled />} href="https://github.com/Night-Sky-Studio/interknot" target="_blank" />
                 </ScrollArea>
             </AppShell.Aside>
 
