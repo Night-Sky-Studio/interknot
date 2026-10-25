@@ -8,6 +8,7 @@ import { useMemo } from "react"
 import { useNavigate } from "react-router"
 import { useAsync } from "react-use"
 import "./styles/AssaultLeaderboards.css"
+import { DeadlyAssault } from "@components/icons"
 
 function isLive(from: string, to: string): boolean {
     const fromDate = new Date(from).getTime(), 
@@ -27,7 +28,12 @@ export default function AssaultLeaderboards(): React.ReactElement {
     return (<>
         <Stack>
             <Alert variant="light" color="blue" 
-                title={<Title order={3}>Deadly Assault Leaderboards</Title>} icon={<IconInfoCircle />}>
+                title={<Title order={3}>Deadly Assault Leaderboards</Title>} icon={<DeadlyAssault height={48} />} styles={{
+                    icon: {
+                        height: "48px",
+                        width: "48px"
+                    }
+                }}>
                 <Stack>
                     <Text>
                         All entries go through a very basic anti-cheat system. If you have {(40000).toLocaleString()}+ points, 

@@ -2,15 +2,16 @@ import { Center, FloatingIndicator, Group, Stack, UnstyledButton } from "@mantin
 import AssaultLeaderboards from "./leaderboards/AssaultLeaderboards"
 import Leaderboards from "./leaderboards/Leaderboards"
 import { memo, useState } from "react"
-import { IconTrophyFilled } from "@tabler/icons-react"
+import { IconTrophy } from "@tabler/icons-react"
+import { DeadlyAssaultOutline } from "@components/icons"
 
 const tabs = [
     {
-        icon: <IconTrophyFilled />,
+        icon: <IconTrophy />,
         title: "Classic Leaderboards",
     },
     {
-        icon: <div></div>, // TODO
+        icon: <DeadlyAssaultOutline height={24} />,
         title: "Deadly Assault leaderboards"
     }
 ]
