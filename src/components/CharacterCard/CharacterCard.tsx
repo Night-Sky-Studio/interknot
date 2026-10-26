@@ -18,7 +18,7 @@ import { getRarityIcon, ProfessionIcon, ZenlessIcon } from "@icons/Icons"
 import * as Mindscapes from "@icons/mindscapes"
 import type { Build, DriveDiscSet, LeaderboardEntry, LeaderboardList, ProfileInfo } from "@interknot/types"
 import { match, Property, Weapon } from "@interknot/types"
-import React, { memo, useMemo, useRef, useState } from "react"
+import React, { memo, useMemo, useRef } from "react"
 import { useSettings } from "@components/SettingsProvider"
 import { DriveDisc } from "@components/DriveDisc/DriveDisc"
 import { SubStat } from "@components/SubStat/SubStat"
@@ -263,17 +263,19 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
 
     const radarRef = useRef<HTMLDivElement | null>(null)
     const theme = useMantineTheme()
-    const [scroll, _] = useWindowScroll()
+
     const { language } = useSettings()
 
-    const [withTooltip, setWithTooltip] = useState(false)
+    const withTooltip = true // [withTooltip, setWithTooltip] = useState(false)
 
     return (
         <div className="cc-stats-graph" ref={radarRef} style={{
             marginTop: leaderboard.Character.Id === 1381 ? "80px" : undefined,
         }}>
             {top1stats &&
-                <Stack gap="0px" onMouseEnter={() => setWithTooltip(true)} onMouseLeave={() => setWithTooltip(false)}>
+                <Stack gap="0px" 
+                    /* onMouseEnter={() => setWithTooltip(true)} */ 
+                    /* onMouseLeave={() => setWithTooltip(false)} */>
                     <RadarChart h={leaderboard.Character.Id === 1381 ? 260 : 280} w={300}
                         data={filteredTop1Stats.map(prop => {
                             let name = getLocalString(prop.simpleName)
@@ -317,6 +319,7 @@ function StatsGraph({ leaderboard, entry, color }: IStatsGraphProps): React.Reac
                                 if (!coordinate || !coordinate.x || !coordinate.y) return null
 
                                 // console.log(radarRect)
+                                const [scroll, _] = useWindowScroll()
                                 const x = radarRect.left + scroll.x + coordinate.x
                                 const y = radarRect.top + scroll.y + coordinate.y
 
