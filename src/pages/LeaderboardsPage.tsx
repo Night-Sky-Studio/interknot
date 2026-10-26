@@ -5,15 +5,20 @@ import { memo, useState } from "react"
 import { IconTrophy } from "@tabler/icons-react"
 import { DeadlyAssaultOutline } from "@components/icons"
 import { useMediaQuery } from "@mantine/hooks";
+import { useLocation, useNavigate } from "react-router"
 
 const tabs = [
     {
         icon: <IconTrophy />,
         title: "Classic Leaderboards",
+        htmlTitle: "Leaderboards",
+        path: "/leaderboards",
     },
     {
         icon: <DeadlyAssaultOutline height={24} />,
-        title: "Deadly Assault Leaderboards"
+        title: "Deadly Assault Leaderboards",
+        htmlTitle: "Deadly Assault Leaderboards",
+        path: "/leaderboards/assault",
     }
 ]
 
@@ -23,7 +28,9 @@ const AssaultLeaderboardsMemoized = memo(AssaultLeaderboards)
 export default function LeaderboardsPage(): React.ReactElement {
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null)
     const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({})
-    const [active, setActive] = useState(0)
+    const location = useLocation()
+    const navigate = useNavigate()
+    const active = location.pathname.replace(/\/+$/, "") === tabs[1].path ? 1 : 0
     const setControlRef = (index: number) => (node: HTMLButtonElement) => {
         controlsRefs[index] = node
         setControlsRefs(controlsRefs)
@@ -37,7 +44,7 @@ export default function LeaderboardsPage(): React.ReactElement {
             className="float-tab-control"
             size="xs"
             ref={setControlRef(idx)}
-            onClick={() => setActive(idx)}
+            onClick={() => navigate(item.path)}
             mod={{ active: active === idx }}
             title={item.title} 
             aria-label={item.title} aria-pressed={active === idx}>
@@ -49,7 +56,7 @@ export default function LeaderboardsPage(): React.ReactElement {
     ))
 
     return (<>
-        <title>Leaderboards | Inter-Knot</title>
+        <title>{`${tabs[active].htmlTitle} | Inter-Knot`}</title>
         <Stack>
             <Center>
                 <div className="float-tab-root" ref={setRootRef}>

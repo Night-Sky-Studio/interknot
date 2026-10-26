@@ -24,7 +24,6 @@ import AuthCallback from "./pages/auth/AuthCallback"
 import { AuthProvider } from "./components/AuthProvider"
 import KitchenSinkPage from "./pages/KitchenSinkPage"
 import { PrivacyPage } from "@pages/PrivacyPage.tsx"
-import AssaultLeaderboardsPage from "./pages/AssaultLeaderboardsPage";
 import AssaultLeaderboardsDetailsPage from "./pages/AssaultLeaderboardsDetailsPage";
 
 const ProfilePageWrapper = () => {
@@ -72,9 +71,8 @@ export default function App() {
                                                 <Route path="/user/:uid" element={<Redirect to="/profile/:uid" />} />
                                                 <Route path="settings" element={<SettingsPage />}/>
                                                 <Route path="builds" element={<BuildsPage />} />
-                                                <Route path="leaderboards" element={<LeaderboardsPage />} />
+                                                <Route path="leaderboards/assault?" element={<LeaderboardsPage />} />
                                                 <Route path="leaderboards/:id" element={<LeaderboardDetailPage />} />
-                                                <Route path="leaderboards/assault" element={<AssaultLeaderboardsPage />} />
                                                 <Route path="leaderboards/assault/:id" element={<AssaultLeaderboardsDetailsPage />} />
 
 
