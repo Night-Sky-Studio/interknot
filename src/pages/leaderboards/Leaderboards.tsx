@@ -144,11 +144,13 @@ export default function Leaderboards() {
                                     render: (leaderboard) => (
                                         <Group gap="xs">
                                             {
-                                                [leaderboard, ...leaderboard.Children].map((child) => (
-                                                    <WeaponButton key={child.Id} id={child.Id} compact
-                                                        refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} 
-                                                        weapon={child.Weapon} />
-                                                ))
+                                                [leaderboard, ...leaderboard.Children]
+                                                    .sort((a, b) => a.Weapon.Rarity - b.Weapon.Rarity || a.Weapon.Id - b.Weapon.Id)
+                                                    .map((child) => (
+                                                        <WeaponButton key={child.Id} id={child.Id} compact
+                                                            refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} 
+                                                            weapon={child.Weapon} />
+                                                    ))
                                             }
                                         </Group>
                                     )
@@ -170,10 +172,12 @@ export default function Leaderboards() {
                                         <Stack p="md" gap="xs" align="flex-start">
                                             <Text fz="sm" c="dimmed">Weapons</Text>
                                             {
-                                                [leaderboard, ...leaderboard.Children].map((child) => (
-                                                    <WeaponButton key={child.Id} id={child.Id} 
-                                                        weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
-                                                ))
+                                                [leaderboard, ...leaderboard.Children]
+                                                    .sort((a, b) => a.Weapon.Rarity - b.Weapon.Rarity || a.Weapon.Id - b.Weapon.Id)
+                                                    .map((child) => (
+                                                        <WeaponButton key={child.Id} id={child.Id} 
+                                                            weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
+                                                    ))
                                             }
                                         </Stack>
                                         <Stack p="md" gap="xs">
