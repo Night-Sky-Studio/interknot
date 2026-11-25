@@ -158,7 +158,6 @@ function BuildsTab() {
     </Stack>
 }
 
-// Only these leaderboards have action groups so far
 const groupedLeaderboards = ["14310100", "14310101", "14310102", "14310103"]
 
 function DamageBarCase({ title, description, actions, groups }: {
@@ -176,17 +175,11 @@ function DamageBarCase({ title, description, actions, groups }: {
 }
 
 function DamageDistributionCase({ buildId, leaderboardId }: { buildId: number, leaderboardId: number }) {
-    // Loaded the same way BuildInfo gets its entries (LeaderboardProvider)
     const state = useAsync(async () => getBuildLeaderboards(buildId), [buildId])
     const entries = useMemo(() => state.value?.data?.Entries, [state.value?.data])
 
     return <Stack gap="xs">
         <Title order={3}>Damage Distribution</Title>
-        <Text c="dimmed">
-            The real component, with the main agent's actions only. Hover a Combo to outline its chips in gray;
-            hover an action (in the bar, the Combo popover, or a chip) to outline its chip in the tag colour.
-            Hovering a chip marks its bar segment without opening a popover.
-        </Text>
         { state.loading && <Loader /> }
         { state.error && <Alert color="red" title="Failed to load build leaderboards">{state.error.message}</Alert> }
         { entries && <DamageDistribution key={leaderboardId} entries={entries} initialLeaderboardId={leaderboardId} /> }
@@ -197,7 +190,7 @@ function DamageBarTab() {
     const [leaderboardId, setLeaderboardId] = useState(groupedLeaderboards[0])
     const entryState = useAsync(async () => getLeaderboardUsers(Number(leaderboardId), { limit: 1 }), [leaderboardId])
     const entry = useMemo(() => entryState.value?.data?.[0], [entryState.value?.data])
-    // Zero-damage filter only; DamageDistribution additionally keeps just the main agent's actions
+
     const actions = useMemo(() => entry?.RotationValue.filter(a => a.Damage !== 0) ?? [], [entry])
     const groups = useMemo(() => entry?.Groups ?? [], [entry])
 
