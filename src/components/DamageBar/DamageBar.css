@@ -47,7 +47,7 @@
     background-color: var(--assist);
     color: white;
 }
-.dmg-bar > div[data-tag="Entry"],
+.dmg-bar > div[data-tag="Entry"]:hover,
 .dmg-bar > div[data-tag="QuickAssist"]:hover,
 .dmg-bar > div[data-tag="DefensiveAssist"]:hover,
 .dmg-bar > div[data-tag="EvasiveAssist"]:hover,
@@ -83,6 +83,37 @@
 }
 .dmg-bar > div[data-tag="Aftershock"]:hover {
     background-color: var(--aftershock-hover);
+}
+
+.dmg-bar > div[data-group] {
+    background-color: var(--mantine-color-gray-4);
+    color: black;
+    min-width: 8ch;
+}
+.dmg-bar > div[data-group]:hover,
+.dmg-bar > div[data-group][data-hover="true"] {
+    background-color: var(--mantine-color-gray-5);
+}
+/* Invisible bridge over the gap between a group and its dropdown, so the pointer never leaves both on the way in */
+.dmg-bar-group-dropdown::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 16px;
+}
+.dmg-bar-group-dropdown[data-position^="bottom"]::before {
+    bottom: 100%;
+}
+.dmg-bar-group-dropdown[data-position^="top"]::before {
+    top: 100%;
+}
+
+.dmg-bar-inner {
+    width: clamp(320px, calc(var(--count) * 56px), calc(100vw - 64px));
+}
+.dmg-bar-inner > div {
+    cursor: default;
 }
 
 .dmg-bar > div[data-hover="true"]::before {

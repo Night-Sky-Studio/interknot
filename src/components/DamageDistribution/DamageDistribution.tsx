@@ -28,7 +28,9 @@ export default function DamageDistribution({ entries, initialLeaderboardId, onLe
 
     // const { getLocalString } = useSettings()
 
-    const rotation = useMemo(() => entries[lbIdx].RotationValue.filter(rv => rv.Damage !== 0), [entries, lbIdx])
+    const currentLeaderboard = useMemo(() => entries[lbIdx], [entries, lbIdx])
+    const rotation = useMemo(() => currentLeaderboard.RotationValue.filter(rv => rv.Damage !== 0 && rv.AgentId === currentLeaderboard.Leaderboard.Character.Id), [currentLeaderboard])
+    const groups = useMemo(() => currentLeaderboard.Groups, [currentLeaderboard])
 
     const DmgChipPart = ({ action, idx } : { action: AgentAction, idx: number }) => {
         return (<Group wrap="nowrap" gap="0px">
@@ -50,7 +52,7 @@ export default function DamageDistribution({ entries, initialLeaderboardId, onLe
                     const newIdx = entries.findIndex(e => e.Leaderboard.Id === entry.Leaderboard.Id)
                     setLbIdx(newIdx)
                 }} />
-            <DamageBar actions={rotation} hoverIdx={hoverIdx} onHighlight={(idx) => {
+            <DamageBar actions={rotation} groups={groups} hoverIdx={hoverIdx} onHighlight={(idx) => {
                 setHoverIdx(idx)
             }} />
             <Flex gap="0.5rem 0" wrap="wrap" justify="center" align="center">

@@ -1,7 +1,7 @@
-import { Stack, Loader, Tabs, Title, Text, Code, Divider, Flex } from "@mantine/core"
+import { Stack, Loader, Tabs, Title, Text, Code, Divider, Flex, SegmentedControl, ScrollArea, Alert } from "@mantine/core"
 import { useAsync } from "react-use"
-import { useMemo } from "react"
-import { getCharacters, getDriveDiscs, getProfile } from "@/api/data"
+import { useMemo, useState } from "react"
+import { getCharacters, getDriveDiscs, getLeaderboardUsers, getProfile } from "@/api/data"
 import "@components/cells/styles/CritCell.css"
 import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
@@ -10,6 +10,13 @@ import { Team } from "@components/Team/Team.tsx"
 import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
 // import MembershipCard from "@/components/MembershipCard/MembershipCard"
 import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
+import DamageBar from "@/components/DamageBar/DamageBar"
+import type { ActionGroup, AgentAction } from "@interknot/types"
+import CharacterCard from "@/components/CharacterCard/CharacterCard";
+import CharacterCardContainer from "@/components/CharacterCard/CharacterCardContainer";
+import { SettingsProvider } from "@/components/SettingsProvider";
+import CardSettingsProvider from "@/components/CardSettingsProvider";
+import { DataProvider } from "@/components/DataProvider";
 // import BuildActions from "@/components/BuildActions"
 // import { DataProvider } from "@/components/DataProvider"
 // import { ICardContext } from "@/components/CharacterCard/CharacterCard"
@@ -78,6 +85,8 @@ function DiscsTab() {
 }
 
 function BuildsTab() {
+    const profileState = useAsync(async () => getProfile(uid), [])
+    const profile = useMemo(() => profileState.value?.data, [profileState.value?.data])
     const buildsState = useAsync(async () => getCharacters({ uid }), [])
     const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data])
     const agent = useMemo(() => builds?.[0]?.Character, [builds])
@@ -86,6 +95,7 @@ function BuildsTab() {
         <Title>Builds</Title>
         { buildsState.loading && <Loader /> }
         { builds && agent && <Stack>
+            <Title order={2}>Team</Title>
             <Text>Compact: <Code>false</Code></Text>
             <Team h="128px" team={[ 
                 { 
@@ -133,7 +143,91 @@ function BuildsTab() {
                     DriveDiscSet: agent.DriveDisksSet[1].Set
                 }
             ]} />
+
+            {/* <Title order={2}>Character Card</Title>
+            <DataProvider data={{
+                owner: profile,
+                build: agent
+            }}>
+                <CardSettingsProvider>
+                    <CharacterCard build={builds[0]} uid={uid} username="USERNAME" />
+                </CardSettingsProvider>
+            </DataProvider> */}
         </Stack>}
+    </Stack>
+}
+
+// Only these leaderboards have action groups so far
+const groupedLeaderboards = ["14310100", "14310101", "14310102", "14310103"]
+
+function DamageBarCase({ title, description, actions, groups }: {
+    title: string, description: string, actions: AgentAction[], groups: ActionGroup[]
+}) {
+    const [highlight, setHighlight] = useState(-1)
+    return <Stack gap="xs">
+        <Title order={3}>{title}</Title>
+        <Text c="dimmed">{description}</Text>
+        <Text fz="sm">Highlighted action index: <Code>{highlight}</Code></Text>
+        <ScrollArea type="auto" offsetScrollbars>
+            <DamageBar actions={actions} groups={groups} onHighlight={setHighlight} />
+        </ScrollArea>
+    </Stack>
+}
+
+function DamageBarTab() {
+    const [leaderboardId, setLeaderboardId] = useState(groupedLeaderboards[0])
+    const entryState = useAsync(async () => getLeaderboardUsers(Number(leaderboardId), { limit: 1 }), [leaderboardId])
+    const entry = useMemo(() => entryState.value?.data?.[0], [entryState.value?.data])
+    // Same filtering as DamageDistribution
+    const actions = useMemo(() => entry?.RotationValue.filter(a => a.Damage !== 0) ?? [], [entry])
+    const groups = useMemo(() => entry?.Groups ?? [], [entry])
+
+    const edgeCases = useMemo(() => {
+        if (groups.length < 2) return undefined
+        const [first, second] = groups
+        const firstIdx = actions.findIndex(a => a.Id === first.ActionIds[0])
+        return {
+            // first group with an action from before it: no longer contiguous
+            nonContiguous: [{ ...first, ActionIds: [...first.ActionIds, actions[Math.max(0, firstIdx - 2)].Id] }, second],
+            // one group that doesn't resolve at all, one that's missing half its actions
+            missingIds: [
+                { ...first, ActionIds: ["00000000-0000-0000-0000-000000000000"] },
+                { ...second, ActionIds: second.ActionIds.slice(0, Math.ceil(second.ActionIds.length / 2)) }
+            ],
+            // second group claims the first group's actions too
+            overlapping: [first, { ...second, ActionIds: [...first.ActionIds, ...second.ActionIds] }]
+        }
+    }, [actions, groups])
+
+    return <Stack p="md">
+        <Title>Damage Bar</Title>
+        <Text>Loads the top entry of a leaderboard from the local backend.</Text>
+        <SegmentedControl data={groupedLeaderboards} value={leaderboardId} onChange={setLeaderboardId} w="fit-content" />
+
+        { entryState.loading && <Loader /> }
+        { entryState.error && <Alert color="red" title="Failed to load entry">{entryState.error.message}</Alert> }
+        { entry && <>
+            <Text>
+                {actions.length} actions, {groups.length} groups
+                ({groups.map(g => g.ActionIds.length).join(", ")} actions each)
+            </Text>
+
+            <DamageBarCase title="Grouped" actions={actions} groups={groups}
+                description="Hover a Combo to see its actions; move into the popover to inspect them. It should stay open while crossing the gap, close as soon as the pointer leaves both." />
+
+            <DamageBarCase title="Ungrouped" actions={actions} groups={[]}
+                description="Same rotation without groups, for width comparison." />
+
+            { edgeCases && <>
+                <Divider label="Edge cases" />
+                <DamageBarCase title="Non-contiguous group" actions={actions} groups={edgeCases.nonContiguous}
+                    description="The first group also claims an action from before it. It should be left ungrouped; the second group still collapses." />
+                <DamageBarCase title="Missing action IDs" actions={actions} groups={edgeCases.missingIds}
+                    description="The first group references an unknown ID and should be skipped; the second only keeps its first half." />
+                <DamageBarCase title="Overlapping groups" actions={actions} groups={edgeCases.overlapping}
+                    description="The second group also claims the first group's actions. Only the first group should collapse." />
+            </>}
+        </>}
     </Stack>
 }
 
@@ -145,6 +239,7 @@ export default function KitchenSinkPage() {
                 <Tabs.Tab value="profile">Profile</Tabs.Tab>
                 <Tabs.Tab value="discs">Drive Discs</Tabs.Tab>
                 <Tabs.Tab value="builds">Builds</Tabs.Tab>
+                <Tabs.Tab value="damage-bar">Damage Bar</Tabs.Tab>
             </Tabs.List>
 
             <Divider mt="lg" />
@@ -153,6 +248,7 @@ export default function KitchenSinkPage() {
             <Tabs.Panel value="profile"><ProfileTab /></Tabs.Panel>
             <Tabs.Panel value="discs"><DiscsTab /></Tabs.Panel>
             <Tabs.Panel value="builds"><BuildsTab /></Tabs.Panel>
+            <Tabs.Panel value="damage-bar"><DamageBarTab /></Tabs.Panel>
         </Tabs>
         
     </>)
