@@ -1,7 +1,7 @@
 import { Stack, Loader, Tabs, Title, Text, Code, Divider, Flex, SegmentedControl, ScrollArea, Alert } from "@mantine/core"
 import { useAsync } from "react-use"
 import { useMemo, useState } from "react"
-import { getCharacters, getDriveDiscs, getLeaderboardUsers, getProfile } from "@/api/data"
+import { getBuildLeaderboards, getCharacters, getDriveDiscs, getLeaderboardUsers, getProfile } from "@/api/data"
 import "@components/cells/styles/CritCell.css"
 import "@components/cells/styles/WeaponCell.css"
 import "./styles/TestPage.css"
@@ -11,12 +11,13 @@ import DriveDiscCard from "@/components/DriveDiscCard/DriveDiscCard"
 // import MembershipCard from "@/components/MembershipCard/MembershipCard"
 import { DriveDisc } from "@/components/DriveDisc/DriveDisc"
 import DamageBar from "@/components/DamageBar/DamageBar"
+import DamageDistribution from "@/components/DamageDistribution/DamageDistribution"
 import type { ActionGroup, AgentAction } from "@interknot/types"
-import CharacterCard from "@/components/CharacterCard/CharacterCard";
-import CharacterCardContainer from "@/components/CharacterCard/CharacterCardContainer";
-import { SettingsProvider } from "@/components/SettingsProvider";
-import CardSettingsProvider from "@/components/CardSettingsProvider";
-import { DataProvider } from "@/components/DataProvider";
+// import CharacterCard from "@/components/CharacterCard/CharacterCard";
+// import CharacterCardContainer from "@/components/CharacterCard/CharacterCardContainer";
+// import { SettingsProvider } from "@/components/SettingsProvider";
+// import CardSettingsProvider from "@/components/CardSettingsProvider";
+// import { DataProvider } from "@/components/DataProvider";
 // import BuildActions from "@/components/BuildActions"
 // import { DataProvider } from "@/components/DataProvider"
 // import { ICardContext } from "@/components/CharacterCard/CharacterCard"
@@ -85,8 +86,8 @@ function DiscsTab() {
 }
 
 function BuildsTab() {
-    const profileState = useAsync(async () => getProfile(uid), [])
-    const profile = useMemo(() => profileState.value?.data, [profileState.value?.data])
+    // const profileState = useAsync(async () => getProfile(uid), [])
+    // const profile = useMemo(() => profileState.value?.data, [profileState.value?.data])
     const buildsState = useAsync(async () => getCharacters({ uid }), [])
     const builds = useMemo(() => buildsState.value?.data, [buildsState.value?.data])
     const agent = useMemo(() => builds?.[0]?.Character, [builds])
@@ -163,14 +164,32 @@ const groupedLeaderboards = ["14310100", "14310101", "14310102", "14310103"]
 function DamageBarCase({ title, description, actions, groups }: {
     title: string, description: string, actions: AgentAction[], groups: ActionGroup[]
 }) {
-    const [highlight, setHighlight] = useState(-1)
+    const [highlight, setHighlight] = useState({ idx: -1, groupIdx: -1 })
     return <Stack gap="xs">
         <Title order={3}>{title}</Title>
         <Text c="dimmed">{description}</Text>
-        <Text fz="sm">Highlighted action index: <Code>{highlight}</Code></Text>
+        <Text fz="sm">Highlighted action index: <Code>{highlight.idx}</Code>, group start: <Code>{highlight.groupIdx}</Code></Text>
         <ScrollArea type="auto" offsetScrollbars>
-            <DamageBar actions={actions} groups={groups} onHighlight={setHighlight} />
+            <DamageBar actions={actions} groups={groups} onHighlight={(idx, groupIdx) => setHighlight({ idx, groupIdx })} />
         </ScrollArea>
+    </Stack>
+}
+
+function DamageDistributionCase({ buildId, leaderboardId }: { buildId: number, leaderboardId: number }) {
+    // Loaded the same way BuildInfo gets its entries (LeaderboardProvider)
+    const state = useAsync(async () => getBuildLeaderboards(buildId), [buildId])
+    const entries = useMemo(() => state.value?.data?.Entries, [state.value?.data])
+
+    return <Stack gap="xs">
+        <Title order={3}>Damage Distribution</Title>
+        <Text c="dimmed">
+            The real component, with the main agent's actions only. Hover a Combo to outline its chips in gray;
+            hover an action (in the bar, the Combo popover, or a chip) to outline its chip in the tag colour.
+            Hovering a chip marks its bar segment without opening a popover.
+        </Text>
+        { state.loading && <Loader /> }
+        { state.error && <Alert color="red" title="Failed to load build leaderboards">{state.error.message}</Alert> }
+        { entries && <DamageDistribution key={leaderboardId} entries={entries} initialLeaderboardId={leaderboardId} /> }
     </Stack>
 }
 
@@ -178,7 +197,7 @@ function DamageBarTab() {
     const [leaderboardId, setLeaderboardId] = useState(groupedLeaderboards[0])
     const entryState = useAsync(async () => getLeaderboardUsers(Number(leaderboardId), { limit: 1 }), [leaderboardId])
     const entry = useMemo(() => entryState.value?.data?.[0], [entryState.value?.data])
-    // Same filtering as DamageDistribution
+    // Zero-damage filter only; DamageDistribution additionally keeps just the main agent's actions
     const actions = useMemo(() => entry?.RotationValue.filter(a => a.Damage !== 0) ?? [], [entry])
     const groups = useMemo(() => entry?.Groups ?? [], [entry])
 
@@ -214,6 +233,8 @@ function DamageBarTab() {
 
             <DamageBarCase title="Grouped" actions={actions} groups={groups}
                 description="Hover a Combo to see its actions; move into the popover to inspect them. It should stay open while crossing the gap, close as soon as the pointer leaves both." />
+
+            <DamageDistributionCase buildId={entry.Build.Id} leaderboardId={Number(leaderboardId)} />
 
             <DamageBarCase title="Ungrouped" actions={actions} groups={[]}
                 description="Same rotation without groups, for width comparison." />

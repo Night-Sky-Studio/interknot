@@ -1,22 +1,16 @@
-import { type AgentAction, type ActionGroup, SkillTag } from "@interknot/types"
+import type { AgentAction, ActionGroup } from "@interknot/types"
 import { getTagName, getTagShortName } from "@localization"
 import "./DamageBar.css"
 import { Center, Popover, Stack, Text } from "@mantine/core"
 import { useEffect, useMemo, useState } from "react"
 import { buildSegments, segmentLength, type GroupSegment } from "./segments"
+import { getTag } from "@components/tags"
 
 interface IDamageBarProps {
     actions: AgentAction[]
     groups?: ActionGroup[]
     hoverIdx?: number
-    onHighlight?: (idx: number) => void
-}
-
-const getTag = (tag: unknown): SkillTag => {
-    if (typeof tag === "number") {
-        return SkillTag[tag] as unknown as SkillTag
-    }
-    return tag as SkillTag
+    onHighlight?: (idx: number, groupIdx: number) => void
 }
 
 const formatActionName = (name: string): string =>
@@ -105,25 +99,20 @@ export default function DamageBar({ actions, groups = [], hoverIdx = -1, onHighl
     // Reset when the rotation changes, so a stale key doesn't point into a different layout
     useEffect(() => close(), [segments])
 
-    // Sync from outside: open whichever segment contains the requested action
-    useEffect(() => {
-        if (hoverIdx < 0) return
-        const segment = segments.find(s => hoverIdx >= s.index && hoverIdx < s.index + segmentLength(s))
-        if (!segment) return
-        setActiveKey(segment.key)
-        setInnerIdx(segment.kind === "group" ? hoverIdx - segment.index : -1)
-    }, [hoverIdx, segments])
+    const externalKey = useMemo(() => hoverIdx < 0
+        ? null
+        : segments.find(s => hoverIdx >= s.index && hoverIdx < s.index + segmentLength(s))?.key ?? null,
+    [hoverIdx, segments])
 
-    const highlightedIdx = useMemo(() => {
-        const segment = segments.find(s => s.key === activeKey)
-        if (!segment) return -1
-        if (segment.kind === "action") return segment.index
-        return innerIdx >= 0 ? segment.index + innerIdx : -1
-    }, [segments, activeKey, innerIdx])
+    const activeSegment = useMemo(() => segments.find(s => s.key === activeKey), [segments, activeKey])
+    const highlightedIdx = !activeSegment ? -1
+        : activeSegment.kind === "action" ? activeSegment.index
+        : innerIdx >= 0 ? activeSegment.index + innerIdx : -1
+    const highlightedGroupIdx = activeSegment?.kind === "group" ? activeSegment.index : -1
 
     useEffect(() => {
-        onHighlight?.(highlightedIdx)
-    }, [highlightedIdx])
+        onHighlight?.(highlightedIdx, highlightedGroupIdx)
+    }, [highlightedIdx, highlightedGroupIdx])
 
     return <Center w="100%" style={{ flexDirection: "column" }}>
         <Text mb="xs">Rotation damage distribution</Text>
@@ -131,6 +120,7 @@ export default function DamageBar({ actions, groups = [], hoverIdx = -1, onHighl
             {
                 segments.map(segment => {
                     const isActive = segment.key === activeKey
+                    const isHighlighted = isActive || segment.key === externalKey
 
                     if (segment.kind === "action") {
                         const { action } = segment
@@ -139,7 +129,7 @@ export default function DamageBar({ actions, groups = [], hoverIdx = -1, onHighl
                                 <div
                                     style={widthStyle(action.Damage, total)}
                                     data-tag={getTag(action.Tag)}
-                                    data-hover={isActive}
+                                    data-hover={isHighlighted}
                                     onMouseEnter={() => open(segment.key)}
                                     onMouseLeave={close}>
                                     {getTagShortName(getTag(action.Tag))}
@@ -158,7 +148,7 @@ export default function DamageBar({ actions, groups = [], hoverIdx = -1, onHighl
                                 style={widthStyle(segment.damage, total)}
                                 data-group
                                 data-group-key={segment.key}
-                                data-hover={isActive}
+                                data-hover={isHighlighted}
                                 onMouseEnter={() => open(segment.key)}
                                 onMouseLeave={(e) => leaveGroup(e, segment.key)}>
                                 Combo
