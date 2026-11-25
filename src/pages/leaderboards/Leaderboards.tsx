@@ -11,7 +11,14 @@ import { useMemo } from "react"
 import { DataTable } from "mantine-datatable"
 import { useQueryParams } from "@/hooks/useQueryParams"
 import FilterSelector from "@components/FilterSelector/FilterSelector"
-import { useSettings } from "@/components/SettingsProvider";
+import { useSettings } from "@/components/SettingsProvider"
+import { type LeaderboardList } from "@interknot/types"
+
+const combineLeaderboards = (l: LeaderboardList) => [
+    l, 
+    ...l.Children
+        .sort((a, b) => b.Weapon.Rarity - a.Weapon.Rarity || a.Weapon.Id - b.Weapon.Id)
+]
 
 export default function Leaderboards() {
     const navigate = useNavigate()
@@ -144,11 +151,11 @@ export default function Leaderboards() {
                                     render: (leaderboard) => (
                                         <Group gap="xs">
                                             {
-                                                [leaderboard, ...leaderboard.Children].map((child) => (
-                                                    <WeaponButton key={child.Id} id={child.Id} compact
-                                                        refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} 
-                                                        weapon={child.Weapon} />
-                                                ))
+                                                combineLeaderboards(leaderboard).map((child) => (
+                                                        <WeaponButton key={child.Id} id={child.Id} compact
+                                                            refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} 
+                                                            weapon={child.Weapon} />
+                                                    ))
                                             }
                                         </Group>
                                     )
@@ -170,10 +177,10 @@ export default function Leaderboards() {
                                         <Stack p="md" gap="xs" align="flex-start">
                                             <Text fz="sm" c="dimmed">Weapons</Text>
                                             {
-                                                [leaderboard, ...leaderboard.Children].map((child) => (
-                                                    <WeaponButton key={child.Id} id={child.Id} 
-                                                        weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
-                                                ))
+                                                combineLeaderboards(leaderboard).map((child) => (
+                                                        <WeaponButton key={child.Id} id={child.Id} 
+                                                            weapon={child.Weapon} refinementLevel={child.Weapon.Rarity === 4 ? 1 : 5} />
+                                                    ))
                                             }
                                         </Stack>
                                         <Stack p="md" gap="xs">

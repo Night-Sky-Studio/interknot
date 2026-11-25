@@ -36,8 +36,15 @@ export default function LeaderboardDetailPage(): React.ReactElement {
     const leaderboardState = useAsync(async () => {
         return await getLeaderboard(Number(id))
     }, [id])
-    const relatedLeaderboards = useMemo(() => leaderboardState.value?.data ?? [],
-        [leaderboardState.value?.data])
+    // Same order as on /leaderboards: parent first, then children by rarity desc, weapon id asc
+    const relatedLeaderboards = useMemo(() => {
+        const all = leaderboardState.value?.data ?? []
+        const parent = all.find(lb => lb.ParentId == null)
+        const children = all
+            .filter(lb => lb !== parent)
+            .sort((a, b) => b.Weapon.Rarity - a.Weapon.Rarity || a.Weapon.Id - b.Weapon.Id)
+        return parent ? [parent, ...children] : children
+    }, [leaderboardState.value?.data])
     const leaderboard = useMemo(() => leaderboardState.value?.data?.find(lb => lb.Id === Number(id)), 
         [leaderboardState.value?.data, id])
 
@@ -213,12 +220,12 @@ export default function LeaderboardDetailPage(): React.ReactElement {
                                     <Title order={5}>Weapons: </Title>
                                     {
                                         relatedLeaderboards.map(lb => {
-                                            return (
-                                                <WeaponButton key={lb.Id} id={lb.Id} weapon={lb.Weapon} 
-                                                    compact refinementLevel={lb.Weapon.Rarity === 4 ? 1 : 5}
-                                                    selected={lb.Id === Number(id)} />
-                                            )
-                                        })
+                                                return (
+                                                    <WeaponButton key={lb.Id} id={lb.Id} weapon={lb.Weapon} 
+                                                        compact refinementLevel={lb.Weapon.Rarity === 4 ? 1 : 5}
+                                                        selected={lb.Id === Number(id)} />
+                                                )
+                                            })
                                     }
                                 </Group>
                                 <Group gap="xs">
