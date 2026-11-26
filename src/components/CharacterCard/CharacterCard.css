@@ -48,6 +48,7 @@
     justify-content: center;
     align-items: center;
     background-color: var(--mantine-color-dark-7);
+    z-index: 300;
 }
 
 .cc-vignette {
@@ -335,7 +336,7 @@ html[lang="fr"] .cc-stat * {
 }
 
 [data-editing="true"] .cc-discs {
-    transform: translateY(280px);
+    transform: translateY(300px);
 }
 [data-editing="true"] .cc-vignette {
     transform: translateY(400px);
