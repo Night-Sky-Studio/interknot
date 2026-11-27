@@ -1,5 +1,5 @@
-import { getErrorString } from "@/localization/Localization"
-import { 
+import { ApiError } from "@api/error"
+import {
     BaseLeaderboardEntry, 
     BelleMessage, 
     Build, 
@@ -92,13 +92,13 @@ export async function req<T>(u: string, restoreProps: boolean = false, init?: Re
     let response = await fetch(u, init)
     let result = await response.json() as IResult<T>
     if (response.status !== 200 || !result.success) {
-        throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
+        throw new ApiError(result.error?.status, result.error?.message ?? "Unknown error")
     }
     if (restoreProps && result.data) {
         result.data = restoreProperties(result.data)
     }
     if (result.data === undefined) {
-        throw new Error(`${getErrorString(result.error?.status)} :: No data in response`)
+        throw new ApiError(result.error?.status, "No data in response")
     }
     return result
 }
@@ -108,13 +108,13 @@ async function reqCursored<T>(u: string, restoreProps: boolean = false, init?: R
     let response = await fetch(u, init)
     let result = await response.json() as ICursoredResult<T>
     if (response.status !== 200 || !result.success) {
-        throw new Error(`${getErrorString(result.error?.status)} :: ${result.error?.message}`)
+        throw new ApiError(result.error?.status, result.error?.message ?? "Unknown error")
     }
     if (restoreProps && result.data) {
         result.data = result.data.map(restoreProperties)
     }
     if (result.data === undefined) {
-        throw new Error(`${getErrorString(result.error?.status)} :: No data in response`)
+        throw new ApiError(result.error?.status, "No data in response")
     }
     return result
 }
@@ -330,7 +330,7 @@ export async function getNews(): Promise<IResult<BelleMessage[]>> {
     }))
 }
 
-type ProfileClaim = { userId: number, secret: string, createdAt: string }
+export type ProfileClaim = { userId: number, secret: string, createdAt: string }
 
 export function initProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
     return req(url({
@@ -350,6 +350,15 @@ export function getProfileClaim(uid: number): Promise<IResult<ProfileClaim>> {
         path: `profile/${uid}/claim`,
     }), false, {
         method: "GET",
+        credentials: "include"
+    })
+}
+export function cancelProfileClaim(uid: number): Promise<IResult<boolean>> {
+    return req(url({
+        base: DATA_URL,
+        path: `profile/${uid}/claim/cancel`,
+    }), false, {
+        method: "POST",
         credentials: "include"
     })
 }
